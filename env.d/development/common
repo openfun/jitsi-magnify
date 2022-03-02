@@ -1,0 +1,13 @@
+# Django
+DJANGO_SETTINGS_MODULE=jitsi_magnify.settings
+DJANGO_SECRET_KEY=ThisIsAnExampleKeyForDevPurposeOnly
+DJANGO_ALLOWED_HOSTS=*
+
+# Python
+PYTHONPATH=/app/src/backend
+
+#JWT
+DJANGO_JWT_PRIVATE_SIGNING_KEY=ThisIsAnExampleKeyForDevPurposeOnly
+
+# jitsi magnify settings
+

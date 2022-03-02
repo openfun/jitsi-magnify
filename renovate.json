@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "github>openfun/renovate-configuration"
+  ],
+  "packageRules": [
+    {
+      "enabled": false,
+      "groupName": "ignored python dependencies",
+      "matchManagers": [
+        "setup-cfg"
+      ],
+      "matchPackageNames": [
+        "django",
+        "PyJWT"
+      ]
+    }
+  ]
+}
