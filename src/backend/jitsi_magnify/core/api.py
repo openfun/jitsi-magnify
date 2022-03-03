@@ -37,6 +37,7 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
 
     @classmethod
     def get_token(cls, user, room):
+        """Method to get the token created based on a user and a room which they wish to access"""
         token = super().get_token(user)
 
         # Add custom claims
@@ -55,9 +56,12 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         return token
 
 class CustomTokenView(TokenObtainPairView):
+    """View for token creation"""
     serializer_class = CustomTokenSerializer
 
 def obtainTokenView(request, room):
+    """View for token fetching based on a guest user and a specific room
+    This redirects to jitsi with the token"""
     user, created = User.objects.get_or_create(username="guest")
     
     if created:
