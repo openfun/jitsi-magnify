@@ -35,14 +35,6 @@ def exception_handler(exc, context):
 class CustomTokenSerializer(TokenObtainPairSerializer):
     """Api viewset to generate a custom token"""
 
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        refresh = self.get_token(self.user)
-        data['refresh'] = str(refresh)
-        data['access'] = str(refresh.access_token)
-
-        return data
-
     @classmethod
     def get_token(cls, user, room):
         token = super().get_token(user)
