@@ -8,6 +8,10 @@ from rest_framework.views import exception_handler as drf_exception_handler
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from django.http import HttpResponseRedirect
+
+from jitsi_magnify.core.models import User
+
 def exception_handler(exc, context):
     """Handle Django ValidationError as an accepted exception.
 
@@ -39,7 +43,7 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         return data
 
     @classmethod
-    def get_token(cls, user):
+    def get_token(cls, user, room):
         token = super().get_token(user)
 
         # Add custom claims
@@ -53,9 +57,20 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         token['aud'] = "jitsi"
         token['iss'] = "jitsi_app_id"
         token['sub'] = "meet.jitsi"
-        token['room'] = "hello"
+        token['room'] = room
 
         return token
 
 class CustomTokenView(TokenObtainPairView):
     serializer_class = CustomTokenSerializer
+
+def obtainTokenView(request, room):
+    user, created = User.objects.get_or_create(username="guest")
+    
+    if created:
+        user.set_password("guest_default_password")
+        user.save()
+
+    token = CustomTokenSerializer.get_token(user=user, room=room)
+
+    return HttpResponseRedirect("https://localhost:8071/" + room + "?jwt=" + str(token))

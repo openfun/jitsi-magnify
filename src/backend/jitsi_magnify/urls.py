@@ -16,14 +16,13 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
-
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
 from jitsi_magnify.core import api
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/token/<room>", api.obtainTokenView),
     path("api/token/create/", api.CustomTokenView.as_view(), name='token_custom_pair')
 ]
 
