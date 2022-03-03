@@ -8,6 +8,7 @@ from rest_framework.views import exception_handler as drf_exception_handler
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from django.conf import settings
 from django.http import HttpResponseRedirect
 
 from jitsi_magnify.core.models import User
@@ -47,7 +48,7 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         # Add custom claims
-        jitsiUser = {'avatar': "",
+        jitsiUser = {'avatar': settings.JWT_CONFIGURATION.get("guest_avatar"),
                 'name': user.username,
                 'email': user.email}
 
@@ -55,7 +56,7 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
 
         token['moderator'] = user.is_staff
         token['aud'] = "jitsi"
-        token['iss'] = "jitsi_app_id"
+        token['iss'] = settings.JWT_CONFIGURATION.get("jitsi_app_id")
         token['sub'] = "meet.jitsi"
         token['room'] = room
 
@@ -68,9 +69,9 @@ def obtainTokenView(request, room):
     user, created = User.objects.get_or_create(username="guest")
     
     if created:
-        user.set_password("guest_default_password")
+        user.set_password(settings.JWT_CONFIGURATION.get("guest_default_password"))
         user.save()
 
     token = CustomTokenSerializer.get_token(user=user, room=room)
 
-    return HttpResponseRedirect("https://localhost:8071/" + room + "?jwt=" + str(token))
+    return HttpResponseRedirect(settings.JWT_CONFIGURATION.get("jitsi_url") + "/" + room + "?jwt=" + str(token))

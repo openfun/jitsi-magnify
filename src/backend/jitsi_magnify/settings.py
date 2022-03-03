@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import json
 import os
+from datetime import timedelta
 
 from django.utils.translation import gettext_lazy as _
 
@@ -112,8 +113,6 @@ class Base(Configuration):
     LANGUAGE_CODE = "en-us"
 
     TIME_ZONE = "UTC"
-    USE_I18N = True
-    USE_L10N = True
     USE_TZ = True
 
     # Templates @TODO remove useless ones (and middelwares too)
@@ -170,10 +169,7 @@ class Base(Configuration):
         "adminsortable2",
         "corsheaders",
         "dockerflow.django",
-        "djmoney",
         "rest_framework",
-        "parler",
-        "howard",
         # Jitsi magnify
         "jitsi_magnify.core",
     ]
@@ -183,21 +179,6 @@ class Base(Configuration):
         "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
     }
 
-    JITSI_MAGNIFY_ANONYMOUS_COURSE_SERIALIZER_CACHE_TTL = 3600  # 1 hour
-
-    LANGUAGES = (
-        ("en-us", _("English")),
-        ("fr-fr", _("French")),
-    )
-    LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
-    PARLER_DEFAULT_LANGUAGE_CODE = "en-us"
-    PARLER_LANGUAGES = {
-        None: (tuple(dict(code=code) for code, _name in LANGUAGES)),
-        "default": {
-            "fallbacks": ["en-us"],
-            "hide_untranslated": False,
-        },
-    }
     REST_FRAMEWORK = {
         "DEFAULT_AUTHENTICATION_CLASSES": (
             "rest_framework_simplejwt.authentication.JWTTokenUserAuthentication",
@@ -206,20 +187,32 @@ class Base(Configuration):
     }
 
     SIMPLE_JWT = {
+        'ACCES_TOKEN_LIFETIME': timedelta(minutes=60),
         "ALGORITHM": values.Value("HS256", environ_name="JWT_ALGORITHM"),
         "SIGNING_KEY": values.SecretValue(
-            environ_name="JWT_PRIVATE_SIGNING_KEY",
+            environ_name="JWT_JITSI_PRIVATE_SIGNING_KEY",
+            environ_prefix=None
         ),
         "AUTH_HEADER_TYPES": ("Bearer",),
         "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
-        "USER_ID_FIELD": "username",
-        "USER_ID_CLAIM": "username",
+        'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
         "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
     }
 
-    # Django Money
-    DEFAULT_CURRENCY = "EUR"
-    CURRENCIES = (DEFAULT_CURRENCY,)
+    JWT_CONFIGURATION = {
+        "guest_avatar": values.Value(
+            "", environ_name="JWT_GUEST_AVATAR", environ_prefix=None
+        ),
+        "guest_default_password": values.Value(
+            "", environ_name="JWT_GUEST_DEFAULT_PASSWORD", environ_prefix=None
+        ),
+        "jitsi_url": values.Value(
+            "", environ_name="JWT_JITSI_URL", environ_prefix=None
+        ),
+        "jitsi_app_id": values.Value(
+            "", environ_name="JWT_JITSI_APP_ID", environ_prefix=None
+        ),
+    }
 
     AUTH_USER_MODEL = "core.User"
 

@@ -43,7 +43,7 @@ COPY ./src/backend /app/
 WORKDIR /app
 
 # collectstatic
-RUN DJANGO_CONFIGURATION=Build DJANGO_JWT_PRIVATE_SIGNING_KEY=Dummy \
+RUN DJANGO_CONFIGURATION=Build JWT_JITSI_PRIVATE_SIGNING_KEY=Dummy \
     python manage.py collectstatic --noinput
 
 # Replace duplicated file by a symlink to decrease the overall size of the

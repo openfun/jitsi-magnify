@@ -6,8 +6,9 @@ DJANGO_ALLOWED_HOSTS=*
 # Python
 PYTHONPATH=/app/src/backend
 
-#JWT
-DJANGO_JWT_PRIVATE_SIGNING_KEY=ThisIsAnExampleKeyForDevPurposeOnly
-
-# jitsi magnify settings
-
+# jitsi magnify jwt settings
+JWT_GUEST_AVATAR="https://ronaldmottram.co.nz/wp-content/uploads/2019/01/default-user-icon-8.jpg"
+JWT_GUEST_DEFAULT_PASSWORD="default"
+JWT_JITSI_URL="https://localhost:8443"
+JWT_JITSI_PRIVATE_SIGNING_KEY="ThisIsAnExampleKeyForDevPurposeOnly"
+JWT_JITSI_APP_ID="app_id"
