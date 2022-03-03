@@ -2,4 +2,4 @@
 # flake8: noqa
 # pylint: disable=wildcard-import
 
-from .users import *
+from .user import *
