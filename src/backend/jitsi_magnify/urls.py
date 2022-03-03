@@ -22,11 +22,9 @@ from rest_framework.routers import DefaultRouter
 
 from jitsi_magnify.core import api
 
-router = DefaultRouter()
-
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include([*router.urls])),
+    path("api/token/create/", api.CustomTokenView.as_view(), name='token_custom_pair')
 ]
 
 if settings.DEBUG:

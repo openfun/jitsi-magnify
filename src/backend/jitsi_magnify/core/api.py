@@ -3,12 +3,10 @@ API endpoints
 """
 from django.core.exceptions import ValidationError as DjangoValidationError
 
-from rest_framework import pagination
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.views import exception_handler as drf_exception_handler
-
-from jitsi_magnify.core import models
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 def exception_handler(exc, context):
     """Handle Django ValidationError as an accepted exception.
@@ -29,9 +27,35 @@ def exception_handler(exc, context):
 
     return drf_exception_handler(exc, context)
 
+class CustomTokenSerializer(TokenObtainPairSerializer):
+    """Api viewset to generate a custom token"""
 
-class Pagination(pagination.PageNumberPagination):
-    """Pagination to display no more than 100 objects per page sorted by creation date."""
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
 
-    ordering = "-created_on"
-    page_size = 100
+        return data
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        jitsiUser = {'avatar': "",
+                'name': user.username,
+                'email': user.email}
+
+        token['context'] = {'user': jitsiUser}
+
+        token['moderator'] = user.is_staff
+        token['aud'] = "jitsi"
+        token['iss'] = "jitsi_app_id"
+        token['sub'] = "meet.jitsi"
+        token['room'] = "hello"
+
+        return token
+
+class CustomTokenView(TokenObtainPairView):
+    serializer_class = CustomTokenSerializer
