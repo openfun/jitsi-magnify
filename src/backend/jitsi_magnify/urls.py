@@ -18,16 +18,14 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from jitsi_magnify.core import api
+from jitsi_magnify.core import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/token/<room>", api.obtainTokenView),
-    path("api/token/create/", api.CustomTokenView.as_view(), name='token_custom_pair')
+    path("api/token/<room>", views.get_room_token_view),
 ]
 
 if settings.DEBUG:
-    urlpatterns = (
-        urlpatterns
-        + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns = urlpatterns + static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
     )

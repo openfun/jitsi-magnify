@@ -6,9 +6,13 @@ DJANGO_ALLOWED_HOSTS=*
 # Python
 PYTHONPATH=/app/src/backend
 
-# jitsi magnify jwt settings
+# Jitsi magnify jwt settings
 JWT_GUEST_AVATAR="https://ronaldmottram.co.nz/wp-content/uploads/2019/01/default-user-icon-8.jpg"
 JWT_GUEST_DEFAULT_PASSWORD="default"
-JWT_JITSI_URL="https://localhost:8443"
-JWT_JITSI_PRIVATE_SIGNING_KEY="ThisIsAnExampleKeyForDevPurposeOnly"
+JWT_GUEST_USERNAME="guest"
+JWT_JITSI_DOMAIN="localhost:8443"
+JWT_JITSI_SECRET_KEY="ThisIsAnExampleKeyForDevPurposeOnly"
 JWT_JITSI_APP_ID="app_id"
+
+# Token expiration settings
+JWT_EXPIRATION_SECONDS=300

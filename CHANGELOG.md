@@ -10,7 +10,9 @@ and this project adheres to
 
 ### Added
 
-- Add an API route to generate a token based on a "guest" user, and redirect to given jitsi instance and room with that token.
+- Add an API route to generate a token
+- If user is logged in, created token on API route contains their information
+- If user is not logged in, created token contains guest information
 
 ### Changed
 

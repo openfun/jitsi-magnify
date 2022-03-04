@@ -12,9 +12,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import json
 import os
-from datetime import timedelta
-
-from django.utils.translation import gettext_lazy as _
 
 import sentry_sdk
 from configurations import Configuration, values
@@ -87,7 +84,9 @@ class Base(Configuration):
                 environ_name="DB_ENGINE",
                 environ_prefix=None,
             ),
-            "NAME": values.Value("jitsi_magnify", environ_name="DB_NAME", environ_prefix=None),
+            "NAME": values.Value(
+                "jitsi_magnify", environ_name="DB_NAME", environ_prefix=None
+            ),
             "USER": values.Value("fun", environ_name="DB_USER", environ_prefix=None),
             "PASSWORD": values.Value(
                 "pass", environ_name="DB_PASSWORD", environ_prefix=None
@@ -142,7 +141,6 @@ class Base(Configuration):
         "django.middleware.security.SecurityMiddleware",
         "whitenoise.middleware.WhiteNoiseMiddleware",
         "django.contrib.sessions.middleware.SessionMiddleware",
-        "django.middleware.locale.LocaleMiddleware",
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
         "corsheaders.middleware.CorsMiddleware",
         "django.middleware.common.CommonMiddleware",
@@ -153,24 +151,25 @@ class Base(Configuration):
     ]
 
     AUTHENTICATION_BACKENDS = [
+        "rest_framework.authentication.SessionAuthentication",
         "django.contrib.auth.backends.ModelBackend",
     ]
 
     # Django applications from the highest priority to the lowest
     INSTALLED_APPS = [
-        "django.contrib.admin",
-        "django.contrib.auth",
-        "django.contrib.contenttypes",
-        "django.contrib.sessions",
-        "django.contrib.messages",
-        "django.contrib.staticfiles",
+        # Jitsi magnify
+        "jitsi_magnify.core",
         # Third party apps
-        "adminsortable2",
         "corsheaders",
         "dockerflow.django",
         "rest_framework",
-        # Jitsi magnify
-        "jitsi_magnify.core",
+        # Django
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.admin",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
     ]
 
     # Cache
@@ -179,37 +178,33 @@ class Base(Configuration):
     }
 
     REST_FRAMEWORK = {
+        "ALLOWED_VERSIONS": ("1.0",),
         "DEFAULT_AUTHENTICATION_CLASSES": (
-            "rest_framework_simplejwt.authentication.JWTTokenUserAuthentication",
+            "rest_framework.authentication.SessionAuthentication",
         ),
+        "DEFAULT_VERSION": "1.0",
+        "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
         "EXCEPTION_HANDLER": "jitsi_magnify.core.api.exception_handler",
-    }
-
-    SIMPLE_JWT = {
-        'ACCES_TOKEN_LIFETIME': timedelta(minutes=60),
-        "ALGORITHM": values.Value("HS256", environ_name="JWT_ALGORITHM"),
-        "SIGNING_KEY": values.SecretValue(
-            environ_name="JWT_JITSI_PRIVATE_SIGNING_KEY",
-            environ_prefix=None
-        ),
-        "AUTH_HEADER_TYPES": ("Bearer",),
-        "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
-        'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
-        "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
     }
 
     JWT_CONFIGURATION = {
         "guest_avatar": values.Value(
             "", environ_name="JWT_GUEST_AVATAR", environ_prefix=None
         ),
-        "guest_default_password": values.Value(
-            "", environ_name="JWT_GUEST_DEFAULT_PASSWORD", environ_prefix=None
+        "guest_username": values.Value(
+            "guest", environ_name="JWT_GUEST_USERNAME", environ_prefix=None
         ),
-        "jitsi_url": values.Value(
-            "", environ_name="JWT_JITSI_URL", environ_prefix=None
+        "jitsi_domain": values.Value(
+            environ_name="JWT_JITSI_DOMAIN", environ_prefix=None
         ),
         "jitsi_app_id": values.Value(
             "", environ_name="JWT_JITSI_APP_ID", environ_prefix=None
+        ),
+        "jitsi_secret_key": values.SecretValue(
+            environ_name="JWT_JITSI_SECRET_KEY", environ_prefix=None
+        ),
+        "token_expiration_seconds": values.Value(
+            300, environ_name="JWT_EXPIRATION_SECONDS", environ_prefix=None
         ),
     }
 
@@ -283,7 +278,6 @@ class Development(Base):
     ALLOWED_HOSTS = ["*"]
     CORS_ALLOW_ALL_ORIGINS = True
     DEBUG = True
-    NGROK_ENDPOINT = values.Value(None, "NGROK_ENDPOINT", environ_prefix=None)
 
 
 class Test(Base):
