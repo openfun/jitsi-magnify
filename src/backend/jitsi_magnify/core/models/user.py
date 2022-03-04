@@ -1,14 +1,8 @@
 """
 Declare and configure the models for the customers part
 """
-import uuid
-
 import django.contrib.auth.models as auth_models
-from django.core.exceptions import ValidationError
-from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from django_countries.fields import CountryField
 
 
 class User(auth_models.AbstractUser):

@@ -1,5 +1,4 @@
 # jitsi-magnify
-# @TODO verify that all packets are necessary
 
 # ---- base image to inherit from ----
 FROM python:3.8-slim-bullseye as base

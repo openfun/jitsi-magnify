@@ -166,26 +166,6 @@ crowdin-upload: ## Upload source translations to crowdin
 	@$(COMPOSE_RUN_CROWDIN) upload sources -c crowdin/config.yml
 .PHONY: crowdin-upload
 
-i18n-compile: ## compile the gettext files
-	@$(MANAGE) compilemessages --ignore="venv/**/*"
-.PHONY: i18n-compile
-
-i18n-download-and-compile: ## download all translated messages and compile them to be used by all applications
-i18n-download-and-compile: \
-  crowdin-download \
-  i18n-compile
-.PHONY: i18n-download-and-compile
-
-i18n-generate: ## create the .pot files used for i18n
-	@$(MANAGE) makemessages -a --keep-pot
-.PHONY: i18n-generate
-
-i18n-generate-and-upload: ## generate source translations for all applications and upload them to crowdin
-i18n-generate-and-upload: \
-  i18n-generate \
-  crowdin-upload
-.PHONY: i18n-generate-and-upload
-
 # -- Misc
 clean: ## restore repository state as it was freshly cloned
 	git clean -idx
@@ -194,10 +174,6 @@ clean: ## restore repository state as it was freshly cloned
 help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
-
-demo-data: ## create fake data for dev purpose
-	@$(MANAGE) loaddatafake
-.PHONY: demo-data
 
 ngrok: ## Run a proxy through ngrok
 ngrok:

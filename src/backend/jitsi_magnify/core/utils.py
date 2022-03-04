@@ -1,12 +1,9 @@
 """
 Utils that can be useful throughout Jitsi magnify's core app
 """
-import base64
 import collections.abc
 
 from django.utils.text import slugify
-
-from PIL import ImageFile as PillowImageFile
 
 
 def normalize_code(code):

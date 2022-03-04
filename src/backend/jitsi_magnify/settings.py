@@ -115,7 +115,7 @@ class Base(Configuration):
     TIME_ZONE = "UTC"
     USE_TZ = True
 
-    # Templates @TODO remove useless ones (and middelwares too)
+    # Templates
     TEMPLATES = [
         {
             "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -126,7 +126,6 @@ class Base(Configuration):
                     "django.contrib.messages.context_processors.messages",
                     "django.template.context_processors.csrf",
                     "django.template.context_processors.debug",
-                    "django.template.context_processors.i18n",
                     "django.template.context_processors.media",
                     "django.template.context_processors.request",
                     "django.template.context_processors.tz",
