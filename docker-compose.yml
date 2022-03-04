@@ -5,8 +5,6 @@ services:
     image: postgres:12
     env_file:
       - env.d/development/postgresql
-    ports:
-      - "15432:5432"
 
   app-dev:
     build:

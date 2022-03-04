@@ -144,8 +144,8 @@ jobs:
         environment:
           DJANGO_SETTINGS_MODULE: jitsi_magnify.settings
           DJANGO_CONFIGURATION: Test
-          DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
-          JWT_JITSI_PRIVATE_SIGNING_KEY: ThisIsAnExampleKeyForDevPurposeOnly
+          DJANGO_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
+          JWT_JITSI_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
           PYTHONPATH: /home/circleci/jitsi_magnify/src/backend
           DB_HOST: localhost
           DB_NAME: jitsi_magnify

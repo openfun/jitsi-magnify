@@ -67,7 +67,21 @@ $ make superuser
 
 ### Explanation
 
-# @TODO add explanation on feature
+Jitsi-magnify helps with authenticating users when they access jitsi rooms. Currently, magnify either gets information from logged in user or inputs default values and token payload, and then redirects to jitsi instance with the token.
+
+### Usage in production
+
+The domain of jitsi instance that uses magnify should be referenced in `env.d/development/common`. As for jitsi, env variables should be set to enable jwt auth and to redirect to magnify instance. 
+
+These variables are : 
+````
+ENABLE_AUTH=1
+AUTH_TYPE=jwt
+JWT_APP_ID={JWT_JITSI_APP_ID}
+TOKEN_AUTH_URL=https://{JWT_JITSI_DOMAIN}/api/token/{room}
+````
+
+With JWT_JITSI_APP_ID and JWT_JITSI_DOMAIN equal to the values in `env.d/development/common`.
 
 ## Contributing
 
