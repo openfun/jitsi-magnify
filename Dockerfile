@@ -1,4 +1,4 @@
-# jitsi-magnify
+# Jitsi Magnify
 
 # ---- base image to inherit from ----
 FROM python:3.8-slim-bullseye as base
@@ -24,7 +24,7 @@ RUN mkdir /install && \
 
 # ---- static link collector ----
 FROM base as link-collector
-ARG JITSI_MAGNIFY_STATIC_ROOT=/data/static
+ARG MAGNIFY_STATIC_ROOT=/data/static
 
 # Install libpangocairo & rdfind
 RUN apt-get update && \
@@ -36,7 +36,7 @@ RUN apt-get update && \
 # Copy installed python dependencies
 COPY --from=back-builder /install /usr/local
 
-# Copy jitsi magnify application (see .dockerignore)
+# Copy magnify application (see .dockerignore)
 COPY ./src/backend /app/
 
 WORKDIR /app
@@ -47,12 +47,12 @@ RUN DJANGO_CONFIGURATION=Build JWT_JITSI_SECRET_KEY=Dummy \
 
 # Replace duplicated file by a symlink to decrease the overall size of the
 # final image
-RUN rdfind -makesymlinks true -followsymlinks true -makeresultsfile false ${JITSI_MAGNIFY_STATIC_ROOT}
+RUN rdfind -makesymlinks true -followsymlinks true -makeresultsfile false ${MAGNIFY_STATIC_ROOT}
 
 # ---- Core application image ----
 FROM base as core
 
-ARG JITSI_MAGNIFY_STATIC_ROOT=/data/static
+ARG MAGNIFY_STATIC_ROOT=/data/static
 
 ENV PYTHONUNBUFFERED=1
 
@@ -83,7 +83,7 @@ COPY ./docker/files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
 RUN chmod g=u /etc/passwd
 
 # Copy statics
-COPY --from=link-collector ${JITSI_MAGNIFY_STATIC_ROOT} ${JITSI_MAGNIFY_STATIC_ROOT}
+COPY --from=link-collector ${MAGNIFY_STATIC_ROOT} ${MAGNIFY_STATIC_ROOT}
 
 WORKDIR /app
 
@@ -98,9 +98,9 @@ FROM core as development
 # Switch back to the root user to install development dependencies
 USER root:root
 
-# Uninstall jitsi magnify and re-install it in editable mode along with development
+# Uninstall magnify and re-install it in editable mode along with development
 # dependencies
-RUN pip uninstall -y jitsi_magnify
+RUN pip uninstall -y magnify
 RUN pip install -e .[dev]
 
 # Restore the un-privileged user running the application
@@ -120,11 +120,11 @@ FROM core as production
 
 # Gunicorn
 RUN mkdir -p /usr/local/etc/gunicorn
-COPY docker/files/usr/local/etc/gunicorn/jitsi_magnify.py /usr/local/etc/gunicorn/jitsi_magnify.py
+COPY docker/files/usr/local/etc/gunicorn/magnify.py /usr/local/etc/gunicorn/magnify.py
 
 # Un-privileged user running the application
 ARG DOCKER_USER
 USER ${DOCKER_USER}
 
-# The default command runs gunicorn WSGI server in jitsi magnify's main module
-CMD gunicorn -c /usr/local/etc/gunicorn/jitsi_magnify.py jitsi_magnify.wsgi:application
+# The default command runs gunicorn WSGI server in magnify's main module
+CMD gunicorn -c /usr/local/etc/gunicorn/magnify.py magnify.wsgi:application

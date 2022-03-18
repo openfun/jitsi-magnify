@@ -7,7 +7,7 @@ UNSET_USER=0
 
 TERRAFORM_DIRECTORY="./env.d/terraform"
 COMPOSE_FILE="${REPO_DIR}/docker-compose.yml"
-COMPOSE_PROJECT="jitsi_magnify"
+COMPOSE_PROJECT="magnify"
 
 
 # _set_user: set (or unset) default user id used to run docker commands
@@ -90,7 +90,7 @@ function _dc_exec() {
 #
 # ARGS : django's manage.py command arguments
 function _django_manage() {
-    _dc_run -w /app/src/backend/jitsi_magnify "jitsi_magnify" python manage.py "$@"
+    _dc_run -w /app/src/backend/magnify "magnify" python manage.py "$@"
 }
 
 # _set_openstack_project: select an OpenStack project from the openrc files defined in the

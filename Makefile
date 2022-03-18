@@ -134,14 +134,14 @@ lint-mypy: ## type check back-end python sources with mypy
 
 lint-pylint: ## lint back-end python sources with pylint
 	@echo 'lint:pylint started…'
-	@$(COMPOSE_TEST_RUN_APP) pylint jitsi_magnify
+	@$(COMPOSE_TEST_RUN_APP) pylint magnify
 .PHONY: lint-pylint
 
 test-back: ## run back-end tests
 	bin/pytest
 .PHONY: test-back
 
-migrate:  ## run django migrations for the jitsi magnify project.
+migrate:  ## run django migrations for the magnify project.
 	@echo "$(BOLD)Running migrations$(RESET)"
 	@$(COMPOSE) up -d postgresql
 	@$(WAIT_DB)
@@ -179,6 +179,6 @@ ngrok: ## Run a proxy through ngrok
 ngrok:
 	@$(COMPOSE) stop ngrok
 	@$(COMPOSE) up -d ngrok
-	@echo "Jitsi magnify is accessible on : "
+	@echo "Magnify is accessible on : "
 	@bin/get_ngrok_url
 .PHONE: ngrok

@@ -1,6 +1,6 @@
 # Gunicorn-django settings
 bind = ["0.0.0.0:8000"]
-name = "jitsi_magnify"
+name = "magnify"
 python_path = "/app"
 
 # Run

@@ -1,5 +1,5 @@
 resource "openstack_objectstorage_container_v1" "backend" {
-  name     = "jitsi-magnify-terraform"
+  name     = "magnify-terraform"
   provider = openstack.ovh
 
   # all objects should be deleted from the container so that the container
@@ -7,13 +7,13 @@ resource "openstack_objectstorage_container_v1" "backend" {
   force_destroy = true
 
   versioning {
-    location = "jitsi-magnify-terraform-archive"
+    location = "magnify-terraform-archive"
     type     = "versions"
   }
 }
 
 resource "openstack_objectstorage_container_v1" "backend_archive" {
-  name     = "jitsi-magnify-terraform-archive"
+  name     = "magnify-terraform-archive"
   provider = openstack.ovh
 
   # all objects should be deleted from the container so that the container

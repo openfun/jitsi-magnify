@@ -58,4 +58,4 @@ db.sqlite3
 
 # Site media
 /data/
-src/backend/jitsi_magnify/static/jitsi_magnify/
+src/backend/magnify/static/magnify/

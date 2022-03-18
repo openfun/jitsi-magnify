@@ -1,12 +1,12 @@
 # Django
-DJANGO_SETTINGS_MODULE=jitsi_magnify.settings
+DJANGO_SETTINGS_MODULE=magnify.settings
 DJANGO_SECRET_KEY=ThisIsAnExampleKeyForDevPurposeOnly
 DJANGO_ALLOWED_HOSTS=*
 
 # Python
 PYTHONPATH=/app/src/backend
 
-# Jitsi magnify jwt settings
+# Magnify jwt settings
 JWT_GUEST_AVATAR="https://ronaldmottram.co.nz/wp-content/uploads/2019/01/default-user-icon-8.jpg"
 JWT_GUEST_DEFAULT_PASSWORD="default"
 JWT_GUEST_USERNAME="guest"

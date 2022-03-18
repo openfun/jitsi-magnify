@@ -1,4 +1,4 @@
-"""Jitsi Magnify core views"""
+"""Magnify core views"""
 from datetime import timedelta
 from urllib.parse import urlencode
 

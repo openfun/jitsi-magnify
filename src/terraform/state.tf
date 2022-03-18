@@ -7,8 +7,8 @@ terraform {
   }
 
   backend "swift" {
-    container = "jitsi-magnify-terraform"
-    archive_container = "jitsi-magnify-terraform-archive"
+    container = "magnify-terraform"
+    archive_container = "magnify-terraform-archive"
   }
 
   required_version = ">= 1.0.0"

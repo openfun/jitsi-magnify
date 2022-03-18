@@ -3,8 +3,8 @@ data "openstack_identity_auth_scope_v3" "current" {
   name = "current"
 }
 
-resource "openstack_objectstorage_container_v1" "jitsi_magnify_media_storage" {
-  name          = "tf-${terraform.workspace}-jitsi-magnify-media-storage"
+resource "openstack_objectstorage_container_v1" "magnify_media_storage" {
+  name          = "tf-${terraform.workspace}-magnify-media-storage"
   provider      = openstack.ovh
 
   # all objects should be deleted from the container so that the container
