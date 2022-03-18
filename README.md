@@ -67,7 +67,7 @@ $ make superuser
 
 ### Explanation
 
-Jitsi-magnify helps with authenticating users when they access jitsi rooms. Currently, magnify either gets information from logged in user or inputs default values and token payload, and then redirects to jitsi instance with the token.
+Jitsi magnify helps with authenticating users when they access jitsi rooms. Currently, magnify either gets information from logged in user or inputs default values and token payload, and then redirects to jitsi instance with the token.
 
 ### Usage in production
 

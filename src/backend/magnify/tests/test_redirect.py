@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 
-from jitsi_magnify.core.factories import UserFactory
+from magnify.core.factories import UserFactory
 
 
 @override_settings(

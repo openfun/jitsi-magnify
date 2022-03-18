@@ -10,7 +10,7 @@ generate-version-file: &generate-version-file
         "$CIRCLE_TAG" \
         "$CIRCLE_PROJECT_USERNAME" \
         "$CIRCLE_PROJECT_REPONAME" \
-        "$CIRCLE_BUILD_URL" > src/backend/jitsi_magnify/version.json
+        "$CIRCLE_BUILD_URL" > src/backend/magnify/version.json
 
 version: 2
 jobs:
@@ -19,7 +19,7 @@ jobs:
   lint-git:
     docker:
       - image: circleci/python:3.8-bullseye
-    working_directory: ~/jitsi_magnify
+    working_directory: ~/magnify
     steps:
       - checkout
       # Make sure the changes don't add a "print" statement to the code base.
@@ -46,7 +46,7 @@ jobs:
   check-changelog:
     docker:
       - image: circleci/buildpack-deps:stretch-scm
-    working_directory: ~/jitsi_magnify
+    working_directory: ~/magnify
     steps:
       - checkout
       - run:
@@ -58,7 +58,7 @@ jobs:
   lint-changelog:
     docker:
       - image: debian:stretch
-    working_directory: ~/jitsi_magnify
+    working_directory: ~/magnify
     steps:
       - checkout
       - run:
@@ -72,7 +72,7 @@ jobs:
   build-docker:
     docker:
       - image: circleci/buildpack-deps:stretch
-    working_directory: ~/jitsi_magnify
+    working_directory: ~/magnify
     steps:
       # Checkout repository sources
       - checkout
@@ -94,7 +94,7 @@ jobs:
   build-back:
     docker:
       - image: circleci/python:3.8-bullseye
-    working_directory: ~/jitsi_magnify
+    working_directory: ~/magnify
     steps:
       - checkout
       - restore_cache:
@@ -112,10 +112,10 @@ jobs:
   lint-back:
     docker:
       - image: circleci/python:3.8-bullseye
-    working_directory: ~/jitsi_magnify/src/backend
+    working_directory: ~/magnify/src/backend
     steps:
       - checkout:
-          path: ~/jitsi_magnify
+          path: ~/magnify
       - restore_cache:
           keys:
             - v1-back-dependencies-{{ .Revision }}
@@ -130,7 +130,7 @@ jobs:
           command: ~/.local/bin/black --check .
       - run:
           name: Lint code with pylint
-          command: ~/.local/bin/pylint jitsi_magnify
+          command: ~/.local/bin/pylint magnify
       - run:
           name: Lint code with bandit
           command: ~/.local/bin/bandit -c .banditrc -qr .
@@ -142,23 +142,23 @@ jobs:
     docker:
       - image: circleci/python:3.8-bullseye
         environment:
-          DJANGO_SETTINGS_MODULE: jitsi_magnify.settings
+          DJANGO_SETTINGS_MODULE: magnify.settings
           DJANGO_CONFIGURATION: Test
           DJANGO_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
           JWT_JITSI_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
-          PYTHONPATH: /home/circleci/jitsi_magnify/src/backend
+          PYTHONPATH: /home/circleci/magnify/src/backend
           DB_HOST: localhost
-          DB_NAME: jitsi_magnify
+          DB_NAME: magnify
           DB_USER: fun
           DB_PASSWORD: pass
           DB_PORT: 5432
       # services
       - image: circleci/postgres:12-ram
         environment:
-          POSTGRES_DB: test_jitsi_magnify
+          POSTGRES_DB: test_magnify
           POSTGRES_USER: fun
           POSTGRES_PASSWORD: pass
-    working_directory: ~/jitsi_magnify
+    working_directory: ~/magnify
     steps:
       - checkout
       - restore_cache:
@@ -190,27 +190,27 @@ jobs:
   package-back:
     docker:
       - image: circleci/python:3.8-bullseye
-    working_directory: ~/jitsi_magnify/src/backend
+    working_directory: ~/magnify/src/backend
     steps:
       - checkout:
-          path: ~/jitsi_magnify
+          path: ~/magnify
       - run:
           name: Build python package
           command: python setup.py sdist bdist_wheel
       # Persist build packages to the workspace
       - persist_to_workspace:
-          root: ~/jitsi_magnify
+          root: ~/magnify
           paths:
             - src/backend/dist
       # Store packages as artifacts to download/test them
       - store_artifacts:
-          path: ~/jitsi_magnify/src/backend/dist
+          path: ~/magnify/src/backend/dist
 
   # ---- DockerHub publication job ----
   hub:
     docker:
       - image: circleci/buildpack-deps:stretch
-    working_directory: ~/jitsi_magnify
+    working_directory: ~/magnify
     steps:
       # Checkout repository sources
       - checkout
@@ -242,7 +242,7 @@ jobs:
       - run:
           name: Tag images
           command: |
-            docker images fundocker/jitsi-magnify
+            docker images fundocker/magnify
             DOCKER_TAG=$([[ -z "$CIRCLE_TAG" ]] && echo $CIRCLE_BRANCH || echo ${CIRCLE_TAG} | sed 's/^v//')
             RELEASE_TYPE=$([[ -z "$CIRCLE_TAG" ]] && echo "branch" || echo "tag ")
             # Display either:
@@ -279,7 +279,7 @@ jobs:
 workflows:
   version: 2
 
-  jitsi-magnify:
+  magnify:
     jobs:
       # Git jobs
       #

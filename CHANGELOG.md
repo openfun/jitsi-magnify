@@ -16,6 +16,6 @@ and this project adheres to
 
 ### Changed
 
-- 
+- Rename code base to magnify
 
 [unreleased]: https://github.com/openfun/jitsi-magnify

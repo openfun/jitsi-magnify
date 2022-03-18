@@ -123,7 +123,7 @@ class Migration(migrations.Migration):
             options={
                 "verbose_name": "User",
                 "verbose_name_plural": "Users",
-                "db_table": "jitsi_magnify_user",
+                "db_table": "magnify_user",
             },
             managers=[
                 ("objects", django.contrib.auth.models.UserManager()),

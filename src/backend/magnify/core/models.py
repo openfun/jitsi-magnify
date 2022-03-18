@@ -9,7 +9,7 @@ class User(auth_models.AbstractUser):
     """User model which follow courses or manage backend (is_staff)"""
 
     class Meta:
-        db_table = "jitsi_magnify_user"
+        db_table = "magnify_user"
         verbose_name = _("User")
         verbose_name_plural = _("Users")
 

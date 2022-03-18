@@ -1,4 +1,4 @@
-"""Jitsi Magnify core API endpoints"""
+"""Magnify core API endpoints"""
 from django.core.exceptions import ValidationError
 
 from rest_framework.exceptions import ValidationError as DRFValidationError
