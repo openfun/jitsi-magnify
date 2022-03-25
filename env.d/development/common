@@ -11,6 +11,7 @@ JWT_GUEST_AVATAR="https://ronaldmottram.co.nz/wp-content/uploads/2019/01/default
 JWT_GUEST_DEFAULT_PASSWORD="default"
 JWT_GUEST_USERNAME="guest"
 JWT_JITSI_DOMAIN="localhost:8443"
+JWT_JITSI_XMPP_DOMAIN="meet.jitsi"
 JWT_JITSI_SECRET_KEY="ThisIsAnExampleKeyForDevPurposeOnly"
 JWT_JITSI_APP_ID="app_id"
 

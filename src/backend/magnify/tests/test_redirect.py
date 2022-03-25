@@ -17,6 +17,7 @@ from magnify.core.factories import UserFactory
         "token_expiration_seconds": 600,
         "jitsi_app_id": "app_id",
         "jitsi_domain": "meet.jit.si",
+        "jitsi_xmpp_domain": "meet.jitsi",
         "guest_username": "guest",
         "guest_avatar": "avatar.jpg",
     }

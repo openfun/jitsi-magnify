@@ -18,8 +18,8 @@ def create_payload(user, room):
         "iat": timezone.now(),
         "moderator": True,
         "aud": "jitsi",
-        "iss": settings.JWT_CONFIGURATION.get("jitsi_app_id"),
-        "sub": "meet.jitsi",
+        "iss": settings.JWT_CONFIGURATION["jitsi_app_id"],
+        "sub": settings.JWT_CONFIGURATION["jitsi_xmpp_domain"],
         "room": room,
     }
 
@@ -40,7 +40,7 @@ def generate_token(user, room):
     token_payload = create_payload(user, room)
     token = jwt.encode(
         token_payload,
-        settings.JWT_CONFIGURATION.get("jitsi_secret_key"),
+        settings.JWT_CONFIGURATION["jitsi_secret_key"],
         algorithm="HS256",
     )
 
