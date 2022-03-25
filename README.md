@@ -73,15 +73,18 @@ Jitsi magnify helps with authenticating users when they access jitsi rooms. Curr
 
 The domain of jitsi instance that uses magnify should be referenced in `env.d/development/common`. As for jitsi, env variables should be set to enable jwt auth and to redirect to magnify instance. 
 
-These variables are : 
+Variables for jwt are : 
 ````
 ENABLE_AUTH=1
 AUTH_TYPE=jwt
 JWT_APP_ID={JWT_JITSI_APP_ID}
+JWT_APP_SECRET={JWT_JITSI_APP_SECRET}
 TOKEN_AUTH_URL=https://{JWT_JITSI_DOMAIN}/api/token/{room}
 ````
 
-With JWT_JITSI_APP_ID and JWT_JITSI_DOMAIN equal to the values in `env.d/development/common`.
+In prosody env, you should also set variable `XMPP_DOMAIN={JWT_JITSI_XMPP_DOMAIN}`.
+
+The above JWT_JITSI_APP_ID, JWT_JITSI_APP_SECRET, JWT_JITSI_DOMAIN and JWT_JITSI_XMPP_DOMAIN variables are equal to the values in `env.d/development/common`.
 
 ## Contributing
 

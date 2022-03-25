@@ -198,7 +198,10 @@ class Base(Configuration):
             environ_name="JWT_JITSI_DOMAIN", environ_prefix=None
         ),
         "jitsi_app_id": values.Value(
-            "", environ_name="JWT_JITSI_APP_ID", environ_prefix=None
+            environ_name="JWT_JITSI_APP_ID", environ_prefix=None
+        ),
+        "jitsi_xmpp_domain": values.Value(
+            environ_name="JWT_JITSI_XMPP_DOMAIN", environ_prefix=None
         ),
         "jitsi_secret_key": values.SecretValue(
             environ_name="JWT_JITSI_SECRET_KEY", environ_prefix=None

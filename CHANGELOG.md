@@ -13,6 +13,7 @@ and this project adheres to
 - Add an API route to generate a token
 - If user is logged in, created token on API route contains their information
 - If user is not logged in, created token contains guest information
+- Sub field in token is a variable referencing jitsi xmpp domain
 
 ### Changed
 
