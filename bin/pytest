@@ -4,5 +4,6 @@ source "$(dirname "${BASH_SOURCE[0]}")/_config.sh"
 
 _dc_run \
     -e DJANGO_CONFIGURATION=Test \
+    -e PYTHONPATH=/app/demo/backend \
     app-dev \
     pytest "$@"

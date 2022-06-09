@@ -1,15 +1,10 @@
 # Jitsi Magnify
 
-# ---- base image to inherit from ----
+# ---- Base image to inherit from ----
 FROM python:3.8-slim-bullseye as base
 
-# Upgrade pip to its latest release to speed up dependencies installation
-RUN python -m pip install --upgrade pip
-
-# Upgrade system packages to install security updates
-RUN apt-get update && \
-  apt-get -y upgrade && \
-  rm -rf /var/lib/apt/lists/*
+# ---- Front-end builder image ----
+FROM node:14 as front-builder
 
 # ---- Back-end builder image ----
 FROM base as back-builder
@@ -17,75 +12,46 @@ FROM base as back-builder
 WORKDIR /builder
 
 # Copy required python dependencies
-COPY ./src/backend /builder
+COPY setup.py setup.cfg MANIFEST.in /builder/
+COPY ./src/magnify /builder/src/magnify/
+
+# Upgrade pip to its latest release to speed up dependencies installation
+RUN pip install --upgrade pip
 
 RUN mkdir /install && \
-  pip install --prefix=/install .
+    pip install --prefix=/install .[sandbox]
 
-# ---- static link collector ----
-FROM base as link-collector
-ARG MAGNIFY_STATIC_ROOT=/data/static
+# ---- Core application image ----
+FROM base as core
 
-# Install libpangocairo & rdfind
+# Install gettext
 RUN apt-get update && \
     apt-get install -y \
-      libpangocairo-1.0-0 \
-      rdfind && \
+    gettext && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy installed python dependencies
 COPY --from=back-builder /install /usr/local
 
-# Copy magnify application (see .dockerignore)
-COPY ./src/backend /app/
-
-WORKDIR /app
-
-# collectstatic
-RUN DJANGO_CONFIGURATION=Build JWT_JITSI_SECRET_KEY=Dummy \
-    python manage.py collectstatic --noinput
-
-# Replace duplicated file by a symlink to decrease the overall size of the
-# final image
-RUN rdfind -makesymlinks true -followsymlinks true -makeresultsfile false ${MAGNIFY_STATIC_ROOT}
-
-# ---- Core application image ----
-FROM base as core
-
-ARG MAGNIFY_STATIC_ROOT=/data/static
-
-ENV PYTHONUNBUFFERED=1
-
-# Install required system libs
-RUN apt-get update && \
-    apt-get install -y \
-      gettext \
-      libcairo2 \
-      libffi-dev \
-      libgdk-pixbuf2.0-0 \
-      libpango-1.0-0 \
-      libpangocairo-1.0-0 \
-      shared-mime-info && \
-  rm -rf /var/lib/apt/lists/*
-
-# Copy installed python dependencies
-COPY --from=back-builder /install /usr/local
-
-# Copy application
-COPY ./src/backend /app/
-
-# Copy entrypoint
+# Copy runtime-required files
+COPY ./src/demo/backend /app/demo/backend
 COPY ./docker/files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
+RUN ls -la /app
+RUN ls -la /app/demo
+RUN ls -la /app/demo/backend
+
+# Gunicorn
+RUN mkdir -p /usr/local/etc/gunicorn
+COPY docker/files/usr/local/etc/gunicorn/magnify.py /usr/local/etc/gunicorn/magnify.py
 
 # Give the "root" group the same permissions as the "root" user on /etc/passwd
 # to allow a user belonging to the root group to add new users; typically the
 # docker user (see entrypoint).
 RUN chmod g=u /etc/passwd
 
-# Copy statics
-COPY --from=link-collector ${MAGNIFY_STATIC_ROOT} ${MAGNIFY_STATIC_ROOT}
-
-WORKDIR /app
+# Un-privileged user running the application
+ARG DOCKER_USER
+USER ${DOCKER_USER}
 
 # We wrap commands run in this container by the following entrypoint that
 # creates a user on-the-fly with the container user ID (see USER) and root group
@@ -97,6 +63,16 @@ FROM core as development
 
 # Switch back to the root user to install development dependencies
 USER root:root
+
+WORKDIR /app
+
+# Upgrade pip to its latest release to speed up dependencies installation
+RUN pip install --upgrade pip
+
+# Copy all sources, not only runtime-required files
+RUN ls -la /app/
+COPY . /app/
+RUN ls -la /app/
 
 # Uninstall magnify and re-install it in editable mode along with development
 # dependencies
@@ -110,21 +86,15 @@ USER ${DOCKER_USER}
 # Target database host (e.g. database engine following docker-compose services
 # name) & port
 ENV DB_HOST=postgresql \
-  DB_PORT=5432
+    DB_PORT=5432
 
 # Run django development server
-CMD python manage.py runserver 0.0.0.0:8000
+CMD cd /app/demo/backend && python manage.py runserver 0.0.0.0:8000
 
 # ---- Production image ----
 FROM core as production
 
-# Gunicorn
-RUN mkdir -p /usr/local/etc/gunicorn
-COPY docker/files/usr/local/etc/gunicorn/magnify.py /usr/local/etc/gunicorn/magnify.py
+WORKDIR /app/demo/backend
 
-# Un-privileged user running the application
-ARG DOCKER_USER
-USER ${DOCKER_USER}
-
-# The default command runs gunicorn WSGI server in magnify's main module
-CMD gunicorn -c /usr/local/etc/gunicorn/magnify.py magnify.wsgi:application
+# The default command runs gunicorn WSGI server in the sandbox
+CMD gunicorn -c /usr/local/etc/gunicorn/magnify.py wsgi:application

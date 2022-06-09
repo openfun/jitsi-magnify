@@ -23,7 +23,7 @@ services:
     ports:
       - "8071:8000"
     volumes:
-      - ./src/backend:/app
+      - ./src:/app
       - ./data/media:/data/media
     depends_on:
       - postgresql

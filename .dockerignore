@@ -27,3 +27,6 @@ data
 .vscode
 db.sqlite3
 .mypy_cache
+
+# Javascript
+node_modules

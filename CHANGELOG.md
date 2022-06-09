@@ -18,5 +18,6 @@ and this project adheres to
 ### Changed
 
 - Rename code base to magnify
+- Change the structure to a 4 part monorepo (frontend + backend) x (lib + demo)
 
 [unreleased]: https://github.com/openfun/jitsi-magnify

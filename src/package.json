@@ -1,0 +1,11 @@
+{
+  "name": "jitsi-magnify",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "workspaces": [
+    "demo/frontend",
+    "frontend"
+  ]
+}
