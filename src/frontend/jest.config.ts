@@ -8,7 +8,8 @@ const config: Config.InitialOptions = {
   moduleNameMapper: {
     "\\.(css|less|scss|sss|styl)$": "jest-css-modules",
   },
-  testEnvironment: 'jsdom',
+  testEnvironment: "jsdom",
+  setupFilesAfterEnv: ["./jest-setup.ts"],
 };
 
 export default config;
