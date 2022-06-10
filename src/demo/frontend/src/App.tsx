@@ -1,9 +1,9 @@
-import { TestButton } from "@jitsi-magnify/frontend";
+import { TestButton } from "@jitsi-magnify/core";
 
 export default function App() {
   return (
     <div>
-      <TestButton />
+      <TestButton variant="blue" />
     </div>
   );
 }

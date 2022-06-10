@@ -1,7 +1,8 @@
 {
-  "name": "@jitsi-magnify/frontend",
+  "name": "@jitsi-magnify/core",
   "version": "1.0.0",
   "license": "MIT",
+  "private": false,
   "scripts": {
     "test": "jest src",
     "build": "rollup -c",
@@ -24,7 +25,7 @@
     "@testing-library/react": "^13.3.0",
     "@types/jest": "^28.1.1",
     "@types/react": "^18.0.12",
-    "babel-loader": "^8.2.5",
+    "@types/styled-components": "^5.1.25",
     "jest": "^28.1.1",
     "jest-css-modules": "^2.1.0",
     "jest-environment-jsdom": "^28.1.1",
@@ -32,12 +33,15 @@
     "react": "^18.1.0",
     "rollup": "^2.75.6",
     "rollup-plugin-dts": "^4.2.2",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-terser": "^7.0.2",
     "ts-jest": "^28.0.4",
     "ts-node": "^10.8.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3",
-    "typescript-plugin-css-modules": "^3.4.0"
+    "typescript-plugin-css-modules": "^3.4.0",
+    "@rollup/plugin-json": "^4.1.0"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -48,5 +52,9 @@
   "include": [
     "src/*"
   ],
-  "dependencies": {}
+  "peerDependencies": {
+    "grommet": "^2.24.0",
+    "polished": "^4.2.2",
+    "styled-components": "^5.3.5"
+  }
 }

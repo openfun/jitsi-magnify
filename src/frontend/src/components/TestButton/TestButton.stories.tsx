@@ -6,4 +6,6 @@ export default {
   component: TestButton,
 };
 
-export const Default = () => <TestButton />;
+// create the template and 2 stories for variants blue and red
+export const Blue = () => <TestButton variant="blue" />;
+export const Red = () => <TestButton variant="red" />;

@@ -1,3 +1,6 @@
+import theme from "./theme";
+import { Grommet } from "grommet";
+
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   controls: {
@@ -6,4 +9,12 @@ export const parameters = {
       date: /Date$/,
     },
   },
-}
+};
+
+// Grommet wrapper decorator
+export const withGrommet = (storyFn) => (
+  <Grommet theme={theme}>{storyFn()}</Grommet>
+);
+
+// Decorators
+export const decorators = [withGrommet];
