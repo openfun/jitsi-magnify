@@ -8,7 +8,7 @@ Backend tests are located in the `tests` folder. They can be run using the comma
 
 ## Storybook
 
-To develop the components of the frontend library in isolation, you can use `yarn storybook` inside the `src/frontend` folder. It will start a storybook server that present each component in a separate page with some controls to interact with it. This works by writing a story for each component. Stories are located also in the folder of the component they present. 
+To develop the components of the frontend library in isolation, you can use `yarn storybook` inside the `src/frontend` folder. It will start a storybook server that presents each component in a separate page with some controls to interact with it. This works by writing a story for each component. Stories are located also in the folder of the component they present. 
 
 ## CSS modules
 
