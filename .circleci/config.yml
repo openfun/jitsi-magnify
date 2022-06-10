@@ -276,6 +276,7 @@ jobs:
               docker push fundocker/jitsi-magnify:latest
             fi
 
+# TODO: implement the CI pipeline for the front-end and backend
 workflows:
   version: 2
 
@@ -305,53 +306,53 @@ workflows:
       # Docker jobs
       #
       # Build images
-      - build-docker:
-          filters:
-            tags:
-              only: /.*/
+      # - build-docker:
+      #     filters:
+      #       tags:
+      #         only: /.*/
 
       # Backend jobs
       #
       # Build, lint and test production and development Docker images
       # (debian-based)
-      - build-back:
-          filters:
-            tags:
-              only: /.*/
-      - lint-back:
-          requires:
-            - build-back
-          filters:
-            tags:
-              only: /.*/
-      - test-back:
-          requires:
-            - build-back
-          filters:
-            tags:
-              only: /.*/
+      # - build-back:
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      # - lint-back:
+      #     requires:
+      #       - build-back
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      # - test-back:
+      #     requires:
+      #       - build-back
+      #     filters:
+      #       tags:
+      #         only: /.*/
 
       # Packaging: python
       #
       # Build the python package
-      - package-back:
-          requires:
-            - test-back
-          filters:
-            tags:
-              only: /.*/
+      # - package-back:
+      #     requires:
+      #       - test-back
+      #     filters:
+      #       tags:
+      #         only: /.*/
 
       # DockerHub publication.
       #
       # Publish docker images only if all build, lint and test jobs succeed
       # and it has been tagged with a tag starting with the letter v or is on
       # the main branch
-      - hub:
-          requires:
-            - build-docker
-            - test-back
-          filters:
-            branches:
-              only: main
-            tags:
-              only: /^v.*/
+      # - hub:
+      #     requires:
+      #       - build-docker
+      #       - test-back
+      #     filters:
+      #       branches:
+      #         only: main
+      #       tags:
+      #         only: /^v.*/

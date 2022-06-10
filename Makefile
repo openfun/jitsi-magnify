@@ -39,7 +39,7 @@ COMPOSE_RUN_APP      = $(COMPOSE_RUN) app-dev
 COMPOSE_RUN_CROWDIN  = $(COMPOSE_RUN) crowdin crowdin
 COMPOSE_TEST_RUN     = $(COMPOSE_RUN)
 COMPOSE_TEST_RUN_APP = $(COMPOSE_TEST_RUN) app-dev
-MANAGE               = $(COMPOSE_RUN_APP) python demo/backend/manage.py
+MANAGE               = $(COMPOSE_RUN_APP) python manage.py
 WAIT_DB              = @$(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
 
 # ==============================================================================
