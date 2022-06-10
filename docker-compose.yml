@@ -25,7 +25,6 @@ services:
     volumes:
       - ./src/demo/backend:/app
       - ./src/magnify:/usr/local/jitsi-magnify/magnify
-      - ./src/tests:/usr/local/jitsi-magnify/tests
       - ./data/media:/data/media
     depends_on:
       - postgresql

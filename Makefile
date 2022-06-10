@@ -138,7 +138,7 @@ lint-pylint: ## lint back-end python sources with pylint
 .PHONY: lint-pylint
 
 test-back: ## run back-end tests
-	bin/pytest
+	bin/pytest /usr/local/jitsi-magnify/magnify
 .PHONY: test-back
 
 migrate:  ## run django migrations for the magnify project.
