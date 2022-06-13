@@ -1,0 +1,24 @@
+// A mixin to create a box element with a slight box-shadow
+//
+// @param {length, percentage} border-radius the border-radius applied to the box
+// @param {color} background-color background-color of the box
+// @param {length, percentage} padding padding applied to the box
+// @param {length, percentage} margin margin applied to the box
+
+@mixin shadowed-box(
+  $border-radius: 4px,
+  $background-color: r-theme-val(shadowed-box, base-background),
+  $padding: 0.6rem 0.4rem,
+  $margin: 0
+) {
+  background-color: $background-color;
+  border-radius: $border-radius;
+  box-shadow: r-theme-val(shadowed-box, base-shadow);
+  margin: $margin;
+  padding: $padding;
+}
+
+// Helper class to hide elements.
+.is-hidden {
+  display: none;
+}

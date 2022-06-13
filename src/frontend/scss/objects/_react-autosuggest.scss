@@ -1,0 +1,50 @@
+.react-autosuggest {
+  &__container {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  &__input {
+    @extend .form-control;
+    @include button-base($text-align: left, $form-factor: 'pill');
+    height: auto;
+    padding-right: 3.6rem;
+    user-select: inherit;
+    @if r-theme-val(base-search, input-border) {
+      border: 1px solid r-theme-val(base-search, input-border);
+    }
+  }
+
+  &__suggestions-container {
+    @extend .dropdown-menu;
+    max-width: 480px;
+    min-width: 100%;
+
+    &--open {
+      display: block; // Show/hide is managed by react-autosuggest with the --open state
+    }
+  }
+
+  &__suggestions-list {
+    display: block;
+  }
+
+  &__suggestion {
+    @extend .dropdown-item;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &--highlighted {
+      @extend .active;
+    }
+  }
+
+  &__section-title {
+    @extend .dropdown-header;
+  }
+}

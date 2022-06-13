@@ -1,66 +1,56 @@
-version: '3.8'
+version: "3.5"
 
 services:
   postgresql:
-    image: postgres:12
+    image: postgres:14.3
     env_file:
       - env.d/development/postgresql
 
-  app-dev:
+  mysql:
+    image: mysql:8.0
+    env_file:
+      - env.d/development/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  app:
     build:
       context: .
       target: development
       args:
         DOCKER_USER: ${DOCKER_USER:-1000}
-    user: ${DOCKER_USER:-1000}
-    image: jitsi-magnify:development
-    environment:
-      - PYLINTHOME=/app/.pylint.d
-      - DJANGO_CONFIGURATION=Development
+    image: magnify:development
     env_file:
       - env.d/development/common
-      - env.d/development/postgresql
-    ports:
-      - "8071:8000"
+      - env.d/development/${DB_HOST:-postgresql}
     volumes:
-      - ./src/backend:/app
+      - .:/app
+      - ./data/static:/data/static
       - ./data/media:/data/media
+      - ./data/smedia:/data/smedia
+      - ./src/django-cms/cms:/usr/local/lib/python3.10/site-packages/cms
     depends_on:
-      - postgresql
-
-  app:
-    build:
-      context: .
-      target: production
-      args:
-        DOCKER_USER: ${DOCKER_USER:-1000}
-    user: ${DOCKER_USER:-1000}
-    image: jitsi-magnify:production
-    environment:
-      - DJANGO_CONFIGURATION=ContinuousIntegration
-    env_file:
-      - env.d/development/common
-      - env.d/development/postgresql
-    volumes:
-      - ./data/media:/data/media
-    depends_on:
-      - postgresql
+      - "${DB_HOST:-postgresql}"
+    stdin_open: true
+    tty: true
 
   nginx:
-    image: nginx:1.13
+    image: nginx
     ports:
-      - "8082:8082"
+      - "8070:8070"
     volumes:
-      - ./docker/files/etc/nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./data/media:/data/media:ro
+      - ./docker/files/etc/nginx/${NGINX_CONF:-conf.d}:/etc/nginx/conf.d:ro
     depends_on:
       - app
 
-  dockerize:
-    image: jwilder/dockerize
+  node:
+    image: circleci/node:14
+    working_dir: /app/src/frontend
+    user: "${DOCKER_USER:-1000}"
+    volumes:
+      - .:/app
 
   crowdin:
-    image: crowdin/cli:3.5.2
+    image: crowdin/cli:3.5.5
     volumes:
       - ".:/app"
     env_file:
@@ -68,24 +58,38 @@ services:
     user: "${DOCKER_USER:-1000}"
     working_dir: /app
 
-  ngrok:
-    image: wernight/ngrok
-    command: ngrok http app-dev:8000
-    ports:
-      - 4040:4040
-
-  terraform-state:
-    image: hashicorp/terraform:1.0.7
+  redis-sentinel:
+    image: docker.io/bitnami/redis-sentinel:6.0-debian-10
+    depends_on:
+      - redis-primary
+      - redis-replica1
+      - redis-replica2
     environment:
-      - TF_WORKSPACE=${PROJECT:-} # avoid env conflict in local state
-    user: ${DOCKER_USER:-1000}
-    working_dir: /app
-    volumes:
-      - ./src/terraform/create_state_bucket:/app
+      - REDIS_MASTER_HOST=redis-primary
 
-  terraform:
-    image: hashicorp/terraform:1.0.7
-    user: ${DOCKER_USER:-1000}
-    working_dir: /app
-    volumes:
-      - ./src/terraform:/app
+  redis-primary:
+    image: docker.io/bitnami/redis:6.0-debian-10
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_REPLICATION_MODE=master
+
+  redis-replica1:
+    image: docker.io/bitnami/redis:6.0-debian-10
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-primary
+    depends_on:
+      - redis-primary
+
+  redis-replica2:
+    image: docker.io/bitnami/redis:6.0-debian-10
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-primary
+    depends_on:
+      - redis-primary
+
+  dockerize:
+    image: jwilder/dockerize

@@ -1,0 +1,293 @@
+// Main body footer
+.body-footer {
+  padding: 0;
+  color: r-theme-val(body-footer, base-color);
+  background: r-theme-val(body-footer, base-background);
+
+  &__container {
+    @include make-container();
+    @include make-container-max-widths();
+    display: flex;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  &__brand {
+    @include sv-flex(1, 0, 100%);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    order: 1;
+
+    @include media-breakpoint-up($r-footer-breakpoint) {
+      @include sv-flex(1, 0, 100%);
+    }
+
+    & > a {
+      @include sv-flex(0, 0, auto);
+    }
+
+    img,
+    svg {
+      display: block;
+      margin: 0 0 1rem;
+      width: $r-footer-logo-width-sm;
+
+      @include media-breakpoint-up($r-footer-breakpoint) {
+        width: $r-footer-logo-width-lg;
+      }
+    }
+  }
+
+  &__insert {
+    @include sv-flex(1, 0, 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    order: 3;
+
+    @include media-breakpoint-up($r-footer-breakpoint) {
+      @include sv-flex(1, 0, auto);
+      margin-top: 0;
+      order: 2;
+    }
+
+    // Divider between every direct children
+    & > * + * {
+      margin-top: 1rem;
+    }
+
+    .magnify-react--language-selector {
+      align-items: flex-start;
+      @include sv-flex(1, 0, auto);
+      padding: 0;
+      margin-bottom: 0;
+      font-family: $r-font-family-montserrat;
+      font-weight: $font-weight-boldest;
+      color: r-theme-val(body-footer, lang-color);
+      list-style-type: none;
+
+      &__item {
+        display: inline-block;
+        margin-left: 0.5rem;
+
+        &--label {
+          margin-left: 0;
+        }
+      }
+
+      &__link {
+        color: inherit;
+      }
+    }
+  }
+
+  &__title {
+    @include sv-flex(0, 0, auto);
+    @include font-size($h4-font-size);
+    margin-bottom: 0;
+    font-family: $r-font-family-montserrat;
+    font-weight: $font-weight-boldest;
+  }
+
+  &__badges {
+    @include sv-flex(0, 0, auto);
+    display: flex;
+  }
+
+  &__badge {
+    @include sv-flex(1, 0, 2.75rem);
+    @include spot($padding: 0.8rem);
+    @include r-button-colors(
+      r-theme-val(body-footer, badge-button),
+      $apply-border: true,
+      $include-hover: true
+    );
+    margin: 0 1rem 1rem 0;
+    height: 2.75rem;
+  }
+
+  &__items {
+    align-content: flex-start;
+    @include sv-flex(1, 0, 100%);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    & > * {
+      margin-bottom: 1rem;
+    }
+
+    @include media-breakpoint-up($r-footer-breakpoint) {
+      flex-direction: row;
+    }
+
+    //
+    // Default variant acts like a simple horizontal menu
+    //
+    & > .nested-item--list,
+    & > a {
+      $nesteditem-base-selector: '.nested-item';
+      @include sv-flex(0, 0, auto);
+      padding-right: 3vw;
+      @include media-breakpoint-up('xl') {
+        padding-right: 4vw;
+      }
+
+      #{$nesteditem-base-selector}__content {
+        font-weight: bold;
+
+        p {
+          margin: 0;
+        }
+      }
+
+      #{$nesteditem-base-selector}__items {
+        @include sv-flex(0, 0, auto);
+        display: flex;
+        padding: 0;
+        margin-bottom: 0;
+        flex-direction: column;
+        flex-wrap: wrap;
+        list-style-type: none;
+
+        li {
+          @include sv-flex(1, 0, calc(100% - 0.2rem));
+          margin: 0.1rem;
+          padding: 0.25rem 0.25rem 0.25rem 0rem;
+
+          @include media-breakpoint-up($r-footer-breakpoint) {
+            @include sv-flex(0, 0, auto);
+            min-width: 15%;
+          }
+        }
+      }
+    }
+  }
+
+  &__menu {
+    @include sv-flex(1, 0, 100%);
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: flex-start;
+    order: 2;
+    margin-right: -3vw;
+    @include media-breakpoint-up('xl') {
+      padding-right: -4vw;
+    }
+
+    @include media-breakpoint-up($r-footer-breakpoint) {
+      @include sv-flex(0, 0, auto);
+      order: 3;
+    }
+
+    // Divider between every direct children
+    & > * + * {
+      margin-top: 1rem;
+    }
+
+    a {
+      color: inherit;
+      display: block;
+    }
+  }
+
+  &__subtitle {
+    @include sv-flex(1, 0, 100%);
+    @include font-size($h4-font-size);
+    margin-bottom: 0;
+    color: r-theme-val(body-footer, subtitle-color);
+    font-family: $r-font-family-montserrat;
+    font-weight: $font-weight-boldest;
+  }
+
+  .magnify-react--language-selector {
+    display: flex;
+
+    .selector {
+      color: r-theme-val(body-footer, base-color);
+
+      &__button {
+        padding-left: 0;
+      }
+
+      &__list {
+        top: auto;
+        bottom: calc(100% + 0.5rem);
+
+        // As the language menu is close to the left edge of the screen in the footer on small screens,
+        // we need to have it pop to the right so it has room to display the available languageS.
+        left: 0;
+        right: auto;
+        @media (min-width: 768px) {
+          left: auto;
+          right: 0;
+        }
+
+        &:after,
+        &:before {
+          bottom: auto;
+          top: 100%;
+
+          // As we moved the language menu (see above), we also needed to move the dropdown arrow.
+          left: 0;
+          @media (min-width: 768px) {
+            left: 50%;
+          }
+        }
+
+        &:after {
+          border-bottom-color: rgba(255, 255, 255, 0);
+          border-top-color: white;
+        }
+
+        &:before {
+          border-bottom-color: rgba(255, 255, 255, 0);
+          border-top-color: r-color('light-grey');
+        }
+      }
+    }
+  }
+}
+
+// Legal mentions
+.body-mentions {
+  padding: 0.8rem 0;
+  color: r-theme-val(body-mentions, base-color);
+  background: r-theme-val(body-mentions, base-background);
+
+  &__container {
+    @include make-container();
+    @include make-container-max-widths();
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  &__poweredby {
+    @include font-size($h6-font-size);
+    @include sv-flex(1, 0, 100%);
+    font-family: $r-font-family-montserrat;
+    text-align: center;
+
+    @include media-breakpoint-up($r-footer-breakpoint) {
+      @include sv-flex(1, 0, auto);
+      text-align: right;
+    }
+
+    a {
+      color: inherit;
+
+      &:hover {
+        text-decoration: none;
+        color: r-theme-val(body-mentions, poweredby-hover);
+      }
+    }
+  }
+}

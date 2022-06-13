@@ -1,0 +1,90 @@
+.selector {
+  position: relative;
+
+  &__button {
+    appearance: none;
+    border: none;
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.7rem 1.3rem;
+
+    &__icon {
+      fill: currentColor;
+      height: 1rem;
+      margin-left: 0.5rem;
+      width: 1rem;
+    }
+  }
+
+  &__list {
+    background: r-theme-val(selector, base-background);
+    border: 1px solid r-theme-val(selector, base-border);
+    list-style: none;
+    margin: 0;
+    outline: none !important;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+
+    &:after,
+    &:before {
+      content: ' ';
+      border: solid transparent;
+      bottom: 100%;
+      height: 0;
+      left: 50%;
+      pointer-events: none;
+      position: absolute;
+      width: 0;
+    }
+
+    &--is-closed {
+      display: none;
+    }
+
+    &:after {
+      border-bottom-color: #ffffff;
+      border-width: 10px;
+      margin-left: calc(3rem - 10px);
+    }
+    &:before {
+      border-bottom-color: r-theme-val(selector, base-border);
+      border-width: 12px;
+      margin-left: calc(3rem - 12px);
+    }
+
+    &__link {
+      @include button-reset-style();
+      background: r-theme-val(selector, base-background);
+      color: r-theme-val(selector, base-color);
+      display: block;
+      font-size: 1rem;
+      min-width: 10rem;
+      padding: 0.5rem 1.5rem;
+      text-align: left;
+
+      &:hover {
+        color: r-theme-val(selector, hover-color);
+        text-decoration: underline;
+      }
+
+      &--highlighted {
+        background: r-theme-val(selector, hover-background);
+        color: r-theme-val(selector, hover-color);
+        text-decoration: underline;
+      }
+
+      .selector--dark & {
+        color: white;
+
+        &:hover {
+          color: white;
+        }
+      }
+    }
+  }
+}

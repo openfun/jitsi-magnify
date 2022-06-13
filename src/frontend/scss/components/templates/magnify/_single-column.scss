@@ -1,0 +1,27 @@
+.single-column {
+  @include make-container();
+  @include make-container-max-widths();
+  padding: 1rem;
+  background: r-theme-val(body-content, base-background);
+  @if $body-padding-fix {
+    @include content-padding-fix;
+  }
+
+  // Add shared margin for vertical divider between allowed plugins
+  .hero-intro,
+  .embed-responsive,
+  .section,
+  .licence-plugin,
+  .button-caesura,
+  .rich-text-container {
+    margin: 1rem 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

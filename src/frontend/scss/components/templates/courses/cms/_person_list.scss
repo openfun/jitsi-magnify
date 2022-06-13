@@ -1,0 +1,12 @@
+.person-list {
+  @include make-container;
+  @include make-container-max-widths;
+  display: flex;
+  margin: 0 auto;
+  padding: 1rem 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  @if $body-padding-fix {
+    @include content-padding-fix;
+  }
+}

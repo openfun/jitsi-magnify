@@ -1,10 +1,11 @@
 # Django
-DJANGO_SETTINGS_MODULE=magnify.settings
+DJANGO_CONFIGURATION=Development
 DJANGO_SECRET_KEY=ThisIsAnExampleKeyForDevPurposeOnly
-DJANGO_ALLOWED_HOSTS=*
+DJANGO_SETTINGS_MODULE=settings
 
 # Python
-PYTHONPATH=/app/src/backend
+PYTHONPATH=/app/sandbox
+PYTHONUNBUFFERED=1
 
 # Magnify jwt settings
 JWT_GUEST_AVATAR="https://ronaldmottram.co.nz/wp-content/uploads/2019/01/default-user-icon-8.jpg"
@@ -17,3 +18,4 @@ JWT_JITSI_APP_ID="app_id"
 
 # Token expiration settings
 JWT_EXPIRATION_SECONDS=300
+

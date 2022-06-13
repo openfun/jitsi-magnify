@@ -1,5 +1,5 @@
 #
-# Your crowdin's credentials
+# Your Crowdin's credentials
 #
 api_token_env: CROWDIN_API_TOKEN
 project_id_env: CROWDIN_PROJECT_ID
@@ -16,8 +16,13 @@ preserve_hierarchy: true
 #
 files: [
  {
-  source : "/backend/locale/django.pot",
+  source : "/magnify/locale/django.pot",
   dest: "/backend.pot",
-  translation : "/backend/locale/%locale_with_underscore%/LC_MESSAGES/django.po"
+  translation : "/magnify/locale/%locale_with_underscore%/LC_MESSAGES/django.po",
+ },
+ {
+  source : "/frontend/i18n/frontend.json",
+  dest: "/frontend.json",
+  translation : "/frontend/i18n/locales/%locale%.json",
  }
 ]

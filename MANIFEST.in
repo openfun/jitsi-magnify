@@ -1,0 +1,6 @@
+include LICENSE
+include README.md
+recursive-include src/magnify *.html *.png *.gif *.js *.css *.ico *.jpg *.jpeg *.po *.mo *.eot *.svg *.ttf *.woff *.woff2
+include src/magnify/apps/core/static/fonts/icomoon/selection.json
+include src/magnify/apps/core/static/magnify/favicon/browserconfig.xml
+include src/magnify/apps/core/static/magnify/favicon/site.webmanifest

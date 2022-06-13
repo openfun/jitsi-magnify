@@ -1,61 +1,64 @@
+# env
+.env
+env.d/development/crowdin
+
+# virtualenv
+.venv
+venv
+
+# Packaging
+build
+dist
+*.egg-info
+
+# sqlite DB
+db.sqlite3
+*.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Translations	# Translations
-*.pot
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-env.d/development/crowdin
-env.d/terraform
-
-# Logs
-*.log
-
-# Terraform
-.terraform
-*.tfstate
-*.tfstate.backup
-
-# Test & lint
-.coverage
-.pylint.d
-.pytest_cache
-db.sqlite3
-.mypy_cache
 
 # Site media
 /data/
-src/backend/magnify/static/magnify/
+src/magnify/static/magnify/
+
+# Settings
+local.py
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.cache
+.pytest_cache
+nosetests.xml
+coverage.xml
+
+# Vagrant
+.vagrant
+
+# PyCharm IDE
+.idea/
+
+# Temp files
+*~
+.~lock*
+
+# Swap files
+*.sw[po]
+
+# JS dependencies
+node_modules
+
+# SASS
+.sass-cache
+
+# logs
+yarn-error.log
+
+# Exported strings & generated translation templates
+src/frontend/i18n/frontend.json
+*.pot
+
+# Meld git diff tool
+*.orig

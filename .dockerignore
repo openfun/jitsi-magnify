@@ -20,10 +20,18 @@ docs
 *.log
 
 # Development/test cache & configurations
-data
 .cache
 .circleci
 .git
 .vscode
-db.sqlite3
-.mypy_cache
+
+# Assets
+data
+sandbox/build
+sandbox/static/css
+src/magnify/static/magnify/css
+!src/magnify/static/magnify/css/ckeditor.css
+src/magnify/static/magnify/js
+
+# Font-end
+**/node_modules

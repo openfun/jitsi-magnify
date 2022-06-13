@@ -1,0 +1,27 @@
+// Person detail template stylesheet
+//
+
+.person-detail {
+  margin: 0 auto;
+  padding: 0;
+  @if $body-padding-fix {
+    @include content-padding-fix;
+  }
+
+  &__block {
+    @include detail-block;
+  }
+
+  &__row {
+    @include detail-row;
+    font-size: 1rem;
+  }
+
+  &__title {
+    @include detail-title;
+  }
+
+  &__empty {
+    @include detail-empty;
+  }
+}
