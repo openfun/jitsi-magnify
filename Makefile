@@ -195,6 +195,11 @@ migrate: ## perform database migrations
 	@$(MANAGE) migrate
 .PHONY: migrate
 
+makemigrations: ## create database migrations
+	@$(COMPOSE) up -d ${DB_HOST}
+	@$(MANAGE) makemigrations
+.PHONY: makemigrations
+
 superuser: ## Create an admin user with password "admin"
 	@$(COMPOSE) up -d mysql
 	@echo "Wait for services to be up..."
