@@ -54,15 +54,6 @@ COMPOSE_TEST_RUN_APP = $(COMPOSE_TEST_RUN) app
 
 PYTHON_FILES         = src/magnify/apps sandbox
 
-# -- Node
-# We must run node with a /home because yarn tries to write to ~/.yarnrc. If the
-# ID of our host user (with which we run the container) does not exist in the
-# container (e.g. 1000 exists but 1009 does not exist by default), then yarn
-# will try to write to "/.yarnrc" at the root of the system and will fail with a
-# permission error.
-COMPOSE_RUN_NODE     = $(COMPOSE_RUN) -e HOME="/tmp" node
-YARN                 = $(COMPOSE_RUN_NODE) yarn
-
 # -- Django
 MANAGE               = $(COMPOSE_RUN_APP) python sandbox/manage.py
 WAIT_DB              = $(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
@@ -116,25 +107,25 @@ stop: ## stop the development server
 .PHONY: stop
 
 # -- Front-end
-build-front: ## build front-end application
-build-front: \
-  install-front \
-  build-ts \
-  build-sass
-.PHONY: build-front
+install-front: ## Install frontend
+	@$(COMPOSE_RUN) -e HOME="/tmp" node yarn install
 
-build-sass: ## build Sass files to CSS
-	@$(YARN) build-sass
-.PHONY: build-sass
+build-front-%: ## Build frontend for a specific package
+	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend/$* node yarn build
 
-build-ts: ## build TypeScript application
-	@$(YARN) compile-translations
-	@$(YARN) build-ts
-.PHONY: build-ts
+build-front: ## Build frontend for each package
+build-front:
+	@$(MAKE) front-install
+	@$(MAKE) build-front-magnify
+	@$(MAKE) build-front-demo
 
-install-front: ## install front-end dependencies
-	@$(YARN) install
-.PHONY: install-front
+test-front-%: ## Test frontend for a specific package
+	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend/$* node yarn test
+
+test-front: ## Test frontend for each package
+test-front:
+	@$(MAKE) test-front-magnify
+	@$(MAKE) test-front-demo
 
 lint-front: ## run all front-end "linters"
 lint-front: \
@@ -143,24 +134,12 @@ lint-front: \
 .PHONY: lint-front
 
 lint-front-prettier: ## run prettier over js/jsx/json/ts/tsx files -- beware! overwrites files
-	@$(YARN) prettier-write
+	@$(COMPOSE_RUN) -e HOME="/tmp" node yarn prettier-write
 .PHONY: lint-front-prettier
 
 lint-front-eslint: ## lint TypeScript sources
-	@$(YARN) lint
+	@$(COMPOSE_RUN) -e HOME="/tmp" node yarn lint
 .PHONY: lint-front-eslint
-
-test-front: ## run front-end tests
-	@$(YARN) test --runInBand
-.PHONY: test-front
-
-watch-sass: ## watch changes in Sass files
-	@$(YARN) watch-sass
-.PHONY: watch-sass
-
-watch-ts: ## watch changes in TypeScript files
-	@$(YARN) watch-ts
-.PHONY: watch-ts
 
 # -- Back-end
 compilemessages: ## compile the gettext files
@@ -246,8 +225,11 @@ i18n-compile-back:
 	@$(COMPOSE_RUN) -w /app/src/magnify app python /app/sandbox/manage.py compilemessages
 .PHONY: i18n-compile-back
 
-i18n-compile-front:
-	@$(YARN) compile-translations
+i18n-compile-front-%: ## Compile translated messages for a specific frontend package
+	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend/$* node yarn compile-translations
+
+i18n-compile-front: ## Compile translated messages for all frontend packages
+	@$(MAKE) i18n-compile-front-magnify
 .PHONY: i18n-compile-front
 
 i18n-download-and-compile: ## download all translated messages and compile them to be used by all applications
@@ -272,8 +254,11 @@ i18n-generate-back:
 	@$(COMPOSE_RUN) -w /app/src/magnify app python /app/sandbox/manage.py makemessages --ignore "venv/**/*" --keep-pot --all
 .PHONY: i18n-generate-back
 
-i18n-generate-front: build-ts
-	@$(YARN) extract-translations
+i18n-generate-front-%: ## Extract strings to be translated from the code of a specific frontend package
+	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend/$* node yarn extract-translations
+
+i18n-generate-front: ## Extract strings to be translated from the code of all frontend packages
+	@$(MAKE) i18n-generate-front-magnify
 .PHONY: i18n-generate-front
 
 # -- Misc

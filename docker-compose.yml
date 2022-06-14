@@ -27,7 +27,6 @@ services:
       - ./data/static:/data/static
       - ./data/media:/data/media
       - ./data/smedia:/data/smedia
-      - ./src/django-cms/cms:/usr/local/lib/python3.10/site-packages/cms
     depends_on:
       - "${DB_HOST:-postgresql}"
     stdin_open: true
@@ -43,7 +42,7 @@ services:
       - app
 
   node:
-    image: circleci/node:14
+    image: node:16.15
     working_dir: /app/src/frontend
     user: "${DOCKER_USER:-1000}"
     volumes:

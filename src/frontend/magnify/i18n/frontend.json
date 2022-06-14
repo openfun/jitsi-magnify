@@ -1,0 +1,6 @@
+{
+  "components.TestButton.testButtonLabel": {
+    "description": "Call to action on the test button",
+    "message": "Test Button"
+  }
+}
