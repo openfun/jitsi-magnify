@@ -57,5 +57,8 @@
     "grommet": "^2.24.0",
     "polished": "^4.2.2",
     "styled-components": "^5.3.5"
+  },
+  "dependencies": {
+    "react-responsive": "^9.0.0-beta.10"
   }
 }
