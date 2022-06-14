@@ -20,20 +20,20 @@ class User(auth_models.AbstractUser):
 
 class Meeting(models.Model):
     """Model for one meeting or a collection of meetings defined reccursively"""
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=500)
 
     # Start and end are the same for a single meeting
     start = models.DateTimeField()
     end = models.DateTimeField()
 
     # Set to True if there is a meeting on that day
-    monday = models.BooleanField(default=False)
-    tuesday = models.BooleanField(default=False)
-    wednesday = models.BooleanField(default=False)
-    thursday = models.BooleanField(default=False)
-    friday = models.BooleanField(default=False)
-    saturday = models.BooleanField(default=False)
-    sunday = models.BooleanField(default=False)
+    held_on_monday = models.BooleanField(default=False)
+    held_on_tuesday = models.BooleanField(default=False)
+    held_on_wednesday = models.BooleanField(default=False)
+    held_on_thursday = models.BooleanField(default=False)
+    held_on_friday = models.BooleanField(default=False)
+    held_on_saturday = models.BooleanField(default=False)
+    held_on_sunday = models.BooleanField(default=False)
 
     start_time = models.TimeField()
     expected_duration = models.DurationField()
@@ -63,12 +63,12 @@ class Room(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=100)
-    token_id = models.CharField(max_length=100)
+    # token to join group with
     token = models.CharField(max_length=100)
     administrators = models.ManyToManyField(User)
-    group_meeting = models.ManyToManyField(Meeting)
-    group_room = models.ManyToManyField(Room)
-    members = models.ManyToManyField(User, related_name="GroupMembers")
+    meetings = models.ManyToManyField(Meeting)
+    rooms = models.ManyToManyField(Room)
+    members = models.ManyToManyField(User, related_name="member_of")
 
     class Meta:
         db_table = "magnify_group"
