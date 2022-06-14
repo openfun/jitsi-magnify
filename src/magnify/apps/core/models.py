@@ -22,8 +22,8 @@ class Meeting(models.Model):
     name = models.CharField(max_length=100)
 
     # Start and end are the same for a single meeting
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    start = models.DateTimeField()
+    end = models.DateTimeField()
 
     # Set to True if there is a meeting on that day
     monday = models.BooleanField(default=False)
@@ -34,10 +34,10 @@ class Meeting(models.Model):
     saturday = models.BooleanField(default=False)
     sunday = models.BooleanField(default=False)
 
-    start_Time = models.TimeField()
+    start_time = models.TimeField()
     expected_duration = models.DurationField()
-    admin = models.ManyToManyField(User)
-    
+    administrators = models.ManyToManyField(User)
+
     class Meta:
         db_table = "magnify_meeting"
         verbose_name = _("Meeting")
@@ -50,7 +50,7 @@ class Room(models.Model):
     """Model for one room"""
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
-    admin = models.ManyToManyField(User)
+    administrators = models.ManyToManyField(User)
 
     class Meta:
         db_table = "magnify_room"
@@ -64,7 +64,7 @@ class Group(models.Model):
     name = models.CharField(max_length=100)
     token_id = models.CharField(max_length=100)
     token = models.CharField(max_length=100)
-    admin = models.ManyToManyField(User)
+    administrators = models.ManyToManyField(User)
     group_meeting = models.ManyToManyField(Meeting)
     group_room = models.ManyToManyField(Room)
     members = models.ManyToManyField(User, related_name="GroupMembers")
@@ -77,7 +77,7 @@ class Group(models.Model):
 class GroupMembers(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    is_admin = models.BooleanField(default=False)
+    is_administrator = models.BooleanField(default=False)
 
     class Meta:
         db_table = "magnify_group_member"
@@ -87,7 +87,7 @@ class GroupMembers(models.Model):
 class Label(models.Model):
     name = models.CharField(max_length=100)
     color = models.CharField(max_length=7)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     groups = models.ManyToManyField(Group)
     rooms = models.ManyToManyField(Room)
     meetings = models.ManyToManyField(Meeting)
@@ -97,17 +97,17 @@ class Label(models.Model):
         verbose_name = _("Label")
         verbose_name_plural = _("Labels")
 
-class JitsiConfig(models.Model):
+class JitsiConfiguration(models.Model):
     """Model for the Jitsi configuration of a room or a meeting"""
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     
     # The following fields are to be changed when we learn more about what is configurable
     is_open = models.BooleanField(default=False)
-    mic_by_default = models.BooleanField(default=False)
-    cam_by_default = models.BooleanField(default=False)
+    has_microphone_by_default = models.BooleanField(default=False)
+    has_camera_by_default = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "magnify_jitsi_config"
+        db_table = "magnify_jitsi_configuration"
         verbose_name = _("Jitsi Configuration")
         verbose_name_plural = _("Jitsi Configurations")
