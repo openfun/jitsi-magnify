@@ -3,6 +3,7 @@ Declare and configure the models for the customers part
 """
 from django.db import models
 import django.contrib.auth.models as auth_models
+from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
 
@@ -86,7 +87,7 @@ class GroupMembers(models.Model):
 
 class Label(models.Model):
     name = models.CharField(max_length=100)
-    color = models.CharField(max_length=7)
+    color = models.CharField(validators=[RegexValidator(regex='^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', message='Color must be a valid hexa code', code='nomatch')])
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     groups = models.ManyToManyField(Group)
     rooms = models.ManyToManyField(Room)
