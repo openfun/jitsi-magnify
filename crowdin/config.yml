@@ -17,12 +17,12 @@ preserve_hierarchy: true
 files: [
  {
   source : "/magnify/locale/django.pot",
-  dest: "/backend.pot",
+  dest: "/backend-magnify.pot",
   translation : "/magnify/locale/%locale_with_underscore%/LC_MESSAGES/django.po",
  },
  {
-  source : "/frontend/i18n/frontend.json",
-  dest: "/frontend.json",
-  translation : "/frontend/i18n/locales/%locale%.json",
+  source : "/frontend/magnify/i18n/frontend.json",
+  dest: "/frontend-magnify.json",
+  translation : "/frontend/magnify/i18n/locales/%locale%.json",
  }
 ]

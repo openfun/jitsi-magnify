@@ -27,11 +27,8 @@ docs
 
 # Assets
 data
-sandbox/build
-sandbox/static/css
-src/magnify/static/magnify/css
-!src/magnify/static/magnify/css/ckeditor.css
-src/magnify/static/magnify/js
+src/frontend/magnify/static/magnify/css
+src/frontend/magnify/static/magnify/js
 
 # Font-end
 **/node_modules

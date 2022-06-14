@@ -17,19 +17,6 @@
 # ---- Base image to inherit from ----
 FROM python:3.10-buster as base
 
-# ---- Front-end builder image ----
-FROM node:14 as front-builder
-
-# Copy frontend app sources
-COPY ./src/frontend /builder/src/frontend
-
-WORKDIR /builder/src/frontend
-
-RUN yarn install --frozen-lockfile && \
-    yarn compile-translations && \
-    yarn build-ts-production && \
-    yarn build-sass-production
-
 # ---- Back-end builder image ----
 FROM base as back-builder
 
@@ -38,14 +25,6 @@ WORKDIR /builder
 # Copy required python dependencies
 COPY setup.py setup.cfg MANIFEST.in /builder/
 COPY ./src/magnify /builder/src/magnify/
-
-# Copy distributed application's statics
-COPY --from=front-builder \
-    /builder/src/magnify/static/magnify/js \
-    /builder/src/magnify/static/magnify/js
-COPY --from=front-builder \
-    /builder/src/magnify/static/magnify/css/main.css \
-    /builder/src/magnify/static/magnify/css/main.css
 
 # Upgrade pip to its latest release to speed up dependencies installation
 RUN pip install --upgrade pip
@@ -66,7 +45,7 @@ RUN apt-get update && \
 COPY --from=back-builder /install /usr/local
 
 # Copy runtime-required files
-COPY ./sandbox /app/sandbox
+COPY ./sandbox /app
 COPY ./docker/files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
 
 # Gunicorn
@@ -116,12 +95,12 @@ ENV DB_HOST=postgresql \
     DB_PORT=5432
 
 # Run django development server
-CMD cd sandbox && python manage.py runserver 0.0.0.0:8000
+CMD python sandbox/manage.py runserver 0.0.0.0:8000
 
 # ---- Production image ----
 FROM core as production
 
-WORKDIR /app/sandbox
+WORKDIR /app
 
 # The default command runs gunicorn WSGI server in the sandbox
 CMD gunicorn -c /usr/local/etc/gunicorn/magnify.py wsgi:application

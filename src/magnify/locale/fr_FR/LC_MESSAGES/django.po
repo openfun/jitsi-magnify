@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: magnify\n"
+"Project-Id-Version: jitsi-magnify\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-01 15:01+0000\n"
-"PO-Revision-Date: 2022-04-04 07:53\n"
+"POT-Creation-Date: 2022-06-14 19:04+0200\n"
+"PO-Revision-Date: 2022-06-14 17:07\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -11,9 +11,21 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Crowdin-Project: magnify\n"
-"X-Crowdin-Project-ID: 308578\n"
+"X-Crowdin-Project: jitsi-magnify\n"
+"X-Crowdin-Project-ID: 521808\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: backend.pot\n"
-"X-Crowdin-File-ID: 32\n"
+"X-Crowdin-File: backend-magnify.pot\n"
+"X-Crowdin-File-ID: 40\n"
+
+#: apps/core/apps.py:10
+msgid "Magnify's core application"
+msgstr "Application noyau de Magnify"
+
+#: apps/core/models.py:13
+msgid "User"
+msgstr "Utilisateur"
+
+#: apps/core/models.py:14
+msgid "Users"
+msgstr "Utilisateurs"
 
