@@ -22,15 +22,17 @@ export interface GroupRowProps {
    * Callback when the group is selected or deselected
    */
   onToogle: (selected: boolean) => void;
+  /**
+   * Is the group currently selected
+   */
+  selected: boolean;
 }
 
 export default function GroupRow(props: GroupRowProps) {
-  const { group, onToogle } = props;
-  const [checked, setChecked] = useState(false);
+  const { group, onToogle, selected } = props;
   const ref = useRef<HTMLInputElement>(null);
 
   const handleToogle = (event: ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
     onToogle(event.target.checked);
   };
 
@@ -45,7 +47,7 @@ export default function GroupRow(props: GroupRowProps) {
   const numberOfDisplayedMembers = 9 - 2 * screenSize;
 
   return (
-    <Card background="light-2" pad="small" elevation="0">
+    <Card background="light-2" pad="small" elevation="0" margin={{ bottom: '10px' }}>
       <Grid
         fill
         areas={[
@@ -61,7 +63,7 @@ export default function GroupRow(props: GroupRowProps) {
       >
         <Box gridArea="action" align="center">
           <Box margin="auto">
-            <CheckBox checked={checked} onChange={handleToogle} label="Select Group" />
+            <CheckBox checked={selected} onChange={handleToogle} title="Select Group" />
           </Box>
         </Box>
         <Box gridArea="title">
@@ -71,7 +73,13 @@ export default function GroupRow(props: GroupRowProps) {
             </Text>
           </Box>
         </Box>
-        <Box gridArea="members" direction="row" gap="small" justify="end">
+        <Box
+          gridArea="members"
+          direction="row"
+          gap="small"
+          justify="end"
+          margin={{ vertical: 'auto' }}
+        >
           {group.members.slice(0, numberOfDisplayedMembers).map((member) => (
             <Avatar
               round="xsmall"
@@ -82,7 +90,7 @@ export default function GroupRow(props: GroupRowProps) {
               data-testid="group-row-member-image"
             />
           ))}
-          {numberOfDisplayedMembers < group.members.length && (
+          {numberOfDisplayedMembers < group.members.length ? (
             <Avatar
               round="xsmall"
               size="40px"
@@ -94,6 +102,8 @@ export default function GroupRow(props: GroupRowProps) {
             >
               <More color="brand" />
             </Avatar>
+          ) : (
+            <Avatar round="xsmall" size="40px" />
           )}
         </Box>
         <Box gridArea="membersNumber" justify="center">

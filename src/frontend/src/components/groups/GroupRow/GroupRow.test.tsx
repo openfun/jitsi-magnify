@@ -24,6 +24,7 @@ describe('GroupRow', () => {
               name: 'Group 1',
               members: mockedMembers.slice(0, numberOfMembers),
             }}
+            selected={false}
             onToogle={() => {}}
           />
         </ReactiveContext.Provider>,
@@ -55,26 +56,24 @@ describe('GroupRow', () => {
     },
   );
 
-  it('should react when click on the checkbox', () => {
-    const mockedToogle = jest.fn();
+  it.each([
+    [true, false],
+    [false, true],
+  ])(
+    'should call onToogle with %p if checkbox.checked is %p',
+    (initialChecked, expectedChecked) => {
+      const mockedToogle = jest.fn();
 
-    render(
-      <GroupRow
-        group={{
-          id: '1',
-          name: 'Group 1',
-          members: mockedMembers,
-        }}
-        onToogle={mockedToogle}
-      />,
-    );
+      render(
+        <GroupRow
+          group={{ id: '1', name: 'Group 1', members: mockedMembers }}
+          selected={initialChecked}
+          onToogle={mockedToogle}
+        />,
+      );
 
-    const checkbox = screen.getByLabelText("Select Group");
-    fireEvent.click(checkbox);
-    expect(mockedToogle).toHaveBeenCalled();
-    expect(mockedToogle).toHaveBeenCalledWith(true);
-    fireEvent.click(checkbox);
-    expect(mockedToogle).toHaveBeenCalledTimes(2);
-    expect(mockedToogle).toHaveBeenCalledWith(false);
-  });
+      fireEvent.click(screen.getByTitle('Select Group'));
+      expect(mockedToogle).toHaveBeenCalledWith(expectedChecked);
+    },
+  );
 });

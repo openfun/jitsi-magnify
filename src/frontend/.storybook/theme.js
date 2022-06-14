@@ -8,14 +8,19 @@ export default {
     colors: {
       brand: '#035ccd',
       'neutral-1': '#294c79',
-      'light-2': '#e5eefa',
-      'light-3': '#a2c2ec',
+      'light-2': '#f2f7fd',
+      'light-3': '#e5eefa',
       'accent-1': '#ff0000',
     },
     focus: {
       border: {
         color: 'light-3',
       },
-    }
+    },
+  },
+  button: {
+    border: {
+      radius: '5px',
+    },
   },
 };
