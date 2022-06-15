@@ -20,10 +20,15 @@ docs
 *.log
 
 # Development/test cache & configurations
-data
 .cache
 .circleci
 .git
 .vscode
-db.sqlite3
-.mypy_cache
+
+# Assets
+data
+src/frontend
+src/terraform
+
+# Front-end
+**/node_modules

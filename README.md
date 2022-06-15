@@ -2,7 +2,8 @@
 
 An authentication and room management system for Jitsi based on Django.
 
-Jitsi magnify is built on top of [Django Rest Framework](https://www.django-rest-framework.org/), and based on [Joanie](https://github.com/openfun/joanie)
+Jitsi magnify is built with [ReactJS](https://fr.reactjs.org/) for the frontend, and
+[Django](https://www.djangoproject.com/) for the backend.
 
 ## Getting started
 
@@ -94,7 +95,7 @@ decisions.
 
 We try to raise our code quality standards and expect contributors to follow
 the recommandations from our
-[handbook](https://openfun.gitbooks.io/handbook/content).
+[handbook](https://handbook.openfun.fr).
 
 ## License
 
