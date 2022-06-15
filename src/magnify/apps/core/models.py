@@ -65,29 +65,29 @@ class Group(models.Model):
     name = models.CharField(max_length=100)
     # token to join group with
     token = models.CharField(max_length=100)
-    administrators = models.ManyToManyField(User)
+    administrators = models.ManyToManyField(User, related_name="is_administrator_of")
     meetings = models.ManyToManyField(Meeting)
     rooms = models.ManyToManyField(Room)
-    members = models.ManyToManyField(User, related_name="member_of")
+    members = models.ManyToManyField(User, through="Membership", related_name="is_member_of")
 
     class Meta:
         db_table = "magnify_group"
         verbose_name = _("Group")
         verbose_name_plural = _("Groups")
 
-class GroupMembers(models.Model):
+class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     is_administrator = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "magnify_group_member"
-        verbose_name = _("Group Member")
-        verbose_name_plural = _("Group Members")
+        db_table = "magnify_membership"
+        verbose_name = _("Membership")
+        verbose_name_plural = _("Memberships")
 
 class Label(models.Model):
     name = models.CharField(max_length=100)
-    color = models.CharField(validators=[RegexValidator(regex='^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', message='Color must be a valid hexa code', code='nomatch')])
+    color = models.CharField(max_length=7, validators=[RegexValidator(regex='^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', message='Color must be a valid hexa code', code='nomatch')])
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     groups = models.ManyToManyField(Group)
     rooms = models.ManyToManyField(Room)
