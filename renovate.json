@@ -5,13 +5,30 @@
   "packageRules": [
     {
       "enabled": false,
+      "groupName": "ignored js dependencies",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "@testing-library/react",
+        "@types/faker",
+        "@types/react",
+        "@types/react-dom",
+        "faker",
+        "node-fetch",
+        "react",
+        "react-dom"
+      ]
+    },
+    {
+      "enabled": false,
       "groupName": "ignored python dependencies",
       "matchManagers": [
         "setup-cfg"
       ],
       "matchPackageNames": [
-        "django",
-        "PyJWT"
+        "django-parler",
+        "djangorestframework",
       ]
     }
   ]

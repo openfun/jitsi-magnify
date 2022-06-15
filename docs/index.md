@@ -1,0 +1,1 @@
+# Magnify developper documentation

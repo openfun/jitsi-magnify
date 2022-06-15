@@ -1,0 +1,34 @@
+{
+  "name": "jitsi-magnify",
+  "version": "0.1.0",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build-demo": "cd demo && yarn build",
+    "build-magnify": "cd magnify && yarn build",
+    "build": "yarn build-magnify && yarn build-demo",
+    "compile-translations-demo": "cd demo && yarn compile-translations",
+    "compile-translations-magnify": "cd magnify && yarn compile-translations",
+    "compile-translations": "yarn compile-translations-magnify && yarn compile-translations-demo",
+    "extract-translations-demo": "cd demo && formatjs extract './**/*.ts*' --ignore ./node_modules --ignore './**/*.d.ts' --out-file './i18n/frontend.json' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --format crowdin",
+    "extract-translations-magnify": "cd magnify && formatjs extract './**/*.ts*' --ignore ./node_modules --ignore './**/*.d.ts' --out-file './i18n/frontend.json' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --format crowdin",
+    "extract-translations": "yarn extract-translations-magnify && yarn extract-translations-demo",
+    "test-demo": "cd demo && yarn test",
+    "test-magnify": "cd magnify && yarn test",
+    "test": "yarn test-magnify && yarn test-demo",
+    "lint-demo": "cd demo && yarn lint",
+    "lint-magnify": "cd magnify && yarn lint",
+    "lint": "yarn lint-magnify && yarn lint-demo",
+    "format-demo:check": "cd demo && yarn format:check",
+    "format-magnify:check": "cd magnify && yarn format:check",
+    "format-demo:write": "cd demo && yarn format:write",
+    "format-magnify:write": "cd magnify && yarn format:write",
+    "format:check": "yarn format-magnify:check && yarn format-demo:check",
+    "format:write": "yarn format-magnify:write && yarn format-demo:write"
+  },
+  "workspaces": [
+    "demo",
+    "magnify"
+  ]
+}
