@@ -1,6 +1,5 @@
 import { Box, Card, CheckBox, Grid, Text } from 'grommet';
-import React, { ChangeEvent, useState } from 'react';
-import { Group } from '../GroupRow/GroupRow';
+import React, { ChangeEvent } from 'react';
 
 export interface GroupsHeaderProps {
   /**
@@ -8,13 +7,13 @@ export interface GroupsHeaderProps {
    */
   groupsSelected: { [id: string]: boolean };
   /**
-   * A callback to handle toogleing groups
+   * A callback to handle toggleing groups
    */
   setGroupsSelected: (groupsSelected: { [id: string]: boolean }) => void;
 }
 
 export default function GroupsHeader({ groupsSelected, setGroupsSelected }: GroupsHeaderProps) {
-  const handleToogleAll = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleToggleAll = (event: ChangeEvent<HTMLInputElement>) => {
     setGroupsSelected(
       Object.fromEntries(
         Object.keys(groupsSelected).map((groupId) => [groupId, event.target.checked]),
@@ -42,7 +41,7 @@ export default function GroupsHeader({ groupsSelected, setGroupsSelected }: Grou
             <CheckBox
               checked={numberChecked === numberOfGroups}
               indeterminate={numberChecked > 0 && numberChecked < numberOfGroups}
-              onChange={handleToogleAll}
+              onChange={handleToggleAll}
               title="Select All Group"
             />
           </Box>

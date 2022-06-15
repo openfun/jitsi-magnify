@@ -1,17 +1,7 @@
-import { Avatar, Box, Card, CheckBox, Grid, Text } from 'grommet';
-import React, { ChangeEvent, useRef, useState } from 'react';
+import { Avatar, Box, Card, CheckBox, Grid, ResponsiveContext, Text } from 'grommet';
+import React, { ChangeEvent, useContext } from 'react';
 import { More } from 'grommet-icons';
-import { useMediaQuery } from 'react-responsive';
-
-export interface Group {
-  id: string;
-  name: string;
-  members: {
-    id: string;
-    name: string;
-    avatar: string;
-  }[];
-}
+import { Group } from '../../../types/group.interface';
 
 export interface GroupRowProps {
   /**
@@ -21,30 +11,29 @@ export interface GroupRowProps {
   /**
    * Callback when the group is selected or deselected
    */
-  onToogle: (selected: boolean) => void;
+  onToggle: (selected: boolean) => void;
   /**
    * Is the group currently selected
    */
   selected: boolean;
 }
 
-export default function GroupRow(props: GroupRowProps) {
-  const { group, onToogle, selected } = props;
-  const ref = useRef<HTMLInputElement>(null);
+type ScreenSize = "small" | "medium" | "large" ;
 
-  const handleToogle = (event: ChangeEvent<HTMLInputElement>) => {
-    onToogle(event.target.checked);
+export default function GroupRow({ group, onToggle, selected }: GroupRowProps) {
+  const screenSize = useContext(ResponsiveContext);
+  const handleToggle = (event: ChangeEvent<HTMLInputElement>) => {
+    onToggle(event.target.checked);
   };
 
   // Get a number between 0 and 3 representing the size of the screen
   // 0 = big, 1 = large, 2 = medium, 3 = small, 4 = xsmall
-  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' });
-  const isLargeScreen = useMediaQuery({ query: '(min-width: 1224px)' });
-  const isMediumScreen = useMediaQuery({ query: '(min-width: 824px)' });
-  const isSmallScreen = useMediaQuery({ query: '(min-width: 424px)' });
-  const matchingScreenSizes = [isBigScreen, isLargeScreen, isMediumScreen, isSmallScreen, true];
-  const screenSize = matchingScreenSizes.findIndex((size) => size);
-  const numberOfDisplayedMembers = 9 - 2 * screenSize;
+  const numberOfDisplayedMembers =
+    {
+      small: 2,
+      medium: 4,
+      large: 9,
+    }[screenSize] || 9;
 
   return (
     <Card background="light-2" pad="small" elevation="0" margin={{ bottom: '10px' }}>
@@ -59,11 +48,10 @@ export default function GroupRow(props: GroupRowProps) {
         columns={['xxsmall', 'flex', 'flex', 'xsmall']}
         rows={['flex']}
         gap="small"
-        ref={ref}
       >
         <Box gridArea="action" align="center">
           <Box margin="auto">
-            <CheckBox checked={selected} onChange={handleToogle} title="Select Group" />
+            <CheckBox checked={selected} onChange={handleToggle} title="Select Group" />
           </Box>
         </Box>
         <Box gridArea="title">

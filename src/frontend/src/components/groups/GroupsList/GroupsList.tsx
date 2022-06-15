@@ -1,6 +1,7 @@
 import { Box, Button, Card, CheckBox, Grid, Menu, Text } from 'grommet';
-import React, { ChangeEvent, useState } from 'react';
-import GroupRow, { Group } from '../GroupRow/GroupRow';
+import React, { useState } from 'react';
+import { Group } from '../../../types/group.interface';
+import GroupRow from '../GroupRow/GroupRow';
 import GroupsHeader from '../GroupsHeader/GroupsHeader';
 
 export interface GroupsListProps {
@@ -15,7 +16,7 @@ export default function GroupList({ groups }: GroupsListProps) {
     Object.fromEntries(groups.map((group) => [group.id, false])),
   );
 
-  const handleToogle = (groupId: string, selected: boolean) => {
+  const handleToggle = (groupId: string, selected: boolean) => {
     setGroupsSelected({ ...groupsSelected, [groupId]: selected });
   };
 
@@ -90,7 +91,7 @@ export default function GroupList({ groups }: GroupsListProps) {
           group={group}
           key={group.id}
           selected={groupsSelected[group.id]}
-          onToogle={(selected: boolean) => handleToogle(group.id, selected)}
+          onToggle={(selected: boolean) => handleToggle(group.id, selected)}
         />
       ))}
     </Card>

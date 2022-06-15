@@ -1,23 +1,22 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { Context as ReactiveContext } from 'react-responsive';
+import userEvent from "@testing-library/user-event";
+import { render, screen } from '@testing-library/react';
 import GroupRow from './GroupRow';
 import { mockedMembers } from './mocks';
+import { ResponsiveContext } from 'grommet';
 
 describe('GroupRow', () => {
   it.each([
-    { numberOfMembers: 0, width: 400, expectedNumberOfMembersRendered: 0, allDisplayed: true },
-    { numberOfMembers: 9, width: 400, expectedNumberOfMembersRendered: 1, allDisplayed: false },
-    { numberOfMembers: 9, width: 700, expectedNumberOfMembersRendered: 3, allDisplayed: false },
-    { numberOfMembers: 9, width: 900, expectedNumberOfMembersRendered: 5, allDisplayed: false },
-    { numberOfMembers: 9, width: 1300, expectedNumberOfMembersRendered: 7, allDisplayed: false },
-    { numberOfMembers: 9, width: 1850, expectedNumberOfMembersRendered: 9, allDisplayed: true },
-    { numberOfMembers: 3, width: 900, expectedNumberOfMembersRendered: 3, allDisplayed: true },
+    { numberOfMembers: 0, width: "small", expectedNumberOfMembersRendered: 0, allDisplayed: true },
+    { numberOfMembers: 9, width: "small", expectedNumberOfMembersRendered: 2, allDisplayed: false },
+    { numberOfMembers: 9, width: "medium", expectedNumberOfMembersRendered: 4, allDisplayed: false },
+    { numberOfMembers: 9, width: "large", expectedNumberOfMembersRendered: 9, allDisplayed: true },
+    { numberOfMembers: 3, width: "medium", expectedNumberOfMembersRendered: 3, allDisplayed: true },
   ])(
     'renders the row with $numberOfMembers images when screen is $width px wide and groups has $numberOfMembers members',
     ({ numberOfMembers, width, expectedNumberOfMembersRendered, allDisplayed }) => {
       render(
-        <ReactiveContext.Provider value={{ width }}>
+        <ResponsiveContext.Provider value={width}>
           <GroupRow
             group={{
               id: '1',
@@ -25,9 +24,9 @@ describe('GroupRow', () => {
               members: mockedMembers.slice(0, numberOfMembers),
             }}
             selected={false}
-            onToogle={() => {}}
+            onToggle={() => {}}
           />
-        </ReactiveContext.Provider>,
+        </ResponsiveContext.Provider>,
       );
 
       // Check if the number of images rendered is correct
@@ -45,7 +44,7 @@ describe('GroupRow', () => {
 
       // If all images are not displayed, we should have an indicator with remaining names
       if (allDisplayed) {
-        expect(screen.queryByTestId('more-members')).toBeNull();
+        expect(screen.queryByTestId('more-members')).not.toBeInTheDocument();
       } else {
         const expectedTitle = mockedMembers
           .slice(expectedNumberOfMembersRendered)
@@ -60,20 +59,21 @@ describe('GroupRow', () => {
     [true, false],
     [false, true],
   ])(
-    'should call onToogle with %p if checkbox.checked is %p',
-    (initialChecked, expectedChecked) => {
-      const mockedToogle = jest.fn();
+    'should call onToggle with %p if checkbox.checked is %p',
+    async (initialChecked, expectedChecked) => {
+      const mockedToggle = jest.fn();
+      const user = userEvent.setup()
 
       render(
         <GroupRow
           group={{ id: '1', name: 'Group 1', members: mockedMembers }}
           selected={initialChecked}
-          onToogle={mockedToogle}
+          onToggle={mockedToggle}
         />,
       );
 
-      fireEvent.click(screen.getByTitle('Select Group'));
-      expect(mockedToogle).toHaveBeenCalledWith(expectedChecked);
+      await user.click(screen.getByTitle('Select Group'));
+      expect(mockedToggle).toHaveBeenCalledWith(expectedChecked);
     },
   );
 });

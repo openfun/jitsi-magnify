@@ -1,8 +1,8 @@
 import React from 'react';
 import GroupsList, { GroupsListProps } from './GroupsList';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Context as ResponsiveContext } from 'react-responsive';
 import { mockedGroups } from './mocks';
+import { ResponsiveContext } from 'grommet';
 
 export default {
   title: 'Groups/GroupsList',
@@ -12,17 +12,22 @@ export default {
 //Test component that wraps GroupsList within a ResponsiveContext.Provider with given size
 interface GroupsListWithinResponsiveContextProps extends GroupsListProps {
   width: number;
+  size: 'small' | 'medium' | 'large';
 }
-const GroupsListWithinResponsiveContext = (props: GroupsListWithinResponsiveContextProps) => {
+const GroupsListWithinResponsiveContext = ({
+  width,
+  size,
+  ...rest
+}: GroupsListWithinResponsiveContextProps) => {
   return (
-    <ResponsiveContext.Provider value={{ width: props.width }}>
-      <div style={{ width: `${props.width}px` }}>
-        <GroupsList {...props} />
+    <ResponsiveContext.Provider value={size}>
+      <div style={{ width: `${width}px` }}>
+        <GroupsList {...rest} />
       </div>
     </ResponsiveContext.Provider>
   );
 };
-const onToogle = console.log;
+const onToggle = console.log;
 
 // Template
 const Template: ComponentStory<typeof GroupsListWithinResponsiveContext> = (
@@ -30,8 +35,8 @@ const Template: ComponentStory<typeof GroupsListWithinResponsiveContext> = (
 ) => <GroupsListWithinResponsiveContext {...args} />;
 
 // Stories
-export const GroupsList400px = Template.bind({});
-GroupsList400px.args = { width: 400, groups: mockedGroups };
+export const GroupsList500px = Template.bind({});
+GroupsList500px.args = { width: 500, size: 'small', groups: mockedGroups };
 
 export const GroupsList800px = Template.bind({});
-GroupsList800px.args = { width: 800, groups: mockedGroups };
+GroupsList800px.args = { width: 800, size: 'medium', groups: mockedGroups };
