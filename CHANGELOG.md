@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html).
 
+<<<<<<< HEAD
 ## Added
 
 - Add models to handle rooms, meetings, labels and groups
@@ -16,3 +17,10 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - Fix storybook not starting up due to storybook packages version
 
 ## [Unrealeased]
+=======
+## [Unreleased]
+
+### Added
+
+- Add components `GroupRow` to present a single group of users
+>>>>>>> 48dfb85 (✨(frontlib) create component to display a single group)
