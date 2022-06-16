@@ -23,4 +23,9 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Add components `GroupRow` to present a single group of users
+<<<<<<< HEAD
 >>>>>>> 48dfb85 (✨(frontlib) create component to display a single group)
+=======
+- Add components `GroupsHeader` and `GroupsList` to display a list of
+  groups of users.
+>>>>>>> cded387 (✨(frontlib) add component to display a list of groups)
