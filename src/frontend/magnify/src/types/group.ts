@@ -1,4 +1,4 @@
-import { Member } from './member.interface';
+import { Member } from './member';
 
 export interface Group {
   id: string;
