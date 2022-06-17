@@ -1,4 +1,9 @@
-import { loadLocaleData, TranslationProvider } from '@jitsi-magnify/core';
+import {
+  ControllerProvider,
+  DefaultController,
+  loadLocaleData,
+  TranslationProvider,
+} from '@jitsi-magnify/core';
 import { Grommet } from 'grommet';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -22,12 +27,17 @@ async function render() {
     translatedMessages = {};
   }
 
+  // Create the controller
+  const controller = new DefaultController({ url: 'http://localhost:3000' });
+
   // Render the app inside the required providers
   root.render(
     <TranslationProvider defaultLocale="en-US" locale={locale} messages={translatedMessages || {}}>
       <React.StrictMode>
         <Grommet>
-          <App />
+          <ControllerProvider controller={controller}>
+            <App />
+          </ControllerProvider>
         </Grommet>
       </React.StrictMode>
     </TranslationProvider>,
