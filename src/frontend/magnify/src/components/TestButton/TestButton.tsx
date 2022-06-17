@@ -1,5 +1,5 @@
 import { defineMessages, useIntl } from 'react-intl';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'grommet';
 import styled from 'styled-components';
 import { useController } from '../../controller';
@@ -29,17 +29,27 @@ const messages = defineMessages({
 const TestButton = ({ variant }: TestButtonProps) => {
   const intl = useIntl();
   const controller = useController();
+  const [examples, setExamples] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    controller.getExamples().then((examples) => {
+      setExamples(examples);
+    });
+  }, []);
 
   const handleClick = () => {
     controller.sendTest('Test Button clicked');
   };
 
   return (
-    <VariantButton
-      label={intl.formatMessage(messages.testButtonLabel)}
-      variant={variant}
-      onClick={handleClick}
-    />
+    <>
+      <VariantButton
+        label={intl.formatMessage(messages.testButtonLabel)}
+        variant={variant}
+        onClick={handleClick}
+      />
+      <pre data-testid="fetched-examples">{JSON.stringify(examples, null, '  ')}</pre>
+    </>
   );
 };
 
