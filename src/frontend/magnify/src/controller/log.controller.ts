@@ -1,8 +1,9 @@
 import Controller from './interface';
+import { example1, example2 } from './mocks/example';
 
 const promisifiedConsoleLogFactory =
-  (name: string) =>
-  (...args: any[]): Promise<void> =>
+  <T>(name: string, resolveTo: T) =>
+  (...args: any[]): Promise<T> =>
     new Promise((resolve) => {
       setTimeout(() => {
         console.log(
@@ -10,10 +11,11 @@ const promisifiedConsoleLogFactory =
           'color: green; font-weight: bold',
           'color: #00a',
         );
-        resolve();
+        resolve(resolveTo);
       }, 200);
     });
 
 export default class LogController extends Controller {
-  sendTest = promisifiedConsoleLogFactory('sendTest');
+  sendTest = promisifiedConsoleLogFactory('sendTest', null);
+  getExamples = promisifiedConsoleLogFactory('getExamples', [example1, example2]);
 }

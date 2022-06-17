@@ -33,11 +33,7 @@
     "@storybook/testing-library": "0.0.13",
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "13.3.0",
-<<<<<<< HEAD
     "@testing-library/user-event": "14.2.0",
-=======
-    "@testing-library/user-event": "^14.2.0",
->>>>>>> 2cb5857 (✨(frontend) create an abstraction to fetch the api)
     "@types/jest": "28.1.1",
     "@types/react": "18.0.12",
     "@types/styled-components": "5.1.25",
@@ -73,7 +69,7 @@
     "src/*"
   ],
   "peerDependencies": {
-    "axios": "^0.27.2",
+    "axios": "0.27.2",
     "grommet": "2.24.0",
     "polished": "4.2.2",
     "react": "18.2.0",

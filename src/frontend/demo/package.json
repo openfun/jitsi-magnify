@@ -5,7 +5,7 @@
   "private": false,
   "dependencies": {
     "@jitsi-magnify/core": "0.1.0",
-    "axios": "^0.27.2",
+    "axios": "0.27.2",
     "grommet": "2.24.0",
     "polished": "4.2.2",
     "react": "18.2.0",
