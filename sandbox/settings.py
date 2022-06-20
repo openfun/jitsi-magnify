@@ -152,8 +152,6 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
     # Login/registration related settings
     LOGIN_REDIRECT_URL = "/"
     LOGOUT_REDIRECT_URL = "/"
-    LOGIN_URL = "login"
-    LOGOUT_URL = "logout"
 
     AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
 
