@@ -14,31 +14,4 @@ const Template: ComponentStory<typeof LayoutWithSidebar> = (args) => (
 
 // create the template and stories
 export const layoutWithSidebar = Template.bind({});
-layoutWithSidebar.args = {
-  itemZones: [
-    [
-      {
-        label: 'Button A',
-        to: 'a',
-        icon: <AppsRounded />,
-      },
-      {
-        label: 'Button B',
-        to: 'b',
-        icon: <AppsRounded />,
-      },
-    ],
-    [
-      {
-        label: 'Button C',
-        to: 'c',
-        icon: <AppsRounded />,
-      },
-      {
-        label: 'Button D',
-        to: 'd',
-        icon: <AppsRounded />,
-      },
-    ],
-  ],
-};
+layoutWithSidebar.args = {};
