@@ -1,6 +1,8 @@
 import theme from './theme';
 import { Grommet, Text, Box } from 'grommet';
 import { MemoryRouter, Routes, Route, Link, useParams } from 'react-router-dom';
+import { IntlProvider } from 'react-intl';
+import messages from '../src/translations/fr-FR.json';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -42,6 +44,13 @@ export const withRouter = (storyFn) => (
   </MemoryRouter>
 );
 
+// Intl wrapper decorator
+export const withIntl = (storyFn) => (
+  <IntlProvider locale="fr" messages={messages}>
+    {storyFn()}
+  </IntlProvider>
+);
+
 // Decorators
 // Decorators are added from last
-export const decorators = [withRouter, withGrommet];
+export const decorators = [withRouter, withGrommet, withIntl];

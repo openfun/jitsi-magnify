@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Nav, Text, Sidebar } from 'grommet';
+import { defineMessages, useIntl } from 'react-intl';
+import { Box, Nav, Sidebar } from 'grommet';
 import { SidebarButton, SidebarButtonProps } from '..';
 import { User, Group, AppsRounded, Calendar, Services } from 'grommet-icons';
 
@@ -13,19 +14,53 @@ export interface MagnifySidebarProps {
   separatorGap?: string;
 }
 
-function MagnifySidebar({
-  itemZones = [
-    [{ label: 'My Account', icon: <User />, to: 'account' }],
+const messages = defineMessages({
+  sidebarMyAccountLabel: {
+    defaultMessage: `My Account`,
+    description: 'Page name on the sidebar button',
+    id: 'components.sidebar.MagnifySidebar.sidebarMyAccountLabel',
+  },
+  sidebarRoomsLabel: {
+    defaultMessage: `Rooms`,
+    description: 'Page name on the sidebar button',
+    id: 'components.sidebar.MagnifySidebar.sidebarRoomsLabel',
+  },
+  sidebarMeetingsLabel: {
+    defaultMessage: `My Meetings`,
+    description: 'Page name on the sidebar button',
+    id: 'components.sidebar.MagnifySidebar.sidebarMeetingsLabel',
+  },
+  sidebarGroupsLabel: {
+    defaultMessage: `Groups`,
+    description: 'Page name on the sidebar button',
+    id: 'components.sidebar.MagnifySidebar.sidebarGroupsLabel',
+  },
+  sidebarSettingsLabel: {
+    defaultMessage: `Settings`,
+    description: 'Page name on the sidebar button',
+    id: 'components.sidebar.MagnifySidebar.sidebarSettingsLabel',
+  },
+});
+
+function MagnifySidebar({ itemZones, gap = 'small', separatorGap = 'large' }: MagnifySidebarProps) {
+  const intl = useIntl();
+  const zones = itemZones || [
+    [{ label: intl.formatMessage(messages.sidebarMyAccountLabel), icon: <User />, to: 'account' }],
     [
-      { label: 'Rooms', icon: <AppsRounded />, to: 'rooms' },
-      { label: 'My Meetings', icon: <Calendar />, to: 'meetings' },
-      { label: 'Groups', icon: <Group />, to: 'groups' },
-      { label: 'Settings', icon: <Services />, to: 'settings' },
+      { label: intl.formatMessage(messages.sidebarRoomsLabel), icon: <AppsRounded />, to: 'rooms' },
+      {
+        label: intl.formatMessage(messages.sidebarMeetingsLabel),
+        icon: <Calendar />,
+        to: 'meetings',
+      },
+      { label: intl.formatMessage(messages.sidebarGroupsLabel), icon: <Group />, to: 'groups' },
+      {
+        label: intl.formatMessage(messages.sidebarSettingsLabel),
+        icon: <Services />,
+        to: 'settings',
+      },
     ],
-  ],
-  gap = 'small',
-  separatorGap = 'large',
-}: MagnifySidebarProps) {
+  ];
   return (
     <Sidebar
       responsive={false}
@@ -35,7 +70,7 @@ function MagnifySidebar({
       pad={{ left: 'medium', right: 'large', vertical: 'medium' }}
     >
       <Nav gap={separatorGap} responsive={false}>
-        {itemZones.map((zone) => (
+        {zones.map((zone) => (
           <Box gap={gap}>
             {zone.map((itemsProps) => (
               <SidebarButton {...itemsProps} />
