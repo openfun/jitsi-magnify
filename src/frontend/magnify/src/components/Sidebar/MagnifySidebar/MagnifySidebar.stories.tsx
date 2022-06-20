@@ -1,10 +1,10 @@
 import React from 'react';
-import LayoutWithSidebar from './LayoutWithSidebar';
+import LayoutWithSidebar from './MagnifySidebar';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { AppsRounded } from 'grommet-icons';
 
 export default {
-  title: 'Sidebar/LayoutWithSidebar',
+  title: 'Sidebar/MagnifySidebar',
   component: LayoutWithSidebar,
 } as ComponentMeta<typeof LayoutWithSidebar>;
 
@@ -13,8 +13,8 @@ const Template: ComponentStory<typeof LayoutWithSidebar> = (args) => (
 );
 
 // create the template and stories
-export const layoutWithSidebar = Template.bind({});
-layoutWithSidebar.args = {
+export const customSidebar = Template.bind({});
+customSidebar.args = {
   itemZones: [
     [
       {

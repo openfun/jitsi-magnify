@@ -1,22 +1,32 @@
-import React from "react";
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from "grommet";
+import { Button, Box } from 'grommet';
+import { useMatch, useResolvedPath } from 'react-router-dom';
+import { MarginType } from 'grommet/utils';
 
 export interface SidebarButtonProps {
-    selected?: boolean;
-    disabled?: boolean;
-    label: string;
-    icon: JSX.Element;
-    to: string;
+  disabled?: boolean;
+  margin?: MarginType;
+  label: string;
+  icon: JSX.Element;
+  to: string;
 }
 
 export default function SidebarButton(props: SidebarButtonProps) {
-  const {selected, to, ...rest} = props;
+  const { to, ...rest } = props;
+  const resolvedPath = useResolvedPath(to);
+  const match = useMatch({ path: resolvedPath.pathname, end: false });
+  const selected = match != null;
 
-  return <Button
-    primary
-    {...(selected ? {} : { color: 'transparent' })}
-    as={(p) => <Link to={to} {...p}/>}
-    {...rest}
-  />;
+  return (
+    <Box margin={props.margin}>
+      <Button
+        primary
+        {...(selected ? {} : { color: 'transparent' })}
+        as={(p) => <Link to={to} {...p} />}
+        {...rest}
+        justify="start"
+      />
+    </Box>
+  );
 }
