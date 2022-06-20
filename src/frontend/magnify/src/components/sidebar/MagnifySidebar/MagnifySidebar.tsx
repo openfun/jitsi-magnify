@@ -8,6 +8,8 @@ export interface MagnifySidebarProps {
   itemZones?: SidebarButtonProps[][];
   gap?: string;
   separatorGap?: string;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
 const messages = defineMessages({
@@ -38,7 +40,13 @@ const messages = defineMessages({
   },
 });
 
-function MagnifySidebar({ itemZones, gap = 'small', separatorGap = 'large' }: MagnifySidebarProps) {
+function MagnifySidebar({
+  itemZones,
+  gap = 'small',
+  separatorGap = 'large',
+  header = <></>,
+  footer = <></>,
+}: MagnifySidebarProps) {
   const intl = useIntl();
   const zones = itemZones || [
     [
@@ -71,12 +79,15 @@ function MagnifySidebar({ itemZones, gap = 'small', separatorGap = 'large' }: Ma
       },
     ],
   ];
+
   return (
     <Sidebar
       responsive={false}
       background="white"
       pad={{ left: 'medium', right: 'medium', vertical: 'medium' }}
       elevation="medium"
+      header={header}
+      footer={footer}
     >
       <Nav gap={separatorGap} responsive={false}>
         {zones.map((zone) => (
