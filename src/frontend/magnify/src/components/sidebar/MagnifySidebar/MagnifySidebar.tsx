@@ -1,7 +1,8 @@
 import { Box, Nav, Sidebar } from 'grommet';
+import { AppsRounded, Calendar, Group, Services, User } from 'grommet-icons';
 import React from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import { SidebarButton, SidebarButtonProps } from '..';
-import { User, Group, AppsRounded, Calendar, Services } from 'grommet-icons';
 
 export interface MagnifySidebarProps {
   itemZones?: SidebarButtonProps[][];
@@ -9,17 +10,67 @@ export interface MagnifySidebarProps {
   separatorGap?: string;
 }
 
+const messages = defineMessages({
+  sidebarMyAccountLabel: {
+    defaultMessage: `My Account`,
+    description: 'Sidebar button label for navigating to the user account page',
+    id: 'components.sidebar.MagnifySidebar.sidebarMyAccountLabel',
+  },
+  sidebarRoomsLabel: {
+    defaultMessage: `Rooms`,
+    description: 'Sidebar button label for navigating to the rooms page',
+    id: 'components.sidebar.MagnifySidebar.sidebarRoomsLabel',
+  },
+  sidebarMeetingsLabel: {
+    defaultMessage: `My Meetings`,
+    description: 'Sidebar button label for navigating to all meetings page',
+    id: 'components.sidebar.MagnifySidebar.sidebarMeetingsLabel',
+  },
+  sidebarGroupsLabel: {
+    defaultMessage: `Groups`,
+    description: 'Sidebar button label for navigating to the list of groups page',
+    id: 'components.sidebar.MagnifySidebar.sidebarGroupsLabel',
+  },
+  sidebarSettingsLabel: {
+    defaultMessage: `Settings`,
+    description: 'Sidebar button label for navigating to the settings page',
+    id: 'components.sidebar.MagnifySidebar.sidebarSettingsLabel',
+  },
+});
+
 function MagnifySidebar({ itemZones, gap = 'small', separatorGap = 'large' }: MagnifySidebarProps) {
+  const intl = useIntl();
   const zones = itemZones || [
-    [{ label: 'My Account', icon: <User />, navigateTo: 'account' }],
     [
-      { label: 'Rooms', icon: <AppsRounded />, navigateTo: 'rooms' },
-      { label: 'My Meetings', icon: <Calendar />, navigateTo: 'meetings' },
-      { label: 'Groups', icon: <Group />, navigateTo: 'groups' },
-      { label: 'Settings', icon: <Services />, navigateTo: 'settings' },
+      {
+        label: intl.formatMessage(messages.sidebarMyAccountLabel),
+        icon: <User />,
+        navigateTo: 'account',
+      },
+    ],
+    [
+      {
+        label: intl.formatMessage(messages.sidebarRoomsLabel),
+        icon: <AppsRounded />,
+        navigateTo: 'rooms',
+      },
+      {
+        label: intl.formatMessage(messages.sidebarMeetingsLabel),
+        icon: <Calendar />,
+        navigateTo: 'meetings',
+      },
+      {
+        label: intl.formatMessage(messages.sidebarGroupsLabel),
+        icon: <Group />,
+        navigateTo: 'groups',
+      },
+      {
+        label: intl.formatMessage(messages.sidebarSettingsLabel),
+        icon: <Services />,
+        navigateTo: 'settings',
+      },
     ],
   ];
-
   return (
     <Sidebar
       responsive={false}
