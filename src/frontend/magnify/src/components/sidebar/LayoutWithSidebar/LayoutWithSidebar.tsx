@@ -14,8 +14,4 @@ function LayoutWithSidebar(props: {
   );
 }
 
-LayoutWithSidebar.args = {
-  full: true,
-};
-
 export default LayoutWithSidebar;
