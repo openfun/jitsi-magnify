@@ -10,4 +10,8 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Add models to handle rooms, meetings, labels and groups
 
+## Fixed
+
+- Fix storybook not starting up due to storybook packages version
+
 ## [Unrealeased]
