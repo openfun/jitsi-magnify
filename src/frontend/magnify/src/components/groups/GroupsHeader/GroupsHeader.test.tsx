@@ -2,6 +2,7 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import GroupsHeader from './GroupsHeader';
+import { IntlProvider } from 'react-intl';
 
 describe('GroupsHeader', () => {
   it("should switch everything on when some groups are selected and others don't", async () => {
@@ -9,13 +10,15 @@ describe('GroupsHeader', () => {
     const user = userEvent.setup();
 
     render(
-      <GroupsHeader
-        groupsSelected={{ g1: false, g2: true, g3: false }}
-        setGroupsSelected={mockedToggle}
-      />,
+      <IntlProvider locale="en">
+        <GroupsHeader
+          groupsSelected={{ g1: false, g2: true, g3: false }}
+          setGroupsSelected={mockedToggle}
+        />
+      </IntlProvider>,
     );
 
-    await user.click(screen.getByTitle('Select All Group'));
+    await user.click(screen.getByTitle('Select all'));
     expect(mockedToggle).toHaveBeenCalledWith({ g1: true, g2: true, g3: true });
   });
 
@@ -24,13 +27,15 @@ describe('GroupsHeader', () => {
     const user = userEvent.setup();
 
     render(
-      <GroupsHeader
-        groupsSelected={{ g1: true, g2: true, g3: true }}
-        setGroupsSelected={mockedToggle}
-      />,
+      <IntlProvider locale="en">
+        <GroupsHeader
+          groupsSelected={{ g1: true, g2: true, g3: true }}
+          setGroupsSelected={mockedToggle}
+        />
+      </IntlProvider>,
     );
 
-    await user.click(screen.getByTitle('Select All Group'));
+    await user.click(screen.getByTitle('Select all'));
     expect(mockedToggle).toHaveBeenCalledWith({ g1: false, g2: false, g3: false });
   });
 
@@ -39,13 +44,15 @@ describe('GroupsHeader', () => {
     const user = userEvent.setup();
 
     render(
-      <GroupsHeader
-        groupsSelected={{ g1: false, g2: false, g3: false }}
-        setGroupsSelected={mockedToggle}
-      />,
+      <IntlProvider locale="en">
+        <GroupsHeader
+          groupsSelected={{ g1: false, g2: false, g3: false }}
+          setGroupsSelected={mockedToggle}
+        />
+      </IntlProvider>,
     );
 
-    await user.click(screen.getByTitle('Select All Group'));
+    await user.click(screen.getByTitle('Select all'));
     expect(mockedToggle).toHaveBeenCalledWith({ g1: true, g2: true, g3: true });
   });
 });

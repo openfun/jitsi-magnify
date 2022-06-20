@@ -3,11 +3,16 @@ import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import GroupsList from './GroupsList';
 import { mockedGroups } from './mocks';
+import { IntlProvider } from 'react-intl';
 
 describe('GroupsList', () => {
   it('should be selectable group by group and globally', async () => {
     const user = userEvent.setup();
-    render(<GroupsList groups={mockedGroups} />);
+    render(
+      <IntlProvider locale="en">
+        <GroupsList groups={mockedGroups} />
+      </IntlProvider>,
+    );
 
     // Initial state: all checkboxes are unchecked; the number of groups is displayed
     const checkboxes = screen.queryAllByTitle('Select Group');
@@ -19,17 +24,21 @@ describe('GroupsList', () => {
     expect(checkboxes[1]).toBeChecked();
 
     // Select all
-    await user.click(screen.getByTitle('Select All Group'));
+    await user.click(screen.getByTitle('Select all'));
     checkboxes.forEach((checkbox) => expect(checkbox).toBeChecked());
 
     // Unselect all
-    await user.click(screen.getByTitle('Select All Group'));
+    await user.click(screen.getByTitle('Select all'));
     checkboxes.forEach((checkbox) => expect(checkbox).not.toBeChecked());
   });
 
   it('should allow and pluralize buttons according to the number of groups selected', async () => {
     const user = userEvent.setup();
-    render(<GroupsList groups={mockedGroups} />);
+    render(
+      <IntlProvider locale="en">
+        <GroupsList groups={mockedGroups} />
+      </IntlProvider>,
+    );
 
     // Initial state: all checkboxes are unchecked; the number of groups is displayed
     const checkboxes = screen.queryAllByTitle('Select Group');
@@ -54,7 +63,7 @@ describe('GroupsList', () => {
     await user.click(checkboxes[2]);
     await user.click(actionMenu);
     expect(screen.getByText('Delete groups').parentElement).not.toBeDisabled();
-    expect(screen.getByText('Rename groups').parentElement).not.toBeDisabled();
+    expect(screen.getByText('Rename group').parentElement).toBeDisabled();
     expect(screen.getByText('Create room for groups').parentElement).not.toBeDisabled();
     expect(screen.getByText('Create meeting for groups').parentElement).not.toBeDisabled();
   });
