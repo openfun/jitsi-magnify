@@ -1,4 +1,5 @@
-"""Magnify core views"""
+"""Module to generate the token for the room"""
+
 from datetime import timedelta
 from urllib.parse import urlencode
 
