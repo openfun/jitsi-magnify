@@ -39,3 +39,9 @@ GroupsList500px.args = { width: 500, size: 'small', groups: mockedGroups };
 
 export const GroupsList800px = Template.bind({});
 GroupsList800px.args = { width: 800, size: 'medium', groups: mockedGroups };
+
+export const GroupsListNoGroup = Template.bind({});
+GroupsListNoGroup.args = { width: 800, size: 'medium', groups: [] };
+
+export const GroupList1Group = Template.bind({});
+GroupList1Group.args = { width: 800, size: 'medium', groups: mockedGroups.slice(0, 1) };

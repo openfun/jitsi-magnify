@@ -1,5 +1,6 @@
 import { Box, Card, CheckBox, Grid, Text } from 'grommet';
 import React, { ChangeEvent } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 
 export interface GroupsHeaderProps {
   /**
@@ -12,7 +13,17 @@ export interface GroupsHeaderProps {
   setGroupsSelected: (groupsSelected: { [id: string]: boolean }) => void;
 }
 
+const messages = defineMessages({
+  selectAllHeaderLabel: {
+    defaultMessage: 'Select all',
+    description: 'The label for the select all checkbox',
+    id: 'components.groups.GroupsHeader.selectAllHeaderLabel',
+  },
+});
+
 export default function GroupsHeader({ groupsSelected, setGroupsSelected }: GroupsHeaderProps) {
+  const intl = useIntl();
+
   const handleToggleAll = (event: ChangeEvent<HTMLInputElement>) => {
     setGroupsSelected(
       Object.fromEntries(
@@ -42,14 +53,14 @@ export default function GroupsHeader({ groupsSelected, setGroupsSelected }: Grou
               checked={numberChecked === numberOfGroups}
               indeterminate={numberChecked > 0 && numberChecked < numberOfGroups}
               onChange={handleToggleAll}
-              title="Select All Group"
+              title={intl.formatMessage(messages.selectAllHeaderLabel)}
             />
           </Box>
         </Box>
         <Box gridArea="title">
           <Box margin="auto 0px">
             <Text size="medium" color="brand" weight="bold">
-              Select All
+              {intl.formatMessage(messages.selectAllHeaderLabel)}
             </Text>
           </Box>
         </Box>

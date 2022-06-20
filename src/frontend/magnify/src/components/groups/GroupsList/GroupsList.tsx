@@ -1,5 +1,6 @@
 import { Box, Button, Card, Grid, Menu, Text } from 'grommet';
 import React, { useState } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import { Group } from '../../../types/group.interface';
 import GroupRow from '../GroupRow/GroupRow';
 import GroupsHeader from '../GroupsHeader/GroupsHeader';
@@ -11,7 +12,46 @@ export interface GroupsListProps {
   groups: Group[];
 }
 
+const messages = defineMessages({
+  addGroupButtonLabel: {
+    defaultMessage: `Add group`,
+    description: 'Call to action on the button to add a group',
+    id: 'components.groups.GroupsList.addGroupButtonLabel',
+  },
+  actionGroupLabel: {
+    defaultMessage: `Actions`,
+    description: 'The label for the action menu',
+    id: 'components.groups.GroupsList.actionGroupLabel',
+  },
+  deleteGroupButtonLabel: {
+    defaultMessage: `Delete {groupCount, plural, =0 {group} one {group} other {groups}}`,
+    description: 'Call to action on the button to delete a group',
+    id: 'components.groups.GroupsList.deleteGroupButtonLabel',
+  },
+  renameGroupButtonLabel: {
+    defaultMessage: `Rename group`,
+    description: 'Call to action on the button to rename a group',
+    id: 'components.groups.GroupsList.renameGroupButtonLabel',
+  },
+  createRoomButtonLabel: {
+    defaultMessage: `Create room for {groupCount, plural, =0 {group} one {group} other {groups}}`,
+    description: 'Call to action on the button to create a room for a group',
+    id: 'components.groups.GroupsList.createRoomButtonLabel',
+  },
+  createMeetingButtonLabel: {
+    defaultMessage: `Create meeting for {groupCount, plural, =0 {group} one {group} other {groups}}`,
+    description: 'Call to action on the button to create a meeting for a group',
+    id: 'components.groups.GroupsList.createMeetingButtonLabel',
+  },
+  numGroupsLabel: {
+    defaultMessage: `{groupCount, plural, =0 {No group yet} one {# group} other {# groups}}`,
+    description: 'The label for the number of groups',
+    id: 'components.groups.GroupsList.numGroupsLabel',
+  },
+});
+
 export default function GroupList({ groups }: GroupsListProps) {
+  const intl = useIntl();
   const [groupsSelected, setGroupsSelected] = useState(
     Object.fromEntries(groups.map((group) => [group.id, false])),
   );
@@ -39,7 +79,11 @@ export default function GroupList({ groups }: GroupsListProps) {
         <Box gridArea="title" pad={{ vertical: 'medium', horizontal: 'small' }}>
           <Box margin="auto 0px">
             <Text size="medium" color="brand" weight="bold">
-              ({groups.length} groups)
+              (
+              {intl.formatMessage(messages.numGroupsLabel, {
+                groupCount: groups.length,
+              })}
+              )
             </Text>
           </Box>
         </Box>
@@ -49,35 +93,41 @@ export default function GroupList({ groups }: GroupsListProps) {
           direction="row"
           justify="end"
         >
-          <Button primary label="Add Group" margin={{ vertical: 'auto', horizontal: 'xsmall' }} />
+          <Button
+            primary
+            label={intl.formatMessage(messages.addGroupButtonLabel)}
+            margin={{ vertical: 'auto', horizontal: 'xsmall' }}
+          />
           <Menu
-            name="Actions"
+            name={intl.formatMessage(messages.actionGroupLabel)}
             role="menu"
-            label="Actions"
-            aria-label="Actions"
+            label={intl.formatMessage(messages.actionGroupLabel)}
+            aria-label={intl.formatMessage(messages.actionGroupLabel)}
             margin={{ vertical: 'auto', horizontal: 'xsmall' }}
             items={[
               {
-                label: numberOfGroupsSelected > 1 ? 'Delete groups' : 'Delete group',
+                label: intl.formatMessage(messages.deleteGroupButtonLabel, {
+                  groupCount: numberOfGroupsSelected,
+                }),
                 onClick: () => {},
                 disabled: numberOfGroupsSelected === 0,
               },
               {
-                label: numberOfGroupsSelected > 1 ? 'Rename groups' : 'Rename group',
+                label: intl.formatMessage(messages.renameGroupButtonLabel),
+                onClick: () => {},
+                disabled: numberOfGroupsSelected !== 1,
+              },
+              {
+                label: intl.formatMessage(messages.createRoomButtonLabel, {
+                  groupCount: numberOfGroupsSelected,
+                }),
                 onClick: () => {},
                 disabled: numberOfGroupsSelected === 0,
               },
               {
-                label:
-                  numberOfGroupsSelected > 1 ? 'Create room for groups' : 'Create room for group',
-                onClick: () => {},
-                disabled: numberOfGroupsSelected === 0,
-              },
-              {
-                label:
-                  numberOfGroupsSelected > 1
-                    ? 'Create meeting for groups'
-                    : 'Create meeting for group',
+                label: intl.formatMessage(messages.createMeetingButtonLabel, {
+                  groupCount: numberOfGroupsSelected,
+                }),
                 onClick: () => {},
                 disabled: numberOfGroupsSelected === 0,
               },
