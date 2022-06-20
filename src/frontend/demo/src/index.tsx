@@ -2,6 +2,7 @@ import { loadLocaleData, TranslationProvider } from '@jitsi-magnify/core';
 import { Grommet } from 'grommet';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
@@ -26,9 +27,11 @@ async function render() {
   root.render(
     <TranslationProvider defaultLocale="en-US" locale={locale} messages={translatedMessages || {}}>
       <React.StrictMode>
-        <Grommet>
-          <App />
-        </Grommet>
+        <BrowserRouter>
+          <Grommet full>
+            <App />
+          </Grommet>
+        </BrowserRouter>
       </React.StrictMode>
     </TranslationProvider>,
   );

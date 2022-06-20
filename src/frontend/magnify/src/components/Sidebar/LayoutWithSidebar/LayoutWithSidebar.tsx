@@ -11,8 +11,4 @@ function LayoutWithSidebar(props: { itemZones?: SidebarButtonProps[][]; children
   );
 }
 
-LayoutWithSidebar.args = {
-  full: true,
-};
-
 export default LayoutWithSidebar;
