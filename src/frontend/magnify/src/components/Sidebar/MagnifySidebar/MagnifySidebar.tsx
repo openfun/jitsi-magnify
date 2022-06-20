@@ -4,14 +4,12 @@ import { Box, Nav, Sidebar } from 'grommet';
 import { SidebarButton, SidebarButtonProps } from '..';
 import { User, Group, AppsRounded, Calendar, Services } from 'grommet-icons';
 
-const SidebarHeader = () => <></>;
-
-const SidebarFooter = () => <></>;
-
 export interface MagnifySidebarProps {
   itemZones?: SidebarButtonProps[][];
   gap?: string;
   separatorGap?: string;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
 const messages = defineMessages({
@@ -42,7 +40,13 @@ const messages = defineMessages({
   },
 });
 
-function MagnifySidebar({ itemZones, gap = 'small', separatorGap = 'large' }: MagnifySidebarProps) {
+function MagnifySidebar({
+  itemZones,
+  gap = 'small',
+  separatorGap = 'large',
+  header = <></>,
+  footer = <></>,
+}: MagnifySidebarProps) {
   const intl = useIntl();
   const zones = itemZones || [
     [{ label: intl.formatMessage(messages.sidebarMyAccountLabel), icon: <User />, to: 'account' }],
@@ -61,12 +65,13 @@ function MagnifySidebar({ itemZones, gap = 'small', separatorGap = 'large' }: Ma
       },
     ],
   ];
+
   return (
     <Sidebar
       responsive={false}
       background="light-1"
-      header={<SidebarHeader />}
-      footer={<SidebarFooter />}
+      header={header}
+      footer={footer}
       pad={{ left: 'medium', right: 'large', vertical: 'medium' }}
     >
       <Nav gap={separatorGap} responsive={false}>
