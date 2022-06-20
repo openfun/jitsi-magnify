@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
 import jwt
+from rest_framework.views import APIView
 
 
 def create_payload(user, room):
@@ -47,21 +48,24 @@ def generate_token(user, room):
     return token
 
 
-def get_room_token_view(request, room):
+class RoomTokenView(APIView):
     """View for token fetching based on a guest user and a specific room
     This redirects to jitsi with the token"""
-    access_token = generate_token(request.user, room)
 
-    base_url = settings.JWT_CONFIGURATION["jitsi_domain"]
-    url_params = {"jwt": access_token}
-    encoded_params = urlencode(url_params)
-    url = f"https://{base_url}/{room}?{encoded_params}"
+    def get(self, request, room):
+        """Get the token for the room"""
+        access_token = generate_token(request.user, room)
 
-    # As we allow users to pass information to redirect url (with the parameter room),
-    # we check that this url is safe before redirecting
-    if not url_has_allowed_host_and_scheme(
-        url, allowed_hosts=base_url, require_https=True
-    ):
-        return HttpResponse(f"Redirection to url {url} is not allowed", status=403)
+        base_url = settings.JWT_CONFIGURATION["jitsi_domain"]
+        url_params = {"jwt": access_token}
+        encoded_params = urlencode(url_params)
+        url = f"https://{base_url}/{room}?{encoded_params}"
 
-    return HttpResponseRedirect(url)
+        # As we allow users to pass information to redirect url (with the parameter room),
+        # we check that this url is safe before redirecting
+        if not url_has_allowed_host_and_scheme(
+            url, allowed_hosts=base_url, require_https=True
+        ):
+            return HttpResponse(f"Redirection to url {url} is not allowed", status=403)
+
+        return HttpResponseRedirect(url)

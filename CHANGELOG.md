@@ -9,6 +9,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 ## Added
 
 - Add models to handle rooms, meetings, labels and groups
+- Add a swagger view to help with front end development
 
 ## Fixed
 

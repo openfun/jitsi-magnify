@@ -210,6 +210,7 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
         "dockerflow.django",
         "parler",
         "rest_framework",
+        "drf_yasg",
         # Django
         "django.contrib.auth",
         "django.contrib.contenttypes",
