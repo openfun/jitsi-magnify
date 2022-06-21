@@ -1,7 +1,7 @@
 import { Box, Button, Card, Grid, Menu, Text } from 'grommet';
 import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { Group } from '../../../types/group.interface';
+import { Group } from '../../../types/group';
 import GroupRow from '../GroupRow/GroupRow';
 import GroupsHeader from '../GroupsHeader/GroupsHeader';
 

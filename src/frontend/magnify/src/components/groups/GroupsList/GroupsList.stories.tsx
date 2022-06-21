@@ -1,8 +1,8 @@
 import React from 'react';
 import GroupsList, { GroupsListProps } from './GroupsList';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { mockedGroups } from './mocks';
 import { ResponsiveContext } from 'grommet';
+import createRandomGroup from '../../../factories/group';
 
 export default {
   title: 'Groups/GroupsList',
@@ -33,6 +33,14 @@ const Template: ComponentStory<typeof GroupsListWithinResponsiveContext> = (
   args: GroupsListWithinResponsiveContextProps,
 ) => <GroupsListWithinResponsiveContext {...args} />;
 
+// Mocks
+const mockedGroups = [
+  createRandomGroup(3, 7),
+  createRandomGroup(9),
+  createRandomGroup(23),
+  createRandomGroup(1),
+];
+
 // Stories
 export const GroupsList500px = Template.bind({});
 GroupsList500px.args = { width: 500, size: 'small', groups: mockedGroups };
@@ -44,4 +52,4 @@ export const GroupsListNoGroup = Template.bind({});
 GroupsListNoGroup.args = { width: 800, size: 'medium', groups: [] };
 
 export const GroupList1Group = Template.bind({});
-GroupList1Group.args = { width: 800, size: 'medium', groups: mockedGroups.slice(0, 1) };
+GroupList1Group.args = { width: 800, size: 'medium', groups: [createRandomGroup(3, 7)] };

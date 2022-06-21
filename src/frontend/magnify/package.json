@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.18.2",
+    "@faker-js/faker": "7.3.0",
     "@formatjs/cli": "5.0.2",
     "@formatjs/intl-relativetimeformat": "11.0.2",
     "@rollup/plugin-commonjs": "22.0.0",

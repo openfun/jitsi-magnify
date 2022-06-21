@@ -2,8 +2,16 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import GroupsList from './GroupsList';
-import { mockedGroups } from './mocks';
 import { IntlProvider } from 'react-intl';
+import createRandomGroup from '../../../factories/group';
+
+// Mocks
+const mockedGroups = [
+  createRandomGroup(3, 7),
+  createRandomGroup(9),
+  createRandomGroup(23),
+  createRandomGroup(1),
+];
 
 describe('GroupsList', () => {
   it('should be selectable group by group and globally', async () => {
