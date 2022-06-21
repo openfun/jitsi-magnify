@@ -16,9 +16,9 @@ describe('IdentityBlock', () => {
       </IntlProvider>,
     );
 
-    const nameInput = screen.getByLabelText('Name');
-    const usernameInput = screen.getByLabelText('Username');
-    const emailInput = screen.getByLabelText('Email');
+    const nameInput = screen.getByLabelText('Name*');
+    const usernameInput = screen.getByLabelText('Username*');
+    const emailInput = screen.getByLabelText('Email*');
     const saveButton = screen.getByText('Save');
 
     expect(nameInput).toHaveValue('John Doe');

@@ -14,9 +14,9 @@ describe('IdentityForm', () => {
       </IntlProvider>,
     );
 
-    const nameInput = screen.getByLabelText('Name');
-    const usernameInput = screen.getByLabelText('Username');
-    const emailInput = screen.getByLabelText('Email');
+    const nameInput = screen.getByRole('textbox', { name: 'Name *' });
+    const usernameInput = screen.getByRole('textbox', { name: 'Username *' });
+    const emailInput = screen.getByRole('textbox', { name: 'Email *' });
 
     // Save button is initially disabled (no modification)
     const saveButton = screen.getByText('Save');
@@ -24,14 +24,14 @@ describe('IdentityForm', () => {
 
     // Name field and validators
     await userEvent.clear(nameInput);
-    await screen.findByText('Name is required');
+    await screen.findByText('This field is required');
     await userEvent.type(nameInput, 'John Watson');
 
     // Username field and validators
     const invalidErrMessage =
       'Username is invalid, it should have between 3 and 16 letters, numbers or underscores';
     await userEvent.clear(usernameInput);
-    await screen.findByText('Username is required');
+    await screen.findByText('This field is required');
     await userEvent.type(usernameInput, '@test');
     await userEvent.clear(usernameInput);
     await userEvent.type(usernameInput, '2t');
@@ -44,7 +44,7 @@ describe('IdentityForm', () => {
 
     // Email field and validators
     await userEvent.clear(emailInput);
-    await screen.findByText('Email is required');
+    await screen.findByText('This field is required');
     await userEvent.type(emailInput, 'watson@test');
     await screen.findByText('Email is invalid');
     await userEvent.type(emailInput, '.fr');
