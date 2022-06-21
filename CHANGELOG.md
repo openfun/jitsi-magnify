@@ -26,3 +26,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - Fix storybook not starting up due to storybook packages version
 
 ## [Unrealeased]
+
+### Added
+
+- Add components for the profile pages (identity, avatars, delete account)
