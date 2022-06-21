@@ -1,8 +1,8 @@
 import React from 'react';
 import GroupRow, { GroupRowProps } from './GroupRow';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { mockedGroup3Members, mockedGroup9Members } from './mocks';
 import { ResponsiveContext } from 'grommet';
+import createRandomGroup from '../../../factories/group';
 
 export default {
   title: 'Groups/GroupRow',
@@ -39,16 +39,16 @@ const TemplateFree: ComponentStory<typeof GroupRow> = (args: GroupRowProps) => (
 
 // Stories
 export const GroupRow9PeopleSmall = Template.bind({});
-GroupRow9PeopleSmall.args = { width: 400, size: 'small', group: mockedGroup9Members, onToggle };
+GroupRow9PeopleSmall.args = { width: 400, size: 'small', group: createRandomGroup(9), onToggle };
 
 export const GroupRow9PeopleMedium = Template.bind({});
-GroupRow9PeopleMedium.args = { width: 900, size: 'medium', group: mockedGroup9Members, onToggle };
+GroupRow9PeopleMedium.args = { width: 900, size: 'medium', group: createRandomGroup(9), onToggle };
 
 export const GroupRow9PeopleLarge = Template.bind({});
-GroupRow9PeopleLarge.args = { width: 1850, size: 'large', group: mockedGroup9Members, onToggle };
+GroupRow9PeopleLarge.args = { width: 1850, size: 'large', group: createRandomGroup(9), onToggle };
 
 export const GroupRow3PeopleMedium = Template.bind({});
-GroupRow3PeopleMedium.args = { width: 900, size: 'medium', group: mockedGroup3Members, onToggle };
+GroupRow3PeopleMedium.args = { width: 900, size: 'medium', group: createRandomGroup(3), onToggle };
 
 export const GroupRow9PeopleAdaptive = TemplateFree.bind({});
-GroupRow9PeopleAdaptive.args = { group: mockedGroup9Members, onToggle };
+GroupRow9PeopleAdaptive.args = { group: createRandomGroup(9), onToggle };
