@@ -20,7 +20,7 @@ describe('TextField', () => {
 
     render(<TestElement />);
 
-    const input = screen.getByLabelText('My input') as HTMLInputElement;
+    const input = screen.getByRole<HTMLInputElement>('textbox', { name: 'My input' });
 
     await user.type(input, ' World');
     expect(input.value).toBe('Hello World');
@@ -35,7 +35,7 @@ describe('TextField', () => {
 
   it('should add a star for required fields', () => {
     render(<TextField label="My input" name="my-input" onChange={() => {}} value="" required />);
-    screen.getByLabelText('My input*');
+    screen.getByRole('textbox', { name: 'My input *' });
   });
 
   it('should render the error messages by default', () => {
@@ -79,7 +79,7 @@ describe('TextField', () => {
       />,
     );
 
-    const input = screen.getByLabelText('My input') as HTMLInputElement;
+    const input = screen.getByLabelText<HTMLInputElement>('My input') as HTMLInputElement;
     const button = screen.getByTitle('Show');
 
     expect(input.type).toBe('password');

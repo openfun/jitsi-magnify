@@ -1,25 +1,15 @@
 import { Box, Button } from 'grommet';
-import React, { useState } from 'react';
+import React from 'react';
 import TextField from '../../design-system/TextField';
 import validator from 'validator';
 import { defineMessages, useIntl } from 'react-intl';
+import useFormState from '../../../hooks/useFormState';
+import { validationMessages } from '../../../i18n/Messages';
 
 export interface IdentityFormProps {
   name: string;
   username: string;
   email: string;
-}
-
-interface IdentityFormValues {
-  name: string;
-  username: string;
-  email: string;
-}
-
-interface IdentityFormErrors {
-  name: string[];
-  username: string[];
-  email: string[];
 }
 
 const messages = defineMessages({
@@ -28,20 +18,10 @@ const messages = defineMessages({
     description: 'The label for the name field',
     id: 'components.profile.identityForm.nameLabel',
   },
-  nameRequired: {
-    defaultMessage: 'Name is required',
-    description: 'The error message for the name field',
-    id: 'components.profile.identityForm.nameRequired',
-  },
   usernameLabel: {
     defaultMessage: 'Username',
     description: 'The label for the username field',
     id: 'components.profile.identityForm.usernameLabel',
-  },
-  usernameRequired: {
-    defaultMessage: 'Username is required',
-    description: 'The error message for the username field',
-    id: 'components.profile.identityForm.usernameRequired',
   },
   usernameInvalid: {
     defaultMessage:
@@ -53,11 +33,6 @@ const messages = defineMessages({
     defaultMessage: 'Email',
     description: 'The label for the email field',
     id: 'components.profile.identityForm.emailLabel',
-  },
-  emailRequired: {
-    defaultMessage: 'Email is required',
-    description: 'The error message for the email field',
-    id: 'components.profile.identityForm.emailRequired',
   },
   emailInvalid: {
     defaultMessage: 'Email is invalid',
@@ -73,50 +48,36 @@ const messages = defineMessages({
 
 export default function IdentityForm({ name, username, email }: IdentityFormProps) {
   const intl = useIntl();
-  const [formValues, setFormValues] = useState<IdentityFormValues>({ name, username, email });
-  const [formErrors, setFormErrors] = useState<IdentityFormErrors>({
-    name: [],
-    username: [],
-    email: [],
-  });
 
-  const modified =
-    name !== formValues.name || username !== formValues.username || email !== formValues.email;
-  const valid = Object.values(formErrors).every((errors) => errors.length === 0);
-
-  const validate = (formState: IdentityFormValues) => {
-    const errors: IdentityFormErrors = {
-      name: [],
-      username: [],
-      email: [],
-    };
-
-    if (!formState.name || formState.name.length < 1)
-      errors.name.push(intl.formatMessage(messages.nameRequired));
-    if (!formState.username || formState.username.length < 1)
-      errors.username.push(intl.formatMessage(messages.usernameRequired));
-    else if (!validator.matches(formState.username, /^[a-zA-Z0-9_]{3,16}$/))
-      errors.username.push(intl.formatMessage(messages.usernameInvalid));
-    if (!formState.email || formState.email.length < 1)
-      errors.email.push(intl.formatMessage(messages.emailRequired));
-    else if (!validator.isEmail(formState.email))
-      errors.email.push(intl.formatMessage(messages.emailInvalid));
-
-    setFormErrors(errors);
-
-    return Object.values(errors).every((errors) => errors.length === 0);
-  };
+  const { values, errors, modified, setValue, isValid, isModified } = useFormState(
+    { name, username, email },
+    {
+      name: (value) => {
+        if (!value || value.length < 1) return [intl.formatMessage(validationMessages.required)];
+        return [];
+      },
+      username: (value) => {
+        if (!value || value.length < 1) return [intl.formatMessage(validationMessages.required)];
+        if (!validator.matches(value, /^[a-zA-Z0-9_]{3,16}$/))
+          return [intl.formatMessage(messages.usernameInvalid)];
+        return [];
+      },
+      email: (value) => {
+        if (!value || value.length < 1) return [intl.formatMessage(validationMessages.required)];
+        if (!validator.isEmail(value)) return [intl.formatMessage(messages.emailInvalid)];
+        return [];
+      },
+    },
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
-    const newFormState = { ...formValues, [name as keyof IdentityFormValues]: value };
-    setFormValues(newFormState);
-    validate(newFormState);
+    setValue(name as 'name' | 'username' | 'email', value);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('submit', formValues);
+    console.log('submit', values);
   };
 
   return (
@@ -124,32 +85,38 @@ export default function IdentityForm({ name, username, email }: IdentityFormProp
       <TextField
         label={intl.formatMessage(messages.nameLabel)}
         name="name"
-        value={formValues.name}
-        errors={formErrors.name}
+        value={values.name}
+        errors={errors.name}
+        displayErrors={modified.name}
         onChange={handleChange}
         margin={{ bottom: 'small' }}
+        required
       />
       <TextField
         label={intl.formatMessage(messages.usernameLabel)}
         name="username"
-        value={formValues.username}
-        errors={formErrors.username}
+        value={values.username}
+        errors={errors.username}
+        displayErrors={modified.username}
         onChange={handleChange}
         margin={{ bottom: 'small' }}
+        required
       />
       <TextField
         label={intl.formatMessage(messages.emailLabel)}
         name="email"
-        value={formValues.email}
-        errors={formErrors.email}
+        value={values.email}
+        errors={errors.email}
+        displayErrors={modified.email}
         onChange={handleChange}
         margin={{ bottom: 'small' }}
+        required
       />
       <Box direction="row" justify="end" margin={{ top: 'small' }}>
         <Button
           primary
           label={intl.formatMessage(messages.submitButtonLabel)}
-          disabled={!modified || !valid}
+          disabled={!isModified || !isValid}
           type="submit"
         />
       </Box>
