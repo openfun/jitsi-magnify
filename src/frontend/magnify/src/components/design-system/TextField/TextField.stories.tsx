@@ -31,3 +31,15 @@ WithErrors.args = {
   ...baseArgs,
   errors: ['This is an error'],
 };
+
+export const Required = Template.bind({});
+Required.args = {
+  ...baseArgs,
+  required: true,
+};
+
+export const Password = Template.bind({});
+Password.args = {
+  ...baseArgs,
+  type: 'password',
+};

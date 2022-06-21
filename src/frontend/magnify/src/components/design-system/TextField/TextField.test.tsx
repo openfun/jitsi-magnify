@@ -33,7 +33,12 @@ describe('TextField', () => {
     expect(baseElement).toHaveStyle('margin: 8px');
   });
 
-  it('should render the error messages', () => {
+  it('should add a star for required fields', () => {
+    render(<TextField label="My input" name="my-input" onChange={() => {}} value="" required />);
+    screen.getByLabelText('My input*');
+  });
+
+  it('should render the error messages by default', () => {
     render(
       <TextField
         label="My input"
@@ -45,5 +50,42 @@ describe('TextField', () => {
     );
 
     screen.getByText('This is an error, This is another error');
+  });
+
+  it('should not render the error messages if displayErrors is false', () => {
+    render(
+      <TextField
+        label="My input"
+        name="my-input"
+        onChange={() => {}}
+        value=""
+        errors={['This is an error', 'This is another error']}
+        displayErrors={false}
+      />,
+    );
+
+    expect(screen.queryByText('This is an error, This is another error')).not.toBeInTheDocument();
+  });
+
+  it('should add a button to reveal password if type is password', async () => {
+    const user = userEvent.setup();
+    render(
+      <TextField
+        label="My input"
+        name="my-input"
+        onChange={() => {}}
+        value="pass"
+        type="password"
+      />,
+    );
+
+    const input = screen.getByLabelText('My input') as HTMLInputElement;
+    const button = screen.getByTitle('Show');
+
+    expect(input.type).toBe('password');
+    await user.click(button);
+    expect(input.type).toBe('text');
+    await user.click(button);
+    expect(input.type).toBe('password');
   });
 });
