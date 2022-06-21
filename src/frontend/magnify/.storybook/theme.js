@@ -29,4 +29,11 @@ export default {
       radius: '5px',
     },
   },
+  input: {
+    border: false,
+    weight: 'normal',
+  },
+  formField: {
+    border: false,
+  },
 };
