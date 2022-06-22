@@ -5,6 +5,7 @@ from django.urls import path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from rest_framework.authtoken import views as authviews
 
 from magnify.apps.core import views
 
@@ -22,6 +23,12 @@ SchemaView = get_schema_view(
 # To appear on the swagger URL,
 # the views need to extend APIView from the rest_framework.views package.
 urlpatterns = [
+    # Authentication
+    path("login/", authviews.obtain_auth_token),
+    # Users
+    path("user/create/", views.UserCreateView.as_view()),
+    path("user/<user_id>", views.UserView.as_view()),
+    # Swagger documentation
     path("token/<room>", views.RoomTokenView.as_view()),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",

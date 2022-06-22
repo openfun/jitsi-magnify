@@ -8,7 +8,48 @@ from django.utils.translation import gettext_lazy as _
 
 
 class User(auth_models.AbstractUser):
-    """User model which follow courses or manage backend (is_staff)"""
+    """User model"""
+
+    username_validator = RegexValidator(
+        "^[a-zA-Z0-9_-]{3,16}$",
+        message="""Username must be between 3 and 16 characters long
+            and contain only letters, numbers, underscores and hyphens.""",
+    )
+
+    username = models.CharField(
+        _("username"),
+        max_length=150,
+        unique=True,
+        validators=[username_validator],
+        error_messages={
+            "unique": _("A user with that username already exists."),
+        },
+    )
+
+    name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        validators=[
+            RegexValidator(
+                regex=r"^[a-zA-Z '-]+$",
+                message=_("Only letters, spaces, apostrophe and hyphen are allowed"),
+            )
+        ],
+    )
+    email = models.EmailField(
+        max_length=255,
+        unique=True,
+        validators=[
+            RegexValidator(
+                r"^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$",
+                message="Invalid email address",
+            )
+        ],
+    )
+
+    avatar = models.ImageField("Avatar", upload_to="avatars", blank=True, null=True)
+    REQUIRED_FIELDS = ["email", "password"]
 
     class Meta:
         db_table = "magnify_user"

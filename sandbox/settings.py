@@ -95,6 +95,24 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
 
     AUTH_USER_MODEL = "core.User"
 
+    AUTH_PASSWORD_VALIDATORS = [
+        {
+            "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        },
+        {
+            "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+            "OPTIONS": {
+                "min_length": 8,
+            },
+        },
+        {
+            "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        },
+        {
+            "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        },
+    ]
+
     JWT_CONFIGURATION = {
         "guest_avatar": values.Value(
             "", environ_name="JWT_GUEST_AVATAR", environ_prefix=None
@@ -208,6 +226,7 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
         "dockerflow.django",
         "parler",
         "rest_framework",
+        "rest_framework.authtoken",
         "drf_yasg",
         # Django
         "django.contrib.auth",
