@@ -4,12 +4,12 @@ from datetime import timedelta
 from urllib.parse import urlencode
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
 import jwt
-from rest_framework.views import APIView
+from rest_framework.views import APIView, Response
 
 
 def create_payload(user, room):
@@ -67,6 +67,6 @@ class RoomTokenView(APIView):
         if not url_has_allowed_host_and_scheme(
             url, allowed_hosts=base_url, require_https=True
         ):
-            return HttpResponse(f"Redirection to url {url} is not allowed", status=403)
+            return Response(f"Redirection to url {url} is not allowed", status=403)
 
         return HttpResponseRedirect(url)
