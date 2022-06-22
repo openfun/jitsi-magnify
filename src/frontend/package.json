@@ -26,7 +26,8 @@
     "format-magnify:write": "cd magnify && yarn format:write",
     "format:check": "yarn format-magnify:check && yarn format-demo:check",
     "format:write": "yarn format-magnify:write && yarn format-demo:write",
-    "verify-all": "yarn format:check & yarn lint & yarn build & yarn test"
+    "verify-all": "yarn format:check & yarn lint & yarn build & yarn test",
+    "scripts:new-icon": "cd scripts && yarn new-icon"
   },
   "workspaces": [
     "demo",
