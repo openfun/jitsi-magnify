@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "new-icon": "ts-node src/generateIcon.ts"
+    "new-icon": "ts-node src/generateIcon.ts",
+    "new-component": "ts-node src/generateComponent.ts"
   },
   "devDependencies": {
     "ts-node": "^10.8.1",
