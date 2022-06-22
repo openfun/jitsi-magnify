@@ -3,12 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
-    "new-icon": "node --loader ts-node/esm ./src/addIcon.ts"
+    "new-icon": "ts-node src/generateIcon.ts"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.4"
   }
