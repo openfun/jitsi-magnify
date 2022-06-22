@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Box, Nav, Sidebar } from 'grommet';
 import { SidebarButton, SidebarButtonProps } from '..';
-import { User, Group, AppsRounded, Calendar, Services } from 'grommet-icons';
+import { AvatarSVG, CalEventSVG, GridSVG, GroupSVG, SettingsSVG } from '../../design-system';
 
 export interface MagnifySidebarProps {
   itemZones?: SidebarButtonProps[][];
@@ -49,18 +49,24 @@ function MagnifySidebar({
 }: MagnifySidebarProps) {
   const intl = useIntl();
   const zones = itemZones || [
-    [{ label: intl.formatMessage(messages.sidebarMyAccountLabel), icon: <User />, to: 'account' }],
     [
-      { label: intl.formatMessage(messages.sidebarRoomsLabel), icon: <AppsRounded />, to: 'rooms' },
+      {
+        label: intl.formatMessage(messages.sidebarMyAccountLabel),
+        icon: <AvatarSVG />,
+        to: 'account',
+      },
+    ],
+    [
+      { label: intl.formatMessage(messages.sidebarRoomsLabel), icon: <GridSVG />, to: 'rooms' },
       {
         label: intl.formatMessage(messages.sidebarMeetingsLabel),
-        icon: <Calendar />,
+        icon: <CalEventSVG />,
         to: 'meetings',
       },
-      { label: intl.formatMessage(messages.sidebarGroupsLabel), icon: <Group />, to: 'groups' },
+      { label: intl.formatMessage(messages.sidebarGroupsLabel), icon: <GroupSVG />, to: 'groups' },
       {
         label: intl.formatMessage(messages.sidebarSettingsLabel),
-        icon: <Services />,
+        icon: <SettingsSVG />,
         to: 'settings',
       },
     ],
