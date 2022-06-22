@@ -1,5 +1,7 @@
 """Urls declarations for Magnify's core app."""
 
+import os
+
 from django.urls import path, re_path
 
 from drf_yasg import openapi
@@ -17,6 +19,7 @@ SchemaView = get_schema_view(
             This app is used in the sandbox folder of the project.""",
     ),
     public=True,
+    url=os.environ.get("BACK_URL"),
     permission_classes=[permissions.AllowAny],
 )
 

@@ -5,9 +5,15 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.utils.translation import gettext_lazy as _
 
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView, Response
 
 from magnify.apps.core.models import User
+from magnify.apps.core.serializers import (
+    UserCreateResponseErrorSerializer,
+    UserCreateResponseSuccessSerializer,
+    UserCreateSerializer,
+)
 
 
 class UserView(APIView):
@@ -31,6 +37,13 @@ class UserCreateView(APIView):
     View for creating a user
     """
 
+    @swagger_auto_schema(
+        request_body=UserCreateSerializer,
+        responses={
+            201: UserCreateResponseSuccessSerializer,
+            400: UserCreateResponseErrorSerializer,
+        },
+    )
     def post(self, request):
         """
         Create a user.
@@ -41,7 +54,7 @@ class UserCreateView(APIView):
             # Password validators are to be found in settings
             validate_password(request.data.get("password"))
         except ValidationError as error:
-            return Response({"password": message for message in error})
+            return Response({"password": message for message in error}, status=400)
         try:
             new_user = User(
                 username=request.data.get("username"),
@@ -71,4 +84,4 @@ class UserCreateView(APIView):
             request.data.get("password"),
             name=request.data.get("name"),
         )
-        return Response(new_user.id, status=200)
+        return Response(new_user.id, status=201)

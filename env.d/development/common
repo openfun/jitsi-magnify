@@ -7,6 +7,9 @@ DJANGO_SETTINGS_MODULE=settings
 PYTHONPATH=/app/sandbox
 PYTHONUNBUFFERED=1
 
+# Dev back URL
+BACK_URL="http://localhost:8071"
+
 # Magnify jwt settings
 JWT_GUEST_AVATAR="https://ronaldmottram.co.nz/wp-content/uploads/2019/01/default-user-icon-8.jpg"
 JWT_GUEST_DEFAULT_PASSWORD="default"
