@@ -15,6 +15,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   groups of users.
 - Add an abstraction of the backend easily mocked and tested
   that also can be overriden
+- Add a component `RoomRow` to present a single room and join it
 
 ## Changed
 
