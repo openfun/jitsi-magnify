@@ -12,10 +12,12 @@ const promisifiedConsoleLogFactory =
           'color: #00a',
         );
         resolve(resolveTo);
-      }, 200);
+      }, 700);
     });
 
 export default class LogController extends Controller {
   sendTest = promisifiedConsoleLogFactory('sendTest', null);
   getExamples = promisifiedConsoleLogFactory('getExamples', [example1, example2]);
+
+  joinRoom = promisifiedConsoleLogFactory('joinRoom', { token: 'successful-token' });
 }

@@ -1,8 +1,11 @@
 import theme from './theme';
-import { Grommet } from 'grommet';
+import { Grommet, Text, Box } from 'grommet';
+import { MemoryRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
 import messages from '../src/translations/fr-FR.json';
 import { ControllerProvider, LogController } from '../src/controller';
+import { QueryClientProvider, QueryClient } from 'react-query';
+import DebugRoute from "../src/utils/DebugRoute";
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -15,9 +18,21 @@ export const parameters = {
 };
 
 const controller = new LogController();
+const queryClient = new QueryClient();
 
 // Grommet wrapper decorator
 const withGrommet = (storyFn) => <Grommet theme={theme}>{storyFn()}</Grommet>;
+
+// Simulate router behavior
+
+export const withRouter = (storyFn) => (
+  <MemoryRouter>
+    {storyFn()}
+    <Routes>
+      <Route path="*" element={<DebugRoute />} />
+    </Routes>
+  </MemoryRouter>
+);
 
 // Intl wrapper decorator
 const withIntl = (storyFn) => (
@@ -31,5 +46,10 @@ const withController = (storyFn) => (
   <ControllerProvider controller={controller}>{storyFn()}</ControllerProvider>
 );
 
+// query decorator
+const withQuery = (storyFn) => (
+  <QueryClientProvider client={queryClient}>{storyFn()}</QueryClientProvider>
+);
+
 // Decorators
-export const decorators = [withGrommet, withIntl, withController];
+export const decorators = [withRouter, withGrommet, withIntl, withController, withQuery];

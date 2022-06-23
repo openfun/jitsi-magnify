@@ -23,4 +23,10 @@ export default {
       radius: '5px',
     },
   },
+  tag: {
+    border: {
+      color: 'brand',
+      radius: '5px',
+    },
+  },
 };

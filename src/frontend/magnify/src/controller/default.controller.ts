@@ -23,4 +23,8 @@ export default class DefaultController extends Controller {
     const res = await this._axios.get('/examples');
     return res.data;
   }
+
+  async joinRoom(roomId: string): Promise<{ token: string }> {
+    throw new Error('Not implemented');
+  }
 }
