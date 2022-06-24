@@ -1,6 +1,6 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { getByRole, getByText, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import RowsList from './RowsList';
 import { IntlProvider } from 'react-intl';
 import { exampleActions, ExampleHeader, ExampleRow, MinimalExampleRow } from './DemoComponents';

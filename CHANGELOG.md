@@ -16,6 +16,10 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - Add an abstraction of the backend easily mocked and tested
   that also can be overriden
 
+## Changed
+
+- Rewrite the GroupList component using a more generic approach
+
 ## Fixed
 
 - Fix storybook not starting up due to storybook packages version

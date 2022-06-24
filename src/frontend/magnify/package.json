@@ -7,7 +7,7 @@
     "build": "rollup -c",
     "build-storybook": "build-storybook",
     "compile-translations": "./i18n/compile-translations.js",
-    "extract-translations": "formatjs extract './**/*.ts*' --ignore ./node_modules --ignore './**/*.d.ts' --out-file './i18n/frontend.json' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --format crowdin",
+    "extract-translations": "formatjs extract './**/*.ts*' --ignore ./node_modules --ignore './**/*.d.ts' --ignore './**/*.stories.ts*' --out-file './i18n/frontend.json' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --format crowdin",
     "storybook": "start-storybook -p 6006",
     "test": "jest src",
     "lint": "eslint src",
