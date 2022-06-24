@@ -83,7 +83,7 @@ export interface RowsListProps<TRowProps extends Row> {
  *
  * You can override a lot in this component.
  */
-export default function RoomRow<TRowProps extends Row>({
+export default function RowsList<TRowProps extends Row>({
   label,
   addLabel,
   onAdd,
