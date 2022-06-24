@@ -7,7 +7,7 @@ from django.urls import path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from rest_framework.authtoken import views as authviews
+from rest_framework_simplejwt import views as jwt_views
 
 from magnify.apps.core import views
 
@@ -16,7 +16,9 @@ SchemaView = get_schema_view(
         title="Magnify API",
         default_version="v1",
         description="""This is the schema for the Magnify API.
-            This app is used in the sandbox folder of the project.""",
+
+            All routes are protected by the JWT authentication except
+            for "login", "refresh" and "create user".""",
     ),
     public=True,
     url=os.environ.get("BACK_URL"),
@@ -27,7 +29,8 @@ SchemaView = get_schema_view(
 # the views need to extend APIView from the rest_framework.views package.
 urlpatterns = [
     # Authentication
-    path("login/", authviews.obtain_auth_token),
+    path("login/", jwt_views.TokenObtainPairView.as_view()),
+    path("login/refresh/", jwt_views.TokenRefreshView.as_view()),
     # Users
     path("user/create/", views.UserCreateView.as_view()),
     path("user/<user_id>", views.UserView.as_view()),

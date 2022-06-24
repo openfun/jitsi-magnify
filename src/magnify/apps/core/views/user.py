@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.utils.translation import gettext_lazy as _
 
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
 
 from magnify.apps.core.models import User
@@ -20,6 +21,8 @@ class UserView(APIView):
     """
     View for a user.
     """
+
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, user_id):
         """
