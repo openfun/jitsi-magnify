@@ -13,13 +13,39 @@ import appendToFile from "./tools/appendToFile";
 import createDirectory from "./tools/createDirectory";
 import searchInFile from "./tools/searchInFile";
 import writeFile from "./tools/writeFile";
+import { folderName } from "./tools/nameFormatting";
+
+if (!process.argv[2])
+  throw new Error(
+    "No component name or path provided. You should provide a component name as an argument."
+  );
+if (process.argv[3])
+  throw new Error(
+    "You provided a second argument, but it is not supported. If you want to genereate a component inside a folder, you should use '<Group>/<ComponentName>' as argument."
+  );
+
+const givenComponentDirs = process.argv[2].split("/").filter((x) => x != "");
+const componentName = givenComponentDirs[givenComponentDirs.length - 1];
+
+const notInCamelCase = givenComponentDirs.filter(
+  (folder) =>
+    folder[0] !== folder[0].toUpperCase() ||
+    folder !== folder.replace(/[^a-zA-Z0-9]/g, "")
+);
+if (notInCamelCase.length > 0)
+  throw new Error(
+    `Component name and groups should be in CamelCase. You should use 'FooBar' instead of 'fooBar' or 'foo-bar.
+Invalid folders/components:${notInCamelCase.join(", ")}\n`
+  );
+
+const componentDirsNames = givenComponentDirs.map((folder, index) =>
+  index !== givenComponentDirs.length - 1 ? folderName(folder) : folder
+);
 
 const pathToComponentFolderInComponents = path.join(
   pathToComponents,
-  process.argv[2]
+  ...componentDirsNames
 );
-const componentDirs = process.argv[2].split("/").filter((x) => x != "");
-const componentName = componentDirs[componentDirs.length - 1];
 
 // CREATE FOLDER
 createDirectory(pathToComponentFolderInComponents);
@@ -39,7 +65,7 @@ writeFile(
 // CREATE STORIES
 writeFile(
   path.join(pathToComponentFolderInComponents, `${componentName}.stories.tsx`),
-  storiesTemplate(componentName, componentDirs)
+  storiesTemplate(componentName, givenComponentDirs)
 );
 
 // CREATE TEST
@@ -52,8 +78,8 @@ writeFile(
 
 // Get [..., .../ComponentGroup, .../ComponentGroup/Component]
 let indexesFolder = [pathToComponents];
-for (let i = 0; i < componentDirs.length - 1; i++) {
-  indexesFolder.push(path.join(indexesFolder[i], componentDirs[i]));
+for (let i = 0; i < componentDirsNames.length - 1; i++) {
+  indexesFolder.push(path.join(indexesFolder[i], componentDirsNames[i]));
 }
 
 // Append 'default as' export to last index file
@@ -65,7 +91,7 @@ appendToFile(
 // Append 'export all' export to others
 for (let i = 0; i < indexesFolder.length - 1; i++) {
   const indexPath = path.join(indexesFolder[i], "index.ts");
-  const exportAll = exportAllTemplate(componentDirs[i]);
+  const exportAll = exportAllTemplate(componentDirsNames[i]);
   let findExportAll = -1;
 
   try {
