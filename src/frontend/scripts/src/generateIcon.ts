@@ -13,7 +13,10 @@ import appendToFile from "./tools/appendToFile";
 import createDirectory from "./tools/createDirectory";
 
 const iconName = process.argv[2];
-if (!iconName) throw new Error("Invalid icon name provided");
+if (!iconName)
+  throw new Error(
+    "No icon name provided. You should provide an icon name as an argument."
+  );
 
 const fullPath = path.join(pathToComponents, `/svgIcons/${iconName}`);
 
