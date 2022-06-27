@@ -33,7 +33,7 @@ export default function LoadingButton({
           </Box>
         ) : (
           <Box direction="row" gap="small">
-            <Box margin={'auto 9px'}>{label}</Box>
+            <Box margin={'auto 15px'}>{label}</Box>
           </Box>
         )
       }

@@ -59,4 +59,7 @@ export default abstract class Controller {
 
   // Groups
   abstract getGroups(): Promise<Group[]>;
+
+  // Meetings
+  abstract joinMeeting(meetingId: string): Promise<{ token: string }>;
 }
