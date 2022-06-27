@@ -32,7 +32,6 @@ export default class DefaultController extends Controller {
     const res = await this._axios.get('/examples');
     return res.data;
   }
-
   async joinRoom(roomId: string): Promise<{ token: string }> {
     throw new Error('Not implemented');
   }
@@ -79,6 +78,10 @@ export default class DefaultController extends Controller {
 
   async getGroups(): Promise<Group[]> {
     // GET /groups
+    throw new Error('Not implemented');
+  }
+
+  async joinMeeting(): Promise<{ token: string }> {
     throw new Error('Not implemented');
   }
 }

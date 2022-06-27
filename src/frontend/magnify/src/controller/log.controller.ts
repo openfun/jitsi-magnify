@@ -316,4 +316,11 @@ export default class LogController extends Controller {
     'getGroups',
     new MockControllerFunction<null, Group[]>().resolveOnDefault(createRandomGroups(7)),
   );
+
+  // Meetings
+  joinMeeting = promisifiedConsoleLogFactory(
+    this,
+    'joinMeeting',
+    new MockControllerFunction<string, { token: string }>().resolveOnDefault({ token: 'token' }),
+  );
 }
