@@ -1,5 +1,5 @@
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { LayoutWithSidebar } from '@jitsi-magnify/core';
+import { LayoutWithSidebar, TestButton, TestButtonVariant } from '@jitsi-magnify/core';
 
 export const messages = defineMessages({
   testTitle: {
@@ -12,9 +12,12 @@ export const messages = defineMessages({
 export default function App() {
   return (
     <LayoutWithSidebar>
-      <h1>
-        <FormattedMessage {...messages.testTitle} />
-      </h1>
+      <div>
+        <h1>
+          <FormattedMessage {...messages.testTitle} />
+        </h1>
+        <TestButton variant={TestButtonVariant.BLUE} />
+      </div>
     </LayoutWithSidebar>
   );
 }

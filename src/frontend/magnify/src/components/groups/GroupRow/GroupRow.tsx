@@ -2,6 +2,7 @@ import { Avatar, Box, Card, CheckBox, Grid, ResponsiveContext, Text } from 'grom
 import React, { ChangeEvent, useContext } from 'react';
 import { More } from 'grommet-icons';
 import { Group } from '../../../types/group';
+import { SquareAvatar } from '../../design-system';
 
 export interface GroupRowProps {
   /**
@@ -67,29 +68,18 @@ export default function GroupRow({ group, onToggle, selected }: GroupRowProps) {
           margin={{ vertical: 'auto' }}
         >
           {group.members.slice(0, numberOfDisplayedMembers).map((member) => (
-            <Avatar
-              round="xsmall"
-              src={member.avatar}
-              size="40px"
-              key={member.id}
-              title={member.name}
-              data-testid="group-row-member-image"
-            />
+            <SquareAvatar src={member.avatar} key={member.id} title={member.name} />
           ))}
           {numberOfDisplayedMembers < group.members.length ? (
-            <Avatar
-              round="xsmall"
-              size="40px"
-              data-testid="more-members"
+            <SquareAvatar
               title={group.members
                 .slice(numberOfDisplayedMembers)
                 .map((member) => member.name)
                 .join(', ')}
-            >
-              <More color="brand" />
-            </Avatar>
+              more
+            />
           ) : (
-            <Avatar round="xsmall" size="40px" />
+            <SquareAvatar />
           )}
         </Box>
         <Box gridArea="membersNumber" justify="center">

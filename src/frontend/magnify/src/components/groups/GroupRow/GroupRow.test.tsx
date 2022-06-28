@@ -29,7 +29,7 @@ describe('GroupRow', () => {
       );
 
       // Check if the number of images rendered is correct
-      const avatars = screen.queryAllByTestId('group-row-member-image');
+      const avatars = screen.queryAllByTestId('avatar');
       expect(avatars.length).toBe(expectedNumberOfMembersRendered);
 
       // Check if images have the right title
