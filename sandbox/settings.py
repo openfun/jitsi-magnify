@@ -45,10 +45,12 @@ class DRFMixin:
     REST_FRAMEWORK = {
         "ALLOWED_VERSIONS": ("1.0",),
         "DEFAULT_AUTHENTICATION_CLASSES": (
+            "rest_framework_simplejwt.authentication.JWTAuthentication",
             "rest_framework.authentication.SessionAuthentication",
         ),
         "DEFAULT_VERSION": "1.0",
         "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+        "EXCEPTION_HANDLER": "magnify.apps.core.api.exception_handler",
     }
 
 
