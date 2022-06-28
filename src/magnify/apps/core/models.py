@@ -135,6 +135,9 @@ class Group(ValidateModelMixin, models.Model):
         verbose_name = _("Group")
         verbose_name_plural = _("Groups")
 
+    def __str__(self):
+        return self.name
+
 
 class Membership(ValidateModelMixin, models.Model):
     """Link table between users and groups"""
