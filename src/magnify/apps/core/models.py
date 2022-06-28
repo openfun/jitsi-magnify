@@ -122,9 +122,8 @@ class Group(ValidateModelMixin, models.Model):
     name = models.CharField(max_length=100)
     # token to join group with
     token = models.CharField(max_length=100)
-    administrators = models.ManyToManyField(User, related_name="is_administrator_of")
-    meetings = models.ManyToManyField(Meeting)
-    rooms = models.ManyToManyField(Room)
+    meetings = models.ManyToManyField(Meeting, related_name="allowed_groups")
+    rooms = models.ManyToManyField(Room, related_name="allowed_groups")
     members = models.ManyToManyField(
         User, through="Membership", related_name="is_member_of"
     )
