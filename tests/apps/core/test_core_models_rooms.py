@@ -29,47 +29,30 @@ class RoomsModelsTestCase(TestCase):
         """The name field should be less than 100 characters."""
         RoomFactory(name="a" * 100)
         with self.assertRaises(ValidationError) as context:
-            RoomFactory(name="a" * 101, slug="a")
+            RoomFactory(name="a" * 101)
 
         self.assertEqual(
             context.exception.messages,
-            ["Ensure this value has at most 100 characters (it has 101)."],
+            ["Ensure this value has at most 100 characters (it has 101).", "Ensure this value has at most 100 characters (it has 101)."],
         )
 
-    def test_models_rooms_slug_valid(self):
-        """The slug field should not accept strings that are not slugs."""
+    def test_models_rooms_slug_unique(self):
+        """Room slugs should be unique."""
+        RoomFactory(name="a room!")
+
         with self.assertRaises(ValidationError) as context:
-            RoomFactory(slug="not a slug")
+            RoomFactory(name="A Room!")
 
         self.assertEqual(
             context.exception.messages,
-            [
-                "Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
-            ],
+            ['Room with this Slug already exists.']
         )
 
-    def test_models_rooms_slug_unicode(self):
-        """The slug field should not accept unicode characters."""
-        with self.assertRaises(ValidationError) as context:
-            RoomFactory(slug="slug-with-é")
-
-        self.assertEqual(
-            context.exception.messages,
-            [
-                "Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
-            ],
-        )
-
-    def test_models_rooms_slug_maxlength(self):
-        """The slug field should be less than 100 characters."""
-        RoomFactory(slug="a" * 100)
-        with self.assertRaises(ValidationError) as context:
-            RoomFactory(slug="a" * 101)
-
-        self.assertEqual(
-            context.exception.messages,
-            ["Ensure this value has at most 100 characters (it has 101)."],
-        )
+    def test_models_rooms_slug_automatic(self):
+        """Room slugs should be automatically populated upon saving."""
+        room = Room(name="Eléphant in the room")
+        room.save()
+        self.assertEqual(room.slug, "elephant-in-the-room")
 
     def test_models_rooms_administrators(self):
         """It should be possible to attach administrators to a room."""
