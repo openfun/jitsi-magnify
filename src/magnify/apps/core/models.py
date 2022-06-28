@@ -7,7 +7,20 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class User(auth_models.AbstractUser):
+class ValidateModelMixin:
+    """Make `save` call `full_clean`.
+
+    Should be the left most mixin in your models.
+    Django doesn't validate models by default but we should do it.
+    """
+
+    def save(self, *args, **kwargs):
+        """Call `full_clean` before saving."""
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+
+class User(ValidateModelMixin, auth_models.AbstractUser):
     """User model which follow courses or manage backend (is_staff)"""
 
     class Meta:
@@ -19,7 +32,7 @@ class User(auth_models.AbstractUser):
         return self.username
 
 
-class Meeting(models.Model):
+class Meeting(ValidateModelMixin, models.Model):
     """Model for one meeting or a collection of meetings defined recursively"""
 
     name = models.CharField(max_length=500)
@@ -50,7 +63,7 @@ class Meeting(models.Model):
         return self.name
 
 
-class Room(models.Model):
+class Room(ValidateModelMixin, models.Model):
     """Model for one room"""
 
     name = models.CharField(max_length=100)
@@ -66,7 +79,7 @@ class Room(models.Model):
         return self.name
 
 
-class Group(models.Model):
+class Group(ValidateModelMixin, models.Model):
     """Group of users to be sent in rooms or in sub-rooms"""
 
     name = models.CharField(max_length=100)
@@ -85,7 +98,7 @@ class Group(models.Model):
         verbose_name_plural = _("Groups")
 
 
-class Membership(models.Model):
+class Membership(ValidateModelMixin, models.Model):
     """Link table between users and groups"""
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -98,7 +111,7 @@ class Membership(models.Model):
         verbose_name_plural = _("Memberships")
 
 
-class Label(models.Model):
+class Label(ValidateModelMixin, models.Model):
     """Label for a meeting, a group or a room"""
 
     name = models.CharField(max_length=100)
@@ -123,7 +136,7 @@ class Label(models.Model):
         verbose_name_plural = _("Labels")
 
 
-class JitsiConfiguration(models.Model):
+class JitsiConfiguration(ValidateModelMixin, models.Model):
     """Model for the Jitsi configuration of a room or a meeting"""
 
     meeting = models.ForeignKey(
