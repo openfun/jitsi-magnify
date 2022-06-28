@@ -31,16 +31,16 @@ class GroupsFactoriesTestCase(TestCase):
         meetings = MeetingFactory.create_batch(2)
         group = GroupFactory(meetings=meetings)
 
-        self.assertQuerysetEqual(group.meetings.all(), meetings, ordered=False)
-        self.assertEqual(list(meetings[0].allowed_groups.all()), [group])
+        self.assertQuerysetEqual(group.related_meetings.all(), meetings, ordered=False)
+        self.assertEqual(list(meetings[0].groups.all()), [group])
 
     def test_factories_groups_rooms(self):
         """We should be able to attach rooms to a group."""
         rooms = RoomFactory.create_batch(2)
         group = GroupFactory(rooms=rooms)
 
-        self.assertQuerysetEqual(group.rooms.all(), rooms, ordered=False)
-        self.assertEqual(list(rooms[0].allowed_groups.all()), [group])
+        self.assertQuerysetEqual(group.related_rooms.all(), rooms, ordered=False)
+        self.assertEqual(list(rooms[0].groups.all()), [group])
 
     def test_factories_groups_members(self):
         """We should be able to attach members to a group."""

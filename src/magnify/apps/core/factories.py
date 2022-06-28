@@ -66,6 +66,12 @@ class MeetingFactory(factory.django.DjangoModelFactory):
             self.administrators.set(extracted)
 
     @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        """Add groups to meeting from a given list of groups."""
+        if create and extracted:
+            self.groups.set(extracted)
+
+    @factory.post_generation
     def labels(self, create, extracted, **kwargs):
         """Add labels to meeting from a given list of labels."""
         if create and extracted:
@@ -100,6 +106,12 @@ class RoomFactory(factory.django.DjangoModelFactory):
             self.administrators.set(extracted)
 
     @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        """Add groups to room from a given list of groups."""
+        if create and extracted:
+            self.groups.set(extracted)
+
+    @factory.post_generation
     def labels(self, create, extracted, **kwargs):
         """Add labels to room from a given list of labels."""
         if create and extracted:
@@ -119,13 +131,13 @@ class GroupFactory(factory.django.DjangoModelFactory):
     def meetings(self, create, extracted, **kwargs):
         """Add meetings to group from a given list of meetings."""
         if create and extracted:
-            self.meetings.set(extracted)
+            self.related_meetings.set(extracted)
 
     @factory.post_generation
     def rooms(self, create, extracted, **kwargs):
         """Add rooms to group from a given list of rooms."""
         if create and extracted:
-            self.rooms.set(extracted)
+            self.related_rooms.set(extracted)
 
     @factory.post_generation
     def members(self, create, extracted, **kwargs):

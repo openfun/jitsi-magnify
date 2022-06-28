@@ -5,7 +5,12 @@ from datetime import date
 
 from django.test import TestCase
 
-from magnify.apps.core.factories import LabelFactory, MeetingFactory, UserFactory
+from magnify.apps.core.factories import (
+    GroupFactory,
+    LabelFactory,
+    MeetingFactory,
+    UserFactory,
+)
 
 
 class MeetingsFactoriesTestCase(TestCase):
@@ -34,3 +39,9 @@ class MeetingsFactoriesTestCase(TestCase):
         labels = LabelFactory.create_batch(2)
         meeting = MeetingFactory(labels=labels)
         self.assertQuerysetEqual(meeting.labels.all(), labels, ordered=False)
+
+    def test_factories_meetings_groups(self):
+        """We should be able to attach groups to a meeting."""
+        groups = GroupFactory.create_batch(2)
+        meeting = MeetingFactory(groups=groups)
+        self.assertQuerysetEqual(meeting.groups.all(), groups, ordered=False)

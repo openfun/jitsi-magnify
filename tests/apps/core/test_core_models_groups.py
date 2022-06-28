@@ -54,17 +54,17 @@ class GroupsModelsTestCase(TestCase):
         """It should be possible to attach meetings to a group."""
         group = GroupFactory()
         meeting = MeetingFactory()
-        group.meetings.add(meeting)
+        group.related_meetings.add(meeting)
         group.refresh_from_db()
-        self.assertEqual(list(group.meetings.all()), [meeting])
+        self.assertEqual(list(group.related_meetings.all()), [meeting])
 
     def test_models_groups_rooms(self):
         """It should be possible to attach rooms to a group."""
         group = GroupFactory()
         room = RoomFactory()
-        group.rooms.add(room)
+        group.related_rooms.add(room)
         group.refresh_from_db()
-        self.assertEqual(list(group.rooms.all()), [room])
+        self.assertEqual(list(group.related_rooms.all()), [room])
 
     def test_models_groups_labels(self):
         """It should be possible to attach labels to a group."""
