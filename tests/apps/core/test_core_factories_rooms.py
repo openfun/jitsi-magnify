@@ -3,7 +3,12 @@ Unit tests for the Room factory
 """
 from django.test import TestCase
 
-from magnify.apps.core.factories import LabelFactory, RoomFactory, UserFactory
+from magnify.apps.core.factories import (
+    GroupFactory,
+    LabelFactory,
+    RoomFactory,
+    UserFactory,
+)
 
 
 class RoomsFactoriesTestCase(TestCase):
@@ -27,3 +32,9 @@ class RoomsFactoriesTestCase(TestCase):
         labels = LabelFactory.create_batch(2)
         room = RoomFactory(labels=labels)
         self.assertQuerysetEqual(room.labels.all(), labels, ordered=False)
+
+    def test_factories_rooms_groups(self):
+        """We should be able to attach groups to a room."""
+        groups = GroupFactory.create_batch(2)
+        room = RoomFactory(groups=groups)
+        self.assertQuerysetEqual(room.groups.all(), groups, ordered=False)

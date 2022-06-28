@@ -60,6 +60,27 @@ class Label(ValidateModelMixin, models.Model):
         return self.name
 
 
+class Group(ValidateModelMixin, models.Model):
+    """Group of users to be sent in rooms or in sub-rooms"""
+
+    name = models.CharField(max_length=100)
+    # token to join group with
+    token = models.CharField(max_length=100)
+    members = models.ManyToManyField(
+        User, through="Membership", related_name="is_member_of"
+    )
+    labels = models.ManyToManyField(Label, related_name="is_group_label_of")
+
+    class Meta:
+        db_table = "magnify_group"
+        ordering = ("name",)
+        verbose_name = _("Group")
+        verbose_name_plural = _("Groups")
+
+    def __str__(self):
+        return self.name
+
+
 class Meeting(ValidateModelMixin, models.Model):
     """Model for one meeting or a collection of meetings defined recursively"""
 
@@ -81,6 +102,7 @@ class Meeting(ValidateModelMixin, models.Model):
     held_on_sunday = models.BooleanField(default=False)
 
     administrators = models.ManyToManyField(User)
+    groups = models.ManyToManyField(Group, related_name="related_meetings")
     labels = models.ManyToManyField(Label, related_name="is_meeting_label_of")
 
     class Meta:
@@ -104,6 +126,7 @@ class Room(ValidateModelMixin, models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
     administrators = models.ManyToManyField(User)
+    groups = models.ManyToManyField(Group, related_name="related_rooms")
     labels = models.ManyToManyField(Label, related_name="is_room_label_of")
 
     class Meta:
@@ -111,29 +134,6 @@ class Room(ValidateModelMixin, models.Model):
         ordering = ("name",)
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
-
-    def __str__(self):
-        return self.name
-
-
-class Group(ValidateModelMixin, models.Model):
-    """Group of users to be sent in rooms or in sub-rooms"""
-
-    name = models.CharField(max_length=100)
-    # token to join group with
-    token = models.CharField(max_length=100)
-    meetings = models.ManyToManyField(Meeting, related_name="allowed_groups")
-    rooms = models.ManyToManyField(Room, related_name="allowed_groups")
-    members = models.ManyToManyField(
-        User, through="Membership", related_name="is_member_of"
-    )
-    labels = models.ManyToManyField(Label, related_name="is_group_label_of")
-
-    class Meta:
-        db_table = "magnify_group"
-        ordering = ("name",)
-        verbose_name = _("Group")
-        verbose_name_plural = _("Groups")
 
     def __str__(self):
         return self.name
