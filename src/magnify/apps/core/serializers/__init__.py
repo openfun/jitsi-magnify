@@ -3,12 +3,12 @@
 from .users import (
     UserCreateResponseErrorSerializer,
     UserCreateResponseSuccessSerializer,
-    UserCreateSerializer,
+    UserSerializer,
 )
 
 # Necessary precision to comply with PEP8
 __all__ = [
-    "UserCreateSerializer",
+    "UserSerializer",
     "UserCreateResponseSuccessSerializer",
     "UserCreateResponseErrorSerializer",
 ]

@@ -12,8 +12,10 @@ class User(auth_models.AbstractUser):
 
     username_validator = RegexValidator(
         "^[a-zA-Z0-9_-]{3,16}$",
-        message="""Username must be between 3 and 16 characters long
-            and contain only letters, numbers, underscores and hyphens.""",
+        message=_(
+            """Username must be between 3 and 16 characters long
+            and contain only letters, numbers, underscores and hyphens."""
+        ),
     )
 
     username = models.CharField(
@@ -37,16 +39,7 @@ class User(auth_models.AbstractUser):
             )
         ],
     )
-    email = models.EmailField(
-        max_length=255,
-        unique=True,
-        validators=[
-            RegexValidator(
-                r"^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$",
-                message="Invalid email address",
-            )
-        ],
-    )
+    email = models.EmailField(max_length=255, unique=True)
 
     avatar = models.ImageField("Avatar", upload_to="avatars", blank=True, null=True)
     REQUIRED_FIELDS = ["email", "password"]

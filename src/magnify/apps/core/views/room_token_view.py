@@ -9,7 +9,6 @@ from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
 import jwt
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
 
 
@@ -54,11 +53,8 @@ class RoomTokenView(APIView):
     """View for token fetching based on a guest user and a specific room
     This redirects to jitsi with the token"""
 
-    permission_classes = (IsAuthenticated,)
-
     def get(self, request, room):
         """Get the token for the room"""
-
         access_token = generate_token(request.user, room)
 
         base_url = settings.JWT_CONFIGURATION["jitsi_domain"]

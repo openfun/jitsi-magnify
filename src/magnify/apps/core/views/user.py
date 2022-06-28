@@ -5,67 +5,55 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.utils.translation import gettext_lazy as _
 
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView, Response
+from rest_framework import viewsets
+from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework.views import Response
 
 from magnify.apps.core.models import User
-from magnify.apps.core.serializers import (
-    UserCreateResponseErrorSerializer,
-    UserCreateResponseSuccessSerializer,
-    UserCreateSerializer,
-)
+from magnify.apps.core.serializers import UserSerializer
 
 
-class UserView(APIView):
+class CustomUserPermission(BasePermission):
     """
-    View for a user.
+    Allows permissions depending on the request
     """
 
-    permission_classes = (IsAuthenticated,)
+    def has_permission(self, request, view):
+        if request.method in ("DELETE", "PUT"):
+            return request.user == view.get_object()
+        if request.method == "GET":
+            return IsAuthenticated()
+        if request.method == "POST":
+            return True
+        return False
 
-    def get(self, request, user_id):
+
+class UserViewSet(viewsets.ModelViewSet):
+    """Set of views for user model"""
+
+    lookup_field = "id"
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    permission_classes = (CustomUserPermission,)
+
+    def create(self, request, *args, **kwargs):
         """
-        Get a user's information.
+        Create a new user (needs to be overridden to verify and hash the password).
         """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         try:
-            user = User.objects.get(id=user_id)
-            return Response(user.username)
-        except User.DoesNotExist:
-            return Response("User does not exist", status=404)
-
-
-class UserCreateView(APIView):
-    """
-    View for creating a user
-    """
-
-    @swagger_auto_schema(
-        request_body=UserCreateSerializer,
-        responses={
-            201: UserCreateResponseSuccessSerializer,
-            400: UserCreateResponseErrorSerializer,
-        },
-    )
-    def post(self, request):
-        """
-        Create a user.
-        """
-        # Password validation must be handled elsewhere
-        # because the ValidationError is not of the same type
-        try:
-            # Password validators are to be found in settings
-            validate_password(request.data.get("password"))
+            validate_password(request.data["password"])
         except ValidationError as error:
-            return Response({"password": message for message in error}, status=400)
+            return Response({"password": error.messages}, status=400)
         try:
             new_user = User(
-                username=request.data.get("username"),
-                email=request.data.get("email"),
-                password=request.data.get("password"),
-                name=request.data.get("name"),
+                username=serializer.validated_data["username"],
+                email=serializer.validated_data["email"],
+                password=request.data["password"],
+                name=serializer.validated_data["name"],
             )
-            # Run verificators on new instance
             new_user.full_clean()
         except ValidationError as error:
             errors = {key: _(value[0]) for key, value in error.message_dict.items()}
@@ -82,9 +70,45 @@ class UserCreateView(APIView):
                 )
             return Response({"unknown": str(error)}, status=400)
         new_user = User.objects.create_user(
-            request.data.get("username"),
-            request.data.get("email"),
-            request.data.get("password"),
-            name=request.data.get("name"),
+            username=serializer.validated_data["username"],
+            email=serializer.validated_data["email"],
+            password=request.data["password"],
+            name=serializer.validated_data["name"],
         )
-        return Response(new_user.id, status=201)
+        return Response(serializer.data, status=201)
+
+    def retrieve_me(self, request):
+        """
+        Retrieve the current user.
+        """
+        return Response(self.get_serializer(request.user).data)
+
+    def change_password(self, request, *args, **kwargs):
+        """
+        Change a user's password.
+        """
+        user = self.get_object()
+        if not "old_password" in request.data:
+            return Response({"old_password": _("This field is required")}, status=400)
+        if not "new_password" in request.data:
+            return Response({"new_password": _("This field is required")}, status=400)
+        if not user.check_password(request.data["old_password"]):
+            return Response({"old_password": _("Old password is not correct")}, status=400)
+        try:
+            validate_password(request.data["new_password"])
+            user.set_password(request.data["new_password"])
+            user.save()
+            return Response(self.get_serializer(request.user).data)
+        except ValidationError as error:
+            return Response(error, status=400)
+
+    def update_avatar(self, request, *args, **kwargs):
+        """
+        Update a user's avatar.
+        """
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user.avatar = request.data["avatar"]
+        user.save()
+        return Response(self.get_serializer(request.user).data)

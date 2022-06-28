@@ -2,19 +2,15 @@
 
 from rest_framework import serializers
 
+from magnify.apps.core.models import User
 
-class UserCreateSerializer(serializers.Serializer):
-    "Serializer for UserCreateView"
-    email = serializers.EmailField()
-    username = serializers.CharField(max_length=100)
-    password = serializers.CharField(max_length=100)
-    name = serializers.CharField(max_length=100)
 
-    def create(self, validated_data):
-        return
+class UserSerializer(serializers.ModelSerializer):
+    """Serializer for User model"""
 
-    def update(self, instance, validated_data):
-        return
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "name", "avatar"]
 
 
 class UserCreateResponseSuccessSerializer(serializers.Serializer):

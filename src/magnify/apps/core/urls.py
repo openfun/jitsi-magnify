@@ -1,7 +1,6 @@
 """Urls declarations for Magnify's core app."""
 
-import os
-
+from django.conf import settings
 from django.urls import path, re_path
 
 from drf_yasg import openapi
@@ -21,9 +20,10 @@ SchemaView = get_schema_view(
             for "login", "refresh" and "create user".""",
     ),
     public=True,
-    url=os.environ.get("BACK_URL"),
+    url=settings.API_URL,
     permission_classes=[permissions.AllowAny],
 )
+
 
 # To appear on the swagger URL,
 # the views need to extend APIView from the rest_framework.views package.
@@ -32,8 +32,31 @@ urlpatterns = [
     path("login/", jwt_views.TokenObtainPairView.as_view()),
     path("login/refresh/", jwt_views.TokenRefreshView.as_view()),
     # Users
-    path("user/create/", views.UserCreateView.as_view()),
-    path("user/<user_id>", views.UserView.as_view()),
+    path("users/me/", views.UserViewSet.as_view({"get": "retrieve_me"})),
+    path(
+        "users/",
+        views.UserViewSet.as_view({"post": "create"}),
+        name="user-create",
+    ),
+    path(
+        "users/<id>",
+        views.UserViewSet.as_view(
+            {
+                "put": "update",
+                "delete": "destroy",
+                "get": "retrieve",
+            }
+        ),
+    ),
+    path(
+        "users/<id>/password",
+        views.UserViewSet.as_view(
+            {
+                "put": "change_password",
+            }
+        ),
+    ),
+    path("users/<id>/avatar", views.UserViewSet.as_view({"put": "update_avatar"})),
     # Swagger documentation
     path("token/<room>", views.RoomTokenView.as_view()),
     re_path(

@@ -101,9 +101,7 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
         },
         {
             "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-            "OPTIONS": {
-                "min_length": 8,
-            },
+            "OPTIONS": {"min_length": 8},
         },
         {
             "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -181,6 +179,7 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
 
     # Swagger
 
+    API_URL = values.Value("http://localhost:8071")
     SWAGGER_SETTINGS = {
         "SECURITY_DEFINITIONS": {
             "Basic": {"type": "basic"},
@@ -235,7 +234,6 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
         "dockerflow.django",
         "parler",
         "rest_framework",
-        "rest_framework.authtoken",
         "drf_yasg",
         # Django
         "django.contrib.auth",
