@@ -4,6 +4,7 @@ Declare and configure the models for the customers part
 import django.contrib.auth.models as auth_models
 from django.core.validators import RegexValidator
 from django.db import models
+from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 
 
@@ -58,6 +59,11 @@ class Meeting(ValidateModelMixin, models.Model):
         db_table = "magnify_meeting"
         verbose_name = _("Meeting")
         verbose_name_plural = _("Meetings")
+        constraints = [
+            models.CheckConstraint(
+                check=Q(end__gte=F("start")), name="end_greater_than_start"
+            )
+        ]
 
     def __str__(self):
         return self.name
