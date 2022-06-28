@@ -5,6 +5,7 @@ import django.contrib.auth.models as auth_models
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import F, Q
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 
@@ -124,7 +125,7 @@ class Room(ValidateModelMixin, models.Model):
     """Model for one room"""
 
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
     administrators = models.ManyToManyField(User)
     groups = models.ManyToManyField(Group, related_name="related_rooms")
     labels = models.ManyToManyField(Label, related_name="is_room_label_of")
@@ -137,6 +138,11 @@ class Room(ValidateModelMixin, models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        """Automatically generate the slug from the name."""
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
 
 class Membership(ValidateModelMixin, models.Model):
