@@ -26,6 +26,7 @@ class User(ValidateModelMixin, auth_models.AbstractUser):
 
     class Meta:
         db_table = "magnify_user"
+        ordering = ("username",)
         verbose_name = _("User")
         verbose_name_plural = _("Users")
 
@@ -57,6 +58,7 @@ class Meeting(ValidateModelMixin, models.Model):
 
     class Meta:
         db_table = "magnify_meeting"
+        ordering = ("-start", "-start_time")
         verbose_name = _("Meeting")
         verbose_name_plural = _("Meetings")
         constraints = [
@@ -78,6 +80,7 @@ class Room(ValidateModelMixin, models.Model):
 
     class Meta:
         db_table = "magnify_room"
+        ordering = ("name",)
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
 
@@ -100,6 +103,7 @@ class Group(ValidateModelMixin, models.Model):
 
     class Meta:
         db_table = "magnify_group"
+        ordering = ("name",)
         verbose_name = _("Group")
         verbose_name_plural = _("Groups")
 
@@ -138,6 +142,7 @@ class Label(ValidateModelMixin, models.Model):
 
     class Meta:
         db_table = "magnify_label"
+        ordering = ("name",)
         verbose_name = _("Label")
         verbose_name_plural = _("Labels")
 
