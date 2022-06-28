@@ -1,6 +1,7 @@
 import App from './App';
 import { render, screen, waitFor } from '@testing-library/react';
 import { ControllerProvider, TranslationProvider, MockController } from '@jitsi-magnify/core';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('App', () => {
   it('renders the test button', async () => {
@@ -9,7 +10,9 @@ describe('App', () => {
     render(
       <TranslationProvider locale="en-US" defaultLocale="en-US" messages={{}}>
         <ControllerProvider controller={controller}>
-          <App />
+          <MemoryRouter>
+            <App />
+          </MemoryRouter>
         </ControllerProvider>
       </TranslationProvider>,
     );
