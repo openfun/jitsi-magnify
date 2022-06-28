@@ -34,6 +34,32 @@ class User(ValidateModelMixin, auth_models.AbstractUser):
         return self.username
 
 
+class Label(ValidateModelMixin, models.Model):
+    """Label for a meeting, a group or a room"""
+
+    name = models.CharField(max_length=100)
+    color = models.CharField(
+        max_length=7,
+        validators=[
+            RegexValidator(
+                regex="^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$",
+                message="Color must be a valid hexa code",
+                code="nomatch",
+            )
+        ],
+    )
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "magnify_label"
+        ordering = ("name",)
+        verbose_name = _("Label")
+        verbose_name_plural = _("Labels")
+
+    def __str__(self):
+        return self.name
+
+
 class Meeting(ValidateModelMixin, models.Model):
     """Model for one meeting or a collection of meetings defined recursively"""
 
@@ -42,6 +68,8 @@ class Meeting(ValidateModelMixin, models.Model):
     # Start and end are the same for a single meeting
     start = models.DateField()
     end = models.DateField()
+    start_time = models.TimeField()
+    expected_duration = models.DurationField()
 
     # Set to True if there is a meeting on that day
     held_on_monday = models.BooleanField(default=False)
@@ -52,9 +80,8 @@ class Meeting(ValidateModelMixin, models.Model):
     held_on_saturday = models.BooleanField(default=False)
     held_on_sunday = models.BooleanField(default=False)
 
-    start_time = models.TimeField()
-    expected_duration = models.DurationField()
     administrators = models.ManyToManyField(User)
+    labels = models.ManyToManyField(Label, related_name="is_meeting_label_of")
 
     class Meta:
         db_table = "magnify_meeting"
@@ -77,6 +104,7 @@ class Room(ValidateModelMixin, models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
     administrators = models.ManyToManyField(User)
+    labels = models.ManyToManyField(Label, related_name="is_room_label_of")
 
     class Meta:
         db_table = "magnify_room"
@@ -100,6 +128,7 @@ class Group(ValidateModelMixin, models.Model):
     members = models.ManyToManyField(
         User, through="Membership", related_name="is_member_of"
     )
+    labels = models.ManyToManyField(Label, related_name="is_group_label_of")
 
     class Meta:
         db_table = "magnify_group"
@@ -119,32 +148,6 @@ class Membership(ValidateModelMixin, models.Model):
         db_table = "magnify_membership"
         verbose_name = _("Membership")
         verbose_name_plural = _("Memberships")
-
-
-class Label(ValidateModelMixin, models.Model):
-    """Label for a meeting, a group or a room"""
-
-    name = models.CharField(max_length=100)
-    color = models.CharField(
-        max_length=7,
-        validators=[
-            RegexValidator(
-                regex="^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$",
-                message="Color must be a valid hexa code",
-                code="nomatch",
-            )
-        ],
-    )
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    groups = models.ManyToManyField(Group)
-    rooms = models.ManyToManyField(Room)
-    meetings = models.ManyToManyField(Meeting)
-
-    class Meta:
-        db_table = "magnify_label"
-        ordering = ("name",)
-        verbose_name = _("Label")
-        verbose_name_plural = _("Labels")
 
 
 class JitsiConfiguration(ValidateModelMixin, models.Model):
