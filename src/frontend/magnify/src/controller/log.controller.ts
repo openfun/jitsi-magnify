@@ -10,12 +10,6 @@ import Controller, {
 } from './interface';
 import { example1, example2 } from './mocks/example';
 
-interface MockResolver<T> extends Record<string, T> {
-  default: T;
-}
-
-type MockRejecter<T> = Record<string, T>;
-
 /**
  * Factory to mock a function that returns a promise.
  * It await 700ms before resolving the promise searching
@@ -32,16 +26,27 @@ type MockRejecter<T> = Record<string, T>;
  * @returns The promise that will be resolved or rejected.
  */
 const promisifiedConsoleLogFactory =
-  <T, TInput, TError>(name: string, resolver = new MockControllerFunction<TInput, T, TError>()) =>
+  <T, TInput, TError>(
+    controller: LogController,
+    name: string,
+    resolver = new MockControllerFunction<TInput, T, TError>(),
+    protectedRoute = true,
+  ) =>
   (args?: any): Promise<T> =>
     new Promise((resolve, reject) => {
       setTimeout(() => {
         // 1) Log the call to the console.
         console.log(
-          `%c${name}: %c\n${JSON.stringify(args, null, '  ')}`,
+          `%c${name}: %c\njwt:${controller._jwt}%c\ninput:${JSON.stringify(args, null, '  ')}`,
           'color: green; font-weight: bold',
+          'color: red; font-weight: bold',
           'color: #00a',
         );
+
+        if (protectedRoute && (!controller._jwt || controller._jwt !== 'successful-access')) {
+          reject(new Error('Unauthorized'));
+          return;
+        }
 
         resolver.run(args, resolve, reject);
       }, 700);
@@ -94,8 +99,9 @@ class MockControllerFunction<TInput, TOutput, TError = Error> {
 }
 
 export default class LogController extends Controller {
-  sendTest = promisifiedConsoleLogFactory('sendTest');
+  sendTest = promisifiedConsoleLogFactory(this, 'sendTest');
   getExamples = promisifiedConsoleLogFactory(
+    this,
     'getExamples',
     new MockControllerFunction<string, { id: string; name: string }[]>().resolveOnDefault([
       example1,
@@ -104,6 +110,7 @@ export default class LogController extends Controller {
   );
 
   joinRoom = promisifiedConsoleLogFactory(
+    this,
     'joinRoom',
     new MockControllerFunction<string, { token: string }>().resolveOnDefault({ token: 'token' }),
   );
@@ -111,13 +118,21 @@ export default class LogController extends Controller {
   /**
    * Login routes
    */
-  login = promisifiedConsoleLogFactory(
-    'login',
-    new MockControllerFunction<LoginInput, Tokens>()
-      .resolveOnDefault({ refresh: 'successful-refresh', access: 'successful-access' })
-      .rejectOn({ username: 'username', password: 'bad-password' }, Error('InvalidCredentials')),
-  );
+  login = async (input: LoginInput) => {
+    const tokens = await promisifiedConsoleLogFactory(
+      this,
+      'login',
+      new MockControllerFunction<LoginInput, Tokens>()
+        .resolveOnDefault({ refresh: 'successful-refresh', access: 'successful-access' })
+        .rejectOn({ username: 'username', password: 'bad-password' }, Error('InvalidCredentials')),
+      false,
+    )(input);
+    localStorage.setItem('refresh', tokens.refresh);
+    this._jwt = tokens.access;
+    return tokens;
+  };
   refresh = promisifiedConsoleLogFactory(
+    this,
     'refresh',
     new MockControllerFunction<string, AccessToken>().resolveOnDefault({
       access: 'successful-access',
@@ -128,6 +143,7 @@ export default class LogController extends Controller {
    * Users routes
    */
   signup = promisifiedConsoleLogFactory(
+    this,
     'signup',
     new MockControllerFunction<SignupInput, Tokens>().resolveOnDefault({
       refresh: 'successful-refresh',
@@ -135,30 +151,36 @@ export default class LogController extends Controller {
     }),
   );
   getMyProfile = promisifiedConsoleLogFactory(
+    this,
     'getMyProfile',
     new MockControllerFunction<null, Profile>().resolveOnDefault(createRandomProfile()),
   );
   getUser = promisifiedConsoleLogFactory(
+    this,
     'getUser',
     new MockControllerFunction<string, Profile>().resolveOnDefault(createRandomProfile()),
   );
   updateUser = promisifiedConsoleLogFactory(
+    this,
     'updateUser',
     new MockControllerFunction<UpdateUserInput, Profile>().resolveOnDefault(createRandomProfile()),
   );
   updateUserAvatar = promisifiedConsoleLogFactory(
+    this,
     'updateUserAvatar',
     new MockControllerFunction<UpdateUserAvatarInput, Profile>().resolveOnDefault(
       createRandomProfile(),
     ),
   );
   updateUserPassword = promisifiedConsoleLogFactory(
+    this,
     'updateUserPassword',
     new MockControllerFunction<UpdateUserPasswordInput, Profile>().resolveOnDefault(
       createRandomProfile(),
     ),
   );
   deleteUser = promisifiedConsoleLogFactory(
+    this,
     'deleteUser',
     new MockControllerFunction<string, void>(),
   );
