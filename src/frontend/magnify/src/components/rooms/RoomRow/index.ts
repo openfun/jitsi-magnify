@@ -1,1 +1,1 @@
-export { default, GroupRowProps } from './GroupRow';
+export { default, RoomRowProps } from './RoomRow';

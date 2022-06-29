@@ -1,3 +1,4 @@
+import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
 import { AccessToken, Tokens } from '../types/tokens';
 
@@ -27,6 +28,8 @@ export interface UpdateUserPasswordInput {
 }
 
 export default abstract class Controller {
+  _jwt: Nullable<string> = null;
+
   // False routes, just to try the controller mechanism.
   abstract sendTest(message: string): Promise<any>;
   abstract getExamples(): Promise<{ id: string; name: string }[]>;
