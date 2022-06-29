@@ -1,10 +1,13 @@
 import { Box, Button } from 'grommet';
 import React from 'react';
 import TextField from '../../design-system/TextField';
-import validator from 'validator';
 import { defineMessages, useIntl } from 'react-intl';
 import useFormState from '../../../hooks/useFormState';
-import { validationMessages } from '../../../i18n/Messages';
+import validators, {
+  emailValidator,
+  requiredValidator,
+  usernameValidator,
+} from '../../../utils/validators';
 
 export interface IdentityFormProps {
   name: string;
@@ -23,21 +26,10 @@ const messages = defineMessages({
     description: 'The label for the username field',
     id: 'components.profile.identityForm.usernameLabel',
   },
-  usernameInvalid: {
-    defaultMessage:
-      'Username is invalid, it should have between 3 and 16 letters, numbers or underscores',
-    description: 'The error message for the username field',
-    id: 'components.profile.identityForm.usernameInvalid',
-  },
   emailLabel: {
     defaultMessage: 'Email',
     description: 'The label for the email field',
     id: 'components.profile.identityForm.emailLabel',
-  },
-  emailInvalid: {
-    defaultMessage: 'Email is invalid',
-    description: 'The error message for the email field',
-    id: 'components.profile.identityForm.emailInvalid',
   },
   submitButtonLabel: {
     defaultMessage: 'Save',
@@ -52,21 +44,9 @@ export default function IdentityForm({ name, username, email }: IdentityFormProp
   const { values, errors, modified, setValue, isValid, isModified } = useFormState(
     { name, username, email },
     {
-      name: (value) => {
-        if (!value || value.length < 1) return [intl.formatMessage(validationMessages.required)];
-        return [];
-      },
-      username: (value) => {
-        if (!value || value.length < 1) return [intl.formatMessage(validationMessages.required)];
-        if (!validator.matches(value, /^[a-zA-Z0-9_]{3,16}$/))
-          return [intl.formatMessage(messages.usernameInvalid)];
-        return [];
-      },
-      email: (value) => {
-        if (!value || value.length < 1) return [intl.formatMessage(validationMessages.required)];
-        if (!validator.isEmail(value)) return [intl.formatMessage(messages.emailInvalid)];
-        return [];
-      },
+      name: validators(intl, requiredValidator),
+      username: validators(intl, requiredValidator, usernameValidator),
+      email: validators(intl, requiredValidator, emailValidator),
     },
   );
 
