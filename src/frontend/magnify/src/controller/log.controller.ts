@@ -122,9 +122,12 @@ export default class LogController extends Controller {
     const tokens = await promisifiedConsoleLogFactory(
       this,
       'login',
-      new MockControllerFunction<LoginInput, Tokens>()
+      new MockControllerFunction<LoginInput, Tokens, Record<string, string>>()
         .resolveOnDefault({ refresh: 'successful-refresh', access: 'successful-access' })
-        .rejectOn({ username: 'username', password: 'bad-password' }, Error('InvalidCredentials')),
+        .rejectOn(
+          { username: 'username', password: 'bad-password' },
+          { detail: 'InvalidCredentials' },
+        ),
       false,
     )(input);
     localStorage.setItem('refresh', tokens.refresh);
@@ -142,14 +145,30 @@ export default class LogController extends Controller {
   /**
    * Users routes
    */
-  signup = promisifiedConsoleLogFactory(
-    this,
-    'signup',
-    new MockControllerFunction<SignupInput, Tokens>().resolveOnDefault({
-      refresh: 'successful-refresh',
-      access: 'successful-access',
-    }),
-  );
+  signup = async (input: SignupInput) => {
+    const tokens = await promisifiedConsoleLogFactory(
+      this,
+      'signup',
+      new MockControllerFunction<SignupInput, Tokens, Record<string, string>>()
+        .resolveOnDefault({
+          refresh: 'successful-refresh',
+          access: 'successful-access',
+        })
+        .rejectOn(
+          {
+            name: 'test',
+            email: 'bad-email@test.fr',
+            username: 'bad_username',
+            password: 'test1234',
+          },
+          { username: 'Username already taken', email: 'Email already taken' },
+        ),
+      false,
+    )(input);
+    localStorage.setItem('refresh', tokens.refresh);
+    this._jwt = tokens.access;
+    return tokens;
+  };
   getMyProfile = promisifiedConsoleLogFactory(
     this,
     'getMyProfile',
