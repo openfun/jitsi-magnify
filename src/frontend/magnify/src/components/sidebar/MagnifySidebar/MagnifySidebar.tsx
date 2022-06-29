@@ -1,6 +1,7 @@
 import { Box, Nav, Sidebar } from 'grommet';
 import React from 'react';
 import { SidebarButton, SidebarButtonProps } from '..';
+import { User, Group, AppsRounded, Calendar, Services } from 'grommet-icons';
 
 export interface MagnifySidebarProps {
   itemZones?: SidebarButtonProps[][];
@@ -9,7 +10,15 @@ export interface MagnifySidebarProps {
 }
 
 function MagnifySidebar({ itemZones, gap = 'small', separatorGap = 'large' }: MagnifySidebarProps) {
-  const zones = itemZones || [];
+  const zones = itemZones || [
+    [{ label: 'My Account', icon: <User />, navigateTo: 'account' }],
+    [
+      { label: 'Rooms', icon: <AppsRounded />, navigateTo: 'rooms' },
+      { label: 'My Meetings', icon: <Calendar />, navigateTo: 'meetings' },
+      { label: 'Groups', icon: <Group />, navigateTo: 'groups' },
+      { label: 'Settings', icon: <Services />, navigateTo: 'settings' },
+    ],
+  ];
 
   return (
     <Sidebar
