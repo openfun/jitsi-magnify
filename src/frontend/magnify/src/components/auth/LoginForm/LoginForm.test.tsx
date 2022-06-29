@@ -38,7 +38,7 @@ const renderWithController = (controller: MockController) => {
 
 const fillInForm = async (user: UserEvent, password: string) => {
   await user.type(screen.getByRole('textbox', { name: 'Username *' }), 'username');
-  await user.type(screen.getByRole('textbox', { name: 'Password *' }), password);
+  await user.type(screen.getByLabelText('Password*'), password);
   await user.click(screen.getByRole('button', { name: 'Login' }));
 };
 
@@ -61,12 +61,12 @@ describe('LoginForm', () => {
 
   it('should raise an error if the credentials are invalid', async () => {
     const controller = new MockController();
-    controller.login.mockRejectedValue({ message: 'InvalidCredentials' });
+    controller.login.mockRejectedValue({ detail: 'Message from the back: invalid credentials' });
 
     const user = renderWithController(controller);
     await fillInForm(user, 'bad-password');
 
-    await screen.findByText('Invalid credentials');
+    await screen.findByText('Message from the back: invalid credentials');
     expect(controller.login).toHaveBeenCalled();
     expect(controller.getMyProfile).not.toHaveBeenCalled();
   });

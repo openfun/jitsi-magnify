@@ -36,7 +36,7 @@ export function requiredValidator(intl: IntlShape) {
  */
 export function usernameValidator(intl: IntlShape) {
   return (value: string) => {
-    if (value && value.length >=1 && !validator.matches(value, /^[a-zA-Z0-9_]{3,16}$/))
+    if (value && value.length >= 1 && !validator.matches(value, /^[a-zA-Z0-9_]{3,16}$/))
       return [intl.formatMessage(validationMessages.usernameInvalid)];
     return [];
   };
@@ -47,7 +47,8 @@ export function usernameValidator(intl: IntlShape) {
  */
 export function emailValidator(intl: IntlShape) {
   return (value: string) => {
-    if (value && value.length >=1 && !validator.isEmail(value)) return [intl.formatMessage(validationMessages.emailInvalid)];
+    if (value && value.length >= 1 && !validator.isEmail(value))
+      return [intl.formatMessage(validationMessages.emailInvalid)];
     return [];
   };
 }
@@ -57,7 +58,7 @@ export function emailValidator(intl: IntlShape) {
  */
 export function passwordConfirmValidator(intl: IntlShape) {
   return (value: string, others: { password: string }) => {
-    if (value && value.length >=1 && value !== others.password)
+    if (value && value.length >= 1 && value !== others.password)
       return [intl.formatMessage(validationMessages.confirmDoesNotMatch)];
     return [];
   };
