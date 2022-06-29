@@ -5,4 +5,15 @@ export default class MockController extends Controller {
   getExamples = jest.fn();
 
   joinRoom = jest.fn();
+
+  login = jest.fn();
+  refresh = jest.fn();
+
+  signup = jest.fn();
+  getMyProfile = jest.fn();
+  getUser = jest.fn();
+  updateUser = jest.fn();
+  updateUserAvatar = jest.fn();
+  updateUserPassword = jest.fn();
+  deleteUser = jest.fn();
 }
