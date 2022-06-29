@@ -42,3 +42,8 @@ customSidebar.args = {
     ],
   ],
 };
+
+export const magnifySidebar = Template.bind({});
+magnifySidebar.args = {
+  itemZones: undefined,
+};
