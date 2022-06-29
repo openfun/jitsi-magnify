@@ -530,10 +530,14 @@ jobs:
           name: Reconnect build
           command: cd magnify && yarn build
       - run:
-          name: Test frontend
+          name: Test frontend library
           # Circle CI needs the tests to be ran sequentially, otherwise it hangs. See Jest docs below:
           # (https://jestjs.io/docs/en/troubleshooting#tests-are-extremely-slow-on-docker-and-or-continuous-integration-ci-server)
-          command: yarn test --runInBand
+          # But in order to pass this option to both projects, we can't use the "yarn test" command of the workspace directly
+          command: yarn test-magnify --runInBand
+      - run:
+          name: Test frontend demo
+          command: yarn test-demo --runInBand
 
   # Publishing to npm requires that you have define the NPM_TOKEN secret
   # environment variables in CircleCI UI (with your PyPI credentials)
