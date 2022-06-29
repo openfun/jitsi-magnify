@@ -53,5 +53,5 @@ describe('IdentityForm', () => {
     // Submit the form
     expect(saveButton).toBeEnabled();
     await userEvent.click(saveButton);
-  });
+  }, 10000);
 });
