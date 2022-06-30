@@ -33,7 +33,10 @@ class RoomsModelsTestCase(TestCase):
 
         self.assertEqual(
             context.exception.messages,
-            ["Ensure this value has at most 100 characters (it has 101).", "Ensure this value has at most 100 characters (it has 101)."],
+            [
+                "Ensure this value has at most 100 characters (it has 101).",
+                "Ensure this value has at most 100 characters (it has 101).",
+            ],
         )
 
     def test_models_rooms_slug_unique(self):
@@ -44,8 +47,7 @@ class RoomsModelsTestCase(TestCase):
             RoomFactory(name="A Room!")
 
         self.assertEqual(
-            context.exception.messages,
-            ['Room with this Slug already exists.']
+            context.exception.messages, ["Room with this Slug already exists."]
         )
 
     def test_models_rooms_slug_automatic(self):
