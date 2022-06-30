@@ -1,7 +1,8 @@
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+
 import LayoutWithSidebar from './LayoutWithSidebar';
 
 describe('LayoutWithSidebar', () => {

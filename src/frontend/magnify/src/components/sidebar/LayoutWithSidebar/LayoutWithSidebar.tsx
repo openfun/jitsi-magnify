@@ -1,5 +1,6 @@
-import React from 'react';
 import { Box } from 'grommet';
+import React from 'react';
+
 import { MagnifySidebar, SidebarButtonProps } from '..';
 
 function LayoutWithSidebar(props: {

@@ -1,8 +1,8 @@
-import React from 'react';
-import styled, { CSSProperties } from 'styled-components';
-import { normalizeColor } from 'grommet/utils';
 import { ThemeContext, ThemeType } from 'grommet';
 import { IconProps } from 'grommet-icons';
+import { normalizeColor } from 'grommet/utils';
+import React from 'react';
+import styled, { CSSProperties } from 'styled-components';
 
 const StyledRect = styled.rect<RectInternalProps>`
   fill: ${(props) => props.focusColor};

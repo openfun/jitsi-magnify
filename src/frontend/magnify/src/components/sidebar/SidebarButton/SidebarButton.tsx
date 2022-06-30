@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link, useMatch, useResolvedPath } from 'react-router-dom';
 import { Box, Button } from 'grommet';
 import { MarginType } from 'grommet/utils';
+import React from 'react';
+import { Link, useMatch, useResolvedPath } from 'react-router-dom';
 
 export interface SidebarButtonProps {
   disabled?: boolean;

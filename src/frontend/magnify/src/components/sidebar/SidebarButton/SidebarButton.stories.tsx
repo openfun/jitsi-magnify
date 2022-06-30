@@ -1,7 +1,8 @@
-import React from 'react';
-import SidebarButton from './SidebarButton';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { AppsRounded } from 'grommet-icons';
+import React from 'react';
+
+import SidebarButton from './SidebarButton';
 
 export default {
   title: 'Sidebar/SidebarButton',

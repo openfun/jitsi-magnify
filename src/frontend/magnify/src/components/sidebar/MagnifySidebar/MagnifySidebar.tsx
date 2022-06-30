@@ -1,6 +1,7 @@
 import { Box, Nav, Sidebar } from 'grommet';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+
 import { SidebarButton, SidebarButtonProps } from '..';
 import { AvatarSVG, CalEventSVG, GridSVG, GroupSVG, SettingsSVG } from '../../design-system';
 

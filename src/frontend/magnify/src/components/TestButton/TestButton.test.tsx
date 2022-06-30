@@ -1,10 +1,10 @@
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import TestButton, { TestButtonVariant } from './TestButton';
-import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { ControllerProvider, MockController } from '../../controller';
-import userEvent from '@testing-library/user-event';
 import { example1, example2 } from '../../controller/mocks/example';
+import TestButton, { TestButtonVariant } from './TestButton';
 
 describe('TestButton', () => {
   it('renders the test button in red when variant is red and react to click', async () => {

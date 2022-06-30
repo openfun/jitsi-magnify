@@ -1,6 +1,6 @@
-export { default as SVGIcon, SVGIconProps, SvgProps } from './SVGIcon';
+export { AvatarSVG } from './AvatarSVG';
+export { CalEventSVG } from './CalEventSVG';
+export { GridSVG } from './GridSVG';
 export { GroupSVG } from './GroupSVG';
 export { SettingsSVG } from './SettingsSVG';
-export { AvatarSVG } from './AvatarSVG';
-export { GridSVG } from './GridSVG';
-export { CalEventSVG } from './CalEventSVG';
+export { default as SVGIcon, SVGIconProps, SvgProps } from './SVGIcon';
