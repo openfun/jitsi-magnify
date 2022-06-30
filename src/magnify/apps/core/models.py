@@ -68,9 +68,9 @@ class Group(ValidateModelMixin, models.Model):
     # token to join group with
     token = models.CharField(max_length=100)
     members = models.ManyToManyField(
-        User, through="Membership", related_name="is_member_of"
+        User, blank=True, through="Membership", related_name="is_member_of"
     )
-    labels = models.ManyToManyField(Label, related_name="is_group_label_of")
+    labels = models.ManyToManyField(Label, blank=True, related_name="is_group_label_of")
 
     class Meta:
         db_table = "magnify_group"
@@ -102,9 +102,11 @@ class Meeting(ValidateModelMixin, models.Model):
     held_on_saturday = models.BooleanField(default=False)
     held_on_sunday = models.BooleanField(default=False)
 
-    administrators = models.ManyToManyField(User)
-    groups = models.ManyToManyField(Group, related_name="related_meetings")
-    labels = models.ManyToManyField(Label, related_name="is_meeting_label_of")
+    administrators = models.ManyToManyField(User, blank=True)
+    groups = models.ManyToManyField(Group, blank=True, related_name="related_meetings")
+    labels = models.ManyToManyField(
+        Label, blank=True, related_name="is_meeting_label_of"
+    )
 
     class Meta:
         db_table = "magnify_meeting"
@@ -126,9 +128,9 @@ class Room(ValidateModelMixin, models.Model):
 
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
-    administrators = models.ManyToManyField(User)
-    groups = models.ManyToManyField(Group, related_name="related_rooms")
-    labels = models.ManyToManyField(Label, related_name="is_room_label_of")
+    administrators = models.ManyToManyField(User, blank=True)
+    groups = models.ManyToManyField(Group, blank=True, related_name="related_rooms")
+    labels = models.ManyToManyField(Label, blank=True, related_name="is_room_label_of")
 
     class Meta:
         db_table = "magnify_room"
