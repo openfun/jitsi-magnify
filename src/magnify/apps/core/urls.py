@@ -1,12 +1,13 @@
 """Urls declarations for Magnify's core app."""
 
-from django.urls import path, re_path
+from django.urls import include, path, re_path
 
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from rest_framework.routers import DefaultRouter
 
-from magnify.apps.core import views
+from magnify.apps.core import api, views
 
 SchemaView = get_schema_view(
     openapi.Info(
@@ -19,10 +20,15 @@ SchemaView = get_schema_view(
     permission_classes=[permissions.AllowAny],
 )
 
+router = DefaultRouter()
+router.register("rooms", api.RoomViewSet, basename="rooms")
+
 # To appear on the swagger URL,
 # the views need to extend APIView from the rest_framework.views package.
 urlpatterns = [
     path("token/<room>", views.RoomTokenView.as_view()),
+    path("", include(router.urls)),
+    # Swagger documentation
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         SchemaView.without_ui(cache_timeout=0),
