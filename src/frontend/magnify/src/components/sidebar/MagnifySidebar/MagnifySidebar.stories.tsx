@@ -1,7 +1,8 @@
-import React from 'react';
-import LayoutWithSidebar from './MagnifySidebar';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { AppsRounded } from 'grommet-icons';
+import React from 'react';
+
+import LayoutWithSidebar from './MagnifySidebar';
 
 export default {
   title: 'Sidebar/MagnifySidebar',

@@ -1,9 +1,10 @@
-import React from 'react';
-import { IntlProvider } from 'react-intl';
-import SidebarButton from './SidebarButton';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
+import React from 'react';
+import { IntlProvider } from 'react-intl';
 import { MemoryRouter, Router } from 'react-router-dom';
+
+import SidebarButton from './SidebarButton';
 
 describe('SidebarButton', () => {
   it('should render with correct label', () => {

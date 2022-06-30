@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { Box } from 'grommet';
 import React from 'react';
+
 import LayoutWithSidebar from './LayoutWithSidebar';
 
 export default {

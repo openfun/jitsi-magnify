@@ -1,7 +1,8 @@
-import React from 'react';
-import * as icons from '.';
 import { ComponentMeta } from '@storybook/react';
 import { Box, Grid } from 'grommet';
+import React from 'react';
+
+import * as icons from '.';
 
 export const Icons = () => {
   const allIcons = {

@@ -1,6 +1,6 @@
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import TestButton, { TestButtonVariant } from './TestButton';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'TestButton',
