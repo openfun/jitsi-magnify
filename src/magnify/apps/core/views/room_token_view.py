@@ -24,7 +24,6 @@ def create_payload(user, room):
         "sub": settings.JWT_CONFIGURATION["jitsi_xmpp_domain"],
         "room": room,
     }
-
     jitsi_user = {
         "avatar": settings.JWT_CONFIGURATION.get("guest_avatar"),
         "name": user.username

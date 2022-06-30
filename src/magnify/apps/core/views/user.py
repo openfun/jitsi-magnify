@@ -22,7 +22,7 @@ class CustomUserPermission(BasePermission):
         if request.method in ("DELETE", "PUT"):
             return request.user == view.get_object()
         if request.method == "GET":
-            return IsAuthenticated()
+            return IsAuthenticated() and not request.user.is_anonymous
         if request.method == "POST":
             return True
         return False
@@ -88,12 +88,14 @@ class UserViewSet(viewsets.ModelViewSet):
         Change a user's password.
         """
         user = self.get_object()
-        if not "old_password" in request.data:
+        if "old_password" not in request.data:
             return Response({"old_password": _("This field is required")}, status=400)
-        if not "new_password" in request.data:
+        if "new_password" not in request.data:
             return Response({"new_password": _("This field is required")}, status=400)
         if not user.check_password(request.data["old_password"]):
-            return Response({"old_password": _("Old password is not correct")}, status=400)
+            return Response(
+                {"old_password": _("Old password is not correct")}, status=400
+            )
         try:
             validate_password(request.data["new_password"])
             user.set_password(request.data["new_password"])
