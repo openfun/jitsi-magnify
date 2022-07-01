@@ -23,10 +23,19 @@ interface ControllerProviderProps {
    * The controller to use
    */
   controller: Controller;
+  /**
+   * The store to override (by default, it should be managed internally)
+   * but for tests, it can be helpful to override it
+   */
+  store?: Store;
 }
 
-export default function ControllerProvider({ children, controller }: ControllerProviderProps) {
-  const [store, setStore] = React.useState<Store>(defaultStore);
+export default function ControllerProvider({
+  children,
+  store: overrideStore,
+  controller,
+}: ControllerProviderProps) {
+  const [store, setStore] = React.useState<Store>(overrideStore || defaultStore);
 
   useEffect(() => {
     controller.registerSetStore(setStore);

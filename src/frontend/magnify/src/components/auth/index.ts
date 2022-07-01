@@ -3,3 +3,4 @@ export { default as SignupForm } from './SignupForm';
 export { default as IntroductionLayout } from './IntroductionLayout';
 export { default as AuthForms } from './AuthForms';
 export { default as AuthGard } from './AuthGard';
+export { default as UserMenu } from './UserMenu';
