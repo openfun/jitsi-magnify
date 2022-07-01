@@ -1,4 +1,5 @@
 import { createRandomProfile } from '../factories/profile';
+import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
 import { AccessToken, Tokens } from '../types/tokens';
 import Controller, {
@@ -9,6 +10,7 @@ import Controller, {
   UpdateUserPasswordInput,
 } from './interface';
 import { example1, example2 } from './mocks/example';
+import { ConnexionStatus, Store } from './store';
 
 /**
  * Factory to mock a function that returns a promise.
@@ -32,25 +34,68 @@ const promisifiedConsoleLogFactory =
     resolver = new MockControllerFunction<TInput, T, TError>(),
     protectedRoute = true,
   ) =>
-  (args?: any): Promise<T> =>
-    new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // 1) Log the call to the console.
-        console.log(
-          `%c${name}: %c\njwt:${controller._jwt}%c\ninput:${JSON.stringify(args, null, '  ')}`,
-          'color: green; font-weight: bold',
-          'color: red; font-weight: bold',
-          'color: #00a',
+  async (args?: any): Promise<T> => {
+    const requestPromiseFactory = (): Promise<T> =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // 1) Log the call to the console.
+          console.log(
+            `%c${name}: %c\njwt:${controller._jwt}%c\ninput:${JSON.stringify(args, null, '  ')}`,
+            'color: green; font-weight: bold',
+            'color: red; font-weight: bold',
+            'color: #00a',
+          );
+
+          // 2) For protected routes, raise error if no jwt.
+          if (protectedRoute && (!controller._jwt || controller._jwt !== 'successful-access')) {
+            reject(new Error('Unauthorized'));
+            return;
+          }
+
+          // 3) Resolve or reject the promise with the value.
+          resolver.run(
+            args,
+            (resolvedValue) => {
+              console.log(
+                `%c${name}: %c\noutput:${JSON.stringify(resolvedValue, null, '  ')}`,
+                'color: green; font-weight: bold',
+                'color: #00a',
+              );
+              resolve(resolvedValue);
+            },
+            reject,
+          );
+        }, 700);
+      });
+
+    let res: Nullable<T> = null;
+    let shouldTryToRefresh = false;
+    try {
+      res = await requestPromiseFactory();
+    } catch (error: any) {
+      console.log('Error', error.message);
+      if (error.message === 'Unauthorized') shouldTryToRefresh = true;
+    }
+
+    if (shouldTryToRefresh) {
+      try {
+        console.log('Trying to refresh the token...');
+        await controller.refresh('refresh-token');
+        if (!controller._jwt) throw new Error('No jwt after refresh');
+        res = await requestPromiseFactory();
+      } catch {
+        console.log("Couldn't refresh the token.");
+        controller._setStore(
+          (pStore): Store => ({
+            ...pStore,
+            connexionStatus: ConnexionStatus.DISCONNECTED,
+          }),
         );
+      }
+    }
 
-        if (protectedRoute && (!controller._jwt || controller._jwt !== 'successful-access')) {
-          reject(new Error('Unauthorized'));
-          return;
-        }
-
-        resolver.run(args, resolve, reject);
-      }, 700);
-    });
+    return res as T;
+  };
 
 /**
  * A helper class to declare and mock a function of the controller
@@ -68,6 +113,11 @@ class MockControllerFunction<TInput, TOutput, TError = Error> {
 
   resolveOn(param: TInput, output: TOutput) {
     this.resolveTo[JSON.stringify(param)] = output;
+    return this;
+  }
+
+  rejectOnDefault(error: TError) {
+    this.rejectTo.default = error;
     return this;
   }
 
@@ -91,6 +141,11 @@ class MockControllerFunction<TInput, TOutput, TError = Error> {
       return;
     }
 
+    if (this.rejectTo.default) {
+      reject(this.rejectTo.default);
+      return;
+    }
+
     if (this.resolveTo.default) {
       resolve(this.resolveTo.default);
       return;
@@ -99,6 +154,9 @@ class MockControllerFunction<TInput, TOutput, TError = Error> {
 }
 
 export default class LogController extends Controller {
+  // mock if the user has a refreshToken, true=>refresh works, false=>refresh fails 403
+  refreshActivated = true;
+
   sendTest = promisifiedConsoleLogFactory(this, 'sendTest');
   getExamples = promisifiedConsoleLogFactory(
     this,
@@ -132,15 +190,37 @@ export default class LogController extends Controller {
     )(input);
     localStorage.setItem('refresh', tokens.refresh);
     this._jwt = tokens.access;
+    this._setStore((pStore): Store => ({ ...pStore, connexionStatus: ConnexionStatus.CONNECTED }));
     return tokens;
   };
-  refresh = promisifiedConsoleLogFactory(
-    this,
-    'refresh',
-    new MockControllerFunction<string, AccessToken>().resolveOnDefault({
-      access: 'successful-access',
-    }),
-  );
+  refresh = async (refreshToken: string) => {
+    const handler: MockControllerFunction<string, AccessToken, any> = this.refreshActivated
+      ? new MockControllerFunction<string, AccessToken>().resolveOnDefault({
+          access: 'successful-access',
+        })
+      : new MockControllerFunction<string, AccessToken, any>().rejectOnDefault({
+          detail: 'Given token not valid for any token type',
+          code: 'token_not_valid',
+          messages: [
+            {
+              token_class: 'AccessToken',
+              token_type: 'access',
+              message: 'Token is invalid or expired',
+            },
+          ],
+        });
+
+    const accessToken = await promisifiedConsoleLogFactory(
+      this,
+      'refresh',
+      handler,
+      false,
+    )(refreshToken);
+
+    this._jwt = accessToken.access;
+    this._setStore((pStore): Store => ({ ...pStore, connexionStatus: ConnexionStatus.CONNECTED }));
+    return accessToken;
+  };
 
   /**
    * Users routes
@@ -167,13 +247,18 @@ export default class LogController extends Controller {
     )(input);
     localStorage.setItem('refresh', tokens.refresh);
     this._jwt = tokens.access;
+    this._setStore((pStore): Store => ({ ...pStore, connexionStatus: ConnexionStatus.CONNECTED }));
     return tokens;
   };
-  getMyProfile = promisifiedConsoleLogFactory(
-    this,
-    'getMyProfile',
-    new MockControllerFunction<null, Profile>().resolveOnDefault(createRandomProfile()),
-  );
+  getMyProfile = async () => {
+    const profile = await promisifiedConsoleLogFactory(
+      this,
+      'getMyProfile',
+      new MockControllerFunction<null, Profile>().resolveOnDefault(createRandomProfile()),
+    )();
+    this._setStore((pStore): Store => ({ ...pStore, user: profile }));
+    return profile;
+  };
   getUser = promisifiedConsoleLogFactory(
     this,
     'getUser',

@@ -1,0 +1,69 @@
+import { Meta } from '@storybook/addon-docs';
+import stateDiagram from './state.png';
+
+<Meta title="Auth/Auth" />
+
+# Auth flow
+
+The auth flow is made of a few requests, a state manager, and 3 components. A protection of the backend looks like:
+
+```tsx
+export default function App() {
+  const { user, connexionStatus } = useStore();
+
+  if (connexionStatus === ConnexionStatus.CONNECTING) return <AuthGard />;
+  if (connexionStatus === ConnexionStatus.DISCONNECTED) return <AuthForm />;
+  return <LayoutWithSidebar>The app as connected user</LayoutWithSidebar>;
+}
+```
+
+First, the `AuthGard` is responsible to try to run a request (to get the user) and so to refresh the token if needed, when in memory the user is not identified yet.
+
+Then, the `AuthForm` is responsible to display the form to connect the user. It is shown only, if th
+
+Finally, the `LayoutWithSidebar` is responsible to display the app as connected user.
+
+# The log controller implementation
+
+The log controller must allow to work as if the user had a valid refresh token or not. This is controlled by the attribute `controller.refreshTokenActivated`.
+
+For instance, this storybook provides a checkbox that allow to switch this parametter, and save this setting in the localStorage.
+
+To use the log controller in the démo app and to test the two behaviours, you can use the following code:
+
+```tsx
+const controller = new LogController();
+controller.refreshTokenActivated = false // or true
+
+<ControllerProvider controller={controller}>
+    <App />
+</ControllerProvider>
+```
+
+- if refreshTokenActivated, all refresh token requests will succeed
+- if not, all refresh token requests will fail
+
+## Trace if refresh token works
+
+- **Display a loader**
+- _Set status to CONNECTING_
+- `getMyProfile`: fails
+- `refresh`: Ok
+- _Set status to CONNECTED_
+- **Display the page**
+- `getMyProfile`: Ok
+- Other requests
+
+## Trace if refresh fails
+
+- **Display a loader**
+- _Set status to CONNECTING_
+- `getMyProfile`: fails
+- `refresh`: fails
+- _Set status to DISCONNECTED_
+- **Display the auth forms**
+- User logins
+
+# State
+
+<img src={stateDiagram} alt="state diagram" />
