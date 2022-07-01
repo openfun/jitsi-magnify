@@ -1,13 +1,14 @@
 import {
   ControllerProvider,
-  DefaultController,
   loadLocaleData,
   TranslationProvider,
   defaultTheme,
+  LogController,
 } from '@jitsi-magnify/core';
 import { Grommet } from 'grommet';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 
@@ -30,7 +31,10 @@ async function render() {
   }
 
   // Create the controller
-  const controller = new DefaultController({ url: 'http://localhost:3000' });
+  // const controller = new DefaultController({ url: 'http://localhost:3000' });
+  const controller = new LogController();
+  // controller.refreshActivated = false;
+  const queryClient = new QueryClient();
 
   // Render the app inside the required providers
   root.render(
