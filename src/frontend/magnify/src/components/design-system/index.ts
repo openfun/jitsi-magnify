@@ -1,5 +1,6 @@
 export { default as LoadingButton } from './LoadingButton';
 export { default as RowsList, HeaderProps, RowPropsExtended, RowsListProps } from './RowsList';
+export { default as Section } from './Section';
 export { default as SquareAvatar, SquareAvatarProps } from './SquareAvatar';
 export * from './svg-icons';
 export { default as TextField, TextFieldProps } from './TextField';
