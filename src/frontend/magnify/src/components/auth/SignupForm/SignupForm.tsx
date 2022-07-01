@@ -1,21 +1,27 @@
-import { Box, Button, Text } from 'grommet';
+import { Box, Button, Heading, Text } from 'grommet';
+import { Close } from 'grommet-icons';
 import React from 'react';
 import { defineMessages, IntlShape, useIntl } from 'react-intl';
 import { useMutation } from 'react-query';
+
 import { useController } from '../../../controller';
+import { useStore } from '../../../controller/ControllerProvider';
+import { SignupInput } from '../../../controller/interface';
 import useFormState from '../../../hooks/useFormState';
 import { validationMessages } from '../../../i18n/Messages';
-import { LoadingButton, TextField } from '../../design-system';
-import { Close } from 'grommet-icons';
-import { SignupInput } from '../../../controller/interface';
-import { useStore } from '../../../controller/ControllerProvider';
 import validators, {
   emailValidator,
   passwordConfirmValidator,
   usernameValidator,
 } from '../../../utils/validators';
+import { LoadingButton, TextField } from '../../design-system';
 
 const messages = defineMessages({
+  formTitle: {
+    defaultMessage: 'Create an account',
+    description: 'The title of the signup form',
+    id: 'components.auth.SignupForm.formTitle',
+  },
   nameLabel: {
     id: 'components.auth.SignupForm.nameLabel',
     description: 'Label for the name input',
@@ -122,6 +128,9 @@ export default function SignupForm() {
 
   return (
     <>
+      <Heading level={2} color="brand">
+        {intl.formatMessage(messages.formTitle)}
+      </Heading>
       {isUnknownError && (
         <Box
           direction="row"
