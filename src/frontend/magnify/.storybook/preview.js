@@ -1,11 +1,12 @@
 import { defaultTheme } from '../src';
-import { Grommet, Text, Box } from 'grommet';
-import { MemoryRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Grommet } from 'grommet';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
 import messages from '../src/translations/fr-FR.json';
 import { ControllerProvider, LogController } from '../src/controller';
 import { QueryClientProvider, QueryClient } from 'react-query';
-import DebugRoute from "../src/utils/DebugRoute";
+import DebugRoute from '../src/utils/DebugRoute';
+import DebugRefreshToken from '../src/utils/DebugRefreshToken';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -18,6 +19,7 @@ export const parameters = {
 };
 
 const controller = new LogController();
+controller.refreshActivated = localStorage.getItem('debugRefreshToken') === 'true';
 const queryClient = new QueryClient();
 
 // Grommet wrapper decorator
@@ -42,9 +44,14 @@ const withIntl = (storyFn) => (
 );
 
 // Controller to access the backend. Here we use a console.log controller
-const withController = (storyFn) => (
-  <ControllerProvider controller={controller}>{storyFn()}</ControllerProvider>
-);
+const withController = (storyFn) => {
+  return (
+    <>
+      <ControllerProvider controller={controller}>{storyFn()}</ControllerProvider>
+      <DebugRefreshToken controller={controller} />
+    </>
+  );
+};
 
 // query decorator
 const withQuery = (storyFn) => (
