@@ -8,6 +8,7 @@ import Controller, {
 import axios, { AxiosInstance } from 'axios';
 import { AccessToken, Tokens } from '../types/tokens';
 import { Profile } from '../types/profile';
+import { Group } from '../types/group';
 
 interface DefaultControllerOptions {
   url: string;
@@ -73,6 +74,11 @@ export default class DefaultController extends Controller {
   }
   async deleteUser(id: string): Promise<void> {
     // DELETE /users/{id}
+    throw new Error('Not implemented');
+  }
+
+  async getGroups(): Promise<Group[]> {
+    // GET /groups
     throw new Error('Not implemented');
   }
 }

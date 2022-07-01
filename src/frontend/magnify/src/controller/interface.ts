@@ -1,3 +1,4 @@
+import { Group } from '../types/group';
 import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
 import { AccessToken, Tokens } from '../types/tokens';
@@ -55,4 +56,7 @@ export default abstract class Controller {
   abstract updateUserAvatar(updateUserAvatarInput: UpdateUserAvatarInput): Promise<Profile>;
   abstract updateUserPassword(updateUserPasswordInput: UpdateUserPasswordInput): Promise<Profile>;
   abstract deleteUser(id: string): Promise<void>;
+
+  // Groups
+  abstract getGroups(): Promise<Group[]>;
 }

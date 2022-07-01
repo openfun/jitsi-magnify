@@ -1,4 +1,7 @@
+import createRandomGroup from '../factories/group';
+import createRandomGroups from '../factories/groups';
 import { createRandomProfile } from '../factories/profile';
+import { Group } from '../types/group';
 import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
 import { AccessToken, Tokens } from '../types/tokens';
@@ -287,5 +290,12 @@ export default class LogController extends Controller {
     this,
     'deleteUser',
     new MockControllerFunction<string, void>(),
+  );
+
+  // Groups routes
+  getGroups = promisifiedConsoleLogFactory(
+    this,
+    'getGroups',
+    new MockControllerFunction<null, Group[]>().resolveOnDefault(createRandomGroups(7)),
   );
 }
