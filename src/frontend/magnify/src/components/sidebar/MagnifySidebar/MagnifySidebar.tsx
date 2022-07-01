@@ -2,8 +2,9 @@ import { Box, Nav, Sidebar } from 'grommet';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
-import { SidebarButton, SidebarButtonProps } from '..';
+import SidebarButton, { SidebarButtonProps } from '../SidebarButton';
 import { AvatarSVG, CalEventSVG, GridSVG, GroupSVG, SettingsSVG } from '../../design-system';
+import { MarginType } from 'grommet/utils';
 
 export interface MagnifySidebarProps {
   itemZones?: SidebarButtonProps[][];
@@ -11,6 +12,7 @@ export interface MagnifySidebarProps {
   separatorGap?: string;
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  margin?: MarginType;
 }
 
 const messages = defineMessages({
@@ -47,6 +49,7 @@ function MagnifySidebar({
   separatorGap = 'large',
   header = <></>,
   footer = <></>,
+  margin = 'none',
 }: MagnifySidebarProps) {
   const intl = useIntl();
   const zones = itemZones || [
@@ -54,29 +57,29 @@ function MagnifySidebar({
       {
         label: intl.formatMessage(messages.sidebarMyAccountLabel),
         icon: <AvatarSVG />,
-        navigateTo: 'account',
+        navigateTo: '/account',
       },
     ],
     [
       {
         label: intl.formatMessage(messages.sidebarRoomsLabel),
         icon: <GridSVG />,
-        navigateTo: 'rooms',
+        navigateTo: '/rooms',
       },
       {
         label: intl.formatMessage(messages.sidebarMeetingsLabel),
         icon: <CalEventSVG />,
-        navigateTo: 'meetings',
+        navigateTo: '/meetings',
       },
       {
         label: intl.formatMessage(messages.sidebarGroupsLabel),
         icon: <GroupSVG />,
-        navigateTo: 'groups',
+        navigateTo: '/groups',
       },
       {
         label: intl.formatMessage(messages.sidebarSettingsLabel),
         icon: <SettingsSVG />,
-        navigateTo: 'settings',
+        navigateTo: '/settings',
       },
     ],
   ];
@@ -86,9 +89,12 @@ function MagnifySidebar({
       responsive={false}
       background="white"
       pad={{ left: 'medium', right: 'medium', vertical: 'medium' }}
-      elevation="medium"
+      elevation="small"
+      round="xsmall"
       header={header}
       footer={footer}
+      width="400px"
+      margin={margin}
     >
       <Nav gap={separatorGap} responsive={false}>
         {zones.map((zone) => (

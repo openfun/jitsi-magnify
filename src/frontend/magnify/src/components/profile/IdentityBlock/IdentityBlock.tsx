@@ -2,15 +2,18 @@ import React from 'react';
 import { Box, Card } from 'grommet';
 import AvatarForm from '../AvatarForm';
 import IdentityForm from '../IdentityForm';
+import { MarginType } from 'grommet/utils';
 import { useStore } from '../../../controller';
 
-export interface IdentityBlockProps {}
+export interface IdentityBlockProps {
+  margin?: MarginType;
+}
 
-export default function IdentityBlock({}: IdentityBlockProps) {
+export default function IdentityBlock({ margin = { vertical: 'small' } }: IdentityBlockProps) {
   const { user } = useStore();
 
   return (
-    <Card>
+    <Card margin={margin} background="white">
       <Box direction="row">
         <Box margin={{ vertical: 'auto', horizontal: 'large' }}>
           <AvatarForm src={user?.avatar} key={user?.id || ''} />
