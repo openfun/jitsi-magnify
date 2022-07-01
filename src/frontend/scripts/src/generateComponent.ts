@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+
 import { pathToComponents } from "./componentPath";
 import {
   componentTemplate,
@@ -11,9 +12,9 @@ import {
 } from "./generateComponent.templates";
 import appendToFile from "./tools/appendToFile";
 import createDirectory from "./tools/createDirectory";
+import { folderName } from "./tools/nameFormatting";
 import searchInFile from "./tools/searchInFile";
 import writeFile from "./tools/writeFile";
-import { folderName } from "./tools/nameFormatting";
 
 if (!process.argv[2])
   throw new Error(
@@ -70,7 +71,7 @@ writeFile(
 
 // CREATE TEST
 writeFile(
-  path.join(pathToComponentFolderInComponents, `${componentName}.tests.tsx`),
+  path.join(pathToComponentFolderInComponents, `${componentName}.test.tsx`),
   testTemplate(componentName)
 );
 
