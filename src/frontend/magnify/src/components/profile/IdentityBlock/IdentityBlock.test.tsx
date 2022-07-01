@@ -2,18 +2,24 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import IdentityBlock from './IdentityBlock';
+import { ConnexionStatus, Store } from '../../../controller/store';
+import { createRandomProfile } from '../../../factories/profile';
+import { ControllerProvider, MockController } from '../../../controller';
 
 describe('IdentityBlock', () => {
   it('should render the avatar and identity forms with right default values', async () => {
+    const controller = new MockController();
+    const store: Store = {
+      connexionStatus: ConnexionStatus.CONNECTED,
+      user: createRandomProfile(),
+    };
+
     render(
-      <IntlProvider locale="en">
-        <IdentityBlock
-          name="John Doe"
-          username="johndoe3"
-          email="john.doe@example.com"
-          avatar="test.jpg"
-        />
-      </IntlProvider>,
+      <ControllerProvider controller={controller} store={store}>
+        <IntlProvider locale="en">
+          <IdentityBlock />
+        </IntlProvider>
+      </ControllerProvider>,
     );
 
     const nameInput = screen.getByLabelText('Name*');
@@ -21,12 +27,12 @@ describe('IdentityBlock', () => {
     const emailInput = screen.getByLabelText('Email*');
     const saveButton = screen.getByText('Save');
 
-    expect(nameInput).toHaveValue('John Doe');
-    expect(usernameInput).toHaveValue('johndoe3');
-    expect(emailInput).toHaveValue('john.doe@example.com');
+    expect(nameInput).toHaveValue(store.user?.name);
+    expect(usernameInput).toHaveValue(store.user?.username);
+    expect(emailInput).toHaveValue(store.user?.email);
     expect(saveButton).toBeDisabled();
 
     const avatarImage = screen.getByTitle('Your avatar');
-    expect(avatarImage).toHaveStyle('background-image: url(test.jpg)');
+    expect(avatarImage).toHaveStyle(`background-image: url(${store.user?.avatar})`);
   });
 });
