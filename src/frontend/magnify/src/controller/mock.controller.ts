@@ -16,4 +16,6 @@ export default class MockController extends Controller {
   updateUserAvatar = jest.fn();
   updateUserPassword = jest.fn();
   deleteUser = jest.fn();
+
+  getGroups = jest.fn();
 }
