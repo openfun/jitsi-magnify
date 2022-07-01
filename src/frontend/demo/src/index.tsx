@@ -3,6 +3,7 @@ import {
   DefaultController,
   loadLocaleData,
   TranslationProvider,
+  defaultTheme,
 } from '@jitsi-magnify/core';
 import { Grommet } from 'grommet';
 import React from 'react';
@@ -36,10 +37,12 @@ async function render() {
     <TranslationProvider defaultLocale="en-US" locale={locale} messages={translatedMessages || {}}>
       <React.StrictMode>
         <BrowserRouter>
-          <Grommet full>
-            <ControllerProvider controller={controller}>
-              <App />
-            </ControllerProvider>
+          <Grommet full theme={defaultTheme}>
+            <QueryClientProvider client={queryClient}>
+              <ControllerProvider controller={controller}>
+                <App />
+              </ControllerProvider>
+            </QueryClientProvider>
           </Grommet>
         </BrowserRouter>
       </React.StrictMode>

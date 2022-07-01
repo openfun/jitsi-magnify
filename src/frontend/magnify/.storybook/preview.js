@@ -1,4 +1,4 @@
-import theme from './theme';
+import { defaultTheme } from '../src';
 import { Grommet, Text, Box } from 'grommet';
 import { MemoryRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
@@ -21,7 +21,7 @@ const controller = new LogController();
 const queryClient = new QueryClient();
 
 // Grommet wrapper decorator
-const withGrommet = (storyFn) => <Grommet theme={theme}>{storyFn()}</Grommet>;
+const withGrommet = (storyFn) => <Grommet theme={defaultTheme}>{storyFn()}</Grommet>;
 
 // Simulate router behavior
 
