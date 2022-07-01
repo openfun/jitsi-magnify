@@ -1,8 +1,8 @@
-import React, { createContext } from 'react';
+import React, { createContext, useEffect } from 'react';
 import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
 import Controller from './interface';
-import { defaultStore, Store } from './store';
+import { ConnexionStatus, defaultStore, Store } from './store';
 
 const ControllerContext = createContext<{
   controller: Controller | null;
@@ -28,6 +28,10 @@ interface ControllerProviderProps {
 export default function ControllerProvider({ children, controller }: ControllerProviderProps) {
   const [store, setStore] = React.useState<Store>(defaultStore);
 
+  useEffect(() => {
+    controller.registerSetStore(setStore);
+  });
+
   return (
     <ControllerContext.Provider value={{ controller, store, setStore }}>
       {children}
@@ -52,10 +56,12 @@ export function useStore(): {
   setStore: React.Dispatch<React.SetStateAction<Store>>;
   user: Nullable<Profile>;
   setUser: React.Dispatch<React.SetStateAction<Nullable<Profile>>>;
+  connexionStatus: ConnexionStatus;
+  setConnexionStatus: React.Dispatch<React.SetStateAction<ConnexionStatus>>;
 } {
   const { store, setStore } = React.useContext(ControllerContext);
 
-  const { user } = store;
+  const { user, connexionStatus } = store;
 
   return {
     // general
@@ -65,9 +71,21 @@ export function useStore(): {
     // user
     user,
     setUser: (user: Nullable<Profile> | ((p: Nullable<Profile>) => Nullable<Profile>)) =>
-      setStore((pStore) => ({
-        ...pStore,
-        user: typeof user === 'function' ? user(pStore.user) : user,
-      })),
+      setStore(
+        (pStore): Store => ({
+          ...pStore,
+          user: typeof user === 'function' ? user(pStore.user) : user,
+        }),
+      ),
+
+    // connexion
+    connexionStatus,
+    setConnexionStatus: (status: ConnexionStatus | ((p: ConnexionStatus) => ConnexionStatus)) =>
+      setStore(
+        (pStore): Store => ({
+          ...pStore,
+          connexionStatus: typeof status === 'function' ? status(pStore.connexionStatus) : status,
+        }),
+      ),
   };
 }

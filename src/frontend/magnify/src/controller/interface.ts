@@ -1,6 +1,7 @@
 import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
 import { AccessToken, Tokens } from '../types/tokens';
+import { Store } from './store';
 
 export interface SignupInput {
   name: string;
@@ -29,6 +30,11 @@ export interface UpdateUserPasswordInput {
 
 export default abstract class Controller {
   _jwt: Nullable<string> = null;
+  _setStore: React.Dispatch<React.SetStateAction<Store>> = () => {};
+
+  registerSetStore(setStore: React.Dispatch<React.SetStateAction<Store>>) {
+    this._setStore = setStore;
+  }
 
   // False routes, just to try the controller mechanism.
   abstract sendTest(message: string): Promise<any>;
