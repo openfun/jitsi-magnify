@@ -106,7 +106,7 @@ export default function RowsList<TRowProps extends Row>({
   };
 
   return (
-    <Card background="white" pad="small" elevation="0">
+    <Card background="white" pad="medium">
       <Grid
         fill
         areas={[

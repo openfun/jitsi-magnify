@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { Box, Button, Card, Heading, Layer, Text } from 'grommet';
 import { defineMessages, useIntl } from 'react-intl';
+import { MarginType } from 'grommet/utils';
+
+export interface DeleteAccountBlockProps {
+  margin?: MarginType;
+}
 
 const messages = defineMessages({
   deleteAccountBlockTitle: {
@@ -46,7 +51,9 @@ const messages = defineMessages({
   },
 });
 
-export default function DeleteAccountBlock() {
+export default function DeleteAccountBlock({
+  margin = { vertical: 'small' },
+}: DeleteAccountBlockProps) {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
 
@@ -59,7 +66,7 @@ export default function DeleteAccountBlock() {
 
   return (
     <>
-      <Card>
+      <Card background="white" margin={margin}>
         <Box margin="small">
           <Box margin="large">
             <Text color="status-error" style={{ textTransform: 'uppercase' }} weight="bold">

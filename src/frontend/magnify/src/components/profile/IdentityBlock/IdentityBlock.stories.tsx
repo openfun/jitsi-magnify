@@ -16,4 +16,6 @@ const Template: ComponentStory<typeof IdentityBlock> = (args) => (
 
 // create the template and 2 stories for variants blue and red
 export const Simple = Template.bind({});
-Simple.args = {};
+Simple.args = {
+  margin: { vertical: 'small', horizontal: 'small' },
+};
