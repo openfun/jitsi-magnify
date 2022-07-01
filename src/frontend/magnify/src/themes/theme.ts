@@ -1,4 +1,6 @@
-export default {
+import { ThemeType } from 'grommet';
+
+const theme: ThemeType = {
   global: {
     font: {
       family: 'Roboto',
@@ -26,14 +28,21 @@ export default {
   tag: {
     border: {
       color: 'brand',
-      radius: '5px',
+      size: '2px',
     },
-  },
-  input: {
-    border: false,
-    weight: 'normal',
   },
   formField: {
     border: false,
   },
+  heading: {
+    level: {
+      2: {
+        font: {
+          weight: 'normal',
+        },
+      },
+    },
+  },
 };
+
+export default theme;
