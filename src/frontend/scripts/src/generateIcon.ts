@@ -1,5 +1,6 @@
-import fs from "fs";
 import path from "path";
+
+import { pathToComponents } from "./componentPath";
 import {
   exportTemplate,
   iconTemplate,
@@ -7,10 +8,9 @@ import {
   lineToFindInStories,
   storyTemplate,
 } from "./generateIcon.templates";
-import { pathToComponents } from "./componentPath";
-import writeFile from "./tools/writeFile";
 import appendToFile from "./tools/appendToFile";
 import createDirectory from "./tools/createDirectory";
+import writeFile from "./tools/writeFile";
 
 const iconName = process.argv[2];
 if (!iconName)
