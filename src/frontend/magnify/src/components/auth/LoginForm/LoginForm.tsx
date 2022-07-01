@@ -1,16 +1,27 @@
-import { Box, Button, Text } from 'grommet';
+import { Box, Button, Heading, Text } from 'grommet';
+import { Close } from 'grommet-icons';
 import React from 'react';
 import { defineMessages, IntlShape, useIntl } from 'react-intl';
 import { useMutation } from 'react-query';
+
 import { useController } from '../../../controller';
+import { useStore } from '../../../controller/ControllerProvider';
+import { LoginInput } from '../../../controller/interface';
 import useFormState from '../../../hooks/useFormState';
 import { validationMessages } from '../../../i18n/Messages';
 import { LoadingButton, TextField } from '../../design-system';
-import { Close } from 'grommet-icons';
-import { LoginInput } from '../../../controller/interface';
-import { useStore } from '../../../controller/ControllerProvider';
 
 const messages = defineMessages({
+  formTitle: {
+    defaultMessage: 'Login to my account',
+    description: 'The title of the login form',
+    id: 'components.auth.LoginForm.formTitle',
+  },
+  formExplanation: {
+    defaultMessage: 'Please login to your account',
+    description: 'The explanation of the login form',
+    id: 'components.auth.LoginForm.formExplanation',
+  },
   usernameLabel: {
     defaultMessage: 'Username',
     description: 'The label for the username field',
@@ -79,6 +90,12 @@ export default function LoginForm() {
 
   return (
     <>
+      <Heading level={2} color="brand">
+        {intl.formatMessage(messages.formTitle)}
+      </Heading>
+      <Text color="brand" margin={{ bottom: 'medium' }}>
+        {intl.formatMessage(messages.formExplanation)}
+      </Text>
       {error && (
         <Box
           direction="row"
