@@ -104,7 +104,7 @@ export function createRandomMeeting({
     customStartDate || (future ? faker.date.future() : faker.date.past(weeksLength / 52));
   const end =
     customEndDate ||
-    (isSingle ? start : new Date(start.getTime() + 3600 * 1000 * 24 * weeksLength));
+    (isSingle ? start : new Date(start.getTime() + 3600 * 1000 * 24 * 7 * weeksLength));
 
   const heldOnArray =
     customHeldOn?.days ||

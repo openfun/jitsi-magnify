@@ -54,7 +54,7 @@ describe('MeetingRow.test.tsx', () => {
 
     screen.getByText(meeting.name);
     screen.getByText('09:00:00');
-    screen.getByText('10:00:00');
+    screen.getByText('01:00');
     screen.getByText('7/24/2022');
   });
 
@@ -73,12 +73,13 @@ describe('MeetingRow.test.tsx', () => {
 
     screen.getByText(meeting.name);
     screen.getByText('11:30:00');
-    screen.getByText('13:00:00');
-    screen.getByText('from 7/24/2022 to 8/24/2022');
+    screen.getByText('01:30');
+    screen.getByText('7/24/2022');
+    screen.getByText('8/24/2022');
     screen.getByText('7/27/2022');
 
-    expect(screen.getByText('W')).toHaveStyle('font-weight: bold; color: rgb(125, 76, 219)');
-    expect(screen.getByText('F')).toHaveStyle('font-weight: bold; color: rgb(125, 76, 219)');
+    expect(screen.getByText('W')).toHaveStyle('font-weight: bold; color: #F8F8F8');
+    expect(screen.getByText('F')).toHaveStyle('font-weight: bold; color: #F8F8F8');
     expect(screen.getByText('M')).toHaveStyle('font-weight: normal; color: inherit');
     expect(screen.getByRole('button', { name: 'Join' })).toBeDisabled();
   });
@@ -99,12 +100,13 @@ describe('MeetingRow.test.tsx', () => {
 
     screen.getByText(meeting.name);
     screen.getByText('11:30:00');
-    screen.getByText('13:00:00');
-    screen.getByText('from 6/1/2022 to 8/20/2022');
+    screen.getByText('01:30');
+    screen.getByText('6/1/2022');
+    screen.getByText('8/20/2022');
     screen.getByText('6/24/2022');
 
-    expect(screen.getByText('W')).toHaveStyle('font-weight: bold; color: rgb(125, 76, 219)');
-    expect(screen.getByText('F')).toHaveStyle('font-weight: bold; color: rgb(125, 76, 219)');
+    expect(screen.getByText('W')).toHaveStyle('font-weight: bold; color: #F8F8F8');
+    expect(screen.getByText('F')).toHaveStyle('font-weight: bold; color: #F8F8F8');
     expect(screen.getByText('M')).toHaveStyle('font-weight: normal; color: inherit');
     expect(screen.getByRole('button', { name: 'Join' })).toBeEnabled();
 
@@ -127,8 +129,9 @@ describe('MeetingRow.test.tsx', () => {
 
     screen.getByText(meeting.name);
     screen.getByText('11:30:00');
-    screen.getByText('13:00:00');
-    screen.getByText('from 3/1/2022 to 4/20/2022');
+    screen.getByText('01:30');
+    screen.getByText('3/1/2022');
+    screen.getByText('4/20/2022');
     screen.getByText('Ended');
   });
 });

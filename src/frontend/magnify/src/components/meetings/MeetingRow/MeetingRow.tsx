@@ -9,6 +9,7 @@ import { getNextMeeting } from './getNextMeeting';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { LoadingButton } from '../../design-system';
+import formatDuration from './formatDuration';
 
 export interface MeetingRowProps {
   /**
@@ -67,7 +68,6 @@ export default function MeetingRow({ meeting, baseJitsiUrl }: MeetingRowProps) {
 
   // Analyse the meeting and compute the nex ocurrence, if any
   const isRepeat = meeting.start !== meeting.end;
-  const endTime = computeEnd(meeting.start_time, meeting.expected_duration);
   const { nextMeeting, inProgress, maybeInProgress } = getNextMeeting(
     meeting.start,
     meeting.end,
@@ -87,17 +87,16 @@ export default function MeetingRow({ meeting, baseJitsiUrl }: MeetingRowProps) {
       aria-disabled={isOver}
     >
       <Grid
-        columns={['xxsmall', 'small', 'xsmall', 'xsmall', 'small', 'flex', 'auto']}
-        gap="large"
+        columns={['auto', 'xsmall', 'xsmall', 'small', 'flex', 'auto']}
+        gap="medium"
         rows={['auto']}
         areas={[
           { name: 'icon', start: [0, 0], end: [0, 0] },
           { name: 'date', start: [1, 0], end: [1, 0] },
-          { name: 'startTime', start: [2, 0], end: [2, 0] },
-          { name: 'endTime', start: [3, 0], end: [3, 0] },
-          { name: 'heldOn', start: [4, 0], end: [4, 0] },
-          { name: 'title', start: [5, 0], end: [5, 0] },
-          { name: 'actions', start: [6, 0], end: [6, 0] },
+          { name: 'times', start: [2, 0], end: [2, 0] },
+          { name: 'heldOn', start: [3, 0], end: [3, 0] },
+          { name: 'title', start: [4, 0], end: [4, 0] },
+          { name: 'actions', start: [5, 0], end: [5, 0] },
         ]}
         fill
       >
@@ -107,47 +106,51 @@ export default function MeetingRow({ meeting, baseJitsiUrl }: MeetingRowProps) {
 
         <Box gridArea="date" direction="row" margin="auto 0px">
           {nextMeeting ? (
-            <>
-              <Box margin="auto 0px">
-                <FastForward color="brand" size="16px" />
-              </Box>
-              <Text color="brand" margin={{ left: '5px' }}>
-                {intl.formatDate(nextMeeting!)}
-              </Text>
-            </>
+            <Text color="brand" margin={{ left: '5px' }}>
+              {intl.formatDate(nextMeeting!)}
+            </Text>
           ) : (
-            <>
-              <Text color="brand" margin={{ left: '5px' }}>
-                {intl.formatMessage(messages.endedLabel)}
-              </Text>
-            </>
+            <Text color="brand" margin={{ left: '5px' }}>
+              {intl.formatMessage(messages.endedLabel)}
+            </Text>
           )}
         </Box>
 
-        <Box gridArea="startTime" margin="auto 0px">
-          <Text color="brand">{meeting.start_time}</Text>
-        </Box>
-
-        <Box gridArea="endTime" margin="auto 0px">
-          <Text color="brand">{endTime}</Text>
+        <Box gridArea="times" margin="auto 0px" direction="column" align="center">
+          <Text color="brand" weight="bold">
+            {meeting.start_time}
+          </Text>
+          <Text color="brand">{formatDuration(meeting.expected_duration)}</Text>
         </Box>
 
         <Box gridArea="heldOn" margin="auto 0px">
           {isRepeat && (
             <>
-              <Text color="brand">
-                {intl.formatMessage(messages.fromDateToDate, {
-                  fromDate: new Date(meeting.start),
-                  toDate: new Date(meeting.end),
-                })}
-              </Text>
-              <Box flex direction="row">
+              <Box direction="row" justify="between">
+                <Text color="brand" size="xsmall">
+                  {intl.formatDate(new Date(meeting.start))}
+                </Text>
+                <Text color="brand" size="xsmall">
+                  &gt;&gt;
+                </Text>
+                <Text color="brand" size="xsmall">
+                  {intl.formatDate(new Date(meeting.end))}
+                </Text>
+              </Box>
+              <Box flex direction="row" justify="between">
                 {weekDays.map((day, index) => (
-                  <Box key={day} pad="3px">
+                  <Box
+                    key={day}
+                    pad="xxsmall"
+                    round="xsmall"
+                    width="10%"
+                    background={holdOn[index] ? 'brand' : 'default'}
+                    align="center"
+                  >
                     <Text
-                      color={holdOn[index] ? 'brand' : 'default'}
+                      color={holdOn[index] ? 'light-1' : 'default'}
                       weight={holdOn[index] ? 'bold' : 'normal'}
-                      size="small"
+                      size="xsmall"
                     >
                       {intl.formatMessage(messages[day as keyof typeof messages])}
                     </Text>
