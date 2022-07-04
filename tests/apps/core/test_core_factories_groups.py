@@ -53,12 +53,17 @@ class GroupsFactoriesTestCase(TestCase):
     def test_factories_groups_administrators(self):
         """We should be able to attach members as administrators to a group."""
         users = UserFactory.create_batch(3)
-        administrator_statuses = [random.choice([True, False]) for u in users]
-        group = GroupFactory(members=zip(users, administrator_statuses))
+        administrator_statuses = {
+            str(u.id): random.choice([True, False]) for u in users
+        }
+        group = GroupFactory(members=zip(users, administrator_statuses.values()))
 
         self.assertQuerysetEqual(group.members.all(), users, ordered=False)
         for i, _user in enumerate(users):
             self.assertEqual(list(users[i].is_member_of.all()), [group])
 
         for i, membership in enumerate(Membership.objects.all()):
-            self.assertEqual(membership.is_administrator, administrator_statuses[i])
+            self.assertEqual(
+                membership.is_administrator,
+                administrator_statuses[str(membership.user.id)],
+            )

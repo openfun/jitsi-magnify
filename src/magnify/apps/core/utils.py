@@ -7,6 +7,7 @@ from django.conf import settings
 from django.utils import timezone
 
 import jwt
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 def create_token_payload(user, room):
@@ -44,3 +45,13 @@ def generate_token(user, room):
     )
 
     return token
+
+
+def get_tokens_for_user(user):
+    """Get JWT tokens for user authentication."""
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+    }
