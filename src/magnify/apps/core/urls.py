@@ -6,6 +6,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt import views as jwt_views
 
 from magnify.apps.core import api, views
 
@@ -22,12 +23,18 @@ SchemaView = get_schema_view(
 
 router = DefaultRouter()
 router.register("rooms", api.RoomViewSet, basename="rooms")
+router.register("users", api.UserViewSet, basename="users")
 
 # To appear on the swagger URL,
 # the views need to extend APIView from the rest_framework.views package.
 urlpatterns = [
     path("token/<room>", views.RoomTokenView.as_view()),
     path("", include(router.urls)),
+    path(
+        "accounts/token-refresh/",
+        jwt_views.TokenRefreshView.as_view(),
+        name="token_refresh",
+    ),
     # Swagger documentation
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
