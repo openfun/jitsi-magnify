@@ -555,7 +555,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/fun/.npmrc
       - run:
           name: Publish package
-          command: npm publish src/frontend/magnify
+          command: npm publish src/frontend/magnify/
 
 workflows:
   version: 2
