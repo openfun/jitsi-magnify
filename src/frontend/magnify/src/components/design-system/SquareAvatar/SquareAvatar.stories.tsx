@@ -33,3 +33,9 @@ export const Empty = () => (
     </div>
   </div>
 );
+
+export const Fallback = Template.bind({});
+Fallback.args = {
+  title: fakeUser.name,
+  src: '',
+};
