@@ -3,15 +3,22 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from 'react-intl';
 import IdentityForm from './IdentityForm';
+import { ControllerProvider, MockController } from '../../../controller';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 describe('IdentityForm', () => {
   it('should render a form that can be filled and submited', async () => {
-    userEvent.setup();
+    const user = userEvent.setup();
+    const controller = new MockController();
 
     render(
-      <IntlProvider locale="en">
-        <IdentityForm name="John Doe" username="johndoe3" email="john.doe@test.fr" />
-      </IntlProvider>,
+      <ControllerProvider controller={controller}>
+        <QueryClientProvider client={new QueryClient()}>
+          <IntlProvider locale="en">
+            <IdentityForm id="123" name="John Doe" username="johndoe3" email="john.doe@test.fr" />
+          </IntlProvider>
+        </QueryClientProvider>
+      </ControllerProvider>,
     );
 
     const nameInput = screen.getByRole('textbox', { name: 'Name *' });
@@ -23,35 +30,41 @@ describe('IdentityForm', () => {
     expect(saveButton).toBeDisabled();
 
     // Name field and validators
-    await userEvent.clear(nameInput);
+    await user.clear(nameInput);
     await screen.findByText('This field is required');
-    await userEvent.type(nameInput, 'John Watson');
+    await user.type(nameInput, 'John Watson');
 
     // Username field and validators
     const invalidErrMessage =
       'Username is invalid, it should have between 3 and 16 letters, numbers or underscores';
-    await userEvent.clear(usernameInput);
+    await user.clear(usernameInput);
     await screen.findByText('This field is required');
-    await userEvent.type(usernameInput, '@test');
-    await userEvent.clear(usernameInput);
-    await userEvent.type(usernameInput, '2t');
+    await user.type(usernameInput, '@test');
+    await user.clear(usernameInput);
+    await user.type(usernameInput, '2t');
     await screen.findByText(invalidErrMessage);
-    await userEvent.clear(usernameInput);
-    await userEvent.type(usernameInput, 'atoolongusername7azertyui');
+    await user.clear(usernameInput);
+    await user.type(usernameInput, 'atoolongusername7azertyui');
     await screen.findByText(invalidErrMessage);
-    await userEvent.clear(usernameInput);
-    await userEvent.type(usernameInput, 'JoshWatson3');
+    await user.clear(usernameInput);
+    await user.type(usernameInput, 'JoshWatson3');
 
     // Email field and validators
-    await userEvent.clear(emailInput);
+    await user.clear(emailInput);
     await screen.findByText('This field is required');
-    await userEvent.type(emailInput, 'watson@test');
+    await user.type(emailInput, 'watson@test');
     await screen.findByText('Email is invalid');
-    await userEvent.type(emailInput, '.fr');
+    await user.type(emailInput, '.fr');
     expect(screen.queryByText('Email is invalid')).not.toBeInTheDocument();
 
     // Submit the form
     expect(saveButton).toBeEnabled();
-    await userEvent.click(saveButton);
+    await user.click(saveButton);
+    expect(controller.updateUser).toHaveBeenCalledWith({
+      id: '123',
+      name: 'John Watson',
+      username: 'JoshWatson3',
+      email: 'watson@test.fr',
+    });
   }, 10000);
 });

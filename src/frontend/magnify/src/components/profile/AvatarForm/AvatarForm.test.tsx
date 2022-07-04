@@ -3,14 +3,22 @@ import { render, screen } from '@testing-library/react';
 import AvatarForm from './AvatarForm';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from 'react-intl';
+import { ControllerProvider, MockController } from '../../../controller';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 describe('AvatarForm', () => {
   it('should render the default avatar, and when a new one is loaded, it should display it as preview', async () => {
     const user = userEvent.setup();
+    const controller = new MockController();
+
     render(
-      <IntlProvider locale="en">
-        <AvatarForm src="test.jpg" />
-      </IntlProvider>,
+      <ControllerProvider controller={controller}>
+        <QueryClientProvider client={new QueryClient()}>
+          <IntlProvider locale="en">
+            <AvatarForm src="test.jpg" id="123" />
+          </IntlProvider>
+        </QueryClientProvider>
+      </ControllerProvider>,
     );
 
     // Verify the default layout
@@ -26,5 +34,14 @@ describe('AvatarForm', () => {
     await screen.findByText('Save');
     await screen.findByLabelText('Remove avatar');
     expect(avatarImage).toHaveStyle('background-image: url(data:image/png;base64,aGVsbG8=)');
+
+    // Submit the avatar and verify the new avatar is saved
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+    expect(controller.updateUserAvatar).toHaveBeenCalled();
+
+    // Verify the content of the sent request
+    const { id, formData } = controller.updateUserAvatar.mock.calls[0][0];
+    expect(id).toBe('123');
+    expect(formData.get('avatar-file-input')).toStrictEqual(file);
   });
 });

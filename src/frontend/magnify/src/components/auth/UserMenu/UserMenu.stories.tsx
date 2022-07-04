@@ -8,10 +8,10 @@ export default {
   component: UserMenu,
 } as ComponentMeta<typeof UserMenu>;
 
-const Template: ComponentStory<typeof UserMenu> = (args) => {
+const Template: ComponentStory<typeof UserMenu> = () => {
   return (
     <InjectFakeUser>
-      <UserMenu {...args} />
+      <UserMenu />
     </InjectFakeUser>
   );
 };

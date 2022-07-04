@@ -27,7 +27,6 @@ export default function PasswordUpdateBlock({
   margin = { vertical: 'small' },
 }: PasswordUpdateBlockProps) {
   const intl = useIntl();
-
   return (
     <Card background="white" margin={margin}>
       <Box margin="small" direction="row">
