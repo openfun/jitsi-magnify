@@ -8,8 +8,11 @@ import validators, {
   requiredValidator,
   usernameValidator,
 } from '../../../utils/validators';
+import { useController } from '../../../controller';
+import { useMutation } from 'react-query';
 
 export interface IdentityFormProps {
+  id?: string;
   name: string;
   username: string;
   email: string;
@@ -38,8 +41,10 @@ const messages = defineMessages({
   },
 });
 
-export default function IdentityForm({ name, username, email }: IdentityFormProps) {
+export default function IdentityForm({ id, name, username, email }: IdentityFormProps) {
   const intl = useIntl();
+  const controller = useController();
+  const { mutate } = useMutation(controller.updateUser);
 
   const { values, errors, modified, setValue, isValid, isModified } = useFormState(
     { name, username, email },
@@ -57,7 +62,7 @@ export default function IdentityForm({ name, username, email }: IdentityFormProp
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('submit', values);
+    if (id) mutate({ id, ...values });
   };
 
   return (
@@ -96,7 +101,7 @@ export default function IdentityForm({ name, username, email }: IdentityFormProp
         <Button
           primary
           label={intl.formatMessage(messages.submitButtonLabel)}
-          disabled={!isModified || !isValid}
+          disabled={!isModified || !isValid || !id}
           type="submit"
         />
       </Box>

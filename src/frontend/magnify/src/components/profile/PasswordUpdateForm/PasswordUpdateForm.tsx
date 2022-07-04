@@ -1,6 +1,8 @@
 import { Box, Button } from 'grommet';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import { useMutation } from 'react-query';
+import { useController } from '../../../controller';
 import useFormState from '../../../hooks/useFormState';
 import validators, { passwordConfirmValidator, requiredValidator } from '../../../utils/validators';
 import { TextField } from '../../design-system';
@@ -30,6 +32,8 @@ const messages = defineMessages({
 
 export default function PasswordUpdateForm() {
   const intl = useIntl();
+  const controller = useController();
+  const { mutate } = useMutation(controller.updateUserPassword);
   const { values, errors, modified, isModified, isValid, setValue } = useFormState(
     { previousPassword: '', password: '', confirmPassword: '' },
     {
@@ -48,7 +52,7 @@ export default function PasswordUpdateForm() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('submit', values);
+    mutate({ oldPassword: values.previousPassword, newPassword: values.password });
   };
 
   return (

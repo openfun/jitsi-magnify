@@ -78,6 +78,7 @@ const promisifiedConsoleLogFactory =
     } catch (error: any) {
       console.log('Error', error.message);
       if (error.message === 'Unauthorized') shouldTryToRefresh = true;
+      else throw error;
     }
 
     if (shouldTryToRefresh) {
@@ -149,10 +150,7 @@ class MockControllerFunction<TInput, TOutput, TError = Error> {
       return;
     }
 
-    if (this.resolveTo.default) {
-      resolve(this.resolveTo.default);
-      return;
-    }
+    resolve(this.resolveTo.default);
   }
 }
 
@@ -267,30 +265,50 @@ export default class LogController extends Controller {
     'getUser',
     new MockControllerFunction<string, Profile>().resolveOnDefault(createRandomProfile()),
   );
-  updateUser = promisifiedConsoleLogFactory(
-    this,
-    'updateUser',
-    new MockControllerFunction<UpdateUserInput, Profile>().resolveOnDefault(createRandomProfile()),
-  );
-  updateUserAvatar = promisifiedConsoleLogFactory(
-    this,
-    'updateUserAvatar',
-    new MockControllerFunction<UpdateUserAvatarInput, Profile>().resolveOnDefault(
-      createRandomProfile(),
-    ),
-  );
-  updateUserPassword = promisifiedConsoleLogFactory(
-    this,
-    'updateUserPassword',
-    new MockControllerFunction<UpdateUserPasswordInput, Profile>().resolveOnDefault(
-      createRandomProfile(),
-    ),
-  );
-  deleteUser = promisifiedConsoleLogFactory(
-    this,
-    'deleteUser',
-    new MockControllerFunction<string, void>(),
-  );
+  updateUser = async (input: UpdateUserInput) => {
+    const profile = await promisifiedConsoleLogFactory(
+      this,
+      'updateUser',
+      new MockControllerFunction<UpdateUserInput, Profile>().resolveOnDefault(
+        createRandomProfile(),
+      ),
+    )(input);
+    this._setStore((pStore): Store => ({ ...pStore, user: profile }));
+    return profile;
+  };
+  updateUserAvatar = async (input: UpdateUserAvatarInput) => {
+    const profile = await promisifiedConsoleLogFactory(
+      this,
+      'updateUserAvatar',
+      new MockControllerFunction<UpdateUserAvatarInput, Profile>().resolveOnDefault(
+        createRandomProfile(),
+      ),
+    )(input);
+    this._setStore((pStore): Store => ({ ...pStore, user: profile }));
+    return profile;
+  };
+  updateUserPassword = async (input: UpdateUserPasswordInput) => {
+    const profile = await promisifiedConsoleLogFactory(
+      this,
+      'updateUserPassword',
+      new MockControllerFunction<UpdateUserPasswordInput, Profile>().resolveOnDefault(
+        createRandomProfile(),
+      ),
+    )(input);
+    this._setStore((pStore): Store => ({ ...pStore, user: profile }));
+    return profile;
+  };
+  deleteUser = async (id: string) => {
+    await promisifiedConsoleLogFactory(
+      this,
+      'deleteUser',
+      new MockControllerFunction<string, void>(),
+    )(id);
+    console.log('User deleted');
+    localStorage.removeItem('refresh');
+    this._jwt = null;
+    this._setStore({ user: null, connexionStatus: ConnexionStatus.DISCONNECTED });
+  };
 
   // Groups routes
   getGroups = promisifiedConsoleLogFactory(

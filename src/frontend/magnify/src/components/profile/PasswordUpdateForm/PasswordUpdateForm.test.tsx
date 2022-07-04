@@ -3,15 +3,24 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from 'react-intl';
 import PasswordUpdateForm from './PasswordUpdateForm';
+import { ControllerProvider, MockController } from '../../../controller';
+import { createRandomProfile } from '../../../factories/profile';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 describe('PasswordUpdateForm', () => {
   it('should render a form that can be filled and submited', async () => {
-    userEvent.setup();
+    const user = userEvent.setup();
+    const controller = new MockController();
+    const fakeUser = createRandomProfile();
 
     render(
-      <IntlProvider locale="en">
-        <PasswordUpdateForm />
-      </IntlProvider>,
+      <ControllerProvider controller={controller}>
+        <QueryClientProvider client={new QueryClient()}>
+          <IntlProvider locale="en">
+            <PasswordUpdateForm />
+          </IntlProvider>
+        </QueryClientProvider>
+      </ControllerProvider>,
     );
 
     const previousPasswordInput = screen.getByLabelText('Previous password*') as HTMLInputElement;
@@ -28,19 +37,24 @@ describe('PasswordUpdateForm', () => {
     expect(saveButton).toBeDisabled();
 
     // Type previous password
-    await userEvent.type(previousPasswordInput, 'oldPassword');
+    await user.type(previousPasswordInput, 'oldPassword');
     expect(saveButton).toBeDisabled();
 
-    await userEvent.type(newPasswordInput, 'newPassword');
+    await user.type(newPasswordInput, 'newPassword');
     expect(saveButton).toBeDisabled();
 
-    await userEvent.type(confirmPasswordInput, 'new');
+    await user.type(confirmPasswordInput, 'new');
     await screen.findByText("New password and it's confirmation do not match");
     expect(saveButton).toBeDisabled();
-    await userEvent.type(confirmPasswordInput, 'Password');
+    await user.type(confirmPasswordInput, 'Password');
 
     // Submit the form
     expect(saveButton).toBeEnabled();
-    await userEvent.click(saveButton);
+    await user.click(saveButton);
+
+    expect(controller.updateUserPassword).toHaveBeenCalledWith({
+      oldPassword: 'oldPassword',
+      newPassword: 'newPassword',
+    });
   });
 });

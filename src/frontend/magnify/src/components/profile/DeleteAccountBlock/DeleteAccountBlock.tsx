@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { Box, Button, Card, Heading, Layer, Text } from 'grommet';
 import { defineMessages, useIntl } from 'react-intl';
 import { MarginType } from 'grommet/utils';
+import { useController, useStore } from '../../../controller';
+import { useMutation } from 'react-query';
 
 export interface DeleteAccountBlockProps {
+  /**
+   * Additional margins
+   */
   margin?: MarginType;
 }
 
@@ -55,12 +60,16 @@ export default function DeleteAccountBlock({
   margin = { vertical: 'small' },
 }: DeleteAccountBlockProps) {
   const intl = useIntl();
+  const { user } = useStore();
+  const controller = useController();
+  const { mutate } = useMutation(controller.deleteUser);
   const [open, setOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
   const handleDelete = () => {
+    if (user) mutate(user.id);
     setOpen(false);
   };
 

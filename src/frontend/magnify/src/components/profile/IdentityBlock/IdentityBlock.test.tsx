@@ -5,6 +5,7 @@ import IdentityBlock from './IdentityBlock';
 import { ConnexionStatus, Store } from '../../../controller/store';
 import { createRandomProfile } from '../../../factories/profile';
 import { ControllerProvider, MockController } from '../../../controller';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 describe('IdentityBlock', () => {
   it('should render the avatar and identity forms with right default values', async () => {
@@ -16,9 +17,11 @@ describe('IdentityBlock', () => {
 
     render(
       <ControllerProvider controller={controller} store={store}>
-        <IntlProvider locale="en">
-          <IdentityBlock />
-        </IntlProvider>
+        <QueryClientProvider client={new QueryClient()}>
+          <IntlProvider locale="en">
+            <IdentityBlock />
+          </IntlProvider>
+        </QueryClientProvider>
       </ControllerProvider>,
     );
 

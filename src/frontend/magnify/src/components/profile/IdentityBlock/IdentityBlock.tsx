@@ -16,10 +16,11 @@ export default function IdentityBlock({ margin = { vertical: 'small' } }: Identi
     <Card margin={margin} background="white">
       <Box direction="row">
         <Box margin={{ vertical: 'auto', horizontal: 'large' }}>
-          <AvatarForm src={user?.avatar} key={user?.id || ''} />
+          <AvatarForm id={user?.id} src={user?.avatar} key={user?.id || ''} />
         </Box>
         <Box margin="large" style={{ flexGrow: 1 }}>
           <IdentityForm
+            id={user?.id}
             name={user?.name || ''}
             email={user?.email || ''}
             username={user?.username || ''}

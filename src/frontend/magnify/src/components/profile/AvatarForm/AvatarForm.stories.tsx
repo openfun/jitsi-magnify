@@ -12,6 +12,7 @@ const Template: ComponentStory<typeof AvatarForm> = (args) => <AvatarForm {...ar
 // create the template and 2 stories for variants blue and red
 export const Simple = Template.bind({});
 Simple.args = {
+  id: '1',
   src: 'https://i.pravatar.cc/120?img=12',
 };
 
