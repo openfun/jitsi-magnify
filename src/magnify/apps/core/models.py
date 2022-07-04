@@ -1,10 +1,12 @@
 """
 Declare and configure the models for the customers part
 """
-import django.contrib.auth.models as auth_models
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import UserManager
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import F, Q
+from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -22,14 +24,65 @@ class ValidateModelMixin:
         super().save(*args, **kwargs)
 
 
-class User(ValidateModelMixin, auth_models.AbstractUser):
-    """User model which follow courses or manage backend (is_staff)"""
+class User(ValidateModelMixin, AbstractBaseUser):
+    """
+    User model with uername and name, admin-compliant permissions.
+    Username and password are required. Other fields are optional.
+    """
+
+    username_validator = RegexValidator(
+        "^[a-zA-Z0-9_-]*$",
+        message=_(
+            "Username must contain only letters, numbers, underscores and hyphens."
+        ),
+    )
+
+    username = models.CharField(
+        _("username"),
+        max_length=30,
+        unique=True,
+        validators=[username_validator],
+        error_messages={
+            "unique": _("A user with that username already exists."),
+        },
+    )
+    name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    email = models.EmailField(max_length=255, unique=True)
+    is_staff = models.BooleanField(
+        _("staff status"),
+        default=False,
+        help_text=_("Designates whether the user can log into this admin site."),
+    )
+    is_active = models.BooleanField(
+        _("active"),
+        default=True,
+        help_text=_(
+            "Designates whether this user should be treated as active. "
+            "Unselect this instead of deleting accounts."
+        ),
+    )
+    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+
+    objects = UserManager()
+
+    EMAIL_FIELD = "email"
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email"]
 
     class Meta:
         db_table = "magnify_user"
         ordering = ("username",)
         verbose_name = _("User")
         verbose_name_plural = _("Users")
+
+    def clean(self):
+        """Normalize the email field."""
+        self.email = self.__class__.objects.normalize_email(self.email)
+        super().clean()
 
     def __str__(self):
         return self.username
