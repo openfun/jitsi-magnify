@@ -1,9 +1,10 @@
-import createRandomGroup from '../factories/group';
 import createRandomGroups from '../factories/groups';
+import createRandomRooms from '../factories/rooms';
 import { createRandomProfile } from '../factories/profile';
 import { Group } from '../types/group';
 import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
+import { Room } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
 import Controller, {
   LoginInput,
@@ -14,6 +15,7 @@ import Controller, {
 } from './interface';
 import { example1, example2 } from './mocks/example';
 import { ConnexionStatus, Store } from './store';
+import createRandomRoom from '../factories/room';
 
 /**
  * Factory to mock a function that returns a promise.
@@ -323,4 +325,15 @@ export default class LogController extends Controller {
     'joinMeeting',
     new MockControllerFunction<string, { token: string }>().resolveOnDefault({ token: 'token' }),
   );
+
+  // Rooms
+  registerRoom = async (name: string) =>
+    promisifiedConsoleLogFactory(
+      this,
+      'registerRoom',
+      new MockControllerFunction<string, Room>().resolveOnDefault({
+        ...createRandomRoom(true),
+        name,
+      }),
+    )(name);
 }

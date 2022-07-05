@@ -6,3 +6,4 @@ export * from './groups';
 export * from './profile';
 export * from './sidebar';
 export * from './users';
+export * from './rooms';
