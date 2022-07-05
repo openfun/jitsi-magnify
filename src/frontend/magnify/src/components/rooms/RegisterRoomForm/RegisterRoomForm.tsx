@@ -8,13 +8,6 @@ import { useMutation, useQueryClient } from 'react-query';
 import { Box, Heading } from 'grommet';
 import { Room } from '../../../types/room';
 
-export interface RegisterRoomFormProps {
-  /**
-   * Function to call when the form is successfully submited
-   */
-  onSuccess: () => void;
-}
-
 const messages = defineMessages({
   nameLabel: {
     id: 'components.rooms.registerRoomForm.nameLabel',
@@ -32,6 +25,14 @@ const messages = defineMessages({
     description: 'Label for the submit button to register a new room',
   },
 });
+
+export interface RegisterRoomFormProps {
+  /**
+   * Function to call when the form is successfully submited,
+   * after the request to register the room has succeeded
+   */
+  onSuccess: () => void;
+}
 
 const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
   const intl = useIntl();

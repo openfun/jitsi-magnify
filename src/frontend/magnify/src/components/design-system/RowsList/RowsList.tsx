@@ -170,7 +170,7 @@ export default function RowsList<TRowProps extends Row>({
             onToggle={() => handleToggle(row.id)}
           />
         ))}
-      {isLoading && [1, 2, 3].map((v) => <WaitingRow key={v} />)}
+      {isLoading && Array.from({ length: 3 }, (_v, i) => <WaitingRow key={i} />)}
     </Card>
   );
 }

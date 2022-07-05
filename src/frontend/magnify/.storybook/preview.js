@@ -20,7 +20,13 @@ export const parameters = {
 
 const controller = new LogController();
 controller.refreshActivated = localStorage.getItem('debugRefreshToken') === 'true';
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 // Grommet wrapper decorator
 const withGrommet = (storyFn) => <Grommet theme={defaultTheme}>{storyFn()}</Grommet>;

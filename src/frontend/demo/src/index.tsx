@@ -34,7 +34,13 @@ async function render() {
   // const controller = new DefaultController({ url: 'http://localhost:3000' });
   const controller = new LogController();
   // controller.refreshActivated = false;
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
 
   // Render the app inside the required providers
   root.render(

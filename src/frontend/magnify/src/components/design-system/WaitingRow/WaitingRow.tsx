@@ -1,17 +1,15 @@
 import React from 'react';
 import { Card } from 'grommet';
 import styled, { keyframes } from 'styled-components';
+import { defineMessages, useIntl } from 'react-intl';
 
-export interface WaitingRowProps {
-  /**
-   * The background color of the card
-   */
-  background?: string;
-  /**
-   * The min height of the card
-   */
-  minHeight?: string;
-}
+const messages = defineMessages({
+  waitingRowTitle: {
+    id: 'components.designSystem.waitingRow.title',
+    description: 'Accessibility label for the blinking card when waiting for a list of row',
+    defaultMessage: 'Loading...',
+  },
+});
 
 const blink = keyframes`
   0% {
@@ -29,7 +27,21 @@ const BlinkingCard = styled(Card)`
   animation: ${blink} 2s linear infinite;
 `;
 
+export interface WaitingRowProps {
+  /**
+   * The background color of the card when at maximum opacity
+   * Keep in mind that the opacity will drop to 50% of this color
+   * on a 1s linear animation
+   */
+  background?: string;
+  /**
+   * The min height of the card, default being 40px
+   */
+  minHeight?: string;
+}
+
 const WaitingRow = ({ background, minHeight }: WaitingRowProps) => {
+  const intl = useIntl();
   return (
     <BlinkingCard
       elevation="0"
@@ -37,7 +49,7 @@ const WaitingRow = ({ background, minHeight }: WaitingRowProps) => {
       height={{ min: minHeight || '40px' }}
       margin={{ bottom: 'small' }}
       pad="small"
-      title="Loading rooms..."
+      title={intl.formatMessage(messages.waitingRowTitle)}
     />
   );
 };
