@@ -36,14 +36,14 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         results = response.json()
         self.assertEqual(len(results), 2)
-        expected_ids = {r.id for r in rooms}
+        expected_ids = {str(r.id) for r in rooms}
         results_id = {r["id"] for r in results}
         self.assertEqual(expected_ids, results_id)
 
     def test_api_rooms_retrieve_anonymous(self):
         """Anonymous users should not be allowed to retrieve a room."""
         room = RoomFactory()
-        response = self.client.get(f"/api/rooms/{room.id}/")
+        response = self.client.get(f"/api/rooms/{room.id!s}/")
 
         self.assertEqual(response.status_code, 401)
         self.assertEqual(
@@ -61,14 +61,14 @@ class RoomsApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.get(
-            f"/api/rooms/{room.id}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+            f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
             {
-                "administrators": [admin.id],
-                "id": room.id,
+                "administrators": [str(admin.id)],
+                "id": str(room.id),
                 "name": room.name,
                 "slug": room.slug,
                 "token": "the token",
@@ -136,7 +136,7 @@ class RoomsApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.put(
-            f"/api/rooms/{room.id}/",
+            f"/api/rooms/{room.id!s}/",
             {
                 "name": "New name",
             },
@@ -154,7 +154,7 @@ class RoomsApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.put(
-            f"/api/rooms/{room.id}/",
+            f"/api/rooms/{room.id!s}/",
             {"name": "New name", "slug": "should-be-ignored"},
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
@@ -171,7 +171,7 @@ class RoomsApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.put(
-            f"/api/rooms/{other_room.id}/",
+            f"/api/rooms/{other_room.id!s}/",
             {"name": "New name", "slug": "should-be-ignored"},
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
@@ -185,7 +185,7 @@ class RoomsApiTestCase(APITestCase):
         room = RoomFactory()
 
         response = self.client.delete(
-            f"/api/rooms/{room.id}/",
+            f"/api/rooms/{room.id!s}/",
         )
 
         self.assertEqual(response.status_code, 401)
@@ -201,7 +201,7 @@ class RoomsApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.delete(
-            f"/api/rooms/{room.id}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+            f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
         )
 
         self.assertEqual(response.status_code, 403)
@@ -216,7 +216,7 @@ class RoomsApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.delete(
-            f"/api/rooms/{room.id}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+            f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
         )
 
         self.assertEqual(response.status_code, 204)

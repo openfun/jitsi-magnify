@@ -1,6 +1,8 @@
 """
 Declare and configure the models for the customers part
 """
+import uuid
+
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import UserManager
 from django.core.validators import RegexValidator
@@ -11,12 +13,23 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 
-class ValidateModelMixin:
+class BaseModel(models.Model):
     """Make `save` call `full_clean`.
 
     Should be the left most mixin in your models.
     Django doesn't validate models by default but we should do it.
     """
+
+    id = models.UUIDField(
+        verbose_name=_("id"),
+        help_text=_("primary key for the record as UUID"),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    class Meta:
+        abstract = True
 
     def save(self, *args, **kwargs):
         """Call `full_clean` before saving."""
@@ -24,7 +37,7 @@ class ValidateModelMixin:
         super().save(*args, **kwargs)
 
 
-class User(ValidateModelMixin, AbstractBaseUser):
+class User(BaseModel, AbstractBaseUser):
     """
     User model with uername and name, admin-compliant permissions.
     Username and password are required. Other fields are optional.
@@ -88,7 +101,7 @@ class User(ValidateModelMixin, AbstractBaseUser):
         return self.username
 
 
-class Label(ValidateModelMixin, models.Model):
+class Label(BaseModel):
     """Label for a meeting, a group or a room"""
 
     name = models.CharField(max_length=100)
@@ -114,7 +127,7 @@ class Label(ValidateModelMixin, models.Model):
         return self.name
 
 
-class Group(ValidateModelMixin, models.Model):
+class Group(BaseModel):
     """Group of users to be sent in rooms or in sub-rooms"""
 
     name = models.CharField(max_length=100)
@@ -135,7 +148,7 @@ class Group(ValidateModelMixin, models.Model):
         return self.name
 
 
-class Meeting(ValidateModelMixin, models.Model):
+class Meeting(BaseModel):
     """Model for one meeting or a collection of meetings defined recursively"""
 
     name = models.CharField(max_length=500)
@@ -176,7 +189,7 @@ class Meeting(ValidateModelMixin, models.Model):
         return self.name
 
 
-class Room(ValidateModelMixin, models.Model):
+class Room(BaseModel):
     """Model for one room"""
 
     name = models.CharField(max_length=100)
@@ -200,7 +213,7 @@ class Room(ValidateModelMixin, models.Model):
         super().save(*args, **kwargs)
 
 
-class Membership(ValidateModelMixin, models.Model):
+class Membership(BaseModel):
     """Link table between users and groups"""
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -213,10 +226,15 @@ class Membership(ValidateModelMixin, models.Model):
         verbose_name_plural = _("Memberships")
 
 
-class JitsiConfiguration(ValidateModelMixin, models.Model):
+class JitsiConfiguration(BaseModel):
     """Model for the Jitsi configuration of a room or a meeting"""
 
     meeting = models.ForeignKey(
         Meeting, on_delete=models.CASCADE, null=True, blank=True
     )
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        db_table = "magnify_jitsi_configuration"
+        verbose_name = _("Jitsi configuration")
+        verbose_name_plural = _("Jitsi configurations")
