@@ -1,6 +1,7 @@
 import { Group } from '../types/group';
 import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
+import { Room } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
 import { Store } from './store';
 
@@ -62,4 +63,7 @@ export default abstract class Controller {
 
   // Meetings
   abstract joinMeeting(meetingId: string): Promise<{ token: string }>;
+
+  // Rooms
+  abstract registerRoom(roomName: string): Promise<Room>;
 }

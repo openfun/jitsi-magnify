@@ -20,4 +20,6 @@ export default class MockController extends Controller {
   getGroups = jest.fn();
 
   joinMeeting = jest.fn();
+
+  registerRoom = jest.fn();
 }

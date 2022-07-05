@@ -9,6 +9,7 @@ import axios, { AxiosInstance } from 'axios';
 import { AccessToken, Tokens } from '../types/tokens';
 import { Profile } from '../types/profile';
 import { Group } from '../types/group';
+import { Room } from '../types/room';
 
 interface DefaultControllerOptions {
   url: string;
@@ -82,6 +83,10 @@ export default class DefaultController extends Controller {
   }
 
   async joinMeeting(): Promise<{ token: string }> {
+    throw new Error('Not implemented');
+  }
+
+  async registerRoom(roomName: string): Promise<Room> {
     throw new Error('Not implemented');
   }
 }
