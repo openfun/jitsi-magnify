@@ -1,7 +1,7 @@
 import { Group } from '../types/group';
 import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
-import { Room } from '../types/room';
+import { Room, RoomSettings } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
 import { Store } from './store';
 
@@ -32,6 +32,11 @@ export interface UpdateUserPasswordInput {
 export interface AddGroupsToRoomInput {
   roomSlug: string;
   groupIds: string[];
+}
+
+export interface UpdateRoomSettingsInput {
+  name: string;
+  roomSettings: RoomSettings;
 }
 
 export default abstract class Controller {
@@ -73,4 +78,6 @@ export default abstract class Controller {
   abstract registerRoom(roomName: string): Promise<Room>;
   abstract addGroupsToRoom(addGroupsToRoomInput: AddGroupsToRoomInput): Promise<Room>;
   abstract getRoomBySlug(roomSlug: string): Promise<Room>;
+  abstract getRoom(roomName: string): Promise<Room>;
+  abstract updateRoomSettings(updateRoomSettingsInput: UpdateRoomSettingsInput): Promise<Room>;
 }

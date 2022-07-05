@@ -1,25 +1,26 @@
+import axios, { AxiosInstance } from 'axios';
+import { Group } from '../types/group';
+import { Profile } from '../types/profile';
+import { Room } from '../types/room';
+import { AccessToken, Tokens } from '../types/tokens';
 import Controller, {
   AddGroupsToRoomInput,
   LoginInput,
   SignupInput,
+  UpdateRoomSettingsInput,
   UpdateUserAvatarInput,
   UpdateUserInput,
   UpdateUserPasswordInput,
 } from './interface';
-import axios, { AxiosInstance } from 'axios';
-import { AccessToken, Tokens } from '../types/tokens';
-import { Profile } from '../types/profile';
-import { Group } from '../types/group';
-import { Room } from '../types/room';
 
-interface DefaultControllerOptions {
+interface DefaultControllerSettings {
   url: string;
 }
 
 export default class DefaultController extends Controller {
   _axios: AxiosInstance;
 
-  constructor(options: DefaultControllerOptions) {
+  constructor(options: DefaultControllerSettings) {
     super();
     this._axios = axios.create({
       baseURL: options.url,
@@ -98,5 +99,13 @@ export default class DefaultController extends Controller {
   }
   async getRoomBySlug(roomSlug: string): Promise<Room> {
     throw new Error('Not implemented');
+  }
+  getRoom(roomName: string): Promise<Room> {
+    // GET /rooms/{roomName}
+    throw new Error('Not implemented.');
+  }
+  updateRoomSettings(updateRoomSettingsInput: UpdateRoomSettingsInput): Promise<Room> {
+    // PUT /rooms/{roomName}/settings {settings}
+    throw new Error('Not implemented.');
   }
 }

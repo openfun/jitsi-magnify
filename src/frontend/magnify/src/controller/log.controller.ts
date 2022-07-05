@@ -11,6 +11,7 @@ import Controller, {
   AddGroupsToRoomInput,
   LoginInput,
   SignupInput,
+  UpdateRoomSettingsInput,
   UpdateUserAvatarInput,
   UpdateUserInput,
   UpdateUserPasswordInput,
@@ -357,4 +358,22 @@ export default class LogController extends Controller {
     'getRoomBySlug',
     new MockControllerFunction<string, Room>().resolveOnDefault(createRandomRoom()),
   );
+  getRoom = promisifiedConsoleLogFactory(
+    this,
+    'getRoom',
+    new MockControllerFunction<string, Room, Record<string, string>>()
+      .resolveOnDefault(createRandomRoom())
+      .rejectOn('bad-name', { detail: 'InvalidRoomName' }),
+  );
+  updateRoomSettings = async (input: UpdateRoomSettingsInput) => {
+    const room = createRandomRoom();
+    return await promisifiedConsoleLogFactory(
+      this,
+      'updateRoomSettings',
+      new MockControllerFunction<UpdateRoomSettingsInput, Room>().resolveOnDefault({
+        ...room,
+        settings: { ...room.settings, ...input.roomSettings },
+      }),
+    )(input);
+  };
 }
