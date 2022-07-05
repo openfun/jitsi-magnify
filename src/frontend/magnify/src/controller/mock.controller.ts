@@ -25,4 +25,6 @@ export default class MockController extends Controller {
   registerRoom = jest.fn();
   addGroupsToRoom = jest.fn();
   getRoomBySlug = jest.fn();
+  getRoom = jest.fn();
+  updateRoomSettings = jest.fn();
 }
