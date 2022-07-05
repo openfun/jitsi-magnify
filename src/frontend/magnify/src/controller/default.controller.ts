@@ -86,6 +86,9 @@ export default class DefaultController extends Controller {
     throw new Error('Not implemented');
   }
 
+  async getMyRooms(): Promise<Room[]> {
+    throw new Error('Not implemented');
+  }
   async registerRoom(roomName: string): Promise<Room> {
     throw new Error('Not implemented');
   }

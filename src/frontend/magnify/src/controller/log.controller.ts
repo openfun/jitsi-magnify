@@ -327,6 +327,11 @@ export default class LogController extends Controller {
   );
 
   // Rooms
+  getMyRooms = promisifiedConsoleLogFactory(
+    this,
+    'getMyRooms',
+    new MockControllerFunction<null, Room[]>().resolveOnDefault(createRandomRooms(7, 3)),
+  );
   registerRoom = async (name: string) =>
     promisifiedConsoleLogFactory(
       this,

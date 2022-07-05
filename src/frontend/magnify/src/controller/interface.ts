@@ -65,5 +65,6 @@ export default abstract class Controller {
   abstract joinMeeting(meetingId: string): Promise<{ token: string }>;
 
   // Rooms
+  abstract getMyRooms(): Promise<Room[]>;
   abstract registerRoom(roomName: string): Promise<Room>;
 }
