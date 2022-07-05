@@ -1,6 +1,7 @@
 import { Box, Button, Card, Grid, Menu, Text } from 'grommet';
 import React, { useState } from 'react';
 import { useIntl, MessageDescriptor } from 'react-intl';
+import WaitingRow from '../WaitingRow';
 
 export interface Row {
   id: string;
@@ -64,6 +65,10 @@ export interface RowsListProps<TRowProps extends Row> {
    * The list of rows
    */
   rows: TRowProps[];
+  /**
+   * Are we still loading the rows?
+   */
+  isLoading?: boolean;
 }
 
 /**
@@ -92,6 +97,7 @@ export default function RowsList<TRowProps extends Row>({
   Row,
   actions,
   rows,
+  isLoading = false,
 }: RowsListProps<TRowProps>) {
   const intl = useIntl();
 
@@ -155,14 +161,16 @@ export default function RowsList<TRowProps extends Row>({
         </Box>
       </Grid>
       {Header && <Header selected={selected} setSelected={setSelected} />}
-      {rows.map((row) => (
-        <Row
-          key={row.id}
-          {...row}
-          selected={selected[row.id]}
-          onToggle={() => handleToggle(row.id)}
-        />
-      ))}
+      {!isLoading &&
+        rows.map((row) => (
+          <Row
+            key={row.id}
+            {...row}
+            selected={selected[row.id]}
+            onToggle={() => handleToggle(row.id)}
+          />
+        ))}
+      {isLoading && [1, 2, 3].map((v) => <WaitingRow key={v} />)}
     </Card>
   );
 }

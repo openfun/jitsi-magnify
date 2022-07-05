@@ -3,3 +3,4 @@ export { default as RowsList, HeaderProps, RowPropsExtended, RowsListProps } fro
 export * from './svg-icons';
 export { default as TextField, TextFieldProps } from './TextField';
 export { default as SquareAvatar, SquareAvatarProps } from './SquareAvatar';
+export { default as WaitingRow } from './WaitingRow';
