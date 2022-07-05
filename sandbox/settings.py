@@ -263,7 +263,7 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
     CACHES = {
         "default": {
             "BACKEND": values.Value(
-                "django.core.cache.backends.redis.RedisCache",
+                "django.core.cache.backends.locmem.LocMemCache",
                 environ_name="CACHE_DEFAULT_BACKEND",
                 environ_prefix=None,
             ),
