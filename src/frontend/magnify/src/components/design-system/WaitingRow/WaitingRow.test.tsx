@@ -10,5 +10,7 @@ describe('WaitingRow', () => {
         <WaitingRow />
       </IntlProvider>,
     );
+
+    screen.getByTitle('Loading...');
   });
 });
