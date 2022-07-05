@@ -5,6 +5,7 @@ import NotFoundView from './views/404';
 import DefaultView from './views/default';
 import GroupsView from './views/groups';
 import ProfileView from './views/profile';
+import RoomsView from './views/rooms';
 
 export default function App() {
   const { connexionStatus } = useStore();
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/" element={<DefaultView />} />
         <Route path="/account" element={<ProfileView />} />
         <Route path="/groups" element={<GroupsView />} />
+        <Route path="/rooms" element={<RoomsView />} />
         <Route path="*" element={<NotFoundView />} />
       </Routes>
     </Box>
