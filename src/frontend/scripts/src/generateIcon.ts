@@ -18,7 +18,10 @@ if (!iconName)
     "No icon name provided. You should provide an icon name as an argument."
   );
 
-const fullPath = path.join(pathToComponents, `/svgIcons/${iconName}`);
+const fullPath = path.join(
+  pathToComponents,
+  `/design-system/svg-icons/${iconName}`
+);
 
 createDirectory(fullPath);
 
