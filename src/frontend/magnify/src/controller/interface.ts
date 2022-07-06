@@ -29,6 +29,10 @@ export interface UpdateUserPasswordInput {
   oldPassword: string;
   newPassword: string;
 }
+export interface AddGroupsToRoomInput {
+  roomSlug: string;
+  groupIds: string[];
+}
 
 export default abstract class Controller {
   _jwt: Nullable<string> = null;
@@ -67,4 +71,5 @@ export default abstract class Controller {
   // Rooms
   abstract getMyRooms(): Promise<Room[]>;
   abstract registerRoom(roomName: string): Promise<Room>;
+  abstract addGroupsToRoom(addGroupsToRoomInput: AddGroupsToRoomInput): Promise<Room>;
 }

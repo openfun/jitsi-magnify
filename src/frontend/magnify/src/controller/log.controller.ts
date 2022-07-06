@@ -7,6 +7,7 @@ import { Profile } from '../types/profile';
 import { Room } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
 import Controller, {
+  AddGroupsToRoomInput,
   LoginInput,
   SignupInput,
   UpdateUserAvatarInput,
@@ -341,4 +342,14 @@ export default class LogController extends Controller {
         name,
       }),
     )(name);
+  addGroupsToRoom = async ({ roomSlug, groupIds }: AddGroupsToRoomInput) => {
+    const resolvedRoom = createRandomRoom(true);
+    console.log(resolvedRoom, createRandomGroups(groupIds.length));
+    resolvedRoom.groups = [...resolvedRoom.groups, ...createRandomGroups(groupIds.length)];
+    return await promisifiedConsoleLogFactory(
+      this,
+      'addGroupsToRoom',
+      new MockControllerFunction<AddGroupsToRoomInput, Room>().resolveOnDefault(resolvedRoom),
+    )({ roomSlug, groupIds });
+  };
 }
