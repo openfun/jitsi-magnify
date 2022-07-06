@@ -18,11 +18,11 @@ export default function IntroductionLayout({
       <Box background="light-5">
         <Stack fill>
           <Box width="100%" height="100%" background={background} />
-          <Box direction="column" height="100%">
-            <Box flex={{ grow: 1 }} margin="auto 25%" justify="center">
+          <Box direction="column" height="100%" justify="between">
+            <Box flex={{ grow: 1 }} height={{ max: '33vh' }} margin="auto 25%" justify="center">
               <Image src={urlLogo} alt="logo" />
             </Box>
-            <Box flex={{ grow: 2 }} justify="center">
+            <Box flex={{ grow: 2 }} height={{ max: '66vh' }} justify="end">
               <Image width="110%" src={urlCover} alt="illustration" />
             </Box>
           </Box>
