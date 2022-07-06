@@ -9,7 +9,9 @@ export default function ${iconName}(svgProps: SvgProps) {
       * 1. Change width and height depending on viewBox in .svg file
       * 2. Paste here the outer <g/> tag
       * 3. /!\ CHANGE 'stroke-width' for 'strokeWidth' and 'fill-rule' for 'fillRule'
-      * 4. You can remove unnecessary info, like ids etc.
+      * 4. Optional:
+      *   a. You can remove unnecessary info, like ids, color, etc.
+      *   b. Format the imports of svg-icons's index.ts 
       */
       }
     </SVGIcon>
