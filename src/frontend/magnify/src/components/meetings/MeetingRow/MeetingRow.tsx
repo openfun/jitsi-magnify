@@ -85,6 +85,8 @@ export default function MeetingRow({ meeting, baseJitsiUrl }: MeetingRowProps) {
       pad="small"
       style={{ opacity: isOver ? 0.5 : 1 }}
       aria-disabled={isOver}
+      elevation="0"
+      margin={{ bottom: 'small' }}
     >
       <Grid
         columns={['auto', 'xsmall', 'xsmall', 'small', 'flex', 'auto']}

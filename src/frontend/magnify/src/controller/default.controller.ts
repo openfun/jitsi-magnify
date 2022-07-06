@@ -96,4 +96,7 @@ export default class DefaultController extends Controller {
   async addGroupsToRoom({ roomSlug, groupIds }: AddGroupsToRoomInput): Promise<Room> {
     throw new Error('Not implemented');
   }
+  async getRoomBySlug(roomSlug: string): Promise<Room> {
+    throw new Error('Not implemented');
+  }
 }

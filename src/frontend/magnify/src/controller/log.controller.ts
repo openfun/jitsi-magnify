@@ -1,6 +1,7 @@
 import createRandomGroups from '../factories/groups';
 import createRandomRooms from '../factories/rooms';
 import { createRandomProfile } from '../factories/profile';
+import createRandomRoom from '../factories/room';
 import { Group } from '../types/group';
 import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
@@ -16,7 +17,6 @@ import Controller, {
 } from './interface';
 import { example1, example2 } from './mocks/example';
 import { ConnexionStatus, Store } from './store';
-import createRandomRoom from '../factories/room';
 
 /**
  * Factory to mock a function that returns a promise.
@@ -352,4 +352,9 @@ export default class LogController extends Controller {
       new MockControllerFunction<AddGroupsToRoomInput, Room>().resolveOnDefault(resolvedRoom),
     )({ roomSlug, groupIds });
   };
+  getRoomBySlug = promisifiedConsoleLogFactory(
+    this,
+    'getRoomBySlug',
+    new MockControllerFunction<string, Room>().resolveOnDefault(createRandomRoom()),
+  );
 }

@@ -72,4 +72,5 @@ export default abstract class Controller {
   abstract getMyRooms(): Promise<Room[]>;
   abstract registerRoom(roomName: string): Promise<Room>;
   abstract addGroupsToRoom(addGroupsToRoomInput: AddGroupsToRoomInput): Promise<Room>;
+  abstract getRoomBySlug(roomSlug: string): Promise<Room>;
 }

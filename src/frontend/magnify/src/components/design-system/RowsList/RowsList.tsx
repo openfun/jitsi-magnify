@@ -69,6 +69,12 @@ export interface RowsListProps<TRowProps extends Row> {
    * Are we still loading the rows?
    */
   isLoading?: boolean;
+  /**
+   * Should we display a loading placeholder at the location of the title?
+   * Make this true if you display the number of rows in the title, but you don't know
+   * how many rows you have yet
+   */
+  titleIsLoading?: boolean;
 }
 
 /**
@@ -98,6 +104,7 @@ export default function RowsList<TRowProps extends Row>({
   actions,
   rows,
   isLoading = false,
+  titleIsLoading = false,
 }: RowsListProps<TRowProps>) {
   const intl = useIntl();
 
@@ -125,9 +132,15 @@ export default function RowsList<TRowProps extends Row>({
       >
         <Box gridArea="title" pad={{ vertical: 'medium', horizontal: 'small' }}>
           <Box margin="auto 0px">
-            <Text size="medium" color="brand" weight="bold">
-              ({intl.formatMessage(label, { numberOfRows: rows.length })})
-            </Text>
+            {titleIsLoading ? (
+              <Box width="small">
+                <WaitingRow />
+              </Box>
+            ) : (
+              <Text size="medium" color="brand" weight="bold">
+                ({intl.formatMessage(label, { numberOfRows: rows.length })})
+              </Text>
+            )}
           </Box>
         </Box>
         <Box
