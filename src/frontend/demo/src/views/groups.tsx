@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl';
 export const messages = defineMessages({
   groupsViewTitle: {
     id: 'app.groupsViewTitle',
-    description: 'H1 page title for the test',
+    description: 'Page title for the My Groups page',
     defaultMessage: 'My Groups',
   },
 });
