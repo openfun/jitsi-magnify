@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
-from .models import Room, User
+from .models import Room, RoomUserRelation, User
 from .permissions import IsObjectAdministrator, IsSelf
 from .serializers import (
     PasswordChangeSerializer,
@@ -175,10 +175,16 @@ class RoomViewSet(
     serializer_class = RoomSerializer
 
     def list(self, request, *args, **kwargs):
-        """Limit listed rooms to the ones in which the authenticated user is administator."""
+        """Limit listed rooms to the ones related to the authenticated user."""
+        user = self.request.user
         queryset = self.filter_queryset(self.get_queryset())
-        if self.request.user.is_authenticated:
-            queryset = queryset.filter(administrators=self.request.user)
+
+        if user.is_authenticated:
+            queryset = queryset.filter(
+                Q(is_public=True) | Q(users=user) | Q(groups__user_relations__user=user)
+            )
+        else:
+            queryset = queryset.filter(is_public=True)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -191,4 +197,6 @@ class RoomViewSet(
     def perform_create(self, serializer):
         """Set the current user as administrators of the newly created room."""
         room = serializer.save()
-        room.administrators.add(self.request.user)
+        RoomUserRelation.objects.create(
+            room=room, user=self.request.user, is_administrator=True
+        )

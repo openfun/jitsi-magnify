@@ -27,6 +27,46 @@ class UserFactory(factory.django.DjangoModelFactory):
     password = make_password("password")
 
 
+class GroupFactory(factory.django.DjangoModelFactory):
+    """Create fake groups for testing."""
+
+    class Meta:
+        model = core_models.Group
+
+    name = factory.Faker("catch_phrase")
+    token = factory.Faker("uuid4")
+
+    @factory.post_generation
+    def meetings(self, create, extracted, **kwargs):
+        """Add meetings to group from a given list of meetings."""
+        if create and extracted:
+            self.meetings.set(extracted)
+
+    @factory.post_generation
+    def rooms(self, create, extracted, **kwargs):
+        """Add rooms to group from a given list of rooms."""
+        if create and extracted:
+            self.rooms.set(extracted)
+
+    @factory.post_generation
+    def members(self, create, extracted, **kwargs):
+        """Add members to group from a given list of users."""
+        if create and extracted:
+            for item in extracted:
+                if isinstance(item, core_models.User):
+                    MembershipFactory(user=item, group=self)
+                else:
+                    MembershipFactory(
+                        user=item[0], group=self, is_administrator=item[1]
+                    )
+
+    @factory.post_generation
+    def labels(self, create, extracted, **kwargs):
+        """Add labels to group from a given list of labels."""
+        if create and extracted:
+            self.labels.set(extracted)
+
+
 class LabelFactory(factory.django.DjangoModelFactory):
     """Create fake labels for testing."""
 
@@ -61,16 +101,36 @@ class MeetingFactory(factory.django.DjangoModelFactory):
     )
 
     @factory.post_generation
-    def administrators(self, create, extracted, **kwargs):
-        """Add administrators to meeting from a given list of users."""
+    def users(self, create, extracted, **kwargs):
+        """Add users to meeting from a given list of users."""
         if create and extracted:
-            self.administrators.set(extracted)
+            for item in extracted:
+                if isinstance(item, core_models.User):
+                    core_models.MeetingUser.objects.create(
+                        user=item,
+                        meeting=self,
+                        is_administrator=random.choice([True, False]),  # nosec
+                    )
+                else:
+                    core_models.MeetingUser.objects.create(
+                        user=item[0], meeting=self, is_administrator=item[1]
+                    )
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
         """Add groups to meeting from a given list of groups."""
         if create and extracted:
-            self.groups.set(extracted)
+            for item in extracted:
+                if isinstance(item, core_models.Group):
+                    core_models.MeetingGroup.objects.create(
+                        group=item,
+                        meeting=self,
+                        is_administrator=random.choice([True, False]),  # nosec
+                    )
+                else:
+                    core_models.MeetingGroup.objects.create(
+                        group=item[0], meeting=self, is_administrator=item[1]
+                    )
 
     @factory.post_generation
     def labels(self, create, extracted, **kwargs):
@@ -91,6 +151,28 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         return self.start + timedelta(days=nb_days)
 
 
+class MeetingUserFactory(factory.django.DjangoModelFactory):
+    """Create fake meeting user relations for testing."""
+
+    class Meta:
+        model = core_models.MeetingUser
+
+    meeting = factory.SubFactory(MeetingFactory)
+    user = factory.SubFactory(UserFactory)
+    is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
+
+
+class MeetingGroupFactory(factory.django.DjangoModelFactory):
+    """Create fake meeting group relations for testing."""
+
+    class Meta:
+        model = core_models.MeetingGroup
+
+    meeting = factory.SubFactory(MeetingFactory)
+    group = factory.SubFactory(GroupFactory)
+    is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
+
+
 class RoomFactory(factory.django.DjangoModelFactory):
     """Create fake rooms for testing."""
 
@@ -101,16 +183,36 @@ class RoomFactory(factory.django.DjangoModelFactory):
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
 
     @factory.post_generation
-    def administrators(self, create, extracted, **kwargs):
-        """Add administrators to room from a given list of users."""
+    def users(self, create, extracted, **kwargs):
+        """Add users to room from a given list of users."""
         if create and extracted:
-            self.administrators.set(extracted)
+            for item in extracted:
+                if isinstance(item, core_models.User):
+                    core_models.RoomUser.objects.create(
+                        user=item,
+                        room=self,
+                        is_administrator=random.choice([True, False]),  # nosec
+                    )
+                else:
+                    core_models.RoomUser.objects.create(
+                        user=item[0], room=self, is_administrator=item[1]
+                    )
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
         """Add groups to room from a given list of groups."""
         if create and extracted:
-            self.groups.set(extracted)
+            for item in extracted:
+                if isinstance(item, core_models.Group):
+                    core_models.RoomGroup.objects.create(
+                        group=item,
+                        room=self,
+                        is_administrator=random.choice([True, False]),  # nosec
+                    )
+                else:
+                    core_models.RoomGroup.objects.create(
+                        group=item[0], room=self, is_administrator=item[1]
+                    )
 
     @factory.post_generation
     def labels(self, create, extracted, **kwargs):
@@ -119,44 +221,26 @@ class RoomFactory(factory.django.DjangoModelFactory):
             self.labels.set(extracted)
 
 
-class GroupFactory(factory.django.DjangoModelFactory):
-    """Create fake groups for testing."""
+class RoomUserFactory(factory.django.DjangoModelFactory):
+    """Create fake room user relations for testing."""
 
     class Meta:
-        model = core_models.Group
+        model = core_models.RoomUser
 
-    name = factory.Faker("catch_phrase")
-    token = factory.Faker("uuid4")
+    room = factory.SubFactory(RoomFactory)
+    user = factory.SubFactory(UserFactory)
+    is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
 
-    @factory.post_generation
-    def meetings(self, create, extracted, **kwargs):
-        """Add meetings to group from a given list of meetings."""
-        if create and extracted:
-            self.related_meetings.set(extracted)
 
-    @factory.post_generation
-    def rooms(self, create, extracted, **kwargs):
-        """Add rooms to group from a given list of rooms."""
-        if create and extracted:
-            self.related_rooms.set(extracted)
+class RoomGroupFactory(factory.django.DjangoModelFactory):
+    """Create fake room group relations for testing."""
 
-    @factory.post_generation
-    def members(self, create, extracted, **kwargs):
-        """Add members to group from a given list of users."""
-        if create and extracted:
-            for item in extracted:
-                if isinstance(item, core_models.User):
-                    MembershipFactory(user=item, group=self)
-                else:
-                    MembershipFactory(
-                        user=item[0], group=self, is_administrator=item[1]
-                    )
+    class Meta:
+        model = core_models.RoomGroup
 
-    @factory.post_generation
-    def labels(self, create, extracted, **kwargs):
-        """Add labels to group from a given list of labels."""
-        if create and extracted:
-            self.labels.set(extracted)
+    room = factory.SubFactory(RoomFactory)
+    group = factory.SubFactory(GroupFactory)
+    is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
 
 
 class MembershipFactory(factory.django.DjangoModelFactory):

@@ -31,7 +31,7 @@ class GroupsFactoriesTestCase(TestCase):
         meetings = MeetingFactory.create_batch(2)
         group = GroupFactory(meetings=meetings)
 
-        self.assertQuerysetEqual(group.related_meetings.all(), meetings, ordered=False)
+        self.assertQuerysetEqual(group.meetings.all(), meetings, ordered=False)
         self.assertEqual(list(meetings[0].groups.all()), [group])
 
     def test_factories_groups_rooms(self):
@@ -39,7 +39,7 @@ class GroupsFactoriesTestCase(TestCase):
         rooms = RoomFactory.create_batch(2)
         group = GroupFactory(rooms=rooms)
 
-        self.assertQuerysetEqual(group.related_rooms.all(), rooms, ordered=False)
+        self.assertQuerysetEqual(group.rooms.all(), rooms, ordered=False)
         self.assertEqual(list(rooms[0].groups.all()), [group])
 
     def test_factories_groups_members(self):

@@ -9,7 +9,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import F, Q
 from django.utils import timezone
-from django.utils.text import slugify
+from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext_lazy as _
 
 
@@ -148,6 +148,23 @@ class Group(BaseModel):
         return self.name
 
 
+class Membership(BaseModel):
+    """Link table between users and groups"""
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="group_relations"
+    )
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name="user_relations"
+    )
+    is_administrator = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "magnify_membership"
+        verbose_name = _("Membership")
+        verbose_name_plural = _("Memberships")
+
+
 class Meeting(BaseModel):
     """Model for one meeting or a collection of meetings defined recursively"""
 
@@ -168,8 +185,12 @@ class Meeting(BaseModel):
     held_on_saturday = models.BooleanField(default=False)
     held_on_sunday = models.BooleanField(default=False)
 
-    administrators = models.ManyToManyField(User, blank=True)
-    groups = models.ManyToManyField(Group, blank=True, related_name="related_meetings")
+    is_public = models.BooleanField(default=True)
+
+    users = models.ManyToManyField(User, through="MeetingUser", related_name="meetings")
+    groups = models.ManyToManyField(
+        Group, through="MeetingGroup", blank=True, related_name="meetings"
+    )
     labels = models.ManyToManyField(
         Label, blank=True, related_name="is_meeting_label_of"
     )
@@ -189,13 +210,64 @@ class Meeting(BaseModel):
         return self.name
 
 
+class MeetingUser(BaseModel):
+    """Link table between meetings and users"""
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="meeting_relations",
+    )
+    meeting = models.ForeignKey(
+        Meeting, on_delete=models.CASCADE, related_name="user_relations"
+    )
+    is_administrator = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "magnify_meeting_user"
+        unique_together = ("user", "meeting")
+        verbose_name = _("Meeting user relation")
+        verbose_name_plural = _("Meeting user relations")
+
+    def __str__(self):
+        admin_status = " (admin)" if self.is_administrator else ""
+        return f"{capfirst(self.meeting.name):s} / {capfirst(self.user.name):s}{admin_status:s}"
+
+
+class MeetingGroup(BaseModel):
+    """Link table between meetings and groups"""
+
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name="meeting_relations"
+    )
+    meeting = models.ForeignKey(
+        Meeting, on_delete=models.CASCADE, related_name="group_relations"
+    )
+    is_administrator = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "magnify_meeting_group"
+        unique_together = ("group", "meeting")
+        verbose_name = _("Meeting group relation")
+        verbose_name_plural = _("Meeting group relations")
+
+    def __str__(self):
+        admin_status = " (admin)" if self.is_administrator else ""
+        return f"{capfirst(self.meeting.name):s} / {capfirst(self.group.name):s}{admin_status:s}"
+
+
 class Room(BaseModel):
     """Model for one room"""
 
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
-    administrators = models.ManyToManyField(User, blank=True)
-    groups = models.ManyToManyField(Group, blank=True, related_name="related_rooms")
+
+    is_public = models.BooleanField(default=True)
+
+    users = models.ManyToManyField(User, through="RoomUser", related_name="rooms")
+    groups = models.ManyToManyField(
+        Group, through="RoomGroup", blank=True, related_name="rooms"
+    )
     labels = models.ManyToManyField(Label, blank=True, related_name="is_room_label_of")
 
     class Meta:
@@ -212,18 +284,63 @@ class Room(BaseModel):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+    def is_administrator(self, user):
+        """check if a user is administrator of the room."""
+        if not user.is_authenticated:
+            return False
 
-class Membership(BaseModel):
-    """Link table between users and groups"""
+        return (
+            self.user_relations.filter(is_administrator=True, user=user).exists()
+            or self.group_relations.filter(
+                is_administrator=True, group__user_relations__user=user
+            ).exists()
+        )
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+
+class RoomUser(BaseModel):
+    """Link table between rooms and users"""
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="room_relations",
+    )
+    room = models.ForeignKey(
+        Room, on_delete=models.CASCADE, related_name="user_relations"
+    )
     is_administrator = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "magnify_membership"
-        verbose_name = _("Membership")
-        verbose_name_plural = _("Memberships")
+        db_table = "magnify_room_user"
+        unique_together = ("user", "room")
+        verbose_name = _("Room user relation")
+        verbose_name_plural = _("Room user relations")
+
+    def __str__(self):
+        admin_status = " (admin)" if self.is_administrator else ""
+        return f"{capfirst(self.room.name):s} / {capfirst(self.user.name):s}{admin_status:s}"
+
+
+class RoomGroup(BaseModel):
+    """Link table between rooms and groups"""
+
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name="room_relations"
+    )
+    room = models.ForeignKey(
+        Room, on_delete=models.CASCADE, related_name="group_relations"
+    )
+    is_administrator = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "magnify_room_group"
+        unique_together = ("group", "room")
+        verbose_name = _("Room group relation")
+        verbose_name_plural = _("Room group relations")
+
+    def __str__(self):
+        admin_status = " (admin)" if self.is_administrator else ""
+        return f"{capfirst(self.room.name):s} / {capfirst(self.group.name):s}{admin_status:s}"
 
 
 class JitsiConfiguration(BaseModel):
