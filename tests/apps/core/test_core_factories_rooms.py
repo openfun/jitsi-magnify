@@ -21,11 +21,11 @@ class RoomsFactoriesTestCase(TestCase):
         room = RoomFactory(name="A Full Name")
         self.assertEqual(room.slug, "a-full-name")
 
-    def test_factories_rooms_administrators(self):
-        """We should be able to attach administrators to a room."""
+    def test_factories_rooms_users(self):
+        """We should be able to attach users to a room."""
         users = UserFactory.create_batch(2)
-        room = RoomFactory(administrators=users)
-        self.assertQuerysetEqual(room.administrators.all(), users, ordered=False)
+        room = RoomFactory(users=users)
+        self.assertQuerysetEqual(room.users.all(), users, ordered=False)
 
     def test_factories_rooms_labels(self):
         """We should be able to attach labels to a room."""

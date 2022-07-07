@@ -4,7 +4,12 @@ Unit tests for the Room model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from magnify.apps.core.factories import LabelFactory, RoomFactory, UserFactory
+from magnify.apps.core.factories import (
+    GroupFactory,
+    LabelFactory,
+    RoomFactory,
+    UserFactory,
+)
 from magnify.apps.core.models import Room
 
 
@@ -56,13 +61,21 @@ class RoomsModelsTestCase(TestCase):
         room.save()
         self.assertEqual(room.slug, "elephant-in-the-room")
 
-    def test_models_rooms_administrators(self):
-        """It should be possible to attach administrators to a room."""
+    def test_models_rooms_users(self):
+        """It should be possible to attach users to a room."""
         room = RoomFactory()
         user = UserFactory()
-        room.administrators.add(user)
+        room.users.add(user)
         room.refresh_from_db()
-        self.assertEqual(list(room.administrators.all()), [user])
+        self.assertEqual(list(room.users.all()), [user])
+
+    def test_models_rooms_groups(self):
+        """It should be possible to attach groups to a room."""
+        room = RoomFactory()
+        group = GroupFactory()
+        room.groups.add(group)
+        room.refresh_from_db()
+        self.assertEqual(list(room.groups.all()), [group])
 
     def test_models_rooms_labels(self):
         """It should be possible to attach labels to a room."""

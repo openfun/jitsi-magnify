@@ -28,11 +28,11 @@ class MeetingsFactoriesTestCase(TestCase):
         meeting = MeetingFactory()
         self.assertGreaterEqual(meeting.end, meeting.start)
 
-    def test_factories_meetings_administrators(self):
-        """We should be able to attach administrators to a meeting."""
+    def test_factories_meetings_users(self):
+        """We should be able to attach users to a meeting."""
         users = UserFactory.create_batch(2)
-        meeting = MeetingFactory(administrators=users)
-        self.assertQuerysetEqual(meeting.administrators.all(), users, ordered=False)
+        meeting = MeetingFactory(users=users)
+        self.assertQuerysetEqual(meeting.users.all(), users, ordered=False)
 
     def test_factories_meetings_labels(self):
         """We should be able to attach labels to a meeting."""

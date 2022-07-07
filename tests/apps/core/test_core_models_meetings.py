@@ -7,7 +7,12 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
 
-from magnify.apps.core.factories import LabelFactory, MeetingFactory, UserFactory
+from magnify.apps.core.factories import (
+    GroupFactory,
+    LabelFactory,
+    MeetingFactory,
+    UserFactory,
+)
 from magnify.apps.core.models import Meeting
 
 
@@ -56,13 +61,21 @@ class MeetingsModelsTestCase(TestCase):
             ["Ensure this value has at most 500 characters (it has 501)."],
         )
 
-    def test_models_meetings_administrators(self):
-        """It should be possible to attach administrators to a room."""
-        room = MeetingFactory()
+    def test_models_meetings_users(self):
+        """It should be possible to attach users to a meeting."""
+        meeting = MeetingFactory()
         user = UserFactory()
-        room.administrators.add(user)
-        room.refresh_from_db()
-        self.assertEqual(list(room.administrators.all()), [user])
+        meeting.users.add(user)
+        meeting.refresh_from_db()
+        self.assertEqual(list(meeting.users.all()), [user])
+
+    def test_models_meetings_groups(self):
+        """It should be possible to attach groups to a meeting."""
+        meeting = MeetingFactory()
+        group = GroupFactory()
+        meeting.groups.add(group)
+        meeting.refresh_from_db()
+        self.assertEqual(list(meeting.groups.all()), [group])
 
     def test_models_meetings_labels(self):
         """It should be possible to attach labels to a meeting."""
