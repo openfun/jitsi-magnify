@@ -6,3 +6,4 @@ export * from './svg-icons';
 export { default as TextField, TextFieldProps } from './TextField';
 export { default as Toggle, ToggleVariant } from './Toggle';
 export { default as WaitingRow } from './WaitingRow';
+export { default as Fieldset } from './Fieldset';
