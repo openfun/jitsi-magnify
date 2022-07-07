@@ -5,7 +5,7 @@ import { defineMessages, useIntl } from 'react-intl';
 const messages = defineMessages({
   notFoundTitle: {
     id: 'app.notFoundTitle',
-    description: 'H1 page title for the 404 page',
+    description: 'Page title for the 404 page',
     defaultMessage: 'Page not found',
   },
   notFoundMessage: {
