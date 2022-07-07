@@ -1,12 +1,13 @@
-import { useStore, IntroductionLayout, ConnexionStatus, AuthGard } from '@jitsi-magnify/core';
+import { AuthGard, ConnexionStatus, IntroductionLayout, useStore } from '@jitsi-magnify/core';
 import { Box } from 'grommet';
 import { Route, Routes } from 'react-router-dom';
 import NotFoundView from './views/404';
 import DefaultView from './views/default';
 import GroupsView from './views/groups';
 import ProfileView from './views/profile';
-import RoomsView from './views/rooms';
 import RoomView from './views/room';
+import RoomsView from './views/rooms';
+import RoomSettingsView from './views/roomSettings';
 
 export default function App() {
   const { connexionStatus } = useStore();
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/groups" element={<GroupsView />} />
         <Route path="/rooms" element={<RoomsView />} />
         <Route path="/rooms/:slug" element={<RoomView />} />
+        <Route path="/rooms/:slug/settings" element={<RoomSettingsView />} />
         <Route path="*" element={<NotFoundView />} />
       </Routes>
     </Box>
