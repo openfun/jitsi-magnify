@@ -1,7 +1,8 @@
-import { Box, Button, Text, TextInput } from 'grommet';
+import { Button, TextInput } from 'grommet';
 import { MarginType } from 'grommet/utils';
 import React, { useState } from 'react';
 import { View, Hide } from 'grommet-icons';
+import Fieldset from '../Fieldset';
 
 export interface TextFieldProps {
   /**
@@ -45,18 +46,18 @@ export interface TextFieldProps {
    * Currently only text and password are supported
    * @default 'text'
    */
-  type?: 'text' | 'password';
+  type?: 'text' | 'password' | 'time' | 'number';
   /**
    * The value of the text field
    */
   value: string;
 }
 
-export default function TextField({
+export default function TextField<T>({
   displayErrors = true,
   errors = [],
   label,
-  margin = 'none',
+  margin,
   name,
   onChange,
   required = false,
@@ -66,49 +67,30 @@ export default function TextField({
   const [revealPassword, setRevealPassword] = useState(false);
 
   return (
-    <Box
-      border={{ side: 'all', color: 'brand' }}
-      round="8px"
-      pad={{ vertical: 'xsmall', horizontal: 'small' }}
+    <Fieldset
+      label={label}
+      name={name}
+      required={required}
+      displayErrors={displayErrors}
       margin={margin}
+      errors={errors}
     >
-      <Box margin={{ left: '11px' }}>
-        <label htmlFor={name}>
-          <Text size="xsmall" weight="bold" color="brand">
-            {label}
-          </Text>
-          {required && (
-            <Text size="xsmall" color="status-error" margin={{ left: 'xxsmall' }}>
-              *
-            </Text>
-          )}
-        </label>
-      </Box>
-      <Box direction="row">
-        <TextInput
-          name={name}
-          id={name}
-          value={value}
-          onChange={onChange}
-          style={{ border: 'none' }}
-          type={type === 'password' ? (revealPassword ? 'text' : 'password') : type}
+      <TextInput
+        name={name}
+        id={name}
+        value={value}
+        onChange={onChange}
+        style={{ border: 'none' }}
+        type={type === 'password' ? (revealPassword ? 'text' : 'password') : type}
+      />
+      {type === 'password' && (
+        <Button
+          icon={revealPassword ? <View /> : <Hide />}
+          onClick={() => setRevealPassword(!revealPassword)}
+          style={{ padding: '7px' }}
+          title={revealPassword ? 'Hide' : 'Show'}
         />
-        {type === 'password' && (
-          <Button
-            icon={revealPassword ? <View /> : <Hide />}
-            onClick={() => setRevealPassword(!revealPassword)}
-            style={{ padding: '7px' }}
-            title={revealPassword ? 'Hide' : 'Show'}
-          />
-        )}
-      </Box>
-      {displayErrors && errors.length > 0 && (
-        <Box margin={{ left: '11px' }}>
-          <Text size="xsmall" color="status-error">
-            {errors.join(', ')}
-          </Text>
-        </Box>
       )}
-    </Box>
+    </Fieldset>
   );
 }
