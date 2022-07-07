@@ -89,7 +89,7 @@ class RoomsApiTestCase(APITestCase):
         """
         room = RoomFactory(is_public=True)
         response = self.client.get(f"/api/rooms/{room.id!s}/")
-        print(response.json())
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),

@@ -11,12 +11,14 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
-from .models import Room, RoomUserRelation, User
-from .permissions import IsObjectAdministrator, IsSelf
+from .models import Room, RoomGroup, RoomUser, User
+from .permissions import IsObjectAdministrator, IsRelatedRoomAdministrator, IsSelf
 from .serializers import (
     PasswordChangeSerializer,
     RegistrationSerializer,
+    RoomGroupSerializer,
     RoomSerializer,
+    RoomUserSerializer,
     UserSerializer,
 )
 from .utils import get_tokens_for_user
@@ -159,6 +161,38 @@ class UserViewSet(
         return Response(status=204)
 
 
+class RoomUserViewSet(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoint to access and perform actions on room/user relations.
+    """
+
+    permission_classes = [IsRelatedRoomAdministrator]
+    queryset = RoomUser.objects.all()
+    serializer_class = RoomUserSerializer
+
+
+class RoomGroupViewSet(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoint to access and perform actions on room/group relations.
+    """
+
+    permission_classes = [IsRelatedRoomAdministrator]
+    queryset = RoomGroup.objects.all()
+    serializer_class = RoomGroupSerializer
+
+
 class RoomViewSet(
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
@@ -197,6 +231,6 @@ class RoomViewSet(
     def perform_create(self, serializer):
         """Set the current user as administrators of the newly created room."""
         room = serializer.save()
-        RoomUserRelation.objects.create(
+        RoomUser.objects.create(
             room=room, user=self.request.user, is_administrator=True
         )
