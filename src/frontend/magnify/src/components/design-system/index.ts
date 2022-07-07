@@ -7,4 +7,5 @@ export { default as TextField, TextFieldProps } from './TextField';
 export { default as Toggle, ToggleVariant } from './Toggle';
 export { default as WaitingRow } from './WaitingRow';
 export { default as ActivableButton } from './ActivableButton';
+export { default as CalendarInput } from './CalendarInput';
 export { default as Fieldset } from './Fieldset';

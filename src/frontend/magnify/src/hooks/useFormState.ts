@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
 
-type Validators<T> = {
-  [key in keyof T]: (value: string, otherValues: T) => string[] | null;
+type Validators<T extends Record<string, string | boolean | number>> = {
+  [key in keyof T]?: (value: string, otherValues: T) => string[] | null;
 };
 
-interface UseFormState<T> {
+interface UseFormState<T extends Record<string, string | boolean | number>> {
   /**
    * The current form state, with values for each field.
    */
@@ -22,7 +22,7 @@ interface UseFormState<T> {
   /**
    * A callback to update a single field
    */
-  setValue: (key: keyof T, value: string) => void;
+  setValue: <N extends keyof T>(key: N, value: T[N]) => void;
   /**
    * Are they errors ? (if so, the form is invalid)
    */
@@ -44,9 +44,10 @@ interface UseFormState<T> {
  *          - ["error message"] if the field as an error
  *          - ["err1", "err2"] if the field as multiple errors
  *      As input, each validator receive the new value of the field, and the values of all other fields.
+ *      Currently, this support state where each field is a string, a boolead, or a number.
  * @returns UseFormState
  */
-export default function useFormState<T extends Record<string, string>>(
+export default function useFormState<T extends Record<string, string | boolean | number>>(
   initialState: T,
   validators: Validators<T>,
 ): UseFormState<T> {
@@ -58,7 +59,7 @@ export default function useFormState<T extends Record<string, string>>(
     >,
   );
 
-  const setValue = useCallback((name: keyof T, value: string) => {
+  const setValue = useCallback(<N extends keyof T>(name: N, value: T[N]) => {
     // Reminder: setters are kind of async, so we need to use a callback to update the state,
     // and to access the new value for error validation, the validation must be done
     // inside too
@@ -66,7 +67,10 @@ export default function useFormState<T extends Record<string, string>>(
       const newValues = { ...pValues, [name]: value };
       const newErrors = Object.fromEntries(
         Object.keys(validators).map((key) => {
-          return [key, validators[key as keyof T](newValues[key as keyof T], newValues)];
+          return [
+            key,
+            validators[key as keyof T]?.(newValues[key as N].toString(), newValues) || [],
+          ];
         }),
       ) as Record<keyof T, string[]>;
 
