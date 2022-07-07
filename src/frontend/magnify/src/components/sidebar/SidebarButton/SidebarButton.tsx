@@ -1,8 +1,8 @@
-import { Box, Button, ThemeType } from 'grommet';
+import { Box } from 'grommet';
 import { MarginType } from 'grommet/utils';
 import React from 'react';
 import { Link, useMatch, useResolvedPath } from 'react-router-dom';
-import styled from 'styled-components';
+import { ActivableButton } from '../../design-system';
 
 export interface SidebarButtonProps {
   disabled?: boolean;
@@ -12,28 +12,6 @@ export interface SidebarButtonProps {
   navigateTo: string;
 }
 
-const conditionalColor =
-  (colorActive: string, colorInnactive: string) =>
-  ({ theme, active }: { theme: ThemeType; active: boolean }) =>
-    active
-      ? theme?.global?.colors?.[colorActive] || colorActive
-      : theme?.global?.colors?.[colorInnactive] || colorInnactive;
-
-const HoverableButton = styled(Button)`
-  background-color: ${conditionalColor('brand', 'transparent')};
-  color: ${conditionalColor('light-1', 'dark-1')};
-  & path {
-    fill: ${conditionalColor('light-1', 'dark-1')};
-  }
-  border-color: ${conditionalColor('brand', 'transparent')};
-  &:hover {
-    background-color: ${conditionalColor('brand', 'light-2')};
-    border-color: ${conditionalColor('brand', 'transparent')};
-    box-shadow: ${(props: { theme: ThemeType; active: boolean }) =>
-      props.active ? '0px 0px 0px 1px ' + props.theme?.global?.colors?.brand : 'none'};
-  }
-`;
-
 export default function SidebarButton(props: SidebarButtonProps) {
   const { navigateTo, label, margin, disabled, icon } = props;
   const resolvedPath = useResolvedPath(navigateTo);
@@ -42,7 +20,7 @@ export default function SidebarButton(props: SidebarButtonProps) {
 
   return (
     <Box margin={margin}>
-      <HoverableButton
+      <ActivableButton
         primary
         active={active}
         disabled={disabled}
