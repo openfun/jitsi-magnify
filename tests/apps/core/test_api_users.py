@@ -3,6 +3,8 @@ Tests for Users API endpoints in Magnify's core app.
 """
 from unittest import mock
 
+from django.contrib.auth.hashers import check_password
+
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
 
@@ -234,7 +236,6 @@ class UsersApiTestCase(APITestCase):
                 "password": "mypassword",
             },
         )
-
         self.assertEqual(response.status_code, 201)
         self.assertEqual(User.objects.count(), 1)
 
@@ -242,6 +243,9 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(user.email, "thomas.jeffersion@example.com")
         self.assertEqual(user.name, "Thomas Jefferson")
         self.assertEqual(user.username, "thomas")
+
+        self.assertIn("pbkdf2_sha256", user.password)
+        self.assertTrue(check_password("mypassword", user.password))
 
     def test_api_users_create_authenticated_successful(self):
         """Authenticated users should be able to create users."""

@@ -1,4 +1,6 @@
 """Serializers for the core Magnify app."""
+from django.contrib.auth.hashers import make_password
+
 from rest_framework import serializers
 
 from magnify.apps.core import models
@@ -33,9 +35,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def save(self, *args, **kwargs):
         """Create the user then set the passsword."""
-        user = super().save(*args, **kwargs)
-        user.set_password(self.validated_data["password"])
-        return user
+        kwargs["password"] = make_password(self.validated_data["password"])
+        return super().save(*args, **kwargs)
 
 
 # pylint: disable=abstract-method
