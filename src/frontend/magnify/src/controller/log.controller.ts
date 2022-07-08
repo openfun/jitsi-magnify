@@ -9,6 +9,7 @@ import { Room } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
 import Controller, {
   AddGroupsToRoomInput,
+  CreateMeetingInput,
   LoginInput,
   SignupInput,
   UpdateRoomSettingsInput,
@@ -18,6 +19,8 @@ import Controller, {
 } from './interface';
 import { example1, example2 } from './mocks/example';
 import { ConnexionStatus, Store } from './store';
+import { createRandomMeeting } from '../factories/meeting';
+import { Meeting } from '../types/meeting';
 
 /**
  * Factory to mock a function that returns a promise.
@@ -326,6 +329,13 @@ export default class LogController extends Controller {
     this,
     'joinMeeting',
     new MockControllerFunction<string, { token: string }>().resolveOnDefault({ token: 'token' }),
+  );
+  createMeeting = promisifiedConsoleLogFactory(
+    this,
+    'createMeeting',
+    new MockControllerFunction<CreateMeetingInput, Meeting>().resolveOnDefault(
+      createRandomMeeting(),
+    ),
   );
 
   // Rooms

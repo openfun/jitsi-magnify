@@ -5,6 +5,7 @@ import { Room } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
 import Controller, {
   AddGroupsToRoomInput,
+  CreateMeetingInput,
   LoginInput,
   SignupInput,
   UpdateRoomSettingsInput,
@@ -12,6 +13,7 @@ import Controller, {
   UpdateUserInput,
   UpdateUserPasswordInput,
 } from './interface';
+import { Meeting } from '../types/meeting';
 
 interface DefaultControllerSettings {
   url: string;
@@ -85,6 +87,9 @@ export default class DefaultController extends Controller {
   }
 
   async joinMeeting(): Promise<{ token: string }> {
+    throw new Error('Not implemented');
+  }
+  async createMeeting(createMeetingInput: CreateMeetingInput): Promise<Meeting> {
     throw new Error('Not implemented');
   }
 

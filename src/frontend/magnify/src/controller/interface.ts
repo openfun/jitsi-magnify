@@ -1,4 +1,5 @@
 import { Group } from '../types/group';
+import { Meeting } from '../types/meeting';
 import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
 import { Room, RoomSettings } from '../types/room';
@@ -32,6 +33,21 @@ export interface UpdateUserPasswordInput {
 export interface AddGroupsToRoomInput {
   roomSlug: string;
   groupIds: string[];
+}
+export interface CreateMeetingInput {
+  roomSlug?: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  heldOnMonday: boolean;
+  heldOnTuesday: boolean;
+  heldOnWednesday: boolean;
+  heldOnThursday: boolean;
+  heldOnFriday: boolean;
+  heldOnSaturday: boolean;
+  heldOnSunday: boolean;
+  startTime: string;
+  expectedDuration: number;
 }
 
 export interface UpdateRoomSettingsInput {
@@ -72,6 +88,7 @@ export default abstract class Controller {
 
   // Meetings
   abstract joinMeeting(meetingId: string): Promise<{ token: string }>;
+  abstract createMeeting(createMeetingInput: CreateMeetingInput): Promise<Meeting>;
 
   // Rooms
   abstract getMyRooms(): Promise<Room[]>;
