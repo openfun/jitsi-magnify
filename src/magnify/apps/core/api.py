@@ -12,7 +12,12 @@ from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
 from .models import Room, RoomGroup, RoomUser, User
-from .permissions import IsObjectAdministrator, IsRelatedRoomAdministrator, IsSelf
+from .permissions import (
+    IsObjectAdministrator,
+    IsRelatedRoomAdministrator,
+    IsRoomAdministrator,
+    IsSelf,
+)
 from .serializers import (
     PasswordChangeSerializer,
     RegistrationSerializer,
@@ -161,22 +166,6 @@ class UserViewSet(
         return Response(status=204)
 
 
-class RoomUserViewSet(
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    viewsets.GenericViewSet,
-):
-    """
-    API endpoint to access and perform actions on room/user relations.
-    """
-
-    permission_classes = [IsRelatedRoomAdministrator]
-    queryset = RoomUser.objects.all()
-    serializer_class = RoomUserSerializer
-
-
 class RoomGroupViewSet(
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
@@ -234,3 +223,62 @@ class RoomViewSet(
         RoomUser.objects.create(
             room=room, user=self.request.user, is_administrator=True
         )
+
+    @action(
+        methods=["post"],
+        detail=True,
+        url_path="users",
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    # pylint: disable=unused-argument,invalid-name
+    def users(self, request, pk=None):
+        """Adds a user in a room."""
+        room = self.get_object()
+        serializer = RoomUserSerializer(
+            data={
+                "room": room.id,
+                "user": request.data.get("user"),
+                "is_administrator": request.data.get("is_administrator"),
+            },
+            context={"request": request},
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
+
+    @action(
+        methods=["get", "put", "delete"],
+        detail=True,
+        url_path="users/(?P<user_pk>[^/.]+)",
+        permission_classes=[IsRoomAdministrator],
+    )
+    # pylint: disable=unused-argument,invalid-name
+    def user(self, request, user_pk, pk=None):
+        """Get, update, or delete a user of a room."""
+        room = self.get_object()
+        room_user = RoomUser.objects.get(room=room, user__pk=user_pk)
+
+        if request.method == "DELETE":
+            room_user.delete()
+            return Response(status=204)
+
+        if request.method == "GET":
+            serializer = RoomUserSerializer(room_user)
+            return Response(serializer.data)
+
+        if request.method == "PUT":
+            serializer = RoomUserSerializer(
+                room_user,
+                data={
+                    "room": room.id,
+                    "user": user_pk,
+                    "is_administrator": request.data.get("is_administrator"),
+                },
+                context={"request": request},
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(status=405)

@@ -20,9 +20,9 @@ class RoomUsersApiTestCase(APITestCase):
 
     def test_api_room_user_relations_list_anonymous(self):
         """Anonymous users should not be allowed to list room user relations."""
-        RoomUserFactory()
+        relation = RoomUserFactory()
 
-        response = self.client.get("/api/room-user-relations/")
+        response = self.client.get(f"/api/rooms/{relation.room.id!s}/users/")
         self.assertEqual(response.status_code, 401)
         self.assertEqual(
             response.json(), {"detail": "Authentication credentials were not provided."}
@@ -39,26 +39,29 @@ class RoomUsersApiTestCase(APITestCase):
         other_user = UserFactory()
         other_group = GroupFactory(members=[other_user])
 
-        RoomUserFactory(room__is_public=False)
-        RoomUserFactory(room__is_public=True)
-        RoomUserFactory(room__is_public=False, room__groups=[group])
-        RoomUserFactory(room__is_public=False, room__users=[user])
-        RoomUserFactory(room__is_public=False, room__groups=[other_group])
-        RoomUserFactory(room__is_public=False, room__users=[other_user])
-
-        response = self.client.get(
-            "/api/room-user-relations/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
-        )
-
-        self.assertEqual(response.status_code, 405)
-        self.assertEqual(response.json(), {"detail": 'Method "GET" not allowed.'})
+        for relation in [
+            RoomUserFactory(room__is_public=False),
+            RoomUserFactory(room__is_public=True),
+            RoomUserFactory(room__is_public=False, room__groups=[group]),
+            RoomUserFactory(room__is_public=False, room__users=[user]),
+            RoomUserFactory(room__is_public=False, room__groups=[other_group]),
+            RoomUserFactory(room__is_public=False, room__users=[other_user]),
+        ]:
+            response = self.client.get(
+                f"/api/rooms/{relation.room.id!s}/users/",
+                HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
+            )
+            self.assertEqual(response.status_code, 405)
+            self.assertEqual(response.json(), {"detail": 'Method "GET" not allowed.'})
 
     def test_api_room_user_relations_retrieve_anonymous(self):
         """
         Anonymous users should not be allowed to retrieve a room user relation.
         """
         relation = RoomUserFactory()
-        response = self.client.get(f"/api/room-user-relations/{relation.id!s}/")
+        response = self.client.get(
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
+        )
 
         self.assertEqual(response.status_code, 401)
         self.assertEqual(
@@ -75,7 +78,7 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.get(
-            f"/api/room-user-relations/{relation.id!s}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 403)
@@ -97,7 +100,7 @@ class RoomUsersApiTestCase(APITestCase):
 
         with self.assertNumQueries(4):
             response = self.client.get(
-                f"/api/room-user-relations/{relation.id!s}/",
+                f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
                 HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
             )
         self.assertEqual(response.status_code, 200)
@@ -124,7 +127,7 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(administrator)
 
         response = self.client.get(
-            f"/api/room-user-relations/{relation.id!s}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
@@ -146,9 +149,8 @@ class RoomUsersApiTestCase(APITestCase):
         is_administrator = random.choice([True, False])
 
         response = self.client.post(
-            "/api/room-user-relations/",
+            f"/api/rooms/{room.id!s}/users/",
             {
-                "room": str(room.id),
                 "user": str(user.id),
                 "is_administrator": is_administrator,
             },
@@ -169,9 +171,8 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.post(
-            "/api/room-user-relations/",
+            f"/api/rooms/{room.id!s}/users/",
             {
-                "room": str(room.id),
                 "user": str(other_user.id),
                 "is_administrator": is_administrator,
             },
@@ -197,9 +198,8 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.post(
-            "/api/room-user-relations/",
+            f"/api/rooms/{room.id!s}/users/",
             {
-                "room": str(room.id),
                 "user": str(other_user.id),
                 "is_administrator": is_administrator,
             },
@@ -224,9 +224,8 @@ class RoomUsersApiTestCase(APITestCase):
 
         self.assertFalse(RoomUser.objects.exists())
         response = self.client.post(
-            "/api/room-user-relations/",
+            f"/api/rooms/{room.id!s}/users/",
             {
-                "room": str(room.id),
                 "user": str(other_user.id),
                 "is_administrator": is_administrator,
             },
@@ -244,10 +243,8 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.put(
-            f"/api/room-user-relations/{relation.id!s}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
             {
-                "user": str(relation.user.id),
-                "room": str(relation.room.id),
                 "is_administrator": not is_administrator,
             },
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
@@ -267,10 +264,8 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.put(
-            f"/api/room-user-relations/{relation.id!s}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
             {
-                "user": str(relation.user.id),
-                "room": str(relation.room.id),
                 "is_administrator": not is_administrator,
             },
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
@@ -289,10 +284,8 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.put(
-            f"/api/room-user-relations/{relation.id!s}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
             {
-                "user": str(relation.user.id),
-                "room": str(relation.room.id),
                 "is_administrator": not is_administrator,
             },
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
@@ -313,10 +306,8 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.put(
-            f"/api/room-user-relations/{relation.id!s}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
             {
-                "user": str(relation.user.id),
-                "room": str(relation.room.id),
                 "is_administrator": not is_administrator,
             },
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
@@ -330,7 +321,7 @@ class RoomUsersApiTestCase(APITestCase):
         relation = RoomUserFactory()
 
         response = self.client.delete(
-            f"/api/room-user-relations/{relation.id!s}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
         )
 
         self.assertEqual(response.status_code, 401)
@@ -346,7 +337,7 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.delete(
-            f"/api/room-user-relations/{relation.id!s}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
 
@@ -367,7 +358,7 @@ class RoomUsersApiTestCase(APITestCase):
         self.assertEqual(RoomUser.objects.count(), 2)
         self.assertTrue(RoomUser.objects.filter(user=relation.user).exists())
         response = self.client.delete(
-            f"/api/room-user-relations/{relation.id}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
 
@@ -386,7 +377,7 @@ class RoomUsersApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.delete(
-            f"/api/room-user-relations/{relation.id}/",
+            f"/api/rooms/{relation.room.id!s}/users/{relation.user.id!s}/",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
 

@@ -26,9 +26,6 @@ SchemaView = get_schema_view(
 router = DefaultRouter()
 router.register("rooms", api.RoomViewSet, basename="rooms")
 router.register(
-    "room-user-relations", api.RoomUserViewSet, basename="room_user_relations"
-)
-router.register(
     "room-group-relations",
     api.RoomGroupViewSet,
     basename="room_group_relations",

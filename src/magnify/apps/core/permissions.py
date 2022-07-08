@@ -75,3 +75,23 @@ class IsRelatedRoomAdministrator(permissions.BasePermission):
                 is_administrator=True, group__user_relations__user=user
             )
         )
+
+
+class IsRoomAdministrator(permissions.BasePermission):
+    """
+    Permissions for a room that can only be updated by room administrators.
+    """
+
+    def has_permission(self, request, view):
+        """Only allow authenticated users."""
+        return request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        """Check that the logged-in user is adminisrator of the linked room."""
+        user = request.user
+        return user.is_authenticated and (
+            obj.user_relations.filter(is_administrator=True, user=user)
+            or obj.group_relations.filter(
+                is_administrator=True, group__user_relations__user=user
+            )
+        )
