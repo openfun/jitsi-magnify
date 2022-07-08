@@ -1,5 +1,6 @@
 """Urls declarations for Magnify's core app."""
 
+from django.conf import settings
 from django.urls import include, path, re_path
 
 from drf_yasg import openapi
@@ -19,6 +20,7 @@ SchemaView = get_schema_view(
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
+    url=settings.API_URL,
 )
 
 router = DefaultRouter()

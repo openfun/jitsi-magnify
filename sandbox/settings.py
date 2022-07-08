@@ -201,6 +201,14 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
         "dockerflow.django.middleware.DockerflowMiddleware",
     )
 
+    # Swagger
+    API_URL = values.Value()
+    SWAGGER_SETTINGS = {
+        "SECURITY_DEFINITIONS": {
+            "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"},
+        }
+    }
+
     # Django applications from the highest priority to the lowest
     INSTALLED_APPS = (
         # magnify stuff
@@ -333,6 +341,7 @@ class Development(Base):
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
     CSRF_TRUSTED_ORIGINS = ["http://localhost:8070"]
+    API_URL = values.Value("http://localhost:8071")
 
 
 class Test(Base):
