@@ -35,5 +35,5 @@ class MeetingGroupsModelsTestCase(TestCase):
 
         self.assertEqual(
             context.exception.messages,
-            ["Meeting group access with this Group and Meeting already exists."],
+            ["Meeting group relation with this Group and Meeting already exists."],
         )

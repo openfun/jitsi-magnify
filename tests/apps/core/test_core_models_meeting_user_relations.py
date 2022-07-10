@@ -35,5 +35,5 @@ class MeetingUsersModelsTestCase(TestCase):
 
         self.assertEqual(
             context.exception.messages,
-            ["Meeting user access with this User and Meeting already exists."],
+            ["Meeting user relation with this User and Meeting already exists."],
         )

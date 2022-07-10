@@ -4,7 +4,6 @@ Unit tests for the Meeting model
 from datetime import date
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from magnify.apps.core.factories import (
@@ -41,14 +40,15 @@ class MeetingsModelsTestCase(TestCase):
         self.assertGreaterEqual(meetings[1].start_time, meetings[2].start_time)
 
     def test_models_meetings_end_greater_than_start(self):
-        """The start date can not be greater than the end date."""
-        with self.assertRaises(IntegrityError) as context:
-            MeetingFactory(start=date(2022, 6, 27), end=date(2022, 6, 26))
-
-        self.assertIn(
-            "end_greater_than_start",
-            str(context.exception),
+        """
+        The start date can not be greater than the date of end of recurrence.
+        """
+        meeting = MeetingFactory(
+            start=date(2022, 6, 27),
+            recurring_until=date(2022, 6, 26),
+            recurrence="daily",
         )
+        self.assertEqual(meeting.recurring_until, meeting.start)
 
     def test_models_meetings_name_maxlength(self):
         """The name field should be less than 100 characters."""

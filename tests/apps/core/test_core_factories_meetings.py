@@ -23,10 +23,10 @@ class MeetingsFactoriesTestCase(TestCase):
         meeting = MeetingFactory()
         self.assertGreaterEqual(meeting.start, date.today())
 
-    def test_factories_meetings_end_greater_than_start(self):
-        """The end date picked should be greater than the start date."""
+    def test_factories_meetings_recurring_until_greater_than_start(self):
+        """The date of end of recurrence should be greater than the start date."""
         meeting = MeetingFactory()
-        self.assertGreaterEqual(meeting.end, meeting.start)
+        self.assertGreaterEqual(meeting.recurring_until, meeting.start)
 
     def test_factories_meetings_users(self):
         """We should be able to attach users to a meeting."""
