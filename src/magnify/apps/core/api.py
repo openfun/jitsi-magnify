@@ -1,8 +1,10 @@
 """Magnify core API endpoints"""
+from datetime import date
+
 from django.contrib.auth import authenticate
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import F, Q
 
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
@@ -11,9 +13,16 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
+from .forms import MeetingFilterForm
 from .models import Room, RoomGroupAccess, RoomUserAccess, User
-from .permissions import IsObjectAdministrator, IsRoomAdministrator, IsSelf
+from .permissions import (
+    HasRoomAccess,
+    IsObjectAdministrator,
+    IsRoomAdministrator,
+    IsSelf,
+)
 from .serializers import (
+    MeetingSerializer,
     PasswordChangeSerializer,
     RegistrationSerializer,
     RoomGroupAccessSerializer,
@@ -320,3 +329,67 @@ class RoomViewSet(
             return Response(serializer.data)
 
         return Response(status=405)
+
+    @action(
+        methods=["get"],
+        detail=True,
+        url_path="meetings",
+        permission_classes=[HasRoomAccess],
+    )
+    # pylint: disable=invalid-name, unused-argument
+    def meetings(self, request, pk=None):
+        """Endpoint to retrieve meetings related to the room."""
+        room = self.get_object()
+
+        # Filter meetings in the date range of interest
+        today = date.today()
+
+        # Instantiate the form to allow validation/cleaning
+        filter_form = MeetingFilterForm(data=request.query_params)
+
+        # Return a 400 with error information if the query params are not valid
+        if not filter_form.is_valid():
+            return Response(status=400, data={"errors": filter_form.errors})
+
+        # Filter meetings by date range
+        start = filter_form.cleaned_data.get("start") or today
+        end = filter_form.cleaned_data.get("end") or today
+        candidate_meetings = room.meetings.filter(
+            Q(
+                recurrence__isnull=True,
+                start__gte=start - F("expected_duration"),
+                start__lte=end,
+            )
+            | (
+                Q(recurrence__isnull=False, start__lte=end)
+                & (
+                    Q(recurring_until__gte=start - F("expected_duration"))
+                    | Q(recurring_until__isnull=True)
+                )
+            )
+        )
+
+        # Filter meetings to which the authenticated user is related
+        user = request.user
+        access_clause = Q(is_public=True)
+        if user.is_authenticated:
+            access_clause |= Q(users=user) | Q(groups__user_accesses__user=user)
+        candidate_meetings = candidate_meetings.filter(access_clause)
+
+        # Keep only the meetings that actually have an occurrence within the date range and
+        # populate the cache field `_occurrences`` with such occurrences.
+        meetings = []
+        for meeting in candidate_meetings:
+            if dates := meeting.get_occurrences(start, end):
+                # pylint: disable=protected-access
+                meeting._occurrences = {
+                    "start": start,
+                    "end": end,
+                    "dates": dates,
+                }
+                meetings.append(meeting)
+
+        serializer = MeetingSerializer(
+            meetings, context={"request": request}, many=True
+        )
+        return Response(serializer.data, status=200)
