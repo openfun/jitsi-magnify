@@ -57,16 +57,10 @@ class RoomGroupAccessSerializer(RoomAccessSerializerMixin, serializers.ModelSeri
 class RoomSerializer(serializers.ModelSerializer):
     """Serialize Room model for the API."""
 
-    token = serializers.SerializerMethodField()
-
     class Meta:
         model = models.Room
-        fields = ["id", "name", "slug", "token"]
+        fields = ["id", "name", "slug"]
         read_only_fields = ["id", "slug"]
-
-    def get_token(self, obj):
-        """Generate and insert the token in the serializer under the "token" field."""
-        return generate_token(self.context["request"].user, obj.slug)
 
     def to_representation(self, instance):
         """Add users and groups only for administrator users."""

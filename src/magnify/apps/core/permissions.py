@@ -1,6 +1,4 @@
 """Permission handlers for Magnify's core app."""
-from django.db.models import Q
-
 from rest_framework import permissions
 
 
@@ -42,14 +40,11 @@ class IsObjectAdministrator(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         """Object permissions are only given to administrators of the room."""
-        user = request.user
 
         if request.method in permissions.SAFE_METHODS:
-            condition = Q(is_public=True)
-            if request.user.is_authenticated:
-                condition |= Q(users=user) | Q(groups__members=user)
-            return obj._meta.model.objects.filter(Q(id=obj.id) & condition).exists()
+            return True
 
+        user = request.user
         return obj.user_accesses.filter(
             is_administrator=True, user=user
         ) or obj.group_accesses.filter(
