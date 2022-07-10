@@ -112,6 +112,7 @@ install-front: ## Install frontend
 
 build-front: ## Build frontend for each package
 build-front:
+	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn install
 	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn build
 
 test-front: ## Test frontend for each package
