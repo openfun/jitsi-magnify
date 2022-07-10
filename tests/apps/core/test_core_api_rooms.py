@@ -74,14 +74,20 @@ class RoomsApiTestCase(APITestCase):
 
     def test_api_rooms_retrieve_anonymous_private(self):
         """
-        Anonymous users should not be allowed to retrieve a private room.
+        Anonymous users should be allowed to retrieve a private room but should not be
+        given any token.
         """
         room = RoomFactory(is_public=False)
         response = self.client.get(f"/api/rooms/{room.id!s}/")
 
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.json(), {"detail": "Authentication credentials were not provided."}
+            response.json(),
+            {
+                "id": str(room.id),
+                "name": room.name,
+                "slug": room.slug,
+            },
         )
 
     @mock.patch(
@@ -138,8 +144,8 @@ class RoomsApiTestCase(APITestCase):
 
     def test_api_rooms_retrieve_authenticated(self):
         """
-        Authenticated users should not be allowed to retrieve a private room to which they
-        are not related.
+        Authenticated users should be allowed to retrieve a private room to which they
+        are not related but should not be given any token.
         """
         room = RoomFactory(is_public=False)
 
@@ -149,11 +155,15 @@ class RoomsApiTestCase(APITestCase):
         response = self.client.get(
             f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
 
         self.assertEqual(
             response.json(),
-            {"detail": "You do not have permission to perform this action."},
+            {
+                "id": str(room.id),
+                "name": room.name,
+                "slug": room.slug,
+            },
         )
 
     @mock.patch(
@@ -170,7 +180,7 @@ class RoomsApiTestCase(APITestCase):
 
         jwt_token = AccessToken.for_user(user)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             response = self.client.get(
                 f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
             )
