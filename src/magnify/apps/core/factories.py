@@ -86,15 +86,6 @@ class MeetingFactory(factory.django.DjangoModelFactory):
 
     name = factory.Faker("catch_phrase")
     start = factory.Faker("future_date")
-
-    held_on_monday = factory.Faker("boolean", chance_of_getting_true=75)
-    held_on_tuesday = factory.Faker("boolean", chance_of_getting_true=75)
-    held_on_wednesday = factory.Faker("boolean", chance_of_getting_true=75)
-    held_on_thursday = factory.Faker("boolean", chance_of_getting_true=75)
-    held_on_friday = factory.Faker("boolean", chance_of_getting_true=75)
-    held_on_saturday = factory.Faker("boolean", chance_of_getting_true=75)
-    held_on_sunday = factory.Faker("boolean", chance_of_getting_true=75)
-
     start_time = factory.Faker("time_object")
     expected_duration = factory.LazyFunction(
         lambda: timedelta(minutes=random.randint(5, 600))  # nosec
@@ -137,18 +128,6 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         """Add labels to meeting from a given list of labels."""
         if create and extracted:
             self.labels.set(extracted)
-
-    @factory.lazy_attribute
-    def end(self):
-        """
-        The end date is the same as start date for meetings that happen once or a random date
-        after the start date for recurrent meetings.
-        """
-        if not self.start:
-            return None
-
-        nb_days = random.randint(0, 100)  # nosec
-        return self.start + timedelta(days=nb_days)
 
 
 class MeetingUserFactory(factory.django.DjangoModelFactory):
