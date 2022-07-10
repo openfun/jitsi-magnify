@@ -75,3 +75,19 @@ class IsRoomAdministrator(permissions.BasePermission):
                 is_administrator=True, group__user_accesses__user=user
             )
         )
+
+
+class HasRoomAccess(permissions.BasePermission):
+    """Permissions for access to an object related to a room."""
+
+    def has_object_permission(self, request, view, obj):
+        """Check that the logged-in user is adminisrator of the linked room."""
+        user = request.user
+        return (
+            obj.is_public
+            or user.is_authenticated
+            and (
+                obj.user_accesses.filter(user=user)
+                or obj.group_accesses.filter(group__user_accesses__user=user)
+            )
+        )

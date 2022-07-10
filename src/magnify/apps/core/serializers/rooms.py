@@ -73,7 +73,20 @@ class RoomSerializer(serializers.ModelSerializer):
         output = super().to_representation(instance)
         request = self.context.get("request")
 
-        if request and instance.is_administrator(request.user):
+        if not request:
+            return output
+        user = request.user
+
+        if instance.is_public or (
+            user.is_authenticated
+            and (
+                instance.user_accesses.filter(user=user)
+                or instance.group_accesses.filter(group__user_accesses__user=user)
+            )
+        ):
+            output["token"] = generate_token(user, instance.slug)
+
+        if instance.is_administrator(request.user):
             groups_serializer = RoomGroupAccessSerializer(
                 instance.group_accesses.all(), many=True
             )
