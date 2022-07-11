@@ -1,11 +1,12 @@
-import { defineMessages, useIntl } from 'react-intl';
-import React from 'react';
 import { Box, Button, Card } from 'grommet';
-import { useController } from '../../../controller';
+import React, { useState } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
+import { useController } from '../../../controller';
 import { LoadingButton, RowsList, SettingsSVG } from '../../design-system';
-import MeetingRow from '../../meetings/MeetingRow/MeetingRow';
 import { GroupRow } from '../../groups';
+import MeetingRow from '../../meetings/MeetingRow/MeetingRow';
+import AddGroupToRoomDialog from '../AddGroupToRoomDialog';
 
 const messages = defineMessages({
   meetingListTitle: {
@@ -30,6 +31,11 @@ const messages = defineMessages({
     defaultMessage: 'Configure room',
     description: 'Label for the button to configure a room',
   },
+  addGroupLabel: {
+    id: 'components.rooms.roomOverview.addGroupLabel',
+    defaultMessage: 'Add group',
+    description: 'Label for the button to add a group to a room',
+  },
 });
 
 export interface RoomOverviewProps {
@@ -50,6 +56,14 @@ const RoomOverview = ({ roomSlug, baseJitsiUrl }: RoomOverviewProps) => {
   const { data: room, isLoading } = useQuery(['room', roomSlug], () =>
     controller.getRoomBySlug(roomSlug),
   );
+
+  const [addGroupOpen, setAddGroupOpen] = useState(false);
+  const handleAddGroupOpen = () => {
+    setAddGroupOpen(true);
+  };
+  const handleAddGroupClose = () => {
+    setAddGroupOpen(false);
+  };
 
   return (
     <>
@@ -82,8 +96,11 @@ const RoomOverview = ({ roomSlug, baseJitsiUrl }: RoomOverviewProps) => {
           isLoading={isLoading}
           titleIsLoading={isLoading}
           Row={GroupRow}
+          addLabel={intl.formatMessage(messages.addGroupLabel)}
+          onAdd={handleAddGroupOpen}
         />
       </Box>
+      <AddGroupToRoomDialog open={addGroupOpen} onClose={handleAddGroupClose} roomSlug={roomSlug} />
     </>
   );
 };
