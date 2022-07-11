@@ -152,10 +152,10 @@ class Membership(BaseModel):
     """Link table between users and groups"""
 
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="group_relations"
+        User, on_delete=models.CASCADE, related_name="group_accesses"
     )
     group = models.ForeignKey(
-        Group, on_delete=models.CASCADE, related_name="user_relations"
+        Group, on_delete=models.CASCADE, related_name="user_accesses"
     )
     is_administrator = models.BooleanField(default=False)
 
@@ -216,18 +216,18 @@ class MeetingUser(BaseModel):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="meeting_relations",
+        related_name="meeting_accesses",
     )
     meeting = models.ForeignKey(
-        Meeting, on_delete=models.CASCADE, related_name="user_relations"
+        Meeting, on_delete=models.CASCADE, related_name="user_accesses"
     )
     is_administrator = models.BooleanField(default=False)
 
     class Meta:
         db_table = "magnify_meeting_user"
         unique_together = ("user", "meeting")
-        verbose_name = _("Meeting user relation")
-        verbose_name_plural = _("Meeting user relations")
+        verbose_name = _("Meeting user access")
+        verbose_name_plural = _("Meeting user accesses")
 
     def __str__(self):
         admin_status = " (admin)" if self.is_administrator else ""
@@ -238,18 +238,18 @@ class MeetingGroup(BaseModel):
     """Link table between meetings and groups"""
 
     group = models.ForeignKey(
-        Group, on_delete=models.CASCADE, related_name="meeting_relations"
+        Group, on_delete=models.CASCADE, related_name="meeting_accesses"
     )
     meeting = models.ForeignKey(
-        Meeting, on_delete=models.CASCADE, related_name="group_relations"
+        Meeting, on_delete=models.CASCADE, related_name="group_accesses"
     )
     is_administrator = models.BooleanField(default=False)
 
     class Meta:
         db_table = "magnify_meeting_group"
         unique_together = ("group", "meeting")
-        verbose_name = _("Meeting group relation")
-        verbose_name_plural = _("Meeting group relations")
+        verbose_name = _("Meeting group access")
+        verbose_name_plural = _("Meeting group accesses")
 
     def __str__(self):
         admin_status = " (admin)" if self.is_administrator else ""
@@ -264,9 +264,9 @@ class Room(BaseModel):
 
     is_public = models.BooleanField(default=True)
 
-    users = models.ManyToManyField(User, through="RoomUser", related_name="rooms")
+    users = models.ManyToManyField(User, through="RoomUserAccess", related_name="rooms")
     groups = models.ManyToManyField(
-        Group, through="RoomGroup", blank=True, related_name="rooms"
+        Group, through="RoomGroupAccess", blank=True, related_name="rooms"
     )
     labels = models.ManyToManyField(Label, blank=True, related_name="is_room_label_of")
 
@@ -290,53 +290,53 @@ class Room(BaseModel):
             return False
 
         return (
-            self.user_relations.filter(is_administrator=True, user=user).exists()
-            or self.group_relations.filter(
-                is_administrator=True, group__user_relations__user=user
+            self.user_accesses.filter(is_administrator=True, user=user).exists()
+            or self.group_accesses.filter(
+                is_administrator=True, group__user_accesses__user=user
             ).exists()
         )
 
 
-class RoomUser(BaseModel):
+class RoomUserAccess(BaseModel):
     """Link table between rooms and users"""
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="room_relations",
+        related_name="room_accesses",
     )
     room = models.ForeignKey(
-        Room, on_delete=models.CASCADE, related_name="user_relations"
+        Room, on_delete=models.CASCADE, related_name="user_accesses"
     )
     is_administrator = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "magnify_room_user"
+        db_table = "magnify_room_user_access"
         unique_together = ("user", "room")
-        verbose_name = _("Room user relation")
-        verbose_name_plural = _("Room user relations")
+        verbose_name = _("Room user access")
+        verbose_name_plural = _("Room user accesses")
 
     def __str__(self):
         admin_status = " (admin)" if self.is_administrator else ""
         return f"{capfirst(self.room.name):s} / {capfirst(self.user.name):s}{admin_status:s}"
 
 
-class RoomGroup(BaseModel):
+class RoomGroupAccess(BaseModel):
     """Link table between rooms and groups"""
 
     group = models.ForeignKey(
-        Group, on_delete=models.CASCADE, related_name="room_relations"
+        Group, on_delete=models.CASCADE, related_name="room_accesses"
     )
     room = models.ForeignKey(
-        Room, on_delete=models.CASCADE, related_name="group_relations"
+        Room, on_delete=models.CASCADE, related_name="group_accesses"
     )
     is_administrator = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "magnify_room_group"
+        db_table = "magnify_room_group_access"
         unique_together = ("group", "room")
-        verbose_name = _("Room group relation")
-        verbose_name_plural = _("Room group relations")
+        verbose_name = _("Room group access")
+        verbose_name_plural = _("Room group accesses")
 
     def __str__(self):
         admin_status = " (admin)" if self.is_administrator else ""

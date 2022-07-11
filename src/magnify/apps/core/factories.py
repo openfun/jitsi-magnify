@@ -152,7 +152,7 @@ class MeetingFactory(factory.django.DjangoModelFactory):
 
 
 class MeetingUserFactory(factory.django.DjangoModelFactory):
-    """Create fake meeting user relations for testing."""
+    """Create fake meeting user accesses for testing."""
 
     class Meta:
         model = core_models.MeetingUser
@@ -163,7 +163,7 @@ class MeetingUserFactory(factory.django.DjangoModelFactory):
 
 
 class MeetingGroupFactory(factory.django.DjangoModelFactory):
-    """Create fake meeting group relations for testing."""
+    """Create fake meeting group accesses for testing."""
 
     class Meta:
         model = core_models.MeetingGroup
@@ -188,13 +188,13 @@ class RoomFactory(factory.django.DjangoModelFactory):
         if create and extracted:
             for item in extracted:
                 if isinstance(item, core_models.User):
-                    core_models.RoomUser.objects.create(
+                    core_models.RoomUserAccess.objects.create(
                         user=item,
                         room=self,
                         is_administrator=random.choice([True, False]),  # nosec
                     )
                 else:
-                    core_models.RoomUser.objects.create(
+                    core_models.RoomUserAccess.objects.create(
                         user=item[0], room=self, is_administrator=item[1]
                     )
 
@@ -204,13 +204,13 @@ class RoomFactory(factory.django.DjangoModelFactory):
         if create and extracted:
             for item in extracted:
                 if isinstance(item, core_models.Group):
-                    core_models.RoomGroup.objects.create(
+                    core_models.RoomGroupAccess.objects.create(
                         group=item,
                         room=self,
                         is_administrator=random.choice([True, False]),  # nosec
                     )
                 else:
-                    core_models.RoomGroup.objects.create(
+                    core_models.RoomGroupAccess.objects.create(
                         group=item[0], room=self, is_administrator=item[1]
                     )
 
@@ -221,22 +221,22 @@ class RoomFactory(factory.django.DjangoModelFactory):
             self.labels.set(extracted)
 
 
-class RoomUserFactory(factory.django.DjangoModelFactory):
-    """Create fake room user relations for testing."""
+class RoomUserAccessFactory(factory.django.DjangoModelFactory):
+    """Create fake room user accesses for testing."""
 
     class Meta:
-        model = core_models.RoomUser
+        model = core_models.RoomUserAccess
 
     room = factory.SubFactory(RoomFactory)
     user = factory.SubFactory(UserFactory)
     is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
 
 
-class RoomGroupFactory(factory.django.DjangoModelFactory):
-    """Create fake room group relations for testing."""
+class RoomGroupAccessFactory(factory.django.DjangoModelFactory):
+    """Create fake room group accesses for testing."""
 
     class Meta:
-        model = core_models.RoomGroup
+        model = core_models.RoomGroupAccess
 
     room = factory.SubFactory(RoomFactory)
     group = factory.SubFactory(GroupFactory)

@@ -11,14 +11,14 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
-from .models import Room, RoomGroup, RoomUser, User
+from .models import Room, RoomGroupAccess, RoomUserAccess, User
 from .permissions import IsObjectAdministrator, IsRoomAdministrator, IsSelf
 from .serializers import (
     PasswordChangeSerializer,
     RegistrationSerializer,
-    RoomGroupSerializer,
+    RoomGroupAccessSerializer,
     RoomSerializer,
-    RoomUserSerializer,
+    RoomUserAccessSerializer,
     UserSerializer,
 )
 from .utils import get_tokens_for_user
@@ -183,7 +183,7 @@ class RoomViewSet(
 
         if user.is_authenticated:
             queryset = queryset.filter(
-                Q(is_public=True) | Q(users=user) | Q(groups__user_relations__user=user)
+                Q(is_public=True) | Q(users=user) | Q(groups__user_accesses__user=user)
             )
         else:
             queryset = queryset.filter(is_public=True)
@@ -199,7 +199,7 @@ class RoomViewSet(
     def perform_create(self, serializer):
         """Set the current user as administrators of the newly created room."""
         room = serializer.save()
-        RoomUser.objects.create(
+        RoomUserAccess.objects.create(
             room=room, user=self.request.user, is_administrator=True
         )
 
@@ -213,7 +213,7 @@ class RoomViewSet(
     def users(self, request, pk=None):
         """Adds a user in a room."""
         room = self.get_object()
-        serializer = RoomUserSerializer(
+        serializer = RoomUserAccessSerializer(
             data={
                 "room": room.id,
                 "user": request.data.get("user"),
@@ -236,19 +236,19 @@ class RoomViewSet(
     def user(self, request, user_pk, pk=None):
         """Get, update, or delete a user of a room."""
         room = self.get_object()
-        room_user = RoomUser.objects.get(room=room, user__pk=user_pk)
+        room_user_access = RoomUserAccess.objects.get(room=room, user__pk=user_pk)
 
         if request.method == "DELETE":
-            room_user.delete()
+            room_user_access.delete()
             return Response(status=204)
 
         if request.method == "GET":
-            serializer = RoomUserSerializer(room_user)
+            serializer = RoomUserAccessSerializer(room_user_access)
             return Response(serializer.data)
 
         if request.method == "PUT":
-            serializer = RoomUserSerializer(
-                room_user,
+            serializer = RoomUserAccessSerializer(
+                room_user_access,
                 data={
                     "room": room.id,
                     "user": user_pk,
@@ -272,7 +272,7 @@ class RoomViewSet(
     def groups(self, request, pk=None):
         """Adds a group in a room."""
         room = self.get_object()
-        serializer = RoomGroupSerializer(
+        serializer = RoomGroupAccessSerializer(
             data={
                 "room": room.id,
                 "group": request.data.get("group"),
@@ -295,19 +295,19 @@ class RoomViewSet(
     def group(self, request, group_pk, pk=None):
         """Get, update, or delete a group of a room."""
         room = self.get_object()
-        room_group = RoomGroup.objects.get(room=room, group__pk=group_pk)
+        room_group_access = RoomGroupAccess.objects.get(room=room, group__pk=group_pk)
 
         if request.method == "DELETE":
-            room_group.delete()
+            room_group_access.delete()
             return Response(status=204)
 
         if request.method == "GET":
-            serializer = RoomGroupSerializer(room_group)
+            serializer = RoomGroupAccessSerializer(room_group_access)
             return Response(serializer.data)
 
         if request.method == "PUT":
-            serializer = RoomGroupSerializer(
-                room_group,
+            serializer = RoomGroupAccessSerializer(
+                room_group_access,
                 data={
                     "room": room.id,
                     "group": group_pk,

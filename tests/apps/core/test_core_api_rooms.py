@@ -52,8 +52,8 @@ class RoomsApiTestCase(APITestCase):
 
         RoomFactory(is_public=False)
         room_public = RoomFactory(is_public=True)
-        room_groups = RoomFactory(is_public=False, groups=[group])
-        room_users = RoomFactory(is_public=False, users=[user])
+        room_group_access_accesses = RoomFactory(is_public=False, groups=[group])
+        room_user_accesses = RoomFactory(is_public=False, users=[user])
         RoomFactory(is_public=False, groups=[other_group])
         RoomFactory(is_public=False, users=[other_user])
 
@@ -64,7 +64,11 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         results = response.json()
         self.assertEqual(len(results), 3)
-        expected_ids = {str(room_public.id), str(room_groups.id), str(room_users.id)}
+        expected_ids = {
+            str(room_public.id),
+            str(room_group_access_accesses.id),
+            str(room_user_accesses.id),
+        }
         results_id = {r["id"] for r in results}
         self.assertEqual(expected_ids, results_id)
 
@@ -172,25 +176,25 @@ class RoomsApiTestCase(APITestCase):
             )
         self.assertEqual(response.status_code, 200)
 
-        user_relation = room.user_relations.first()
-        group_relation = room.group_relations.first()
+        user_access = room.user_accesses.first()
+        group_access = room.group_accesses.first()
         self.assertEqual(
             response.json(),
             {
                 "groups": [
                     {
-                        "id": str(group_relation.id),
+                        "id": str(group_access.id),
                         "group": str(group.id),
                         "room": str(room.id),
-                        "is_administrator": group_relation.is_administrator,
+                        "is_administrator": group_access.is_administrator,
                     }
                 ],
                 "users": [
                     {
-                        "id": str(user_relation.id),
+                        "id": str(user_access.id),
                         "user": str(user.id),
                         "room": str(room.id),
-                        "is_administrator": user_relation.is_administrator,
+                        "is_administrator": user_access.is_administrator,
                     }
                 ],
                 "id": str(room.id),
@@ -221,25 +225,25 @@ class RoomsApiTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        user_relation = room.user_relations.first()
-        group_relation = room.group_relations.first()
+        user_access = room.user_accesses.first()
+        group_access = room.group_accesses.first()
         self.assertEqual(
             response.json(),
             {
                 "groups": [
                     {
-                        "id": str(group_relation.id),
+                        "id": str(group_access.id),
                         "group": str(group.id),
                         "room": str(room.id),
-                        "is_administrator": group_relation.is_administrator,
+                        "is_administrator": group_access.is_administrator,
                     }
                 ],
                 "users": [
                     {
-                        "id": str(user_relation.id),
+                        "id": str(user_access.id),
                         "user": str(user.id),
                         "room": str(room.id),
-                        "is_administrator": user_relation.is_administrator,
+                        "is_administrator": user_access.is_administrator,
                     }
                 ],
                 "id": str(room.id),
@@ -280,7 +284,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 201)
         room = Room.objects.get()
         self.assertTrue(
-            room.user_relations.filter(is_administrator=True, user=user).exists()
+            room.user_accesses.filter(is_administrator=True, user=user).exists()
         )
 
     def test_api_rooms_create_authenticated_existing_slug(self):
