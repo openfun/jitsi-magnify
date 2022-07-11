@@ -395,7 +395,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name="MeetingUser",
+            name="MeetingUserAccess",
             fields=[
                 (
                     "id",
@@ -413,7 +413,7 @@ class Migration(migrations.Migration):
                     "meeting",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="user_relations",
+                        related_name="user_accesses",
                         to="core.meeting",
                     ),
                 ),
@@ -421,20 +421,20 @@ class Migration(migrations.Migration):
                     "user",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="meeting_relations",
+                        related_name="meeting_accesses",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Meeting user relation",
-                "verbose_name_plural": "Meeting user relations",
-                "db_table": "magnify_meeting_user",
+                "verbose_name": "Meeting user access",
+                "verbose_name_plural": "Meeting user accesses",
+                "db_table": "magnify_meeting_user_access",
                 "unique_together": {("user", "meeting")},
             },
         ),
         migrations.CreateModel(
-            name="MeetingGroup",
+            name="MeetingGroupAccess",
             fields=[
                 (
                     "id",
@@ -452,7 +452,7 @@ class Migration(migrations.Migration):
                     "group",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="meeting_relations",
+                        related_name="meeting_accesses",
                         to="core.group",
                     ),
                 ),
@@ -460,15 +460,15 @@ class Migration(migrations.Migration):
                     "meeting",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="group_relations",
+                        related_name="group_accesses",
                         to="core.meeting",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Meeting group relation",
-                "verbose_name_plural": "Meeting group relations",
-                "db_table": "magnify_meeting_group",
+                "verbose_name": "Meeting group access",
+                "verbose_name_plural": "Meeting group accesses",
+                "db_table": "magnify_meeting_group_access",
                 "unique_together": {("group", "meeting")},
             },
         ),
@@ -478,7 +478,7 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(
                 blank=True,
                 related_name="meetings",
-                through="core.MeetingGroup",
+                through="core.MeetingGroupAccess",
                 to="core.group",
             ),
         ),
@@ -505,7 +505,7 @@ class Migration(migrations.Migration):
             name="users",
             field=models.ManyToManyField(
                 related_name="meetings",
-                through="core.MeetingUser",
+                through="core.MeetingUserAccess",
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
