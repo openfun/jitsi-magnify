@@ -70,6 +70,7 @@
     "src/*"
   ],
   "peerDependencies": {
+    "@jitsi/react-sdk": "1.0.1",
     "axios": "0.27.2",
     "grommet": "2.24.0",
     "polished": "4.2.2",

@@ -4,6 +4,7 @@ import { Nullable } from '../types/misc';
 import { Profile } from '../types/profile';
 import { Room, RoomSettings } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
+import { WithToken } from '../types/withToken';
 import { Store } from './store';
 
 export interface SignupInput {
@@ -87,6 +88,7 @@ export default abstract class Controller {
   abstract getGroups(): Promise<Group[]>;
 
   // Meetings
+  abstract getMeeting(meetingId: string): Promise<WithToken<Meeting>>;
   abstract joinMeeting(meetingId: string): Promise<{ token: string }>;
   abstract createMeeting(createMeetingInput: CreateMeetingInput): Promise<Meeting>;
 
@@ -94,7 +96,8 @@ export default abstract class Controller {
   abstract getMyRooms(): Promise<Room[]>;
   abstract registerRoom(roomName: string): Promise<Room>;
   abstract addGroupsToRoom(addGroupsToRoomInput: AddGroupsToRoomInput): Promise<Room>;
-  abstract getRoomBySlug(roomSlug: string): Promise<Room>;
   abstract getRoom(roomName: string): Promise<Room>;
   abstract updateRoomSettings(updateRoomSettingsInput: UpdateRoomSettingsInput): Promise<Room>;
+  abstract getRoomBySlug(roomSlug: string): Promise<WithToken<Room>>;
+  abstract getRoomPossibleMeetings(roomSlug: string): Promise<WithToken<Meeting>[]>;
 }

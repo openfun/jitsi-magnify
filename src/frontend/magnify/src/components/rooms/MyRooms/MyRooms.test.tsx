@@ -39,7 +39,7 @@ describe('MyRooms', () => {
     await waitForElementToBeRemoved(() => screen.queryAllByTitle('Loading...'));
 
     // 3) Check the rooms
-    expect(screen.getAllByRole('button', { name: 'Join' }).length).toBe(7);
+    expect(screen.getAllByRole('link', { name: 'Join' }).length).toBe(7);
 
     // 4) Register a new room
     await user.click(screen.getByRole('button', { name: 'Register new room' }));
@@ -48,7 +48,7 @@ describe('MyRooms', () => {
     await waitForElementToBeRemoved(() => screen.getByRole('dialog'));
 
     // 5) Check the new room
-    expect(screen.getAllByRole('button', { name: 'Join' }).length).toBe(8);
+    expect(screen.getAllByRole('link', { name: 'Join' }).length).toBe(8);
     screen.getByText(roomToCreate.name);
   });
 });

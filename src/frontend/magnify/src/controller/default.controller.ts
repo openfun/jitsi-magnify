@@ -13,6 +13,7 @@ import Controller, {
   UpdateUserInput,
   UpdateUserPasswordInput,
 } from './interface';
+import { WithToken } from '../types/withToken';
 import { Meeting } from '../types/meeting';
 
 interface DefaultControllerSettings {
@@ -86,6 +87,9 @@ export default class DefaultController extends Controller {
     throw new Error('Not implemented');
   }
 
+  async getMeeting(meetingId: string): Promise<WithToken<Meeting>> {
+    throw new Error('Not implemented');
+  }
   async joinMeeting(): Promise<{ token: string }> {
     throw new Error('Not implemented');
   }
@@ -102,7 +106,10 @@ export default class DefaultController extends Controller {
   async addGroupsToRoom({ roomSlug, groupIds }: AddGroupsToRoomInput): Promise<Room> {
     throw new Error('Not implemented');
   }
-  async getRoomBySlug(roomSlug: string): Promise<Room> {
+  async getRoomBySlug(roomSlug: string): Promise<WithToken<Room>> {
+    throw new Error('Not implemented');
+  }
+  async getRoomPossibleMeetings(roomSlug: string): Promise<WithToken<Meeting>[]> {
     throw new Error('Not implemented');
   }
   getRoom(roomName: string): Promise<Room> {

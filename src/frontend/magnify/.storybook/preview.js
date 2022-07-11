@@ -18,7 +18,7 @@ export const parameters = {
   },
 };
 
-const controller = new LogController();
+const controller = new LogController(process.env.TEST_TOKEN);
 controller.refreshActivated = localStorage.getItem('debugRefreshToken') === 'true';
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,12 +1,15 @@
 import createRandomGroups from '../factories/groups';
-import createRandomRooms from '../factories/rooms';
+import { createMeetingInProgress, createRandomMeeting } from '../factories/meeting';
 import { createRandomProfile } from '../factories/profile';
 import createRandomRoom from '../factories/room';
+import createRandomRooms from '../factories/rooms';
+import withToken from '../factories/withToken';
 import { Group } from '../types/group';
-import { Nullable } from '../types/misc';
+import { Meeting } from '../types/meeting';
 import { Profile } from '../types/profile';
 import { Room } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
+import { WithToken } from '../types/withToken';
 import Controller, {
   AddGroupsToRoomInput,
   CreateMeetingInput,
@@ -17,153 +20,37 @@ import Controller, {
   UpdateUserInput,
   UpdateUserPasswordInput,
 } from './interface';
+import MockControllerFunction from './MockControllerFunction';
 import { example1, example2 } from './mocks/example';
+import promisifiedConsoleLogFactoryGeneric from './promisifiedConsoleLogFactory';
 import { ConnexionStatus, Store } from './store';
-import { createRandomMeeting } from '../factories/meeting';
-import { Meeting } from '../types/meeting';
 
 /**
- * Factory to mock a function that returns a promise.
- * It await 700ms before resolving the promise searching
- * the received arguments in the mock resolver for the key
- * in the given "resolveTo", or even in "rejectTo".
- *
- * If there is a such key, resolve or reject the promise with the value.
- * Elese, resolve the "default" (may be undefined).
- *
- * @param name The name of the function to mock.
- * @param resolveTo The map of keys to values to resolve the promise.
- * @param rejectTo A map of keys to values to reject the promise.
- *
- * @returns The promise that will be resolved or rejected.
+ * At first, this function seems to do nothing more than the promisifiedConsoleLogFactoryGeneric
+ * But we can't use it directly. If we specifiy only "Controller" as the type of controller, or even
+ * if we add a generic "TController extends Controller", the compiler will complain that we are not
+ * typing the function correctly, because we pass this without typing it. Therefore we need to type
+ * explicitely the first argument as "LogController". But we can't do it from the other file without
+ * a circular dependency. Therefore, we use this definition to type the controller.
  */
-const promisifiedConsoleLogFactory =
-  <T, TInput, TError>(
-    controller: LogController,
-    name: string,
-    resolver = new MockControllerFunction<TInput, T, TError>(),
-    protectedRoute = true,
-  ) =>
-  async (args?: any): Promise<T> => {
-    const requestPromiseFactory = (): Promise<T> =>
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // 1) Log the call to the console.
-          console.log(
-            `%c${name}: %c\njwt:${controller._jwt}%c\ninput:${JSON.stringify(args, null, '  ')}`,
-            'color: green; font-weight: bold',
-            'color: red; font-weight: bold',
-            'color: #00a',
-          );
-
-          // 2) For protected routes, raise error if no jwt.
-          if (protectedRoute && (!controller._jwt || controller._jwt !== 'successful-access')) {
-            reject(new Error('Unauthorized'));
-            return;
-          }
-
-          // 3) Resolve or reject the promise with the value.
-          resolver.run(
-            args,
-            (resolvedValue) => {
-              console.log(
-                `%c${name}: %c\noutput:${JSON.stringify(resolvedValue, null, '  ')}`,
-                'color: green; font-weight: bold',
-                'color: #00a',
-              );
-              resolve(resolvedValue);
-            },
-            reject,
-          );
-        }, 700);
-      });
-
-    let res: Nullable<T> = null;
-    let shouldTryToRefresh = false;
-    try {
-      res = await requestPromiseFactory();
-    } catch (error: any) {
-      console.log('Error', error.message);
-      if (error.message === 'Unauthorized') shouldTryToRefresh = true;
-      else throw error;
-    }
-
-    if (shouldTryToRefresh) {
-      try {
-        console.log('Trying to refresh the token...');
-        await controller.refresh('refresh-token');
-        if (!controller._jwt) throw new Error('No jwt after refresh');
-        res = await requestPromiseFactory();
-      } catch {
-        console.log("Couldn't refresh the token.");
-        controller._setStore(
-          (pStore): Store => ({
-            ...pStore,
-            connexionStatus: ConnexionStatus.DISCONNECTED,
-          }),
-        );
-      }
-    }
-
-    return res as T;
-  };
-
-/**
- * A helper class to declare and mock a function of the controller
- */
-class MockControllerFunction<TInput, TOutput, TError = Error> {
-  private resolveTo: Record<string, TOutput> = {};
-  private rejectTo: Record<string, TError> = {};
-
-  constructor() {}
-
-  resolveOnDefault(output: TOutput) {
-    this.resolveTo.default = output;
-    return this;
-  }
-
-  resolveOn(param: TInput, output: TOutput) {
-    this.resolveTo[JSON.stringify(param)] = output;
-    return this;
-  }
-
-  rejectOnDefault(error: TError) {
-    this.rejectTo.default = error;
-    return this;
-  }
-
-  rejectOn(param: TInput, error: TError) {
-    this.rejectTo[JSON.stringify(param)] = error;
-    return this;
-  }
-
-  run(
-    param: TInput,
-    resolve: (value: TOutput | PromiseLike<TOutput>) => void,
-    reject: (reason?: any) => void,
-  ): void {
-    if (JSON.stringify(param) in this.rejectTo) {
-      reject(this.rejectTo[JSON.stringify(param)]);
-      return;
-    }
-
-    if (JSON.stringify(param) in this.resolveTo) {
-      resolve(this.resolveTo[JSON.stringify(param)]);
-      return;
-    }
-
-    if (this.rejectTo.default) {
-      reject(this.rejectTo.default);
-      return;
-    }
-
-    resolve(this.resolveTo.default);
-  }
+function promisifiedConsoleLogFactory<T, TInput, TError>(
+  controller: LogController,
+  name: string,
+  resolver = new MockControllerFunction<TInput, T, TError>(),
+  protectedRoute = true,
+): (args?: any) => Promise<T> {
+  return promisifiedConsoleLogFactoryGeneric(controller, name, resolver, protectedRoute);
 }
 
 export default class LogController extends Controller {
   // mock if the user has a refreshToken, true=>refresh works, false=>refresh fails 403
   refreshActivated = true;
+  testToken: string;
+
+  constructor(testToken: string) {
+    super();
+    this.testToken = testToken;
+  }
 
   sendTest = promisifiedConsoleLogFactory(this, 'sendTest');
   getExamples = promisifiedConsoleLogFactory(
@@ -180,6 +67,19 @@ export default class LogController extends Controller {
     'joinRoom',
     new MockControllerFunction<string, { token: string }>().resolveOnDefault({ token: 'token' }),
   );
+  getRoomPossibleMeetings = (roomSlug: string) =>
+    promisifiedConsoleLogFactory(
+      this,
+      'getRoomPossibleMeetings',
+      new MockControllerFunction<string, WithToken<Meeting>[], { detail: string }>()
+        .resolveOnDefault([withToken(createMeetingInProgress(), this.testToken)])
+        .resolveOn('my-room-with-no-meetings', [])
+        .resolveOn('my-room-with2-meetings', [
+          withToken(createMeetingInProgress(), this.testToken),
+          withToken(createMeetingInProgress(), this.testToken),
+        ])
+        .rejectOn('my-innexistant-room', { detail: 'Room not found' }),
+    )(roomSlug);
 
   /**
    * Login routes
@@ -337,6 +237,14 @@ export default class LogController extends Controller {
       createRandomMeeting(),
     ),
   );
+  getMeeting = (meetingId: string) =>
+    promisifiedConsoleLogFactory(
+      this,
+      'getMeeting',
+      new MockControllerFunction<string, WithToken<Meeting>>().resolveOnDefault(
+        withToken(createRandomMeeting(), this.testToken),
+      ),
+    )(meetingId);
 
   // Rooms
   getMyRooms = promisifiedConsoleLogFactory(
@@ -363,11 +271,6 @@ export default class LogController extends Controller {
       new MockControllerFunction<AddGroupsToRoomInput, Room>().resolveOnDefault(resolvedRoom),
     )({ roomSlug, groupIds });
   };
-  getRoomBySlug = promisifiedConsoleLogFactory(
-    this,
-    'getRoomBySlug',
-    new MockControllerFunction<string, Room>().resolveOnDefault(createRandomRoom()),
-  );
   getRoom = promisifiedConsoleLogFactory(
     this,
     'getRoom',
@@ -386,4 +289,12 @@ export default class LogController extends Controller {
       }),
     )(input);
   };
+  getRoomBySlug = (roomSlug: string) =>
+    promisifiedConsoleLogFactory(
+      this,
+      'getRoomBySlug',
+      new MockControllerFunction<string, WithToken<Room>>().resolveOnDefault(
+        withToken(createRandomRoom(), this.testToken),
+      ),
+    )(roomSlug);
 }

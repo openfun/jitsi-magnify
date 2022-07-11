@@ -81,7 +81,7 @@ describe('MeetingRow.test.tsx', () => {
     expect(screen.getByText('W')).toHaveStyle('font-weight: bold; color: #F8F8F8');
     expect(screen.getByText('F')).toHaveStyle('font-weight: bold; color: #F8F8F8');
     expect(screen.getByText('M')).toHaveStyle('font-weight: normal; color: inherit');
-    expect(screen.getByRole('button', { name: 'Join' })).toBeDisabled();
+    expect(screen.queryByRole('link', { name: 'Join' })).not.toBeInTheDocument();
   });
 
   it('should render a meeting in progress', async () => {
@@ -108,10 +108,10 @@ describe('MeetingRow.test.tsx', () => {
     expect(screen.getByText('W')).toHaveStyle('font-weight: bold; color: #F8F8F8');
     expect(screen.getByText('F')).toHaveStyle('font-weight: bold; color: #F8F8F8');
     expect(screen.getByText('M')).toHaveStyle('font-weight: normal; color: inherit');
-    expect(screen.getByRole('button', { name: 'Join' })).toBeEnabled();
+    expect(screen.getByRole('link', { name: 'Join' })).toBeEnabled();
 
     await user.click(screen.getByText('Join'));
-    await screen.findByText(`/${meeting.id}?token=success-token`);
+    await screen.findByText(`/m/${meeting.id}`);
   });
 
   it("should render a meeting that's over", () => {

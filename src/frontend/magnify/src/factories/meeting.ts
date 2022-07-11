@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Meeting } from '../types/meeting';
+import createRandomGroups from './groups';
 const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 function createFakeWorkingTime() {
@@ -122,6 +123,7 @@ export function createRandomMeeting({
     ...Object.fromEntries(heldOn),
     start_time: customStartTime || createFakeWorkingTime(),
     expected_duration: customDuration || 15 * faker.datatype.number({ min: 1, max: 12 }),
+    groups: createRandomGroups(faker.datatype.number({ min: 1, max: 5 })),
   };
 }
 

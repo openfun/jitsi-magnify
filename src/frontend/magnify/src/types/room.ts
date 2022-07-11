@@ -14,6 +14,7 @@ export interface RoomSettings {
 export interface Room {
   id: string;
   name: string;
+  slug: string;
   isAdmin?: boolean;
   groups: Group[];
   meetings: Meeting[];

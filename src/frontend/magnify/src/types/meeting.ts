@@ -1,3 +1,5 @@
+import { Group } from './group';
+
 export interface Meeting {
   id: string;
   name: string;
@@ -15,4 +17,6 @@ export interface Meeting {
 
   start_time: string;
   expected_duration: number;
+
+  groups: Group[];
 }

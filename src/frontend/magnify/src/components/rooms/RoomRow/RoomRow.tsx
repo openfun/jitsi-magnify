@@ -1,6 +1,6 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Card, Grid, Tag, Text } from 'grommet';
+import { Link, useNavigate } from 'react-router-dom';
+import { Box, Button, Card, Grid, Tag, Text } from 'grommet';
 import { defineMessages } from '@formatjs/intl';
 import { useIntl } from 'react-intl';
 import { useMutation } from 'react-query';
@@ -36,13 +36,6 @@ const messages = defineMessages({
 
 export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
   const intl = useIntl();
-  const controller = useController();
-  const navigate = useNavigate();
-  const { mutate, isLoading } = useMutation(controller.joinRoom, {
-    onSuccess: (data) => {
-      navigate(`${baseJitsiUrl}/${room.id}?token=${data.token}`);
-    },
-  });
 
   return (
     <Card background="light-2" pad="small" elevation="0" margin={{ bottom: '10px' }}>
@@ -72,11 +65,14 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
 
         <Box gridArea="action" align="center">
           <Box margin="auto">
-            <LoadingButton
+            <Button
               label={intl.formatMessage(messages.join)}
               primary
-              onClick={() => mutate(room.id)}
-              isLoading={isLoading}
+              as={({ children, type, className }) => (
+                <Link type={type} className={className} to={`${baseJitsiUrl}/${room.slug}`}>
+                  {children}
+                </Link>
+              )}
             />
           </Box>
         </Box>

@@ -9,6 +9,8 @@ export function createRandomGroupMember(): Member {
   };
 }
 
-export function createRandomGroupMembers(count: number): Member[] {
-  return Array.from({ length: count }, () => createRandomGroupMember());
+export function createRandomGroupMembers(count: number, userToInclude?: Member): Member[] {
+  return Array.from({ length: count }, (_v, index) =>
+    index === 0 && userToInclude ? userToInclude : createRandomGroupMember(),
+  );
 }

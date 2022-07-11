@@ -1,14 +1,10 @@
-import { Box, Card, Grid, Text } from 'grommet';
-import { Projects, FastForward, Play } from 'grommet-icons';
+import { Box, Button, Card, Grid, Text } from 'grommet';
+import { Projects, Play } from 'grommet-icons';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useController } from '../../../controller';
 import { Meeting } from '../../../types/meeting';
-import { computeEnd } from './computeEnd';
 import { getNextMeeting } from './getNextMeeting';
-import { useNavigate } from 'react-router-dom';
-import { useMutation } from 'react-query';
-import { LoadingButton } from '../../design-system';
+import { Link, useNavigate } from 'react-router-dom';
 import formatDuration from './formatDuration';
 
 export interface MeetingRowProps {
@@ -20,7 +16,12 @@ export interface MeetingRowProps {
    * The redirection url to use when the user clicks on join
    * (without the token nor the meeting id)
    */
-  baseJitsiUrl: string;
+  baseJitsiUrl?: string;
+  /**
+   * What to do when the user clicks on join. If provided
+   * it will override the default behavior of redirecting
+   */
+  onJoin?: (meeting: Meeting) => void;
 }
 
 const messages = defineMessages({
@@ -50,16 +51,9 @@ const messages = defineMessages({
 
 const weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-export default function MeetingRow({ meeting, baseJitsiUrl }: MeetingRowProps) {
+export default function MeetingRow({ meeting, baseJitsiUrl, onJoin }: MeetingRowProps) {
   // Hooks
   const intl = useIntl();
-  const controller = useController();
-  const navigate = useNavigate();
-  const { mutate, isLoading } = useMutation(controller.joinMeeting, {
-    onSuccess: ({ token }) => {
-      navigate(`${baseJitsiUrl}/${meeting.id}?token=${token}`);
-    },
-  });
 
   // Convert the keys held_on_... to an array indexed by day number
   const holdOn = weekDays.map(
@@ -171,13 +165,29 @@ export default function MeetingRow({ meeting, baseJitsiUrl }: MeetingRowProps) {
         </Box>
 
         <Box gridArea="actions" margin="auto 0px">
-          <LoadingButton
-            label={intl.formatMessage(messages.joinLabel)}
-            primary
-            disabled={!maybeInProgress}
-            isLoading={isLoading}
-            onClick={() => mutate(meeting.id)}
-          />
+          {onJoin ? (
+            <Button
+              label={intl.formatMessage(messages.joinLabel)}
+              primary
+              disabled={!maybeInProgress}
+              onClick={() => onJoin(meeting)}
+            />
+          ) : (
+            <Button
+              label={intl.formatMessage(messages.joinLabel)}
+              primary
+              disabled={!maybeInProgress}
+              as={({ children, type, className }) =>
+                maybeInProgress ? (
+                  <Link type={type} className={className} to={`${baseJitsiUrl}/m/${meeting.id}`}>
+                    {children}
+                  </Link>
+                ) : (
+                  <Box className={className}>{children}</Box>
+                )
+              }
+            />
+          )}
         </Box>
       </Grid>
     </Card>

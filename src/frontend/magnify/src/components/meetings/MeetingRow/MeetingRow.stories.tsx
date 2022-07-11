@@ -19,19 +19,24 @@ const Template: ComponentStory<typeof MeetingRow> = (args: MeetingRowProps) => (
 
 // Stories
 export const NonRepeatingMeeting = Template.bind({});
-NonRepeatingMeeting.args = { meeting: createRandomSingleMeeting(), baseJitsiUrl: '' };
+NonRepeatingMeeting.args = {
+  meeting: createRandomSingleMeeting(),
+  baseJitsiUrl: '',
+  onJoin: undefined,
+};
 
 export const OnceAWeek = Template.bind({});
-OnceAWeek.args = { meeting: createRandomMeeting(), baseJitsiUrl: '' };
+OnceAWeek.args = { meeting: createRandomMeeting(), baseJitsiUrl: '', onJoin: undefined };
 
 export const ThriceAWeek = Template.bind({});
 ThriceAWeek.args = {
   meeting: createRandomMeeting({ numberOfMeetingPerWeek: 3 }),
   baseJitsiUrl: '',
+  onJoin: undefined,
 };
 
 export const InProgress = Template.bind({});
-InProgress.args = { meeting: createMeetingInProgress(), baseJitsiUrl: '' };
+InProgress.args = { meeting: createMeetingInProgress(), baseJitsiUrl: '', onJoin: undefined };
 
 export const Over = Template.bind({});
-Over.args = { meeting: createMeetingOver(), baseJitsiUrl: '' };
+Over.args = { meeting: createMeetingOver(), baseJitsiUrl: '', onJoin: undefined };
