@@ -32,7 +32,7 @@ async function render() {
 
   // Create the controller
   // const controller = new DefaultController({ url: 'http://localhost:3000' });
-  const controller = new LogController();
+  const controller = new LogController(process.env.REACT_APP_TEST_TOKEN as string);
   // controller.refreshActivated = false;
   const queryClient = new QueryClient({
     defaultOptions: {
