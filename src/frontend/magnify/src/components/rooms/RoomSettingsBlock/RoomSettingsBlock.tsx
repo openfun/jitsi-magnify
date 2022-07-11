@@ -32,23 +32,22 @@ const RoomSettingsBlock = ({
         gap="medium"
       >
         {toggles.map((row) => {
-          return (
-            <Box key={row.reduce((acc, toggle) => acc + '-' + toggle.settingKey, 'row')}>
-              {row.map(({ label, settingKey }) => (
-                <RoomSettingToggle
-                  label={label}
-                  checked={room?.settings?.[settingKey]}
-                  roomName={roomName}
-                  settingKey={settingKey}
-                  key={settingKey}
-                />
-              ))}
-              {size !== 'small' &&
-                Array.from({ length: maxRowLength - row.length }, (_elt, index) => (
-                  <Box key={index} />
-                ))}
-            </Box>
-          );
+          const builtRow = row.map(({ label, settingKey }) => (
+            <RoomSettingToggle
+              label={label}
+              checked={room?.settings?.[settingKey]}
+              roomName={roomName}
+              settingKey={settingKey}
+              key={settingKey}
+            />
+          ));
+          if (size !== 'small')
+            builtRow.push(
+              ...Array.from({ length: maxRowLength - row.length }, (_elt, index) => (
+                <Box key={index} />
+              )),
+            );
+          return builtRow;
         })}
       </Grid>
     </Section>
