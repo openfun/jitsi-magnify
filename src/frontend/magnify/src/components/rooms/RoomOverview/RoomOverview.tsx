@@ -7,6 +7,7 @@ import { LoadingButton, RowsList, SettingsSVG } from '../../design-system';
 import { GroupRow } from '../../groups';
 import MeetingRow from '../../meetings/MeetingRow/MeetingRow';
 import AddGroupToRoomDialog from '../AddGroupToRoomDialog';
+import CreateMeetingInRoomDialog from '../CreateMeetingInRoomDialog';
 
 const messages = defineMessages({
   meetingListTitle: {
@@ -35,6 +36,11 @@ const messages = defineMessages({
     id: 'components.rooms.roomOverview.addGroupLabel',
     defaultMessage: 'Add group',
     description: 'Label for the button to add a group to a room',
+  },
+  createMeetingLabel: {
+    id: 'components.rooms.roomOverview.createMeetingLabel',
+    defaultMessage: 'New meeting',
+    description: 'Label for the button to create a meeting in a room',
   },
 });
 
@@ -65,6 +71,14 @@ const RoomOverview = ({ roomSlug, baseJitsiUrl }: RoomOverviewProps) => {
     setAddGroupOpen(false);
   };
 
+  const [createMeetingOpen, setCreateMeetingOpen] = useState(false);
+  const handleCreateMeetingOpen = () => {
+    setCreateMeetingOpen(true);
+  };
+  const handleCreateMeetingClose = () => {
+    setCreateMeetingOpen(false);
+  };
+
   return (
     <>
       <Card background="white" direction="row" justify="end" pad="medium">
@@ -87,6 +101,8 @@ const RoomOverview = ({ roomSlug, baseJitsiUrl }: RoomOverviewProps) => {
           Row={({ meeting }) => <MeetingRow meeting={meeting} baseJitsiUrl={baseJitsiUrl} />}
           isLoading={isLoading}
           titleIsLoading={isLoading}
+          addLabel={intl.formatMessage(messages.createMeetingLabel)}
+          onAdd={handleCreateMeetingOpen}
         />
       </Box>
       <Box margin={{ top: 'medium' }}>
@@ -100,6 +116,11 @@ const RoomOverview = ({ roomSlug, baseJitsiUrl }: RoomOverviewProps) => {
           onAdd={handleAddGroupOpen}
         />
       </Box>
+      <CreateMeetingInRoomDialog
+        open={createMeetingOpen}
+        onClose={handleCreateMeetingClose}
+        roomSlug={roomSlug}
+      />
       <AddGroupToRoomDialog open={addGroupOpen} onClose={handleAddGroupClose} roomSlug={roomSlug} />
     </>
   );
