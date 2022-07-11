@@ -97,13 +97,13 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         if create and extracted:
             for item in extracted:
                 if isinstance(item, core_models.User):
-                    core_models.MeetingUser.objects.create(
+                    core_models.MeetingUserAccess.objects.create(
                         user=item,
                         meeting=self,
                         is_administrator=random.choice([True, False]),  # nosec
                     )
                 else:
-                    core_models.MeetingUser.objects.create(
+                    core_models.MeetingUserAccess.objects.create(
                         user=item[0], meeting=self, is_administrator=item[1]
                     )
 
@@ -113,13 +113,13 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         if create and extracted:
             for item in extracted:
                 if isinstance(item, core_models.Group):
-                    core_models.MeetingGroup.objects.create(
+                    core_models.MeetingGroupAccess.objects.create(
                         group=item,
                         meeting=self,
                         is_administrator=random.choice([True, False]),  # nosec
                     )
                 else:
-                    core_models.MeetingGroup.objects.create(
+                    core_models.MeetingGroupAccess.objects.create(
                         group=item[0], meeting=self, is_administrator=item[1]
                     )
 
@@ -134,18 +134,18 @@ class MeetingUserFactory(factory.django.DjangoModelFactory):
     """Create fake meeting user accesses for testing."""
 
     class Meta:
-        model = core_models.MeetingUser
+        model = core_models.MeetingUserAccess
 
     meeting = factory.SubFactory(MeetingFactory)
     user = factory.SubFactory(UserFactory)
     is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
 
 
-class MeetingGroupFactory(factory.django.DjangoModelFactory):
+class MeetingGroupAccessFactory(factory.django.DjangoModelFactory):
     """Create fake meeting group accesses for testing."""
 
     class Meta:
-        model = core_models.MeetingGroup
+        model = core_models.MeetingGroupAccess
 
     meeting = factory.SubFactory(MeetingFactory)
     group = factory.SubFactory(GroupFactory)

@@ -307,9 +307,11 @@ class Meeting(BaseModel):
 
     is_public = models.BooleanField(default=True)
 
-    users = models.ManyToManyField(User, through="MeetingUser", related_name="meetings")
+    users = models.ManyToManyField(
+        User, through="MeetingUserAccess", related_name="meetings"
+    )
     groups = models.ManyToManyField(
-        Group, through="MeetingGroup", blank=True, related_name="meetings"
+        Group, through="MeetingGroupAccess", blank=True, related_name="meetings"
     )
     labels = models.ManyToManyField(
         Label, blank=True, related_name="is_meeting_label_of"
@@ -472,46 +474,46 @@ class Meeting(BaseModel):
         return []
 
 
-class MeetingUser(BaseModel):
+class MeetingUserAccess(BaseModel):
     """Link table between meetings and users"""
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="meeting_relations",
+        related_name="meeting_accesses",
     )
     meeting = models.ForeignKey(
-        Meeting, on_delete=models.CASCADE, related_name="user_relations"
+        Meeting, on_delete=models.CASCADE, related_name="user_accesses"
     )
     is_administrator = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "magnify_meeting_user"
+        db_table = "magnify_meeting_user_access"
         unique_together = ("user", "meeting")
-        verbose_name = _("Meeting user relation")
-        verbose_name_plural = _("Meeting user relations")
+        verbose_name = _("Meeting user access")
+        verbose_name_plural = _("Meeting user accesses")
 
     def __str__(self):
         admin_status = " (admin)" if self.is_administrator else ""
         return f"{capfirst(self.meeting.name):s} / {capfirst(self.user.name):s}{admin_status:s}"
 
 
-class MeetingGroup(BaseModel):
+class MeetingGroupAccess(BaseModel):
     """Link table between meetings and groups"""
 
     group = models.ForeignKey(
-        Group, on_delete=models.CASCADE, related_name="meeting_relations"
+        Group, on_delete=models.CASCADE, related_name="meeting_accesses"
     )
     meeting = models.ForeignKey(
-        Meeting, on_delete=models.CASCADE, related_name="group_relations"
+        Meeting, on_delete=models.CASCADE, related_name="group_accesses"
     )
     is_administrator = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "magnify_meeting_group"
+        db_table = "magnify_meeting_group_access"
         unique_together = ("group", "meeting")
-        verbose_name = _("Meeting group relation")
-        verbose_name_plural = _("Meeting group relations")
+        verbose_name = _("Meeting group access")
+        verbose_name_plural = _("Meeting group accesses")
 
     def __str__(self):
         admin_status = " (admin)" if self.is_administrator else ""
