@@ -1,6 +1,8 @@
-import { defineMessages, useIntl } from 'react-intl';
+import { Box, Button, Heading, Text } from 'grommet';
 import React from 'react';
-import { Box, Heading, Text } from 'grommet';
+import { defineMessages, useIntl } from 'react-intl';
+import { useMutation } from 'react-query';
+import { useController } from '../../../controller';
 import useFormState from '../../../hooks/useFormState';
 import validators, { requiredValidator } from '../../../utils/validators';
 import {
@@ -10,11 +12,11 @@ import {
   LoadingButton,
   TextField,
 } from '../../design-system';
-import { useController } from '../../../controller';
-import { useMutation } from 'react-query';
 
 export interface CreateMeetingFormProps {
   roomSlug?: string;
+  onCancel?: () => void;
+  onSuccess?: () => void;
 }
 
 const messages = defineMessages({
@@ -53,9 +55,14 @@ const messages = defineMessages({
     defaultMessage: 'Create meeting',
     description: 'Label for the submit button',
   },
+  cancelLabel: {
+    id: 'components.meetings.CreateMeetingForm.cancelLabel',
+    defaultMessage: 'Cancel',
+    description: 'Label for the cancel button',
+  },
 });
 
-const CreateMeetingForm = ({ roomSlug }: CreateMeetingFormProps) => {
+const CreateMeetingForm = ({ roomSlug, onCancel, onSuccess }: CreateMeetingFormProps) => {
   const intl = useIntl();
   const controller = useController();
   const { mutate, isLoading } = useMutation(controller.createMeeting);
@@ -80,11 +87,14 @@ const CreateMeetingForm = ({ roomSlug }: CreateMeetingFormProps) => {
   );
 
   const handleSubmit = async () => {
-    mutate({
-      roomSlug,
-      ...values,
-      expectedDuration: parseInt(values.expectedDuration, 10),
-    });
+    mutate(
+      {
+        roomSlug,
+        ...values,
+        expectedDuration: parseInt(values.expectedDuration, 10),
+      },
+      { onSuccess: onSuccess },
+    );
   };
 
   return (
@@ -156,6 +166,15 @@ const CreateMeetingForm = ({ roomSlug }: CreateMeetingFormProps) => {
         </Fieldset>
 
         <Box justify="end" direction="row">
+          {onCancel && (
+            <Button
+              label={intl.formatMessage(messages.cancelLabel)}
+              onClick={onCancel}
+              onFocus={(event: React.FocusEvent) => event.stopPropagation()}
+              margin={{ right: 'small' }}
+            />
+          )}
+
           <LoadingButton
             primary
             isLoading={isLoading}

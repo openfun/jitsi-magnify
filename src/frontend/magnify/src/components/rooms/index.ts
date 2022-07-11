@@ -6,3 +6,4 @@ export { default as RoomConfig } from './RoomConfig';
 export { default as RoomOverview } from './RoomOverview';
 export { default as RoomSettingsBlock } from './RoomSettingsBlock';
 export { default as RoomSettingToggle } from './RoomSettingToggle';
+export { default as CreateMeetingInRoomDialog } from './CreateMeetingInRoomDialog';

@@ -1,6 +1,6 @@
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import CreateMeetingForm from './CreateMeetingForm';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'Meetings/CreateMeetingForm',
@@ -13,4 +13,11 @@ const Template: ComponentStory<typeof CreateMeetingForm> = (args) => (
 
 // create the template and stories
 export const basicCreateMeetingForm = Template.bind({});
-basicCreateMeetingForm.args = {};
+basicCreateMeetingForm.args = {
+  onCancel: undefined,
+};
+
+export const createMeetingFormWithCancel = Template.bind({});
+createMeetingFormWithCancel.args = {
+  onCancel: () => {},
+};
