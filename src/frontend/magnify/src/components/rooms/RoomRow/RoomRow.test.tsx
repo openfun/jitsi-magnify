@@ -38,6 +38,6 @@ describe('RoomRow', () => {
 
     await user.click(screen.getByText('Join'));
 
-    expect(screen.getByText(`//${room.id}?token=token`)).toBeInTheDocument();
+    expect(screen.getByText(`//${room.slug}`)).toBeInTheDocument();
   });
 });

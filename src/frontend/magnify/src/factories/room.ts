@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { Room, RoomSettings } from '../types/room';
 import createRandomGroups from './groups';
 import createRandomMeetings from './meetings';
+import { Member } from '../types/member';
 
 function settings(): (keyof RoomSettings)[] {
   return [
@@ -28,12 +29,13 @@ export function createRandomRoomSettings(): RoomSettings {
   return Object.fromEntries(randomSettings);
 }
 
-export default function createRandomRoom(isAdmin?: boolean): Room {
+export default function createRandomRoom(isAdmin?: boolean, userToInclude?: Member): Room {
   return {
     id: faker.datatype.uuid(),
     name: faker.lorem.slug(),
+    slug: faker.lorem.slug(),
     isAdmin: isAdmin || false,
-    groups: createRandomGroups(4),
+    groups: createRandomGroups(4, userToInclude),
     meetings: createRandomMeetings(7),
     settings: createRandomRoomSettings(),
   };
