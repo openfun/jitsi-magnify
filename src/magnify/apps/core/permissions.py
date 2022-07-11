@@ -50,10 +50,10 @@ class IsObjectAdministrator(permissions.BasePermission):
                 condition |= Q(users=user) | Q(groups__members=user)
             return obj._meta.model.objects.filter(Q(id=obj.id) & condition).exists()
 
-        return obj.user_relations.filter(
+        return obj.user_accesses.filter(
             is_administrator=True, user=user
-        ) or obj.group_relations.filter(
-            is_administrator=True, group__user_relations__user=user
+        ) or obj.group_accesses.filter(
+            is_administrator=True, group__user_accesses__user=user
         )
 
 
@@ -70,8 +70,8 @@ class IsRoomAdministrator(permissions.BasePermission):
         """Check that the logged-in user is adminisrator of the linked room."""
         user = request.user
         return user.is_authenticated and (
-            obj.user_relations.filter(is_administrator=True, user=user)
-            or obj.group_relations.filter(
-                is_administrator=True, group__user_relations__user=user
+            obj.user_accesses.filter(is_administrator=True, user=user)
+            or obj.group_accesses.filter(
+                is_administrator=True, group__user_accesses__user=user
             )
         )

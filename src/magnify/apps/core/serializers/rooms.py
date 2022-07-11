@@ -7,9 +7,9 @@ from magnify.apps.core import models
 from magnify.apps.core.utils import generate_token
 
 
-class RoomRelationSerializerMixin:
+class RoomAccessSerializerMixin:
     """
-    A serializer mix to share controling that the logged-in user submitting a room relation object
+    A serializer mix to share controling that the logged-in user submitting a room access object
     is administrator on the targeted room.
     """
 
@@ -22,34 +22,34 @@ class RoomRelationSerializerMixin:
             and request.user
             and request.user.is_authenticated
             and (
-                room.user_relations.filter(is_administrator=True, user=request.user)
-                or room.group_relations.filter(
-                    is_administrator=True, group__user_relations__user=request.user
+                room.user_accesses.filter(is_administrator=True, user=request.user)
+                or room.group_accesses.filter(
+                    is_administrator=True, group__user_accesses__user=request.user
                 )
             )
         )
         if not is_administrator:
             raise serializers.ValidationError(
-                _("You must be administrator of a room to add relations to it.")
+                _("You must be administrator of a room to add accesses to it.")
             )
 
         return room
 
 
-class RoomUserSerializer(RoomRelationSerializerMixin, serializers.ModelSerializer):
-    """Serialize Room to User relationship for the API."""
+class RoomUserAccessSerializer(RoomAccessSerializerMixin, serializers.ModelSerializer):
+    """Serialize Room to User accesses for the API."""
 
     class Meta:
-        model = models.RoomUser
+        model = models.RoomUserAccess
         fields = ["id", "user", "room", "is_administrator"]
         read_only_fields = ["id"]
 
 
-class RoomGroupSerializer(RoomRelationSerializerMixin, serializers.ModelSerializer):
-    """Serialize Room to Group relationship for the API."""
+class RoomGroupAccessSerializer(RoomAccessSerializerMixin, serializers.ModelSerializer):
+    """Serialize Room to Group accesses for the API."""
 
     class Meta:
-        model = models.RoomGroup
+        model = models.RoomGroupAccess
         fields = ["id", "group", "room", "is_administrator"]
         read_only_fields = ["id"]
 
@@ -74,11 +74,11 @@ class RoomSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
 
         if request and instance.is_administrator(request.user):
-            groups_serializer = RoomGroupSerializer(
-                instance.group_relations.all(), many=True
+            groups_serializer = RoomGroupAccessSerializer(
+                instance.group_accesses.all(), many=True
             )
-            users_serializer = RoomUserSerializer(
-                instance.user_relations.all(), many=True
+            users_serializer = RoomUserAccessSerializer(
+                instance.user_accesses.all(), many=True
             )
             output.update(
                 {

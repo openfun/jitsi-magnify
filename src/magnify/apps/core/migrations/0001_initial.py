@@ -219,7 +219,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name="RoomUser",
+            name="RoomUserAccess",
             fields=[
                 (
                     "id",
@@ -237,7 +237,7 @@ class Migration(migrations.Migration):
                     "room",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="user_relations",
+                        related_name="user_accesses",
                         to="core.room",
                     ),
                 ),
@@ -245,20 +245,20 @@ class Migration(migrations.Migration):
                     "user",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="room_relations",
+                        related_name="room_accesses",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Room user relation",
-                "verbose_name_plural": "Room user relations",
-                "db_table": "magnify_room_user",
+                "verbose_name": "Room user access",
+                "verbose_name_plural": "Room user accesses",
+                "db_table": "magnify_room_user_access",
                 "unique_together": {("user", "room")},
             },
         ),
         migrations.CreateModel(
-            name="RoomGroup",
+            name="RoomGroupAccess",
             fields=[
                 (
                     "id",
@@ -276,7 +276,7 @@ class Migration(migrations.Migration):
                     "group",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="room_relations",
+                        related_name="room_accesses",
                         to="core.group",
                     ),
                 ),
@@ -284,15 +284,15 @@ class Migration(migrations.Migration):
                     "room",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="group_relations",
+                        related_name="group_accesses",
                         to="core.room",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Room group relation",
-                "verbose_name_plural": "Room group relations",
-                "db_table": "magnify_room_group",
+                "verbose_name": "Room group access",
+                "verbose_name_plural": "Room group accesses",
+                "db_table": "magnify_room_group_access",
                 "unique_together": {("group", "room")},
             },
         ),
@@ -302,7 +302,7 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(
                 blank=True,
                 related_name="rooms",
-                through="core.RoomGroup",
+                through="core.RoomGroupAccess",
                 to="core.group",
             ),
         ),
@@ -318,7 +318,7 @@ class Migration(migrations.Migration):
             name="users",
             field=models.ManyToManyField(
                 related_name="rooms",
-                through="core.RoomUser",
+                through="core.RoomUserAccess",
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
@@ -341,7 +341,7 @@ class Migration(migrations.Migration):
                     "group",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="user_relations",
+                        related_name="user_accesses",
                         to="core.group",
                     ),
                 ),
@@ -349,7 +349,7 @@ class Migration(migrations.Migration):
                     "user",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="group_relations",
+                        related_name="group_accesses",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
@@ -379,7 +379,7 @@ class Migration(migrations.Migration):
                     "meeting",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="user_relations",
+                        related_name="user_accesses",
                         to="core.meeting",
                     ),
                 ),
@@ -387,14 +387,14 @@ class Migration(migrations.Migration):
                     "user",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="meeting_relations",
+                        related_name="meeting_accesses",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Meeting user relation",
-                "verbose_name_plural": "Meeting user relations",
+                "verbose_name": "Meeting user access",
+                "verbose_name_plural": "Meeting user accesses",
                 "db_table": "magnify_meeting_user",
                 "unique_together": {("user", "meeting")},
             },
@@ -418,7 +418,7 @@ class Migration(migrations.Migration):
                     "group",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="meeting_relations",
+                        related_name="meeting_accesses",
                         to="core.group",
                     ),
                 ),
@@ -426,14 +426,14 @@ class Migration(migrations.Migration):
                     "meeting",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="group_relations",
+                        related_name="group_accesses",
                         to="core.meeting",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Meeting group relation",
-                "verbose_name_plural": "Meeting group relations",
+                "verbose_name": "Meeting group access",
+                "verbose_name_plural": "Meeting group accesses",
                 "db_table": "magnify_meeting_group",
                 "unique_together": {("group", "meeting")},
             },

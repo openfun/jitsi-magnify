@@ -12,28 +12,28 @@ class MeetingUsersModelsTestCase(TestCase):
     Unit test suite to validate the behavior of the MeetingUser model
     """
 
-    def test_models_meeting_user_relations_str_normal(self):
+    def test_models_meeting_user_accesses_str_normal(self):
         """The str representation should consist in the meeting and user names."""
-        relation = MeetingUserFactory(
+        access = MeetingUserFactory(
             meeting__name="my meeting", user__name="François", is_administrator=False
         )
-        self.assertEqual(str(relation), "My meeting / François")
+        self.assertEqual(str(access), "My meeting / François")
 
-    def test_models_meeting_user_relations_str_admin(self):
+    def test_models_meeting_user_accesses_str_admin(self):
         """The str representation for an admin user should include the mention."""
-        relation = MeetingUserFactory(
+        access = MeetingUserFactory(
             meeting__name="my meeting", user__name="François", is_administrator=True
         )
-        self.assertEqual(str(relation), "My meeting / François (admin)")
+        self.assertEqual(str(access), "My meeting / François (admin)")
 
-    def test_models_meeting_user_relations_unique(self):
-        """Meeting user relations should be unique."""
-        relation = MeetingUserFactory()
+    def test_models_meeting_user_accesses_unique(self):
+        """Meeting user accesses should be unique."""
+        access = MeetingUserFactory()
 
         with self.assertRaises(ValidationError) as context:
-            MeetingUserFactory(user=relation.user, meeting=relation.meeting)
+            MeetingUserFactory(user=access.user, meeting=access.meeting)
 
         self.assertEqual(
             context.exception.messages,
-            ["Meeting user relation with this User and Meeting already exists."],
+            ["Meeting user access with this User and Meeting already exists."],
         )
