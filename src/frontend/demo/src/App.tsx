@@ -8,6 +8,7 @@ import ProfileView from './views/profile';
 import RoomView from './views/room';
 import RoomsView from './views/rooms';
 import RoomSettingsView from './views/roomSettings';
+import JitsiView from './views/jitsi';
 
 export default function App() {
   const { connexionStatus } = useStore();
@@ -35,6 +36,8 @@ export default function App() {
         <Route path="/rooms" element={<RoomsView />} />
         <Route path="/rooms/:slug" element={<RoomView />} />
         <Route path="/rooms/:slug/settings" element={<RoomSettingsView />} />
+        <Route path="/j/m/:meetingId" element={<JitsiView />} />
+        <Route path="/j/:roomSlug" element={<JitsiView />} />
         <Route path="*" element={<NotFoundView />} />
       </Routes>
     </Box>

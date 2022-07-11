@@ -13,7 +13,7 @@ export default function RoomsView() {
   const intl = useTranslations();
   return (
     <LayoutWithSidebar title={intl.formatMessage(messages.roomsViewTitle)}>
-      <MyRooms baseJitsiUrl="/jitsi" />
+      <MyRooms baseJitsiUrl="/j" />
     </LayoutWithSidebar>
   );
 }

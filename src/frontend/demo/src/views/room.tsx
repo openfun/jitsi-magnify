@@ -20,7 +20,7 @@ export default function RoomView() {
 
   return (
     <LayoutWithSidebar title={intl.formatMessage(messages.roomViewTitle, { roomName: slug })}>
-      <RoomOverview baseJitsiUrl="/jitsi" roomSlug={slug} />
+      <RoomOverview baseJitsiUrl="/j" roomSlug={slug} />
     </LayoutWithSidebar>
   );
 }
