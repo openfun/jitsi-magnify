@@ -3,6 +3,7 @@ import React, { ChangeEvent, useContext } from 'react';
 import { More } from 'grommet-icons';
 import { Group } from '../../../types/group';
 import { SquareAvatar } from '../../design-system';
+import { Link } from 'react-router-dom';
 
 export interface GroupRowProps {
   /**
@@ -55,9 +56,11 @@ export default function GroupRow({ group, onToggle, selected }: GroupRowProps) {
         </Box>
         <Box gridArea="title">
           <Box margin="auto 0px">
-            <Text size="medium" color="brand" weight="bold">
-              {group.name}
-            </Text>
+            <Link to={`/groups/${group.id}`}>
+              <Text size="medium" color="brand" weight="bold">
+                {group.name}
+              </Text>
+            </Link>
           </Box>
         </Box>
         <Box

@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import GroupRow from './GroupRow';
 import { ResponsiveContext } from 'grommet';
 import createRandomGroup from '../../../factories/group';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('GroupRow', () => {
   it.each([
@@ -24,7 +25,9 @@ describe('GroupRow', () => {
 
       render(
         <ResponsiveContext.Provider value={width}>
-          <GroupRow group={group} selected={false} onToggle={() => {}} />
+          <MemoryRouter>
+            <GroupRow group={group} selected={false} onToggle={() => {}} />
+          </MemoryRouter>
         </ResponsiveContext.Provider>,
       );
 
@@ -64,7 +67,13 @@ describe('GroupRow', () => {
       const user = userEvent.setup();
 
       render(
-        <GroupRow group={createRandomGroup(9)} selected={initialChecked} onToggle={mockedToggle} />,
+        <MemoryRouter>
+          <GroupRow
+            group={createRandomGroup(9)}
+            selected={initialChecked}
+            onToggle={mockedToggle}
+          />
+        </MemoryRouter>,
       );
 
       await user.click(screen.getByTitle('Select Group'));

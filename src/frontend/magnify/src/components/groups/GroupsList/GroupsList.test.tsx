@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import GroupsList from './GroupsList';
 import { IntlProvider } from 'react-intl';
 import createRandomGroup from '../../../factories/group';
+import { MemoryRouter } from 'react-router-dom';
 
 // Mocks
 const mockedGroups = [
@@ -18,7 +19,9 @@ describe('GroupsList', () => {
     const user = userEvent.setup();
     render(
       <IntlProvider locale="en">
-        <GroupsList groups={mockedGroups} />
+        <MemoryRouter>
+          <GroupsList groups={mockedGroups} />
+        </MemoryRouter>
       </IntlProvider>,
     );
 
@@ -44,7 +47,9 @@ describe('GroupsList', () => {
     const user = userEvent.setup();
     render(
       <IntlProvider locale="en">
-        <GroupsList groups={mockedGroups} />
+        <MemoryRouter>
+          <GroupsList groups={mockedGroups} />
+        </MemoryRouter>
       </IntlProvider>,
     );
 
