@@ -86,6 +86,12 @@ export default class DefaultController extends Controller {
     // GET /groups
     throw new Error('Not implemented');
   }
+  async getGroup(): Promise<Group> {
+    throw new Error('Not implemented');
+  }
+  async addUserToGroup(): Promise<Group> {
+    throw new Error('Not implemented');
+  }
 
   async getMeeting(meetingId: string): Promise<WithToken<Meeting>> {
     throw new Error('Not implemented');

@@ -5,6 +5,7 @@ import { render, screen } from '@testing-library/react';
 import { ControllerProvider, MockController } from '../../../controller';
 import createRandomGroups from '../../../factories/groups';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('MyGroupsBlock', () => {
   it('should load a list of groups', async () => {
@@ -16,7 +17,9 @@ describe('MyGroupsBlock', () => {
       <ControllerProvider controller={controller}>
         <QueryClientProvider client={new QueryClient()}>
           <IntlProvider locale="en">
-            <MyGroupsBlock />
+            <MemoryRouter>
+              <MyGroupsBlock />
+            </MemoryRouter>
           </IntlProvider>
         </QueryClientProvider>
       </ControllerProvider>,

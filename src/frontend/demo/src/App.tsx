@@ -3,6 +3,7 @@ import { Box } from 'grommet';
 import { Route, Routes } from 'react-router-dom';
 import NotFoundView from './views/404';
 import DefaultView from './views/default';
+import GroupView from './views/group';
 import GroupsView from './views/groups';
 import ProfileView from './views/profile';
 import RoomView from './views/room';
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/" element={<DefaultView />} />
         <Route path="/account" element={<ProfileView />} />
         <Route path="/groups" element={<GroupsView />} />
+        <Route path="/groups/:groupId" element={<GroupView />} />
         <Route path="/rooms" element={<RoomsView />} />
         <Route path="/rooms/:slug" element={<RoomView />} />
         <Route path="/rooms/:slug/settings" element={<RoomSettingsView />} />

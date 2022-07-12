@@ -1,3 +1,4 @@
+import createRandomGroup from '../factories/group';
 import createRandomGroups from '../factories/groups';
 import { createMeetingInProgress, createRandomMeeting } from '../factories/meeting';
 import { createRandomProfile } from '../factories/profile';
@@ -12,6 +13,7 @@ import { AccessToken, Tokens } from '../types/tokens';
 import { WithToken } from '../types/withToken';
 import Controller, {
   AddGroupsToRoomInput,
+  AddUserToGroupInput,
   CreateMeetingInput,
   LoginInput,
   SignupInput,
@@ -223,6 +225,19 @@ export default class LogController extends Controller {
     'getGroups',
     new MockControllerFunction<null, Group[]>().resolveOnDefault(createRandomGroups(7)),
   );
+  getGroup = promisifiedConsoleLogFactory(
+    this,
+    'getGroup',
+    new MockControllerFunction<string, Group>().resolveOnDefault(createRandomGroup(6)),
+  );
+  addUserToGroup = (input: AddUserToGroupInput) =>
+    promisifiedConsoleLogFactory(
+      this,
+      'addUserToGroup',
+      new MockControllerFunction<AddUserToGroupInput, Group>().resolveOnDefault(
+        createRandomGroup(7),
+      ),
+    )(input);
 
   // Meetings
   joinMeeting = promisifiedConsoleLogFactory(

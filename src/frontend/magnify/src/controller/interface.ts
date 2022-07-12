@@ -50,6 +50,10 @@ export interface CreateMeetingInput {
   startTime: string;
   expectedDuration: number;
 }
+export interface AddUserToGroupInput {
+  groupId: string;
+  userEmail: string;
+}
 
 export interface UpdateRoomSettingsInput {
   name: string;
@@ -86,6 +90,8 @@ export default abstract class Controller {
 
   // Groups
   abstract getGroups(): Promise<Group[]>;
+  abstract getGroup(groupId: string): Promise<Group>;
+  abstract addUserToGroup(input: AddUserToGroupInput): Promise<Group>;
 
   // Meetings
   abstract getMeeting(meetingId: string): Promise<WithToken<Meeting>>;
