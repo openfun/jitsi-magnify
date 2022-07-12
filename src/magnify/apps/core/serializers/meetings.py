@@ -10,7 +10,7 @@ from magnify.apps.core.utils import generate_token
 class MeetingSerializer(serializers.ModelSerializer):
     """Serialize Meeting model for the API."""
 
-    token = serializers.SerializerMethodField()
+    jitsi = serializers.SerializerMethodField()
     occurrences = serializers.SerializerMethodField()
 
     class Meta:
@@ -21,6 +21,7 @@ class MeetingSerializer(serializers.ModelSerializer):
             "frequency",
             "groups",
             "is_public",
+            "jitsi",
             "labels",
             "monthly_type",
             "name",
@@ -30,7 +31,6 @@ class MeetingSerializer(serializers.ModelSerializer):
             "room",
             "start",
             "start_time",
-            "token",
             "users",
             "recurring_until",
             "weekdays",
@@ -38,11 +38,14 @@ class MeetingSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "token"]
         extra_kwargs = {"recurring_until": {"required": False}}
 
-    def get_token(self, obj):
-        """Generate and insert the token in the serializer under the "token" field."""
+    def get_jitsi(self, obj):
+        """Generate and insert the jitsi credentials in the serializer under the "jitsi" field."""
         if request := self.context.get("request"):
-            return generate_token(request.user, f"{obj.room.slug:s}-{obj.id!s}")
-        return ""
+            return {
+                "room": obj.jitsi_name,
+                "token": generate_token(request.user, obj.jitsi_name),
+            }
+        return None
 
     @staticmethod
     def get_occurrences(obj):
