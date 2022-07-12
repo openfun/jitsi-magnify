@@ -1,13 +1,11 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Box, Button, Card, Grid, Tag, Text } from 'grommet';
 import { defineMessages } from '@formatjs/intl';
 import { useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
 
 import { Room } from '../../../types/room';
-import { useController } from '../../../controller';
-import { LoadingButton, SettingsSVG } from '../../design-system';
+import { SettingsSVG } from '../../design-system';
 
 export interface RoomRowProps {
   /**
@@ -50,10 +48,14 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
         gap="small"
       >
         <Box gridArea="title">
-          <Box margin="auto 0px" direction="row">
-            <Text size="medium" color="brand" weight="bold" margin="auto 20px">
-              {room.name}
-            </Text>
+          <Box margin="auto 0px" direction="row" gap="small">
+            <Box margin="auto 0px">
+              <Link to={`/rooms/${room.slug}`}>
+                <Text size="medium" color="brand" weight="bold">
+                  {room.name}
+                </Text>
+              </Link>
+            </Box>
             {room.isAdmin && (
               <Tag
                 value={intl.formatMessage(messages.admin)}
