@@ -1,4 +1,6 @@
 """Permission handlers for Magnify's core app."""
+from django.db.models import Q
+
 from rest_framework import permissions
 
 
@@ -45,10 +47,12 @@ class IsObjectAdministrator(permissions.BasePermission):
             return True
 
         user = request.user
-        return obj.user_accesses.filter(
-            is_administrator=True, user=user
-        ) or obj.group_accesses.filter(
-            is_administrator=True, group__user_accesses__user=user
+        return (
+            obj.user_accesses.filter(is_administrator=True, user=user).exists()
+            or obj.group_accesses.filter(
+                Q(group__administrators=user) | Q(group__members=user),
+                is_administrator=True,
+            ).exists()
         )
 
 
@@ -67,7 +71,8 @@ class IsRoomAdministrator(permissions.BasePermission):
         return user.is_authenticated and (
             obj.user_accesses.filter(is_administrator=True, user=user)
             or obj.group_accesses.filter(
-                is_administrator=True, group__user_accesses__user=user
+                Q(group__members=user) | Q(group__administrators=user),
+                is_administrator=True,
             )
         )
 
@@ -76,13 +81,15 @@ class HasRoomAccess(permissions.BasePermission):
     """Permissions for access to an object related to a room."""
 
     def has_object_permission(self, request, view, obj):
-        """Check that the logged-in user is adminisrator of the linked room."""
+        """Check that the logged-in user is related to the linked room."""
         user = request.user
         return (
             obj.is_public
             or user.is_authenticated
             and (
                 obj.user_accesses.filter(user=user)
-                or obj.group_accesses.filter(group__user_accesses__user=user)
+                or obj.group_accesses.filter(
+                    Q(group__members=user) | Q(group__administrators=user)
+                )
             )
         )

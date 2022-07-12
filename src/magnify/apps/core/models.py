@@ -139,9 +139,10 @@ class Group(BaseModel):
     name = models.CharField(max_length=100)
     # token to join group with
     token = models.CharField(max_length=100)
-    members = models.ManyToManyField(
-        User, blank=True, through="Membership", related_name="is_member_of"
+    administrators = models.ManyToManyField(
+        User, blank=True, related_name="is_administrator_of"
     )
+    members = models.ManyToManyField(User, blank=True, related_name="is_member_of")
     labels = models.ManyToManyField(Label, blank=True, related_name="is_group_label_of")
 
     class Meta:
@@ -153,22 +154,10 @@ class Group(BaseModel):
     def __str__(self):
         return self.name
 
-
-class Membership(BaseModel):
-    """Link table between users and groups"""
-
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="group_accesses"
-    )
-    group = models.ForeignKey(
-        Group, on_delete=models.CASCADE, related_name="user_accesses"
-    )
-    is_administrator = models.BooleanField(default=False)
-
-    class Meta:
-        db_table = "magnify_membership"
-        verbose_name = _("Membership")
-        verbose_name_plural = _("Memberships")
+    def clean_fields(self, exclude=None):
+        """Generate a fresh token on each save."""
+        self.token = uuid.uuid4()
+        super().clean_fields(exclude=exclude)
 
 
 class Room(BaseModel):
@@ -222,7 +211,8 @@ class Room(BaseModel):
         return (
             self.user_accesses.filter(is_administrator=True, user=user).exists()
             or self.group_accesses.filter(
-                is_administrator=True, group__user_accesses__user=user
+                Q(group__members=user) | Q(group__administrators=user),
+                is_administrator=True,
             ).exists()
         )
 
