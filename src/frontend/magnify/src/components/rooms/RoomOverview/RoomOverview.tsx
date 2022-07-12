@@ -2,8 +2,9 @@ import { Box, Button, Card } from 'grommet';
 import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
+import { Link } from 'react-router-dom';
 import { useController } from '../../../controller';
-import { LoadingButton, RowsList, SettingsSVG } from '../../design-system';
+import { RowsList, SettingsSVG } from '../../design-system';
 import { GroupRow } from '../../groups';
 import MeetingRow from '../../meetings/MeetingRow/MeetingRow';
 import AddGroupToRoomDialog from '../AddGroupToRoomDialog';
@@ -82,16 +83,25 @@ const RoomOverview = ({ roomSlug, baseJitsiUrl }: RoomOverviewProps) => {
   return (
     <>
       <Card background="white" direction="row" justify="end" pad="medium">
-        <LoadingButton
+        <Button
           primary
-          isLoading={false}
           label={intl.formatMessage(messages.joinRoomLabel)}
           margin={{ right: 'small' }}
+          as={({ children, type, className }) => (
+            <Link type={type} className={className} to={`${baseJitsiUrl}/${roomSlug}`}>
+              {children}
+            </Link>
+          )}
         />
         <Button
           primary
           label={intl.formatMessage(messages.configureRoomLabel)}
           icon={<SettingsSVG />}
+          as={({ children, type, className }) => (
+            <Link type={type} className={className} to={`/rooms/${roomSlug}/settings`}>
+              {children}
+            </Link>
+          )}
         />
       </Card>
       <Box margin={{ top: 'medium' }}>

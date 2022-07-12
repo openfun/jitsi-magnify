@@ -25,8 +25,8 @@ describe('RoomOverview', () => {
       </IntlProvider>,
     );
 
-    screen.getByRole('button', { name: 'Join room' });
-    screen.getByRole('button', { name: 'Configure room' });
+    screen.getByRole('link', { name: 'Join room' });
+    screen.getByRole('link', { name: 'Configure room' });
     expect(screen.getAllByTitle('Loading...')).toHaveLength(2 + 3 + 3);
 
     await screen.findByText(room.groups[0].name);
