@@ -55,6 +55,19 @@ class RoomsModelsTestCase(TestCase):
             context.exception.messages, ["Room with this Slug already exists."]
         )
 
+    def test_models_rooms_name_slug_like_uuid(self):
+        """
+        It should raise an error if the value of the name field leads to a slug looking
+        loke a UUID . We need unicity on the union of the `id` and `slug` fields.
+        """
+        with self.assertRaises(ValidationError) as context:
+            RoomFactory(name="918689fb-038e 4e81-bf09 efd5902c5f0b")
+
+        self.assertEqual(
+            context.exception.messages,
+            ['Room name "918689fb-038e 4e81-bf09 efd5902c5f0b" is reserved.'],
+        )
+
     def test_models_rooms_slug_automatic(self):
         """Room slugs should be automatically populated upon saving."""
         room = Room(name="Eléphant in the room")
