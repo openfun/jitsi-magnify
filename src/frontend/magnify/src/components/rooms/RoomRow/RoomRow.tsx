@@ -7,7 +7,7 @@ import { useMutation } from 'react-query';
 
 import { Room } from '../../../types/room';
 import { useController } from '../../../controller';
-import { LoadingButton } from '../../design-system';
+import { LoadingButton, SettingsSVG } from '../../design-system';
 
 export interface RoomRowProps {
   /**
@@ -45,7 +45,7 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
           { name: 'title', start: [0, 0], end: [0, 0] },
           { name: 'action', start: [1, 0], end: [1, 0] },
         ]}
-        columns={['flex', 'xsmall']}
+        columns={['flex', 'auto']}
         rows={['flex']}
         gap="small"
       >
@@ -64,7 +64,14 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
         </Box>
 
         <Box gridArea="action" align="center">
-          <Box margin="auto">
+          <Box margin="auto" direction="row">
+            {room.isAdmin && (
+              <Box margin={{ vertical: 'auto', horizontal: 'small' }}>
+                <Link to={`/rooms/${room.slug}/settings`}>
+                  <SettingsSVG color="brand" />
+                </Link>
+              </Box>
+            )}
             <Button
               label={intl.formatMessage(messages.join)}
               primary
