@@ -33,6 +33,6 @@ describe('MyMeetings', () => {
     await waitForElementToBeRemoved(() => screen.queryAllByTitle('Loading...'));
 
     // 3) Check the meetings
-    expect(screen.getAllByRole('button', { name: 'Join' }).length).toBe(5);
+    expect(screen.getAllByText('Join').length).toBe(5);
   });
 });
