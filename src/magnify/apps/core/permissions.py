@@ -28,6 +28,22 @@ class IsSelf(permissions.BasePermission):
         return obj == request.user
 
 
+class IsGroupAdministrator(permissions.BasePermission):
+    """
+    Allow a request to proceed only if the user is listed as administrator via a simple
+    "administrators" many-to-many.
+    """
+
+    def has_permission(self, request, view):
+        """Only allow authenticated users for unsafe methods."""
+        return request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        """Object permissions are only given to administrators of the room."""
+        user = request.user
+        return user in obj.administrators.all()
+
+
 class IsObjectAdministrator(permissions.BasePermission):
     """
     Allow a request to proceed only if the user is listed as administrator to the targeted object.
