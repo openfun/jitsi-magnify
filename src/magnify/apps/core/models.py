@@ -199,6 +199,11 @@ class Room(BaseModel):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+    @property
+    def jitsi_name(self):
+        """The name used for the room in Jitsi."""
+        return f"{self.slug:s}-{self.id!s}"
+
     def is_administrator(self, user):
         """check if a user is administrator of the room."""
         if not user.is_authenticated:
@@ -337,6 +342,14 @@ class Meeting(BaseModel):
 
     def __str__(self):
         return self.name
+
+    @property
+    def jitsi_name(self):
+        """The name used for the room in Jitsi."""
+        # Get a unique identifier for the meeing
+        if self.room:
+            return f"{self.room.slug:s}-{self.id!s}"
+        return str(self.id)
 
     def reset_recurrence(self):
         """

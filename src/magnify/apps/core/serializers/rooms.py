@@ -78,7 +78,10 @@ class RoomSerializer(serializers.ModelSerializer):
                 or instance.group_accesses.filter(group__user_accesses__user=user)
             )
         ):
-            output["token"] = generate_token(user, instance.slug)
+            output["jitsi"] = {
+                "room": instance.jitsi_name,
+                "token": generate_token(user, instance.jitsi_name),
+            }
 
         if instance.is_administrator(request.user):
             groups_serializer = RoomGroupAccessSerializer(

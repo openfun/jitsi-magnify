@@ -57,6 +57,10 @@ class RoomMeetingsApiTestCase(APITestCase):
                 "frequency": 1,
                 "groups": [],
                 "is_public": True,
+                "jitsi": {
+                    "room": f"{meeting.room.slug:s}-{meeting.id!s}",
+                    "token": "the token",
+                },
                 "labels": [],
                 "monthly_type": "date_day",
                 "name": meeting.name,
@@ -70,7 +74,6 @@ class RoomMeetingsApiTestCase(APITestCase):
                 "room": str(room.id),
                 "start": meeting.start.strftime("%Y-%m-%d"),
                 "start_time": meeting.start_time.strftime("%H:%M:%S"),
-                "token": "the token",
                 "recurring_until": meeting.start.strftime("%Y-%m-%d"),
                 "users": [],
                 "weekdays": str(meeting.start.weekday()),
