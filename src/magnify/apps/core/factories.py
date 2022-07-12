@@ -52,13 +52,13 @@ class GroupFactory(factory.django.DjangoModelFactory):
     def members(self, create, extracted, **kwargs):
         """Add members to group from a given list of users."""
         if create and extracted:
-            for item in extracted:
-                if isinstance(item, core_models.User):
-                    MembershipFactory(user=item, group=self)
-                else:
-                    MembershipFactory(
-                        user=item[0], group=self, is_administrator=item[1]
-                    )
+            self.members.set(extracted)
+
+    @factory.post_generation
+    def administrators(self, create, extracted, **kwargs):
+        """Add administrators to group from a given list of users."""
+        if create and extracted:
+            self.administrators.set(extracted)
 
     @factory.post_generation
     def labels(self, create, extracted, **kwargs):
@@ -220,14 +220,3 @@ class RoomGroupAccessFactory(factory.django.DjangoModelFactory):
     room = factory.SubFactory(RoomFactory)
     group = factory.SubFactory(GroupFactory)
     is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
-
-
-class MembershipFactory(factory.django.DjangoModelFactory):
-    """Create fake group memberships for testing."""
-
-    class Meta:
-        model = core_models.Membership
-
-    user = factory.SubFactory(UserFactory)
-    group = factory.SubFactory(GroupFactory)
-    is_administrator = factory.Faker("boolean", chance_of_getting_true=75)

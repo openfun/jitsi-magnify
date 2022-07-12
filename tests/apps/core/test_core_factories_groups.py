@@ -1,7 +1,6 @@
 """
 Unit tests for the Group factory
 """
-import random
 from uuid import UUID
 
 from django.test import TestCase
@@ -12,7 +11,6 @@ from magnify.apps.core.factories import (
     RoomFactory,
     UserFactory,
 )
-from magnify.apps.core.models import Membership
 
 
 class GroupsFactoriesTestCase(TestCase):
@@ -51,19 +49,9 @@ class GroupsFactoriesTestCase(TestCase):
         self.assertEqual(list(users[0].is_member_of.all()), [group])
 
     def test_factories_groups_administrators(self):
-        """We should be able to attach members as administrators to a group."""
-        users = UserFactory.create_batch(3)
-        administrator_statuses = {
-            str(u.id): random.choice([True, False]) for u in users
-        }
-        group = GroupFactory(members=zip(users, administrator_statuses.values()))
+        """We should be able to attach administrators to a group."""
+        users = UserFactory.create_batch(2)
+        group = GroupFactory(administrators=users)
 
-        self.assertQuerysetEqual(group.members.all(), users, ordered=False)
-        for i, _user in enumerate(users):
-            self.assertEqual(list(users[i].is_member_of.all()), [group])
-
-        for i, membership in enumerate(Membership.objects.all()):
-            self.assertEqual(
-                membership.is_administrator,
-                administrator_statuses[str(membership.user.id)],
-            )
+        self.assertQuerysetEqual(group.administrators.all(), users, ordered=False)
+        self.assertEqual(list(users[0].is_administrator_of.all()), [group])

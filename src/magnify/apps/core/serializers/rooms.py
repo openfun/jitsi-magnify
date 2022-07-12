@@ -1,4 +1,5 @@
 """Serializers for the core Magnify app."""
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -24,7 +25,9 @@ class RoomAccessSerializerMixin:
             and (
                 room.user_accesses.filter(is_administrator=True, user=request.user)
                 or room.group_accesses.filter(
-                    is_administrator=True, group__user_accesses__user=request.user
+                    Q(group__administrators=request.user)
+                    | Q(group__members=request.user),
+                    is_administrator=True,
                 )
             )
         )
@@ -63,7 +66,10 @@ class RoomSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "slug"]
 
     def to_representation(self, instance):
-        """Add users and groups only for administrator users."""
+        """
+        Add users and groups only for administrator users.
+        Add Jitsi credentials for public instance or related users/groups
+        """
         output = super().to_representation(instance)
         request = self.context.get("request")
 
@@ -75,7 +81,9 @@ class RoomSerializer(serializers.ModelSerializer):
             user.is_authenticated
             and (
                 instance.user_accesses.filter(user=user)
-                or instance.group_accesses.filter(group__user_accesses__user=user)
+                or instance.group_accesses.filter(
+                    Q(group__members=user) | Q(group__administrators=user)
+                )
             )
         ):
             output["jitsi"] = {
