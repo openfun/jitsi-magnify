@@ -101,6 +101,7 @@ export default abstract class Controller {
   abstract getMeeting(meetingId: string): Promise<WithToken<Meeting>>;
   abstract joinMeeting(meetingId: string): Promise<{ token: string }>;
   abstract createMeeting(createMeetingInput: CreateMeetingInput): Promise<Meeting>;
+  abstract getMyMeetings(): Promise<Meeting[]>;
 
   // Rooms
   abstract getMyRooms(): Promise<Room[]>;

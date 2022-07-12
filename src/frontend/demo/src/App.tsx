@@ -10,6 +10,7 @@ import RoomView from './views/room';
 import RoomsView from './views/rooms';
 import RoomSettingsView from './views/roomSettings';
 import JitsiView from './views/jitsi';
+import MyMeetings from './views/myMeetings';
 
 export default function App() {
   const { connexionStatus } = useStore();
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/account" element={<ProfileView />} />
         <Route path="/groups" element={<GroupsView />} />
         <Route path="/groups/:groupId" element={<GroupView />} />
+        <Route path="/meetings" element={<MyMeetings />} />
         <Route path="/rooms" element={<RoomsView />} />
         <Route path="/rooms/:slug" element={<RoomView />} />
         <Route path="/rooms/:slug/settings" element={<RoomSettingsView />} />
