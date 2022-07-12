@@ -5,6 +5,7 @@ import { Room } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
 import Controller, {
   AddGroupsToRoomInput,
+  CreateGroupInput,
   CreateMeetingInput,
   LoginInput,
   SignupInput,
@@ -82,6 +83,9 @@ export default class DefaultController extends Controller {
     throw new Error('Not implemented');
   }
 
+  async createGroup(group: CreateGroupInput): Promise<Group> {
+    throw new Error('Not implemented');
+  }
   async getGroups(): Promise<Group[]> {
     // GET /groups
     throw new Error('Not implemented');
