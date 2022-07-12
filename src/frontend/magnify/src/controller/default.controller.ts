@@ -106,6 +106,9 @@ export default class DefaultController extends Controller {
   async createMeeting(createMeetingInput: CreateMeetingInput): Promise<Meeting> {
     throw new Error('Not implemented');
   }
+  async getMyMeetings(): Promise<Meeting[]> {
+    throw new Error('Not implemented');
+  }
 
   async getMyRooms(): Promise<Room[]> {
     throw new Error('Not implemented');

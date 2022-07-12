@@ -27,6 +27,7 @@ import MockControllerFunction from './MockControllerFunction';
 import { example1, example2 } from './mocks/example';
 import promisifiedConsoleLogFactoryGeneric from './promisifiedConsoleLogFactory';
 import { ConnexionStatus, Store } from './store';
+import createRandomMeetings from '../factories/meetings';
 
 /**
  * At first, this function seems to do nothing more than the promisifiedConsoleLogFactoryGeneric
@@ -270,6 +271,11 @@ export default class LogController extends Controller {
         withToken(createRandomMeeting(), this.testToken),
       ),
     )(meetingId);
+  getMyMeetings = promisifiedConsoleLogFactory(
+    this,
+    'getMyMeetings',
+    new MockControllerFunction<null, Meeting[]>().resolveOnDefault(createRandomMeetings(5)),
+  );
 
   // Rooms
   getMyRooms = promisifiedConsoleLogFactory(
