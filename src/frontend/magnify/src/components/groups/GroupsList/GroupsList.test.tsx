@@ -1,10 +1,12 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import GroupsList from './GroupsList';
 import { IntlProvider } from 'react-intl';
 import createRandomGroup from '../../../factories/group';
 import { MemoryRouter } from 'react-router-dom';
+import { ControllerProvider, MockController } from '../../../controller';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 // Mocks
 const mockedGroups = [
@@ -14,16 +16,24 @@ const mockedGroups = [
   createRandomGroup(1),
 ];
 
+const renderGroupList = () => {
+  render(
+    <IntlProvider locale="en">
+      <ControllerProvider controller={new MockController()}>
+        <QueryClientProvider client={new QueryClient()}>
+          <MemoryRouter>
+            <GroupsList groups={mockedGroups} />
+          </MemoryRouter>
+        </QueryClientProvider>
+      </ControllerProvider>
+    </IntlProvider>,
+  );
+};
+
 describe('GroupsList', () => {
   it('should be selectable group by group and globally', async () => {
     const user = userEvent.setup();
-    render(
-      <IntlProvider locale="en">
-        <MemoryRouter>
-          <GroupsList groups={mockedGroups} />
-        </MemoryRouter>
-      </IntlProvider>,
-    );
+    renderGroupList();
 
     // Initial state: all checkboxes are unchecked; the number of groups is displayed
     const checkboxes = screen.queryAllByTitle('Select Group');
@@ -45,13 +55,7 @@ describe('GroupsList', () => {
 
   it('should allow and pluralize buttons according to the number of groups selected', async () => {
     const user = userEvent.setup();
-    render(
-      <IntlProvider locale="en">
-        <MemoryRouter>
-          <GroupsList groups={mockedGroups} />
-        </MemoryRouter>
-      </IntlProvider>,
-    );
+    renderGroupList();
 
     // Initial state: all checkboxes are unchecked; the number of groups is displayed
     const checkboxes = screen.queryAllByTitle('Select Group');
@@ -79,5 +83,16 @@ describe('GroupsList', () => {
     expect(screen.getByText('Rename group').parentElement).toBeDisabled();
     expect(screen.getByText('Create room for groups').parentElement).not.toBeDisabled();
     expect(screen.getByText('Create meeting for groups').parentElement).not.toBeDisabled();
+  });
+
+  it('should be possible to add a new group', async () => {
+    const user = userEvent.setup();
+
+    renderGroupList();
+
+    await user.click(screen.getByRole('button', { name: 'Add group' }));
+    await screen.findByRole('textbox', { name: 'Name' });
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+    await waitForElementToBeRemoved(() => screen.getByRole('textbox', { name: 'Name' }));
   });
 });

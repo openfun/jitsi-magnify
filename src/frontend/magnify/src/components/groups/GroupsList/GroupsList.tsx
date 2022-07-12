@@ -1,7 +1,9 @@
-import React from 'react';
+import { Layer } from 'grommet';
+import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Group } from '../../../types/group';
 import { RowsList } from '../../design-system';
+import AddGroupForm from '../AddGroupForm';
 import GroupRow from '../GroupRow/GroupRow';
 import GroupsHeader from '../GroupsHeader/GroupsHeader';
 
@@ -52,26 +54,36 @@ const messages = defineMessages({
 
 export default function GroupList({ groups }: GroupsListProps) {
   const intl = useIntl();
+  const [openAddGroupForm, setOpenAddGroupForm] = useState(false);
+  const handleOpenGroupForm = () => setOpenAddGroupForm(true);
+  const handleCloseGroupForm = () => setOpenAddGroupForm(false);
 
   return (
-    <RowsList
-      label={messages.numGroupsLabel}
-      addLabel={intl.formatMessage(messages.addGroupButtonLabel)}
-      onAdd={() => {}}
-      actionsLabel={intl.formatMessage(messages.actionGroupLabel)}
-      Header={({ selected, setSelected }) => (
-        <GroupsHeader groupsSelected={selected} setGroupsSelected={setSelected} />
+    <>
+      <RowsList
+        label={messages.numGroupsLabel}
+        addLabel={intl.formatMessage(messages.addGroupButtonLabel)}
+        onAdd={handleOpenGroupForm}
+        actionsLabel={intl.formatMessage(messages.actionGroupLabel)}
+        Header={({ selected, setSelected }) => (
+          <GroupsHeader groupsSelected={selected} setGroupsSelected={setSelected} />
+        )}
+        Row={({ group, selected, onToggle }) => (
+          <GroupRow group={group} selected={selected} onToggle={onToggle} />
+        )}
+        rows={groups.map((group) => ({ group, id: group.id }))}
+        actions={[
+          { label: messages.deleteGroupButtonLabel, onClick: () => {}, disabled: (n) => n === 0 },
+          { label: messages.renameGroupButtonLabel, onClick: () => {}, disabled: (n) => n !== 1 },
+          { label: messages.createRoomButtonLabel, onClick: () => {}, disabled: (n) => n === 0 },
+          { label: messages.createMeetingButtonLabel, onClick: () => {}, disabled: (n) => n === 0 },
+        ]}
+      />
+      {openAddGroupForm && (
+        <Layer onClickOutside={handleCloseGroupForm} onEsc={handleCloseGroupForm}>
+          <AddGroupForm onCancel={handleCloseGroupForm} onSuccess={handleCloseGroupForm} />
+        </Layer>
       )}
-      Row={({ group, selected, onToggle }) => (
-        <GroupRow group={group} selected={selected} onToggle={onToggle} />
-      )}
-      rows={groups.map((group) => ({ group, id: group.id }))}
-      actions={[
-        { label: messages.deleteGroupButtonLabel, onClick: () => {}, disabled: (n) => n === 0 },
-        { label: messages.renameGroupButtonLabel, onClick: () => {}, disabled: (n) => n !== 1 },
-        { label: messages.createRoomButtonLabel, onClick: () => {}, disabled: (n) => n === 0 },
-        { label: messages.createMeetingButtonLabel, onClick: () => {}, disabled: (n) => n === 0 },
-      ]}
-    />
+    </>
   );
 }

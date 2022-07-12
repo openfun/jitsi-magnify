@@ -35,6 +35,9 @@ export interface AddGroupsToRoomInput {
   roomSlug: string;
   groupIds: string[];
 }
+export interface CreateGroupInput {
+  name: string;
+}
 export interface CreateMeetingInput {
   roomSlug?: string;
   name: string;
@@ -89,6 +92,7 @@ export default abstract class Controller {
   abstract deleteUser(id: string): Promise<void>;
 
   // Groups
+  abstract createGroup(group: CreateGroupInput): Promise<Group>;
   abstract getGroups(): Promise<Group[]>;
   abstract getGroup(groupId: string): Promise<Group>;
   abstract addUserToGroup(input: AddUserToGroupInput): Promise<Group>;

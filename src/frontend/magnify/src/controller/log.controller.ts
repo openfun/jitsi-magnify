@@ -14,6 +14,7 @@ import { WithToken } from '../types/withToken';
 import Controller, {
   AddGroupsToRoomInput,
   AddUserToGroupInput,
+  CreateGroupInput,
   CreateMeetingInput,
   LoginInput,
   SignupInput,
@@ -220,6 +221,15 @@ export default class LogController extends Controller {
   };
 
   // Groups routes
+  createGroup = async (input: CreateGroupInput) =>
+    promisifiedConsoleLogFactory(
+      this,
+      'createGroup',
+      new MockControllerFunction<CreateGroupInput, Group>().resolveOnDefault({
+        ...createRandomGroup(5),
+        ...input,
+      }),
+    )(input);
   getGroups = promisifiedConsoleLogFactory(
     this,
     'getGroups',
