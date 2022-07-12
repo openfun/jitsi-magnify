@@ -1,5 +1,6 @@
 """Magnify core serializers"""
 
+from .groups import GroupSerializer
 from .meetings import MeetingSerializer
 from .rooms import RoomGroupAccessSerializer, RoomSerializer, RoomUserAccessSerializer
 from .users import PasswordChangeSerializer, RegistrationSerializer, UserSerializer
@@ -13,4 +14,5 @@ __all__ = [
     "RoomGroupAccessSerializer",
     "RoomUserAccessSerializer",
     "UserSerializer",
+    "GroupSerializer",
 ]

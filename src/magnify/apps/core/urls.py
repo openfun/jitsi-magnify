@@ -26,6 +26,7 @@ SchemaView = get_schema_view(
 router = DefaultRouter()
 router.register("rooms", api.RoomViewSet, basename="rooms")
 router.register("users", api.UserViewSet, basename="users")
+router.register("groups", api.GroupViewSet, basename="groups")
 
 # To appear on the swagger URL,
 # the views need to extend APIView from the rest_framework.views package.
