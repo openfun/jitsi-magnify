@@ -3,7 +3,7 @@ import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import SidebarButton, { SidebarButtonProps } from '../SidebarButton';
-import { AvatarSVG, CalEventSVG, GridSVG, GroupSVG, SettingsSVG } from '../../design-system';
+import { AvatarSVG, CalEventSVG, GridSVG, GroupSVG } from '../../design-system';
 import { MarginType } from 'grommet/utils';
 
 export interface MagnifySidebarProps {
@@ -75,11 +75,6 @@ function MagnifySidebar({
         label: intl.formatMessage(messages.sidebarGroupsLabel),
         icon: <GroupSVG />,
         navigateTo: '/groups',
-      },
-      {
-        label: intl.formatMessage(messages.sidebarSettingsLabel),
-        icon: <SettingsSVG />,
-        navigateTo: '/settings',
       },
     ],
   ];
