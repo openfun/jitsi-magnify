@@ -194,10 +194,20 @@ class Room(BaseModel):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        """Automatically generate the slug from the name."""
+    def clean_fields(self, exclude=None):
+        """
+        Automatically generate the slug from the name and make sure it does not look like a UUID.
+        We don't want any overlapping between the `slug` and the `id` fields because they can
+        both be used to get a room detail view on the API.
+        """
         self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+        try:
+            uuid.UUID(self.slug)
+        except ValueError:
+            pass
+        else:
+            raise ValidationError({"name": f'Room name "{self.name:s}" is reserved.'})
+        super().clean_fields(exclude=exclude)
 
     @property
     def jitsi_name(self):

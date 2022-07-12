@@ -1,10 +1,12 @@
 """Magnify core API endpoints"""
+import uuid
 from datetime import date
 
 from django.contrib.auth import authenticate
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db.models import F, Q
+from django.shortcuts import get_object_or_404
 
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
@@ -184,6 +186,20 @@ class RoomViewSet(
     permission_classes = [IsObjectAdministrator]
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
+
+    def get_object(self):
+        """Allow getting a room by its slug."""
+        try:
+            uuid.UUID(self.kwargs["pk"])
+            filter_kwargs = {"pk": self.kwargs["pk"]}
+        except ValueError:
+            filter_kwargs = {"slug": self.kwargs["pk"]}
+
+        queryset = self.filter_queryset(self.get_queryset())
+        obj = get_object_or_404(queryset, **filter_kwargs)
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def list(self, request, *args, **kwargs):
         """Limit listed rooms to the ones related to the authenticated user."""

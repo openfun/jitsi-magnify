@@ -75,13 +75,28 @@ class RoomsApiTestCase(APITestCase):
         results_id = {r["id"] for r in results}
         self.assertEqual(expected_ids, results_id)
 
-    def test_api_rooms_retrieve_anonymous_private(self):
+    def test_api_rooms_retrieve_anonymous_private_pk(self):
         """
         Anonymous users should be allowed to retrieve a private room but should not be
         given any token.
         """
         room = RoomFactory(is_public=False)
         response = self.client.get(f"/api/rooms/{room.id!s}/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "id": str(room.id),
+                "name": room.name,
+                "slug": room.slug,
+            },
+        )
+
+    def test_api_rooms_retrieve_anonymous_private_slug(self):
+        """It sbhould be possible to get a room by its slug."""
+        room = RoomFactory(is_public=False)
+        response = self.client.get(f"/api/rooms/{room.slug!s}/")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
