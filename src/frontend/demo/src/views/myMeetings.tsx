@@ -13,7 +13,7 @@ export default function MeetingsView() {
   const intl = useTranslations();
   return (
     <LayoutWithSidebar title={intl.formatMessage(messages.meetingsViewTitle)}>
-      <MyMeetings baseJitsiUrl="/jitsi" />
+      <MyMeetings baseJitsiUrl="/j" />
     </LayoutWithSidebar>
   );
 }
