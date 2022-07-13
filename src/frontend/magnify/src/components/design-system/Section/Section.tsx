@@ -8,7 +8,7 @@ export interface SectionProps {
 }
 
 const Section = ({ children, title, titleLevel = 3 }: SectionProps) => (
-  <Box background={'white'} round="xsmall" elevation="small" pad="medium">
+  <Box background={'white'} round="xsmall" elevation="small" pad="medium" height="100%">
     {title && (
       <Heading color="brand" level={titleLevel} margin={{ top: '0' }}>
         {title}
