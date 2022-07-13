@@ -1,9 +1,11 @@
 import { Box, Button, Heading, Text } from 'grommet';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useController } from '../../../controller';
 import useFormState from '../../../hooks/useFormState';
+import { Maybe } from '../../../types/misc';
+import { Room } from '../../../types/room';
 import validators, { requiredValidator } from '../../../utils/validators';
 import {
   ActivableButton,
@@ -65,7 +67,17 @@ const messages = defineMessages({
 const CreateMeetingForm = ({ roomSlug, onCancel, onSuccess }: CreateMeetingFormProps) => {
   const intl = useIntl();
   const controller = useController();
-  const { mutate, isLoading } = useMutation(controller.createMeeting);
+  const queryClient = useQueryClient();
+  const { mutate, isLoading } = useMutation(controller.createMeeting, {
+    onSuccess: (meeting) => {
+      queryClient.setQueryData<Maybe<Room>>(
+        ['room', roomSlug],
+        (room?: Room): Maybe<Room> =>
+          room ? { ...room, meetings: [...room.meetings, meeting] } : undefined,
+      );
+      onSuccess?.();
+    },
+  });
   const { values, setValue, isValid, isModified } = useFormState(
     {
       name: '',
@@ -87,14 +99,11 @@ const CreateMeetingForm = ({ roomSlug, onCancel, onSuccess }: CreateMeetingFormP
   );
 
   const handleSubmit = async () => {
-    mutate(
-      {
-        roomSlug,
-        ...values,
-        expectedDuration: parseInt(values.expectedDuration, 10),
-      },
-      { onSuccess: onSuccess },
-    );
+    mutate({
+      roomSlug,
+      ...values,
+      expectedDuration: parseInt(values.expectedDuration, 10),
+    });
   };
 
   return (
