@@ -84,8 +84,8 @@ const RoomConfig = ({ roomName }: { roomName: string }) => {
         { name: 'moderationBlock', start: [0, 1], end: mobile ? [1, 1] : [0, 1] },
         { name: 'securityBlock', start: mobile ? [0, 2] : [1, 1], end: mobile ? [1, 2] : [1, 1] },
       ]}
-      columns={['1/2', '1/2']}
-      rows={mobile ? ['1/3', '1/3', '1/3'] : ['1/2', '1/2']}
+      columns={['flex', 'flex']}
+      rows={mobile ? ['auto', 'auto', 'auto'] : ['auto', 'auto']}
       gap="medium"
     >
       <Box gridArea="settingsBlock">
