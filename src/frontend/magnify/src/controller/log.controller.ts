@@ -294,7 +294,6 @@ export default class LogController extends Controller {
     )(name);
   addGroupsToRoom = async ({ roomSlug, groupIds }: AddGroupsToRoomInput) => {
     const resolvedRoom = createRandomRoom(true);
-    console.log(resolvedRoom, createRandomGroups(groupIds.length));
     resolvedRoom.groups = [...resolvedRoom.groups, ...createRandomGroups(groupIds.length)];
     return await promisifiedConsoleLogFactory(
       this,

@@ -2,7 +2,7 @@ import { defineMessages, useIntl } from 'react-intl';
 import React, { useState } from 'react';
 import { Box, Button, Heading, Layer, Select, Text } from 'grommet';
 import { FormClose } from 'grommet-icons';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { useController } from '../../../controller';
 import { Group } from '../../../types/group';
@@ -77,8 +77,12 @@ const AddGroupToRoomDialog = ({ open, onClose, roomSlug }: AddGroupToRoomDialogP
   const intl = useIntl();
   const controller = useController();
   const { data: groups, isLoading: groupsLoading } = useQuery('groups', controller.getGroups);
+  const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation(controller.addGroupsToRoom, {
-    onSuccess: () => onClose(),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['room', roomSlug], data);
+      onClose();
+    },
   });
   const [selected, setSelected] = useState<number[]>([]);
 
