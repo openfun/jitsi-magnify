@@ -329,7 +329,8 @@ class Meeting(BaseModel):
         verbose_name_plural = _("Meetings")
         constraints = [
             models.CheckConstraint(
-                check=Q(recurring_until__gte=F("start")),
+                check=Q(recurring_until__gte=F("start"))
+                | Q(recurring_until__isnull=True),
                 name="recurring_until_greater_than_start",
             ),
             models.CheckConstraint(check=Q(frequency__gte=1), name="frequency_gte_1"),
