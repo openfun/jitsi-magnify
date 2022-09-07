@@ -5,7 +5,7 @@ import uuid
 from datetime import timedelta
 
 from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import UserManager
+from django.contrib.auth.models import PermissionsMixin, UserManager
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
@@ -43,7 +43,7 @@ class BaseModel(models.Model):
         super().save(*args, **kwargs)
 
 
-class User(BaseModel, AbstractBaseUser):
+class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     """
     User model with uername and name, admin-compliant permissions.
     Username and password are required. Other fields are optional.
