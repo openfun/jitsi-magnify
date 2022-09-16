@@ -31,7 +31,7 @@ describe('RegisterRoomForm', () => {
     // 1) Fill in the form
     screen.getByRole('button', { name: 'Register room' });
     await user.type(screen.getByRole('textbox', { name: 'Name' }), roomToCreate.name);
-    await user.click(screen.getByRole('button', { name: `Register room ${roomToCreate.name}` }));
+    await user.click(screen.getByRole('button', { name: `Register room` }));
 
     // 2) Verify that mutation is called
     await waitFor(() => {

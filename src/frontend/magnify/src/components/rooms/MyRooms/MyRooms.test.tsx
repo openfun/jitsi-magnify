@@ -44,7 +44,7 @@ describe('MyRooms', () => {
     // 4) Register a new room
     await user.click(screen.getByRole('button', { name: 'Register new room' }));
     await user.type(screen.getByRole('textbox', { name: 'Name' }), roomToCreate.name);
-    await user.click(screen.getByRole('button', { name: `Register room ${roomToCreate.name}` }));
+    await user.click(screen.getByRole('button', { name: `Register room` }));
     await waitForElementToBeRemoved(() => screen.getByRole('dialog'));
 
     // 5) Check the new room

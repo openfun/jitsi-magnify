@@ -17,7 +17,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 async function render() {
   // Determine the BCP47/RFC5646 locale to use
   // const locale = document.querySelector('html')!.getAttribute('lang') || 'en-US';
-  const locale = 'fr-FR';
+  const locale = 'en-US';
 
   // Load our own strings for the given lang, and the strings from the lib
   let translatedMessages: Record<string, string> | undefined;

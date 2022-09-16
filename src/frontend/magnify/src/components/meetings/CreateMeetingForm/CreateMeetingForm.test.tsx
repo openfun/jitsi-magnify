@@ -55,9 +55,8 @@ describe('CreateMeetingForm', () => {
         startTime: '19:00',
         expectedDuration: 30,
       });
+      expect(onSuccess).toHaveBeenCalled();
     });
-
-    expect(onSuccess).toHaveBeenCalled();
   });
 
   it('should call the onCancel callback when the cancel button is clicked', async () => {

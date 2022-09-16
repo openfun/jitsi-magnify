@@ -18,9 +18,9 @@ describe('PasswordUpdateBlock', () => {
     );
 
     // Verify we get the form
-    screen.getByLabelText('Previous password*') as HTMLInputElement;
-    screen.getByLabelText('New password*') as HTMLInputElement;
-    screen.getByLabelText('Confirm new password*') as HTMLInputElement;
+    screen.getByLabelText('Previous password') as HTMLInputElement;
+    screen.getByLabelText('New password') as HTMLInputElement;
+    screen.getByLabelText('Confirm new password') as HTMLInputElement;
 
     // Verify we get the explanation
     screen.getByText('Update password');

@@ -31,9 +31,6 @@ const theme: ThemeType = {
       size: '2px',
     },
   },
-  formField: {
-    border: false,
-  },
   heading: {
     level: {
       2: {
