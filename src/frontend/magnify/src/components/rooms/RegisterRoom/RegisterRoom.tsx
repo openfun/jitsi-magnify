@@ -56,7 +56,7 @@ const RegisterRoom = () => {
           onEsc={handleClose}
           role="dialog"
         >
-          <Box pad="medium">
+          <Box width={'medium'} pad="medium">
             <RegisterRoomForm onSuccess={handleClose} />
           </Box>
         </Layer>

@@ -75,7 +75,7 @@ export default function DeleteAccountBlock({
 
   return (
     <>
-      <Card background="white" margin={margin}>
+      <Card background={'white'} margin={margin}>
         <Box margin="small">
           <Box margin="large">
             <Text color="status-error" style={{ textTransform: 'uppercase' }} weight="bold">
@@ -104,7 +104,7 @@ export default function DeleteAccountBlock({
           onClickOutside={handleClose}
           onEsc={handleClose}
         >
-          <Box pad="medium" gap="small" width="medium">
+          <Box pad="medium" gap="small" width="large">
             <Heading level={3} margin="none">
               {intl.formatMessage(messages.confirmationHeader)}
             </Heading>
