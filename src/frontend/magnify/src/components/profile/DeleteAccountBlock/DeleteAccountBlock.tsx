@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
 import { Box, Button, Card, Heading, Layer, Text } from 'grommet';
-import { defineMessages, useIntl } from 'react-intl';
 import { MarginType } from 'grommet/utils';
-import { useController, useStore } from '../../../controller';
+import React, { useState } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import { useMutation } from 'react-query';
+import { useController, useStore } from '../../../controller';
 
 export interface DeleteAccountBlockProps {
   /**
@@ -86,7 +86,7 @@ export default function DeleteAccountBlock({
             </Heading>
             <Text>{intl.formatMessage(messages.deleteAccountBlockDescription)}</Text>
           </Box>
-          <Box margin={{ bottom: 'large', horizontal: 'large' }} direction="row">
+          <Box direction="row" margin={{ bottom: 'large', horizontal: 'large' }}>
             <Button
               primary
               color="status-error"
@@ -100,34 +100,34 @@ export default function DeleteAccountBlock({
       {open && (
         <Layer
           id="confirmDelete"
-          position="center"
           onClickOutside={handleClose}
           onEsc={handleClose}
+          position="center"
         >
-          <Box pad="medium" gap="small" width="medium">
+          <Box gap="small" pad="medium" width="medium">
             <Heading level={3} margin="none">
               {intl.formatMessage(messages.confirmationHeader)}
             </Heading>
             <Text>{intl.formatMessage(messages.confirmationWarning)}</Text>
             <Box
-              as="footer"
-              gap="small"
-              direction="row"
               align="center"
+              as="footer"
+              direction="row"
+              gap="small"
               justify="end"
               pad={{ top: 'medium', bottom: 'small' }}
             >
               <Button
+                color="dark-3"
                 label={intl.formatMessage(messages.cancelButtonLabel)}
                 onClick={handleClose}
-                color="dark-3"
                 role="button"
               />
               <Button
-                label={intl.formatMessage(messages.confirmDeleteAccountButtonLabel)}
-                onClick={handleDelete}
                 primary
                 color="status-critical"
+                label={intl.formatMessage(messages.confirmDeleteAccountButtonLabel)}
+                onClick={handleDelete}
                 role="button"
               />
             </Box>

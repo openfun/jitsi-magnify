@@ -1,11 +1,11 @@
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import userEvent from '@testing-library/user-event';
-import AddGroupForm from './AddGroupForm';
-import { render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { ControllerProvider, MockController } from '../../../controller';
 import createRandomGroup from '../../../factories/group';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import AddGroupForm from './AddGroupForm';
 
 describe('AddGroupForm', () => {
   it('should render successfully', async () => {
@@ -19,7 +19,7 @@ describe('AddGroupForm', () => {
       <IntlProvider locale="en">
         <ControllerProvider controller={controller}>
           <QueryClientProvider client={new QueryClient()}>
-            <AddGroupForm onSuccess={onSuccess} onCancel={onCancel} />
+            <AddGroupForm onCancel={onCancel} onSuccess={onSuccess} />
           </QueryClientProvider>
         </ControllerProvider>
       </IntlProvider>,

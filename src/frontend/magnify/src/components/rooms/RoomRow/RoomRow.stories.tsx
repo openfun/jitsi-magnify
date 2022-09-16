@@ -1,7 +1,7 @@
-import React from 'react';
-import RoomRow, { RoomRowProps } from './RoomRow';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 import createRandomRoom from '../../../factories/room';
+import RoomRow, { RoomRowProps } from './RoomRow';
 
 export default {
   title: 'Rooms/RoomRow',

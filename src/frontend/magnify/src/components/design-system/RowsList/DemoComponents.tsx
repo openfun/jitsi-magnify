@@ -1,5 +1,5 @@
-import React from 'react';
 import { Button, Card, CheckBox } from 'grommet';
+import React from 'react';
 import { HeaderProps, RowPropsExtended } from './RowsList';
 
 export interface ExampleRowProps {
@@ -17,14 +17,14 @@ export const ExampleRow = ({
   selected,
 }: ExampleRowProps & RowPropsExtended) => {
   return (
-    <Card background="brand" pad="small" margin={{ vertical: 'xsmall' }}>
-      <CheckBox checked={selected} onChange={onToggle} label="Select" />
+    <Card background="brand" margin={{ vertical: 'xsmall' }} pad="small">
+      <CheckBox checked={selected} label="Select" onChange={onToggle} />
       Hello {name} (id: {id})
     </Card>
   );
 };
 export const MinimalExampleRow = ({ id, name }: ExampleRowProps) => (
-  <Card background="brand" pad="small" margin={{ vertical: 'xsmall' }}>
+  <Card background="brand" margin={{ vertical: 'xsmall' }} pad="small">
     Hello {name} ({id})
   </Card>
 );
@@ -37,15 +37,15 @@ export const ExampleHeader = ({ selected, setSelected }: HeaderProps) => (
     Header, {Object.values(selected).filter((x) => x).length} selected
     <Button
       primary
-      onClick={() => setSelected({ '1': false, '2': false, '3': false })}
       margin="xsmall"
+      onClick={() => setSelected({ '1': false, '2': false, '3': false })}
     >
       Clear
     </Button>
     <Button
       primary
-      onClick={() => setSelected({ '1': true, '2': true, '3': true })}
       margin="xsmall"
+      onClick={() => setSelected({ '1': true, '2': true, '3': true })}
     >
       Select all
     </Button>

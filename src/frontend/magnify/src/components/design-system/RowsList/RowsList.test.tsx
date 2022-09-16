@@ -1,9 +1,9 @@
-import React from 'react';
-import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
-import RowsList from './RowsList';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
 import { exampleActions, ExampleHeader, ExampleRow, MinimalExampleRow } from './DemoComponents';
+import RowsList from './RowsList';
 
 // Mocks
 const mockedRows = [
@@ -18,14 +18,14 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Header={ExampleHeader}
+          Row={ExampleRow}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          Header={ExampleHeader}
         />
       </IntlProvider>,
     );
@@ -59,16 +59,16 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Header={ExampleHeader}
+          Row={ExampleRow}
+          actions={exampleActions}
+          actionsLabel="Actions"
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          Header={ExampleHeader}
-          actions={exampleActions}
-          actionsLabel="Actions"
         />
       </IntlProvider>,
     );
@@ -109,18 +109,18 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Header={ExampleHeader}
+          Row={ExampleRow}
+          actions={mockedActions}
+          actionsLabel="Actions"
+          addLabel="Add example"
+          onAdd={onAdd}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          Header={ExampleHeader}
-          actions={mockedActions}
-          actionsLabel="Actions"
-          addLabel="Add example"
-          onAdd={onAdd}
         />
       </IntlProvider>,
     );
@@ -155,14 +155,14 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Row={ExampleRow}
+          actions={exampleActions}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          actions={exampleActions}
         />
       </IntlProvider>,
     );
@@ -174,14 +174,14 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Row={ExampleRow}
+          onAdd={() => {}}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          onAdd={() => {}}
         />
       </IntlProvider>,
     );
@@ -193,13 +193,13 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Row={MinimalExampleRow}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={MinimalExampleRow}
         />
       </IntlProvider>,
     );

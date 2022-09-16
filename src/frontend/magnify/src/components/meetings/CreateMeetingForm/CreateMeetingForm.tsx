@@ -100,44 +100,44 @@ const CreateMeetingForm = ({ roomSlug, onCancel, onSuccess }: CreateMeetingFormP
   return (
     <>
       <form>
-        <Heading level={3} size="small" color="brand">
+        <Heading color="brand" level={3} size="small">
           {intl.formatMessage(messages.createMeetingFormTitle)}
         </Heading>
         <TextField
-          name="name"
           label={intl.formatMessage(messages.nameLabel)}
-          value={values.name}
-          onChange={(event) => setValue('name', event.target.value)}
           margin={{ vertical: 'small' }}
+          name="name"
+          onChange={(event) => setValue('name', event.target.value)}
+          value={values.name}
         />
         <CalendarInput
           label={intl.formatMessage(messages.datesLabel)}
+          margin={{ vertical: 'small' }}
           name="dates"
           value={[values.startDate, values.endDate]}
           onChange={(e) => {
             setValue('startDate', e.value[0]);
             setValue('endDate', e.value[1]);
           }}
-          margin={{ vertical: 'small' }}
         />
         <TextField
-          type="time"
           label={intl.formatMessage(messages.startTimeLabel)}
-          name="startTime"
-          value={values.startTime}
-          onChange={(event) => setValue('startTime', event.target.value)}
           margin={{ vertical: 'small' }}
+          name="startTime"
+          onChange={(event) => setValue('startTime', event.target.value)}
+          type="time"
+          value={values.startTime}
         />
         <TextField
-          type="number"
           label={intl.formatMessage(messages.durationLabel)}
-          name="expectedDuration"
-          value={values.expectedDuration}
-          onChange={(event) => setValue('expectedDuration', event.target.value)}
           margin={{ vertical: 'small' }}
+          name="expectedDuration"
+          onChange={(event) => setValue('expectedDuration', event.target.value)}
+          type="number"
+          value={values.expectedDuration}
         />
         <Fieldset label={intl.formatMessage(messages.daysLabel)} name="days">
-          <Box direction="row" gap="small" align="center" margin={'small'} width="100%">
+          <Box align="center" direction="row" gap="small" margin="small" width="100%">
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
               (day) => {
                 const dayKey = `heldOn${day}` as keyof typeof values;
@@ -145,18 +145,18 @@ const CreateMeetingForm = ({ roomSlug, onCancel, onSuccess }: CreateMeetingFormP
                   <Box key={day} width="14.3%">
                     <ActivableButton
                       key={day}
+                      fill
                       active={values[dayKey] as boolean}
                       onClick={() => setValue(dayKey, !values[dayKey])}
                       label={
                         <Text
-                          size="small"
-                          margin="auto"
                           color={values[dayKey] ? 'light-1' : 'brand'}
+                          margin="auto"
+                          size="small"
                         >
                           {day}
                         </Text>
                       }
-                      fill
                     />
                   </Box>
                 );
@@ -165,22 +165,22 @@ const CreateMeetingForm = ({ roomSlug, onCancel, onSuccess }: CreateMeetingFormP
           </Box>
         </Fieldset>
 
-        <Box justify="end" direction="row">
+        <Box direction="row" justify="end">
           {onCancel && (
             <Button
               label={intl.formatMessage(messages.cancelLabel)}
+              margin={{ right: 'small' }}
               onClick={onCancel}
               onFocus={(event: React.FocusEvent) => event.stopPropagation()}
-              margin={{ right: 'small' }}
             />
           )}
 
           <LoadingButton
             primary
+            disabled={!isModified || !isValid}
             isLoading={isLoading}
             label={intl.formatMessage(messages.submitLabel)}
             onClick={handleSubmit}
-            disabled={!isModified || !isValid}
           />
         </Box>
       </form>

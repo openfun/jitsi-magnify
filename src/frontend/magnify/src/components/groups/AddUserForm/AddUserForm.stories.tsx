@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import AddUserForm from './AddUserForm';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'Groups/AddUserForm',

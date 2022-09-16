@@ -1,8 +1,8 @@
-import React from 'react';
-import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
-import GroupsHeader from './GroupsHeader';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
+import GroupsHeader from './GroupsHeader';
 
 describe('GroupsHeader', () => {
   it("should switch everything on when some groups are selected and others don't", async () => {

@@ -58,43 +58,43 @@ export default function PasswordUpdateForm() {
   return (
     <form onSubmit={handleSubmit}>
       <TextField
-        label={intl.formatMessage(messages.previousPasswordLabel)}
-        name="previousPassword"
-        value={values.previousPassword}
-        errors={errors.previousPassword}
+        required
         displayErrors={modified.previousPassword}
-        onChange={handleChange}
+        errors={errors.previousPassword}
+        label={intl.formatMessage(messages.previousPasswordLabel)}
         margin={{ bottom: 'small' }}
+        name="previousPassword"
+        onChange={handleChange}
         type="password"
-        required
+        value={values.previousPassword}
       />
       <TextField
-        label={intl.formatMessage(messages.passwordLabel)}
-        name="password"
-        value={values.password}
-        errors={errors.password}
+        required
         displayErrors={modified.password}
-        onChange={handleChange}
+        errors={errors.password}
+        label={intl.formatMessage(messages.passwordLabel)}
         margin={{ bottom: 'small' }}
+        name="password"
+        onChange={handleChange}
         type="password"
-        required
+        value={values.password}
       />
       <TextField
-        label={intl.formatMessage(messages.confirmNewPasswordLabel)}
-        name="confirmPassword"
-        value={values.confirmPassword}
-        errors={errors.confirmPassword}
-        displayErrors={modified.confirmPassword}
-        onChange={handleChange}
-        margin={{ bottom: 'small' }}
-        type="password"
         required
+        displayErrors={modified.confirmPassword}
+        errors={errors.confirmPassword}
+        label={intl.formatMessage(messages.confirmNewPasswordLabel)}
+        margin={{ bottom: 'small' }}
+        name="confirmPassword"
+        onChange={handleChange}
+        type="password"
+        value={values.confirmPassword}
       />
       <Box direction="row" justify="end" margin={{ top: 'small' }}>
         <Button
           primary
-          label={intl.formatMessage(messages.submitButtonLabel)}
           disabled={!isModified || !isValid}
+          label={intl.formatMessage(messages.submitButtonLabel)}
           type="submit"
         />
       </Box>

@@ -14,7 +14,7 @@ describe('Toggle', () => {
     render(
       <Grommet>
         <IntlProvider locale="en">
-          <Toggle title="My toggle" label="This is a toggle" />
+          <Toggle label="This is a toggle" title="My toggle" />
         </IntlProvider>
       </Grommet>,
     );
@@ -25,7 +25,7 @@ describe('Toggle', () => {
     render(
       <Grommet>
         <IntlProvider locale="en">
-          <StatefullToggle title="My toggle" label="This is a toggle" />
+          <StatefullToggle label="This is a toggle" title="My toggle" />
         </IntlProvider>
       </Grommet>,
     );

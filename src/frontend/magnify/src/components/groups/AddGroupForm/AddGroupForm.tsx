@@ -1,11 +1,11 @@
-import { defineMessages, useIntl } from 'react-intl';
-import React from 'react';
-import { useController } from '../../../controller';
-import { useMutation, useQueryClient } from 'react-query';
-import { Group } from '../../../types/group';
-import useFormState from '../../../hooks/useFormState';
-import validators, { requiredValidator } from '../../../utils/validators';
 import { Box, Button, Heading } from 'grommet';
+import React from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import { useMutation, useQueryClient } from 'react-query';
+import { useController } from '../../../controller';
+import useFormState from '../../../hooks/useFormState';
+import { Group } from '../../../types/group';
+import validators, { requiredValidator } from '../../../utils/validators';
 import { LoadingButton, TextField } from '../../design-system';
 
 export interface AddGroupFormProps {
@@ -56,22 +56,22 @@ const AddGroupForm = ({ onSuccess, onCancel }: AddGroupFormProps) => {
       <Heading level={3}>{intl.formatMessage(messages.addGroupTitle)}</Heading>
 
       <TextField
-        name="name"
-        label={intl.formatMessage(messages.name)}
-        value={values.name}
-        onChange={(event) => setValue('name', event.target.value)}
-        errors={errors.name}
         displayErrors={modified.name}
+        errors={errors.name}
+        label={intl.formatMessage(messages.name)}
+        name="name"
+        onChange={(event) => setValue('name', event.target.value)}
+        value={values.name}
       />
 
-      <Box margin={{ top: 'small' }} justify="end" direction="row" gap="small">
-        <Button onClick={() => onCancel?.()} label={intl.formatMessage(messages.cancel)} />
+      <Box direction="row" gap="small" justify="end" margin={{ top: 'small' }}>
+        <Button label={intl.formatMessage(messages.cancel)} onClick={() => onCancel?.()} />
         <LoadingButton
           primary
           disabled={!isModified || !isValid}
-          onClick={() => mutate(values)}
-          label={intl.formatMessage(messages.addGroupButtonLabel, { name: values.name })}
           isLoading={isLoading}
+          label={intl.formatMessage(messages.addGroupButtonLabel, { name: values.name })}
+          onClick={() => mutate(values)}
         />
       </Box>
     </Box>

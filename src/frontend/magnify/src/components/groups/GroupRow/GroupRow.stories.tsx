@@ -1,8 +1,8 @@
-import React from 'react';
-import GroupRow, { GroupRowProps } from './GroupRow';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { ResponsiveContext } from 'grommet';
+import React from 'react';
 import createRandomGroup from '../../../factories/group';
+import GroupRow, { GroupRowProps } from './GroupRow';
 
 export default {
   title: 'Groups/GroupRow',

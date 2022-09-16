@@ -1,11 +1,11 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
-import PasswordUpdateForm from './PasswordUpdateForm';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { ControllerProvider, MockController } from '../../../controller';
 import { createRandomProfile } from '../../../factories/profile';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import PasswordUpdateForm from './PasswordUpdateForm';
 
 describe('PasswordUpdateForm', () => {
   it('should render a form that can be filled and submited', async () => {

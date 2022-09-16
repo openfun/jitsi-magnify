@@ -1,7 +1,7 @@
-import { defineMessages } from 'react-intl';
 import React from 'react';
-import { useController } from '../../../controller';
+import { defineMessages } from 'react-intl';
 import { useQuery } from 'react-query';
+import { useController } from '../../../controller';
 import { RowsList } from '../../design-system';
 import MeetingRow from '../MeetingRow';
 
@@ -23,10 +23,10 @@ const MyMeetings = ({ baseJitsiUrl }: MyMeetingsProps) => {
 
   return (
     <RowsList
+      Row={({ meeting }) => <MeetingRow baseJitsiUrl={baseJitsiUrl} meeting={meeting} />}
+      isLoading={isLoading}
       label={messages.meetingsListLabel}
       rows={(meetings || []).map((meeting) => ({ meeting, id: meeting.id }))}
-      Row={({ meeting }) => <MeetingRow meeting={meeting} baseJitsiUrl={baseJitsiUrl} />}
-      isLoading={isLoading}
     />
   );
 };

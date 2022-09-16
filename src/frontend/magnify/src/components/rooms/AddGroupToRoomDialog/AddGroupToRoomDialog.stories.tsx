@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import AddGroupToRoomDialog from './AddGroupToRoomDialog';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'Rooms/AddGroupToRoomDialog',

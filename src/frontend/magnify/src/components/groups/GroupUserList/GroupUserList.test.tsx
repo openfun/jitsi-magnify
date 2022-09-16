@@ -1,12 +1,12 @@
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import userEvent from '@testing-library/user-event';
-import GroupUserList from './GroupUserList';
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { MemoryRouter } from 'react-router-dom';
 import { ControllerProvider, MockController } from '../../../controller';
 import createRandomGroup from '../../../factories/group';
-import { MemoryRouter } from 'react-router-dom';
+import GroupUserList from './GroupUserList';
 
 describe('GroupUserList', () => {
   it('should render successfully', async () => {

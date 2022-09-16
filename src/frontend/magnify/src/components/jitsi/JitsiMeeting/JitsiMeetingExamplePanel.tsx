@@ -16,24 +16,24 @@ interface JitsiMeetingExamplePanelProps {
 export function JitsiMeetingExamplePanel({ users, groups }: JitsiMeetingExamplePanelProps) {
   return (
     <Box
-      width={{ width: '300px', max: '300px' }}
       height={{ max: '100vh' }}
       overflow={{ vertical: 'auto' }}
       pad="medium"
+      width={{ width: '300px', max: '300px' }}
     >
-      <Heading level="3" size="small" color="brand">
+      <Heading color="brand" level="3" size="small">
         People in this meeting
       </Heading>
 
       {users.map((user) => (
         <Box key={user.participantId} direction="row" margin={{ vertical: 'small' }}>
-          <Text size="small" margin={{ vertical: 'auto', horizontal: '5px' }}>
+          <Text margin={{ vertical: 'auto', horizontal: '5px' }} size="small">
             {user.displayName}
           </Text>
         </Box>
       ))}
 
-      <Heading level="3" size="small" color="brand">
+      <Heading color="brand" level="3" size="small">
         Groups in this meeting
       </Heading>
 
@@ -44,7 +44,7 @@ export function JitsiMeetingExamplePanel({ users, groups }: JitsiMeetingExampleP
               {group.members.map((member) => (
                 <Box key={member.id} direction="row" margin={{ vertical: 'small' }}>
                   <SquareAvatar src={member.avatar} title={member.name} />
-                  <Text size="small" margin={{ vertical: 'auto', horizontal: '5px' }}>
+                  <Text margin={{ vertical: 'auto', horizontal: '5px' }} size="small">
                     {member.name}
                   </Text>
                 </Box>

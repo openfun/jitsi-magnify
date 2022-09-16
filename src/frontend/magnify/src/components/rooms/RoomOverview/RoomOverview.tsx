@@ -88,17 +88,17 @@ const RoomOverview = ({ roomSlug, baseJitsiUrl }: RoomOverviewProps) => {
           label={intl.formatMessage(messages.joinRoomLabel)}
           margin={{ right: 'small' }}
           as={({ children, type, className }) => (
-            <Link type={type} className={className} to={`${baseJitsiUrl}/${roomSlug}`}>
+            <Link className={className} to={`${baseJitsiUrl}/${roomSlug}`} type={type}>
               {children}
             </Link>
           )}
         />
         <Button
           primary
-          label={intl.formatMessage(messages.configureRoomLabel)}
           icon={<SettingsSVG />}
+          label={intl.formatMessage(messages.configureRoomLabel)}
           as={({ children, type, className }) => (
-            <Link type={type} className={className} to={`/rooms/${roomSlug}/settings`}>
+            <Link className={className} to={`/rooms/${roomSlug}/settings`} type={type}>
               {children}
             </Link>
           )}
@@ -106,32 +106,32 @@ const RoomOverview = ({ roomSlug, baseJitsiUrl }: RoomOverviewProps) => {
       </Card>
       <Box margin={{ top: 'medium' }}>
         <RowsList
-          label={messages.meetingListTitle}
-          rows={(room?.meetings || []).map((meeting) => ({ id: meeting.id, meeting }))}
-          Row={({ meeting }) => <MeetingRow meeting={meeting} baseJitsiUrl={baseJitsiUrl} />}
-          isLoading={isLoading}
-          titleIsLoading={isLoading}
+          Row={({ meeting }) => <MeetingRow baseJitsiUrl={baseJitsiUrl} meeting={meeting} />}
           addLabel={intl.formatMessage(messages.createMeetingLabel)}
+          isLoading={isLoading}
+          label={messages.meetingListTitle}
           onAdd={handleCreateMeetingOpen}
+          rows={(room?.meetings || []).map((meeting) => ({ id: meeting.id, meeting }))}
+          titleIsLoading={isLoading}
         />
       </Box>
       <Box margin={{ top: 'medium' }}>
         <RowsList
-          label={messages.groupsListTitle}
-          rows={(room?.groups || []).map((group) => ({ id: group.id, group }))}
-          isLoading={isLoading}
-          titleIsLoading={isLoading}
           Row={GroupRow}
           addLabel={intl.formatMessage(messages.addGroupLabel)}
+          isLoading={isLoading}
+          label={messages.groupsListTitle}
           onAdd={handleAddGroupOpen}
+          rows={(room?.groups || []).map((group) => ({ id: group.id, group }))}
+          titleIsLoading={isLoading}
         />
       </Box>
       <CreateMeetingInRoomDialog
-        open={createMeetingOpen}
         onClose={handleCreateMeetingClose}
+        open={createMeetingOpen}
         roomSlug={roomSlug}
       />
-      <AddGroupToRoomDialog open={addGroupOpen} onClose={handleAddGroupClose} roomSlug={roomSlug} />
+      <AddGroupToRoomDialog onClose={handleAddGroupClose} open={addGroupOpen} roomSlug={roomSlug} />
     </>
   );
 };

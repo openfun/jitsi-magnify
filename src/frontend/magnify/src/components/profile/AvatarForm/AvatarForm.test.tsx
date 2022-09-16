@@ -1,10 +1,10 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import AvatarForm from './AvatarForm';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { ControllerProvider, MockController } from '../../../controller';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ControllerProvider, MockController } from '../../../controller';
+import AvatarForm from './AvatarForm';
 
 describe('AvatarForm', () => {
   it('should render the default avatar, and when a new one is loaded, it should display it as preview', async () => {
@@ -15,7 +15,7 @@ describe('AvatarForm', () => {
       <ControllerProvider controller={controller}>
         <QueryClientProvider client={new QueryClient()}>
           <IntlProvider locale="en">
-            <AvatarForm src="test.jpg" id="123" />
+            <AvatarForm id="123" src="test.jpg" />
           </IntlProvider>
         </QueryClientProvider>
       </ControllerProvider>,

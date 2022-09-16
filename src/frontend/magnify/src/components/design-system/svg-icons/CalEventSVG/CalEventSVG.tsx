@@ -4,8 +4,8 @@ import SVGIcon, { SvgProps } from '../SVGIcon';
 export default function CalEventSVG(svgProps: SvgProps) {
   return (
     <SVGIcon viewBox={{ x: 0, y: 0, width: 17, height: 18 }} {...svgProps}>
-      <g id="Bank" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-        <g id="Bank-Colors-&amp;-Iko" transform="translate(-54.000000, -779.000000)" fill="#055FD2">
+      <g fill="none" fillRule="evenodd" id="Bank" stroke="none" strokeWidth="1">
+        <g fill="#055FD2" id="Bank-Colors-&amp;-Iko" transform="translate(-54.000000, -779.000000)">
           <g id="•-icones" transform="translate(50.000000, 691.000000)">
             <g id="iko/cal-event" transform="translate(4.000000, 88.000000)">
               <path

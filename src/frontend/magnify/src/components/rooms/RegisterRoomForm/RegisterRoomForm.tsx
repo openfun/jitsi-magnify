@@ -1,12 +1,12 @@
-import { defineMessages, useIntl } from 'react-intl';
+import { Box, Heading } from 'grommet';
 import React from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import { useMutation, useQueryClient } from 'react-query';
+import { useController } from '../../../controller';
 import useFormState from '../../../hooks/useFormState';
+import { Room } from '../../../types/room';
 import validators, { requiredValidator } from '../../../utils/validators';
 import { LoadingButton, TextField } from '../../design-system';
-import { useController } from '../../../controller';
-import { useMutation, useQueryClient } from 'react-query';
-import { Box, Heading } from 'grommet';
-import { Room } from '../../../types/room';
 
 const messages = defineMessages({
   nameLabel: {
@@ -61,24 +61,24 @@ const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Heading level="2" size="small" color="brand">
+      <Heading color="brand" level="2" size="small">
         {intl.formatMessage(messages.registerRoomDialogLabel)}
       </Heading>
       <TextField
+        displayErrors={modified.name}
+        errors={errors.name}
         label={intl.formatMessage(messages.nameLabel)}
         name="name"
-        value={values.name}
         onChange={handleChange}
-        errors={errors.name}
-        displayErrors={modified.name}
+        value={values.name}
       />
       <Box direction="row" justify="end" margin={{ top: 'medium' }}>
         <LoadingButton
-          type="submit"
           primary
-          isLoading={isLoading}
           disabled={!isValid}
+          isLoading={isLoading}
           label={intl.formatMessage(messages.registerRoomSubmitLabel, { name: values.name })}
+          type="submit"
         />
       </Box>
     </form>

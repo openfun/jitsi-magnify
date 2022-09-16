@@ -45,8 +45,8 @@ const TestButton = ({ variant }: TestButtonProps) => {
     <>
       <VariantButton
         label={intl.formatMessage(messages.testButtonLabel)}
-        variant={variant}
         onClick={handleClick}
+        variant={variant}
       />
       <pre data-testid="fetched-examples">{JSON.stringify(examples, null, '  ')}</pre>
     </>

@@ -79,20 +79,20 @@ const RoomConfig = ({ roomName }: { roomName: string }) => {
 
   return (
     <Grid
+      columns={['1/2', '1/2']}
+      gap="medium"
+      rows={mobile ? ['1/3', '1/3', '1/3'] : ['1/2', '1/2']}
       areas={[
         { name: 'settingsBlock', start: [0, 0], end: [1, 0] },
         { name: 'moderationBlock', start: [0, 1], end: mobile ? [1, 1] : [0, 1] },
         { name: 'securityBlock', start: mobile ? [0, 2] : [1, 1], end: mobile ? [1, 2] : [1, 1] },
       ]}
-      columns={['1/2', '1/2']}
-      rows={mobile ? ['1/3', '1/3', '1/3'] : ['1/2', '1/2']}
-      gap="medium"
     >
       <Box gridArea="settingsBlock">
         <RoomSettingsBlock
-          title={intl.formatMessage(messages.settingsTitle)}
           room={data}
           roomName={roomName}
+          title={intl.formatMessage(messages.settingsTitle)}
           toggles={[
             [
               { label: intl.formatMessage(messages.enableChat), settingKey: 'chatEnabled' },
@@ -106,9 +106,9 @@ const RoomConfig = ({ roomName }: { roomName: string }) => {
       </Box>
       <Box gridArea="moderationBlock">
         <RoomSettingsBlock
-          title={intl.formatMessage(messages.moderationTitle)}
           room={data}
           roomName={roomName}
+          title={intl.formatMessage(messages.moderationTitle)}
           toggles={[
             [
               {
@@ -127,9 +127,9 @@ const RoomConfig = ({ roomName }: { roomName: string }) => {
       </Box>
       <Box gridArea="securityBlock">
         <RoomSettingsBlock
-          title={intl.formatMessage(messages.securityTitle)}
           room={data}
           roomName={roomName}
+          title={intl.formatMessage(messages.securityTitle)}
           toggles={[
             [
               {

@@ -21,7 +21,7 @@ describe('CreateMeetingForm', () => {
       <ControllerProvider controller={controller}>
         <QueryClientProvider client={new QueryClient()}>
           <IntlProvider locale="en">
-            <CreateMeetingForm roomSlug="room-slug" onSuccess={onSuccess} />
+            <CreateMeetingForm onSuccess={onSuccess} roomSlug="room-slug" />
           </IntlProvider>
         </QueryClientProvider>
       </ControllerProvider>,
@@ -68,7 +68,7 @@ describe('CreateMeetingForm', () => {
       <ControllerProvider controller={new MockController()}>
         <QueryClientProvider client={new QueryClient()}>
           <IntlProvider locale="en">
-            <CreateMeetingForm roomSlug="room-slug" onCancel={onCancel} />
+            <CreateMeetingForm onCancel={onCancel} roomSlug="room-slug" />
           </IntlProvider>
         </QueryClientProvider>
       </ControllerProvider>,

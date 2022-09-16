@@ -1,7 +1,7 @@
-import React from 'react';
-import { useStore } from '../../../controller';
 import { Avatar, Box, Text } from 'grommet';
 import { User } from 'grommet-icons';
+import React from 'react';
+import { useStore } from '../../../controller';
 
 const UserMenu = () => {
   const { user } = useStore();
@@ -12,8 +12,8 @@ const UserMenu = () => {
       <Box>
         <Avatar
           {...(user?.avatar ? { src: user.avatar } : { children: <User /> })}
-          size="24px"
           role="img"
+          size="24px"
           title={user?.username}
         />
       </Box>

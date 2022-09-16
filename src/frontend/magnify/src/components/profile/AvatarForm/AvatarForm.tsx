@@ -1,10 +1,10 @@
 import { Avatar, Box, Button, Card } from 'grommet';
 import { User } from 'grommet-icons';
-import React from 'react';
 import { Trash } from 'grommet-icons';
+import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useController } from '../../../controller';
 import { useMutation } from 'react-query';
+import { useController } from '../../../controller';
 
 export interface AvatarFormProps {
   id?: string;
@@ -52,12 +52,12 @@ export default function AvatarForm({ id, src: defaultSrc = '' }: AvatarFormProps
   return (
     <Box direction="column" width="190px">
       <form onSubmit={handleSubmit}>
-        <Card width="190px" height="190px" background="light-2">
+        <Card background="light-2" height="190px" width="190px">
           <Avatar
-            size="120px"
-            margin="auto"
-            title="Your avatar"
             background="light-4"
+            margin="auto"
+            size="120px"
+            title="Your avatar"
             {...avatarProps}
           />
         </Card>
@@ -65,10 +65,10 @@ export default function AvatarForm({ id, src: defaultSrc = '' }: AvatarFormProps
         {!changed && (
           <label htmlFor="avatar-file-input">
             <Button
-              label={intl.formatMessage(messages.loadNewButtonLabel)}
-              margin={{ top: 'small' }}
               primary
               as="div"
+              label={intl.formatMessage(messages.loadNewButtonLabel)}
+              margin={{ top: 'small' }}
               style={{ width: '100%' }}
             />
           </label>
@@ -77,15 +77,15 @@ export default function AvatarForm({ id, src: defaultSrc = '' }: AvatarFormProps
         {changed && (
           <Box direction="row" margin={{ top: 'small' }}>
             <Button
-              label={intl.formatMessage(messages.saveNewAvatarButtonLabel)}
               primary
-              type="submit"
-              style={{ flexGrow: 1 }}
+              label={intl.formatMessage(messages.saveNewAvatarButtonLabel)}
               margin={{ right: 'small', vertical: 'auto' }}
+              style={{ flexGrow: 1 }}
+              type="submit"
             />
             <Button
-              icon={<Trash />}
               hoverIndicator
+              icon={<Trash />}
               onClick={handleRemove}
               tip={intl.formatMessage(messages.removeButtonLabel)}
             />
@@ -93,11 +93,11 @@ export default function AvatarForm({ id, src: defaultSrc = '' }: AvatarFormProps
         )}
 
         <input
-          name="avatar-file-input"
-          id="avatar-file-input"
           accept="image/png, image/jpeg"
-          type="file"
+          id="avatar-file-input"
+          name="avatar-file-input"
           style={{ display: 'none' }}
+          type="file"
           onChange={(event) => {
             const file = event.target.files && event.target.files[0];
             if (file) {

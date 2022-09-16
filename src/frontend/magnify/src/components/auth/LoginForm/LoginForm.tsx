@@ -90,7 +90,7 @@ export default function LoginForm() {
 
   return (
     <>
-      <Heading level={2} color="brand">
+      <Heading color="brand" level={2}>
         {intl.formatMessage(messages.formTitle)}
       </Heading>
       <Text color="brand" margin={{ bottom: 'medium' }}>
@@ -98,52 +98,52 @@ export default function LoginForm() {
       </Text>
       {error && (
         <Box
+          background="status-error"
           direction="row"
           gap="small"
-          pad="small"
-          margin={{ vertical: 'small' }}
-          background="status-error"
-          round="xsmall"
           justify="between"
+          margin={{ vertical: 'small' }}
+          pad="small"
+          round="xsmall"
         >
           <Text size="small">
             {(error as { detail: string }).detail || intl.formatMessage(messages.UnknownError)}
           </Text>
           <Button>
-            <Close size="small" onClick={reset} />
+            <Close onClick={reset} size="small" />
           </Button>
         </Box>
       )}
       <form onSubmit={handleSubmit}>
         <TextField
-          label={intl.formatMessage(messages.usernameLabel)}
-          name="username"
-          value={values.username}
-          errors={errors.username}
-          displayErrors={modified.username}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
           required
+          displayErrors={modified.username}
+          errors={errors.username}
+          label={intl.formatMessage(messages.usernameLabel)}
+          margin={{ bottom: 'small' }}
+          name="username"
+          onChange={handleChange}
+          value={values.username}
         />
         <TextField
-          label={intl.formatMessage(messages.passwordLabel)}
-          name="password"
-          value={values.password}
-          errors={errors.password}
-          displayErrors={modified.password}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
-          type="password"
           required
+          displayErrors={modified.password}
+          errors={errors.password}
+          label={intl.formatMessage(messages.passwordLabel)}
+          margin={{ bottom: 'small' }}
+          name="password"
+          onChange={handleChange}
+          type="password"
+          value={values.password}
         />
         <Box direction="row" justify="end" margin={{ top: 'small' }}>
           <LoadingButton
             primary
-            label={intl.formatMessage(messages.submitButtonLabel)}
             disabled={!isModified || !isValid}
+            isLoading={isLoading}
+            label={intl.formatMessage(messages.submitButtonLabel)}
             onClick={() => mutate(values)}
             type="submit"
-            isLoading={isLoading}
           />
         </Box>
       </form>

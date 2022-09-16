@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import JitsiMeeting from './JitsiMeeting';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'Jitsi/JitsiMeeting',

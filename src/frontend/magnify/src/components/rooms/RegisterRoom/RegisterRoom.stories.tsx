@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import RegisterRoom from './RegisterRoom';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'Rooms/RegisterRoom',

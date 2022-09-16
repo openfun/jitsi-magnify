@@ -79,19 +79,19 @@ export default function Toggle({
           : {})}
         width={width}
       >
-        <Stack margin={{ top: 'auto', bottom: 'auto', left: 'small' }} anchor="left">
+        <Stack anchor="left" margin={{ top: 'auto', bottom: 'auto', left: 'small' }}>
           <CheckBox
+            toggle
             a11yTitle={title}
+            aria-busy={loading}
             aria-checked={checked}
             checked={checked}
             disabled={disabled}
+            label={label}
             onChange={onChange}
             title={title}
-            label={label}
-            toggle
-            aria-busy={loading}
           />
-          {loading && <Spinner size="xsmall" margin={{ left: '6px' }} />}
+          {loading && <Spinner margin={{ left: '6px' }} size="xsmall" />}
         </Stack>
       </Box>
     </ThemeContext.Extend>

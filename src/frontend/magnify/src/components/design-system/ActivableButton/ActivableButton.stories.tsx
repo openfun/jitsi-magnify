@@ -1,6 +1,6 @@
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import ActivableButton from './ActivableButton';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'DesignSystem/ActivableButton',
@@ -11,6 +11,7 @@ const Template: ComponentStory<typeof ActivableButton> = (args) => <ActivableBut
 
 // create the template and stories
 export const basicActivableButtonDeactivated = Template.bind({});
+
 basicActivableButtonDeactivated.args = {
   label: 'ActivableButton',
   primary: true,

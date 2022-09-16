@@ -51,4 +51,4 @@ export const ListExample = () => (
   />
 );
 
-export const SelectableListExample = () => <RowsList label={title} rows={users} Row={UserRow} />;
+export const SelectableListExample = () => <RowsList Row={UserRow} label={title} rows={users} />;

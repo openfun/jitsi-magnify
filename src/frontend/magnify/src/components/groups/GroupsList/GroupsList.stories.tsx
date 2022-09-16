@@ -1,8 +1,8 @@
-import React from 'react';
-import GroupsList, { GroupsListProps } from './GroupsList';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { ResponsiveContext } from 'grommet';
+import React from 'react';
 import createRandomGroup from '../../../factories/group';
+import GroupsList, { GroupsListProps } from './GroupsList';
 
 export default {
   title: 'Groups/GroupsList',

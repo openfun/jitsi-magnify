@@ -1,12 +1,12 @@
-import { defineMessages, useIntl } from 'react-intl';
+import { Box, Button, Heading } from 'grommet';
 import React from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import { useMutation, useQueryClient } from 'react-query';
+import { useController } from '../../../controller';
 import useFormState from '../../../hooks/useFormState';
+import { Group } from '../../../types/group';
 import validators, { emailValidator, requiredValidator } from '../../../utils/validators';
 import { LoadingButton, TextField } from '../../design-system';
-import { Box, Button, Heading } from 'grommet';
-import { useController } from '../../../controller';
-import { useMutation, useQueryClient } from 'react-query';
-import { Group } from '../../../types/group';
 
 export interface AddUserFormProps {
   onSuccess?: () => void;
@@ -57,23 +57,23 @@ const AddUserForm = ({ onSuccess, onCancel, groupId }: AddUserFormProps) => {
     <>
       <Heading level={3}>{intl.formatMessage(messages.addUserHeading)}</Heading>
       <TextField
+        displayErrors={modified.email}
+        errors={errors.email}
         label={intl.formatMessage(messages.email)}
         name="email"
         value={values.email}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setValue('email', e.currentTarget.value)
         }
-        errors={errors.email}
-        displayErrors={modified.email}
       />
-      <Box direction="row" justify="end" margin={{ top: 'medium' }} gap="small">
-        <Button onClick={onCancel} label={intl.formatMessage(messages.cancel)} />
+      <Box direction="row" gap="small" justify="end" margin={{ top: 'medium' }}>
+        <Button label={intl.formatMessage(messages.cancel)} onClick={onCancel} />
         <LoadingButton
-          label={intl.formatMessage(messages.addUserSubmitLabel)}
           primary
-          onClick={() => mutate({ groupId, userEmail: values.email })}
-          isLoading={isLoading}
           disabled={!isModified || !isValid}
+          isLoading={isLoading}
+          label={intl.formatMessage(messages.addUserSubmitLabel)}
+          onClick={() => mutate({ groupId, userEmail: values.email })}
         />
       </Box>
     </>

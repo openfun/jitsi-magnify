@@ -1,9 +1,9 @@
-import { defineMessages, useIntl } from 'react-intl';
-import React from 'react';
 import { Box, Button, Heading, Layer, Text } from 'grommet';
-import { WithToken } from '../../../types/withToken';
+import React from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import { Meeting } from '../../../types/meeting';
 import { Room } from '../../../types/room';
+import { WithToken } from '../../../types/withToken';
 import MeetingRow from '../../meetings/MeetingRow/MeetingRow';
 
 // An access to the Jitsi API can be for a room or a meeting.
@@ -56,7 +56,7 @@ const MeetingDisambiguation = ({
   return (
     <Layer>
       <Box pad="medium">
-        <Heading level={3} color="brand">
+        <Heading color="brand" level={3}>
           {intl.formatMessage(messages.meetingDisambiguationTitle)}
         </Heading>
         <Text color="brand">
@@ -65,7 +65,7 @@ const MeetingDisambiguation = ({
 
         {roomAvailable >= 0 && (
           <>
-            <Heading level={4} size="small" color="brand">
+            <Heading color="brand" level={4} size="small">
               {roomSlug}
             </Heading>
             <Box direction="row" justify="center">
@@ -82,14 +82,14 @@ const MeetingDisambiguation = ({
 
         {meetingsAvailable.length > 0 && (
           <>
-            <Heading level={4} size="small" color="brand">
+            <Heading color="brand" level={4} size="small">
               {intl.formatMessage(messages.meetings)}
             </Heading>
             {meetingsAvailable.map((meeting) => (
               <MeetingRow
+                key={meeting.id}
                 meeting={meeting as Meeting}
                 onJoin={() => setCurrent({ meeting })}
-                key={meeting.id}
               />
             ))}
           </>

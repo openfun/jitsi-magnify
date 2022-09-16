@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import LoadingButton, { LoadingButtonProps } from './LoadingButton';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'DesignSystem/LoadingButton',

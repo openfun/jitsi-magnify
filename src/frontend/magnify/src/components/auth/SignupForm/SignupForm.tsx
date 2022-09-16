@@ -128,18 +128,18 @@ export default function SignupForm() {
 
   return (
     <>
-      <Heading level={2} color="brand">
+      <Heading color="brand" level={2}>
         {intl.formatMessage(messages.formTitle)}
       </Heading>
       {isUnknownError && (
         <Box
+          background="status-error"
           direction="row"
           gap="small"
-          pad="small"
-          margin={{ vertical: 'small' }}
-          background="status-error"
-          round="xsmall"
           justify="between"
+          margin={{ vertical: 'small' }}
+          pad="small"
+          round="xsmall"
         >
           <Text size="small">
             {(error as Error).message === 'InvalidCredentials'
@@ -147,70 +147,70 @@ export default function SignupForm() {
               : intl.formatMessage(messages.UnknownError)}
           </Text>
           <Button>
-            <Close size="small" onClick={reset} />
+            <Close onClick={reset} size="small" />
           </Button>
         </Box>
       )}
       <form onSubmit={handleSubmit}>
         <TextField
-          label={intl.formatMessage(messages.nameLabel)}
-          name="name"
-          value={values.name}
-          errors={aggErrors('name')}
+          required
           displayErrors={modified.name}
-          onChange={handleChange}
+          errors={aggErrors('name')}
+          label={intl.formatMessage(messages.nameLabel)}
           margin={{ bottom: 'small' }}
-          required
+          name="name"
+          onChange={handleChange}
+          value={values.name}
         />
         <TextField
-          label={intl.formatMessage(messages.emailLabel)}
-          name="email"
-          value={values.email}
-          errors={aggErrors('email')}
+          required
           displayErrors={modified.email}
-          onChange={handleChange}
+          errors={aggErrors('email')}
+          label={intl.formatMessage(messages.emailLabel)}
           margin={{ bottom: 'small' }}
-          required
+          name="email"
+          onChange={handleChange}
+          value={values.email}
         />
         <TextField
-          label={intl.formatMessage(messages.usernameLabel)}
-          name="username"
-          value={values.username}
-          errors={aggErrors('username')}
+          required
           displayErrors={modified.username}
-          onChange={handleChange}
+          errors={aggErrors('username')}
+          label={intl.formatMessage(messages.usernameLabel)}
           margin={{ bottom: 'small' }}
-          required
+          name="username"
+          onChange={handleChange}
+          value={values.username}
         />
         <TextField
-          label={intl.formatMessage(messages.passwordLabel)}
-          name="password"
-          value={values.password}
-          errors={aggErrors('password')}
+          required
           displayErrors={modified.password}
-          onChange={handleChange}
+          errors={aggErrors('password')}
+          label={intl.formatMessage(messages.passwordLabel)}
           margin={{ bottom: 'small' }}
+          name="password"
+          onChange={handleChange}
           type="password"
-          required
+          value={values.password}
         />
         <TextField
-          label={intl.formatMessage(messages.confirmPasswordLabel)}
-          name="confirmPassword"
-          value={values.confirmPassword}
-          errors={errors.confirmPassword}
-          displayErrors={modified.confirmPassword}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
-          type="password"
           required
+          displayErrors={modified.confirmPassword}
+          errors={errors.confirmPassword}
+          label={intl.formatMessage(messages.confirmPasswordLabel)}
+          margin={{ bottom: 'small' }}
+          name="confirmPassword"
+          onChange={handleChange}
+          type="password"
+          value={values.confirmPassword}
         />
         <Box direction="row" justify="end" margin={{ top: 'small' }}>
           <LoadingButton
             primary
-            label={intl.formatMessage(messages.submitButtonLabel)}
             disabled={!isModified || !isValid}
-            type="submit"
             isLoading={isLoading}
+            label={intl.formatMessage(messages.submitButtonLabel)}
+            type="submit"
           />
         </Box>
       </form>

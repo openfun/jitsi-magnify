@@ -1,10 +1,10 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
-import IdentityForm from './IdentityForm';
-import { ControllerProvider, MockController } from '../../../controller';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ControllerProvider, MockController } from '../../../controller';
+import IdentityForm from './IdentityForm';
 
 describe('IdentityForm', () => {
   it('should render a form that can be filled and submited', async () => {
@@ -15,7 +15,7 @@ describe('IdentityForm', () => {
       <ControllerProvider controller={controller}>
         <QueryClientProvider client={new QueryClient()}>
           <IntlProvider locale="en">
-            <IdentityForm id="123" name="John Doe" username="johndoe3" email="john.doe@test.fr" />
+            <IdentityForm email="john.doe@test.fr" id="123" name="John Doe" username="johndoe3" />
           </IntlProvider>
         </QueryClientProvider>
       </ControllerProvider>,

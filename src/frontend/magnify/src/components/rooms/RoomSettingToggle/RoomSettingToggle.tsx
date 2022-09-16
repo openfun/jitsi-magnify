@@ -32,16 +32,16 @@ const RoomSettingToggle = ({
 
   return (
     <Toggle
-      title={label}
-      label={label}
       checked={checked}
+      disabled={forceDisabled || checked === undefined || isLoading}
+      label={label}
+      loading={checked === undefined || isLoading}
+      title={label}
+      variant="primary"
+      width={width}
       onChange={(event) =>
         mutate({ name: roomName, roomSettings: { [settingKey]: event.currentTarget.checked } })
       }
-      disabled={forceDisabled || checked === undefined || isLoading}
-      loading={checked === undefined || isLoading}
-      variant="primary"
-      width={width}
     />
   );
 };

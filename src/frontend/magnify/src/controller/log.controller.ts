@@ -1,6 +1,7 @@
 import createRandomGroup from '../factories/group';
 import createRandomGroups from '../factories/groups';
 import { createMeetingInProgress, createRandomMeeting } from '../factories/meeting';
+import createRandomMeetings from '../factories/meetings';
 import { createRandomProfile } from '../factories/profile';
 import createRandomRoom from '../factories/room';
 import createRandomRooms from '../factories/rooms';
@@ -27,7 +28,6 @@ import MockControllerFunction from './MockControllerFunction';
 import { example1, example2 } from './mocks/example';
 import promisifiedConsoleLogFactoryGeneric from './promisifiedConsoleLogFactory';
 import { ConnexionStatus, Store } from './store';
-import createRandomMeetings from '../factories/meetings';
 
 /**
  * At first, this function seems to do nothing more than the promisifiedConsoleLogFactoryGeneric

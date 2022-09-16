@@ -1,9 +1,9 @@
-import React from 'react';
-import MeetingDisambiguation from './MeetingDisambiguation';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 import { createMeetingInProgress } from '../../../factories/meeting';
-import withToken from '../../../factories/withToken';
 import createRandomRoom from '../../../factories/room';
+import withToken from '../../../factories/withToken';
+import MeetingDisambiguation from './MeetingDisambiguation';
 
 export default {
   title: 'Jitsi/MeetingDisambiguation',

@@ -1,15 +1,15 @@
 import { Box, Button } from 'grommet';
 import React, { useEffect } from 'react';
-import TextField from '../../design-system/TextField';
 import { defineMessages, useIntl } from 'react-intl';
+import { useMutation } from 'react-query';
+import { useController } from '../../../controller';
 import useFormState from '../../../hooks/useFormState';
 import validators, {
   emailValidator,
   requiredValidator,
   usernameValidator,
 } from '../../../utils/validators';
-import { useController } from '../../../controller';
-import { useMutation } from 'react-query';
+import TextField from '../../design-system/TextField';
 
 export interface IdentityFormProps {
   id?: string;
@@ -68,40 +68,40 @@ export default function IdentityForm({ id, name, username, email }: IdentityForm
   return (
     <form onSubmit={handleSubmit}>
       <TextField
-        label={intl.formatMessage(messages.nameLabel)}
-        name="name"
-        value={values.name}
-        errors={errors.name}
+        required
         displayErrors={modified.name}
-        onChange={handleChange}
+        errors={errors.name}
+        label={intl.formatMessage(messages.nameLabel)}
         margin={{ bottom: 'small' }}
-        required
+        name="name"
+        onChange={handleChange}
+        value={values.name}
       />
       <TextField
-        label={intl.formatMessage(messages.usernameLabel)}
-        name="username"
-        value={values.username}
-        errors={errors.username}
+        required
         displayErrors={modified.username}
-        onChange={handleChange}
+        errors={errors.username}
+        label={intl.formatMessage(messages.usernameLabel)}
         margin={{ bottom: 'small' }}
-        required
+        name="username"
+        onChange={handleChange}
+        value={values.username}
       />
       <TextField
-        label={intl.formatMessage(messages.emailLabel)}
-        name="email"
-        value={values.email}
-        errors={errors.email}
-        displayErrors={modified.email}
-        onChange={handleChange}
-        margin={{ bottom: 'small' }}
         required
+        displayErrors={modified.email}
+        errors={errors.email}
+        label={intl.formatMessage(messages.emailLabel)}
+        margin={{ bottom: 'small' }}
+        name="email"
+        onChange={handleChange}
+        value={values.email}
       />
       <Box direction="row" justify="end" margin={{ top: 'small' }}>
         <Button
           primary
-          label={intl.formatMessage(messages.submitButtonLabel)}
           disabled={!isModified || !isValid || !id}
+          label={intl.formatMessage(messages.submitButtonLabel)}
           type="submit"
         />
       </Box>

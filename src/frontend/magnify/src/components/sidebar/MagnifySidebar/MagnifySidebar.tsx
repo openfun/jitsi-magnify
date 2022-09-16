@@ -1,10 +1,10 @@
 import { Box, Nav, Sidebar } from 'grommet';
+import { MarginType } from 'grommet/utils';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
-import SidebarButton, { SidebarButtonProps } from '../SidebarButton';
 import { AvatarSVG, CalEventSVG, GridSVG, GroupSVG } from '../../design-system';
-import { MarginType } from 'grommet/utils';
+import SidebarButton, { SidebarButtonProps } from '../SidebarButton';
 
 export interface MagnifySidebarProps {
   itemZones?: SidebarButtonProps[][];
@@ -81,27 +81,27 @@ function MagnifySidebar({
 
   return (
     <Sidebar
-      responsive={false}
       background="white"
-      pad={{ left: 'medium', right: 'medium', vertical: 'medium' }}
       elevation="small"
-      round="xsmall"
-      header={header}
       footer={footer}
-      width="400px"
+      header={header}
       margin={margin}
+      pad={{ left: 'medium', right: 'medium', vertical: 'medium' }}
+      responsive={false}
+      round="xsmall"
+      width="400px"
     >
       <Nav gap={separatorGap} responsive={false}>
         {zones.map((zone) => (
-          <Box gap={gap} key={zone.map((i) => i.navigateTo).join('')}>
+          <Box key={zone.map((i) => i.navigateTo).join('')} gap={gap}>
             {zone.map(({ label, navigateTo: to, disabled, icon, margin }) => (
               <SidebarButton
-                label={label}
-                navigateTo={to}
+                key={to}
                 disabled={disabled}
                 icon={icon}
+                label={label}
                 margin={margin}
-                key={to}
+                navigateTo={to}
               />
             ))}
           </Box>

@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import DeleteAccountBlock from './DeleteAccountBlock';
-import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ControllerProvider, MockController } from '../../../controller';
-import InjectFakeUser from '../../../utils/InjectFakeUser';
 import { createRandomProfile } from '../../../factories/profile';
+import InjectFakeUser from '../../../utils/InjectFakeUser';
+import DeleteAccountBlock from './DeleteAccountBlock';
 
 describe('DeleteAccountBlock', () => {
   it('should render the form and an explanation', async () => {

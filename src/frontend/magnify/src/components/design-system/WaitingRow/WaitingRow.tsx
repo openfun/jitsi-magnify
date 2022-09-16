@@ -1,7 +1,7 @@
-import React from 'react';
 import { Card } from 'grommet';
-import styled, { keyframes } from 'styled-components';
+import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import styled, { keyframes } from 'styled-components';
 
 const messages = defineMessages({
   waitingRowTitle: {
@@ -44,8 +44,8 @@ const WaitingRow = ({ background, minHeight }: WaitingRowProps) => {
   const intl = useIntl();
   return (
     <BlinkingCard
-      elevation="0"
       background={background || 'light-2'}
+      elevation="0"
       height={{ min: minHeight || '40px' }}
       margin={{ bottom: 'small' }}
       pad="small"

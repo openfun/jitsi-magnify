@@ -1,0 +1,4 @@
+magnify/**/*.html
+magnify/dist
+demo/dist
+demo/**/*.html

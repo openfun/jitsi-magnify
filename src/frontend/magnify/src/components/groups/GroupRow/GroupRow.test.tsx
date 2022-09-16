@@ -1,10 +1,10 @@
-import React from 'react';
-import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
-import GroupRow from './GroupRow';
+import userEvent from '@testing-library/user-event';
 import { ResponsiveContext } from 'grommet';
-import createRandomGroup from '../../../factories/group';
+import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import createRandomGroup from '../../../factories/group';
+import GroupRow from './GroupRow';
 
 describe('GroupRow', () => {
   it.each([
@@ -26,7 +26,7 @@ describe('GroupRow', () => {
       render(
         <ResponsiveContext.Provider value={width}>
           <MemoryRouter>
-            <GroupRow group={group} selected={false} onToggle={() => {}} />
+            <GroupRow group={group} onToggle={() => {}} selected={false} />
           </MemoryRouter>
         </ResponsiveContext.Provider>,
       );
@@ -70,8 +70,8 @@ describe('GroupRow', () => {
         <MemoryRouter>
           <GroupRow
             group={createRandomGroup(9)}
-            selected={initialChecked}
             onToggle={mockedToggle}
+            selected={initialChecked}
           />
         </MemoryRouter>,
       );

@@ -1,12 +1,12 @@
-import React from 'react';
-import userEvent from '@testing-library/user-event';
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
-import GroupsList from './GroupsList';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
-import createRandomGroup from '../../../factories/group';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { ControllerProvider, MockController } from '../../../controller';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import createRandomGroup from '../../../factories/group';
+import GroupsList from './GroupsList';
 
 // Mocks
 const mockedGroups = [

@@ -1,8 +1,8 @@
 import { ComponentStory } from '@storybook/react';
 import { Box } from 'grommet';
 import React from 'react';
-import IntroductionLayout from './IntroductionLayout';
 import filename from './example-cover.svg';
+import IntroductionLayout from './IntroductionLayout';
 import logo from './logo-fun.svg';
 
 export default {
@@ -11,7 +11,7 @@ export default {
 };
 
 const Template: ComponentStory<typeof IntroductionLayout> = (args) => (
-  <Box width="100vw" height="100vh">
+  <Box height="100vh" width="100vw">
     <IntroductionLayout {...args} />
   </Box>
 );

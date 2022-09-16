@@ -7,7 +7,7 @@ describe('LoadingButton', () => {
     render(
       <>
         <LoadingButton isLoading primary label="Test" />
-        <LoadingButton isLoading={false} primary label="Test" />
+        <LoadingButton primary isLoading={false} label="Test" />
       </>,
     );
 
