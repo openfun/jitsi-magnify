@@ -62,3 +62,6 @@ src/frontend/i18n/frontend.json
 
 # Meld git diff tool
 *.orig
+
+# OS Files
+.DS_Store
