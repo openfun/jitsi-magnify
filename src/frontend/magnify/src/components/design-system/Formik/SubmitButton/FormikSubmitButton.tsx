@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 import { useFormikContext } from 'formik';
 import { Box, Button, ButtonExtendedProps, Spinner, Tip } from 'grommet';
 import { defineMessages, useIntl } from 'react-intl';
-import {Maybe} from "../../../../types/misc";
+import { Maybe } from '../../../../types/misc';
 
 export const formikSubmitButtonMessages = defineMessages({
   isNotDirty: {

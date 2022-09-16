@@ -1,31 +1,18 @@
-import { Box, Button, Heading, Text } from 'grommet';
-import { Close } from 'grommet-icons';
-import React from 'react';
-import { defineMessages, IntlShape, useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
-
-import { useController } from '../../../controller';
-import { useStore } from '../../../controller/ControllerProvider';
-import { SignupInput } from '../../../controller/interface';
-import useFormState from '../../../hooks/useFormState';
+import { Box, Heading } from 'grommet';
+import React, { useMemo } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import { Form, Formik } from 'formik';
+import FormikInput from '../../design-system/Formik/Input';
+import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
+import * as Yup from 'yup';
 import { validationMessages } from '../../../i18n/Messages';
-import validators, {
-  emailValidator,
-  passwordConfirmValidator,
-  usernameValidator,
-} from '../../../utils/validators';
-import { LoadingButton, TextField } from '../../design-system';
+import {formLabelMessages} from "../../../i18n/Messages/formLabelMessages";
 
 const messages = defineMessages({
   formTitle: {
     defaultMessage: 'Create an account',
     description: 'The title of the signup form',
     id: 'components.auth.SignupForm.formTitle',
-  },
-  nameLabel: {
-    id: 'components.auth.SignupForm.nameLabel',
-    description: 'Label for the name input',
-    defaultMessage: 'Name',
   },
   emailLabel: {
     id: 'components.auth.SignupForm.emailLabel',
@@ -64,156 +51,63 @@ const messages = defineMessages({
   },
 });
 
-const requiredValidator = (intl: IntlShape) => (value: string) => {
-  if (!value || value.length < 1) return [intl.formatMessage(validationMessages.required)];
-  return [];
-};
-
 export default function SignupForm() {
   const intl = useIntl();
-  const controller = useController();
-  const { setUser } = useStore();
-  const { mutate, error, isLoading, reset } = useMutation(
-    async (input: SignupInput) => {
-      await controller.signup(input);
-      return await controller.getMyProfile();
-    },
-    {
-      onSuccess: (data) => {
-        setUser(data);
-      },
-    },
-  );
 
-  const { values, errors, modified, setValue, isValid, isModified } = useFormState(
-    { email: '', name: '', username: '', password: '', confirmPassword: '' },
-    {
-      email: validators(intl, requiredValidator, emailValidator),
-      name: validators(intl, requiredValidator),
-      username: validators(intl, requiredValidator, usernameValidator),
-      password: validators(intl, requiredValidator),
-      confirmPassword: validators(intl, requiredValidator, passwordConfirmValidator),
-    },
-  );
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
-    setValue(name as 'username' | 'password', value);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    mutate({
-      name: values.name,
-      email: values.email,
-      username: values.username,
-      password: values.password,
+  const validationSchema = useMemo(() => {
+    return Yup.object().shape({
+      name: Yup.string().required(),
+      email: Yup.string().email().required(),
+      username: Yup.string()
+        .min(3, intl.formatMessage(validationMessages.usernameInvalid))
+        .max(16, intl.formatMessage(validationMessages.usernameInvalid))
+        .required(),
+      password: Yup.string().required(),
+      confirmPassword: Yup.string()
+        .oneOf(
+          [Yup.ref('password'), null],
+          intl.formatMessage(validationMessages.confirmDoesNotMatch),
+        )
+        .required(),
     });
-    setValue('password', '');
-    setValue('confirmPassword', '');
-  };
-
-  const aggErrors = (field: keyof typeof values) => {
-    const clientErrors = errors[field];
-    const serverErrors = (error as Record<keyof typeof values, string>)?.[field];
-    return [...clientErrors, ...(serverErrors ? [serverErrors] : [])];
-  };
-
-  const isUnknownError =
-    error &&
-    !(error as any)?.username &&
-    !(error as any)?.password &&
-    !(error as any)?.email &&
-    !(error as any)?.name;
+  }, []);
 
   return (
-    <>
-      <Heading level={2} color="brand">
-        {intl.formatMessage(messages.formTitle)}
-      </Heading>
-      {isUnknownError && (
-        <Box
-          direction="row"
-          gap="small"
-          pad="small"
-          margin={{ vertical: 'small' }}
-          background="status-error"
-          round="xsmall"
-          justify="between"
-        >
-          <Text size="small">
-            {(error as Error).message === 'InvalidCredentials'
-              ? intl.formatMessage(messages.InvalidCredentials)
-              : intl.formatMessage(messages.UnknownError)}
-          </Text>
-          <Button>
-            <Close size="small" onClick={reset} />
-          </Button>
-        </Box>
-      )}
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label={intl.formatMessage(messages.nameLabel)}
-          name="name"
-          value={values.name}
-          errors={aggErrors('name')}
-          displayErrors={modified.name}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
-          required
-        />
-        <TextField
-          label={intl.formatMessage(messages.emailLabel)}
-          name="email"
-          value={values.email}
-          errors={aggErrors('email')}
-          displayErrors={modified.email}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
-          required
-        />
-        <TextField
-          label={intl.formatMessage(messages.usernameLabel)}
-          name="username"
-          value={values.username}
-          errors={aggErrors('username')}
-          displayErrors={modified.username}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
-          required
-        />
-        <TextField
-          label={intl.formatMessage(messages.passwordLabel)}
-          name="password"
-          value={values.password}
-          errors={aggErrors('password')}
-          displayErrors={modified.password}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
-          type="password"
-          required
-        />
-        <TextField
-          label={intl.formatMessage(messages.confirmPasswordLabel)}
-          name="confirmPassword"
-          value={values.confirmPassword}
-          errors={errors.confirmPassword}
-          displayErrors={modified.confirmPassword}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
-          type="password"
-          required
-        />
-        <Box direction="row" justify="end" margin={{ top: 'small' }}>
-          <LoadingButton
-            primary
-            label={intl.formatMessage(messages.submitButtonLabel)}
-            disabled={!isModified || !isValid}
-            type="submit"
-            isLoading={isLoading}
+    <Formik
+      initialValues={{
+        name: '',
+        email: '',
+        username: '',
+        password: '',
+        confirmPassword: '',
+      }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => console.log(values)}
+    >
+      <Form>
+        <Box gap={'medium'}>
+          <Heading
+            level={4}
+            color="brand"
+          >{intl.formatMessage(messages.formTitle)}</Heading>
+          <FormikInput name={'name'} label={intl.formatMessage(formLabelMessages.name)} />
+          <FormikInput name={'email'} label={intl.formatMessage(messages.emailLabel)} />
+          <FormikInput name={'username'} label={intl.formatMessage(messages.usernameLabel)} />
+          <FormikInput
+            name={'password'}
+            type={'password'}
+            label={intl.formatMessage(messages.passwordLabel)}
           />
+          <FormikInput
+            name={'confirmPassword'}
+            type={'password'}
+            label={intl.formatMessage(messages.confirmPasswordLabel)}
+          />
+          <Box direction="row" justify="end" margin={{ top: 'small' }}>
+            <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />
+          </Box>
         </Box>
-      </form>
-    </>
+      </Form>
+    </Formik>
   );
 }

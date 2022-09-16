@@ -12,6 +12,7 @@ import {
   LoadingButton,
   TextField,
 } from '../../design-system';
+import {formLabelMessages} from "../../../i18n/Messages/formLabelMessages";
 
 export interface CreateMeetingFormProps {
   roomSlug?: string;
@@ -24,11 +25,6 @@ const messages = defineMessages({
     id: 'components.meetings.CreateMeetingForm.createMeetingFormTitle',
     defaultMessage: 'Create Meeting',
     description: 'Title of the create meeting form',
-  },
-  nameLabel: {
-    id: 'components.meetings.CreateMeetingForm.nameLabel',
-    defaultMessage: 'Name',
-    description: 'Label for the name field',
   },
   datesLabel: {
     id: 'components.meetings.CreateMeetingForm.datesLabel',
@@ -105,7 +101,7 @@ const CreateMeetingForm = ({ roomSlug, onCancel, onSuccess }: CreateMeetingFormP
         </Heading>
         <TextField
           name="name"
-          label={intl.formatMessage(messages.nameLabel)}
+          label={intl.formatMessage(formLabelMessages.name)}
           value={values.name}
           onChange={(event) => setValue('name', event.target.value)}
           margin={{ vertical: 'small' }}

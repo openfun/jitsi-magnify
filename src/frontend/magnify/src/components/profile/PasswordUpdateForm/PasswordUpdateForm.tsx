@@ -1,11 +1,11 @@
-import { Box, Button } from 'grommet';
-import React from 'react';
+import { Box } from 'grommet';
+import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
-import { useController } from '../../../controller';
-import useFormState from '../../../hooks/useFormState';
-import validators, { passwordConfirmValidator, requiredValidator } from '../../../utils/validators';
-import { TextField } from '../../design-system';
+import * as Yup from 'yup';
+import { Form, Formik } from 'formik';
+import FormikInput from '../../design-system/Formik/Input';
+import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
+import { validationMessages } from '../../../i18n/Messages';
 
 const messages = defineMessages({
   previousPasswordLabel: {
@@ -30,74 +30,62 @@ const messages = defineMessages({
   },
 });
 
+interface UpdatePasswordFormValues {
+  previousPassword: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export default function PasswordUpdateForm() {
   const intl = useIntl();
-  const controller = useController();
-  const { mutate } = useMutation(controller.updateUserPassword);
-  const { values, errors, modified, isModified, isValid, setValue } = useFormState(
-    { previousPassword: '', password: '', confirmPassword: '' },
-    {
-      previousPassword: validators(intl, requiredValidator),
-      password: validators(intl, requiredValidator),
-      confirmPassword: validators(intl, requiredValidator, passwordConfirmValidator),
-    },
-  );
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(
-      event.target.name as 'previousPassword' | 'password' | 'confirmPassword',
-      event.target.value,
-    );
-  };
+  const validationSchema = useMemo(() => {
+    return Yup.object().shape({
+      previousPassword: Yup.string().required(),
+      password: Yup.string().required(),
+      confirmPassword: Yup.string()
+        .oneOf(
+          [Yup.ref('password'), null],
+          intl.formatMessage(validationMessages.confirmDoesNotMatch),
+        )
+        .required(),
+    });
+  }, []);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    mutate({ oldPassword: values.previousPassword, newPassword: values.password });
+  const handleSubmit = (values: UpdatePasswordFormValues) => {
+    console.log(values);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <TextField
-        label={intl.formatMessage(messages.previousPasswordLabel)}
-        name="previousPassword"
-        value={values.previousPassword}
-        errors={errors.previousPassword}
-        displayErrors={modified.previousPassword}
-        onChange={handleChange}
-        margin={{ bottom: 'small' }}
-        type="password"
-        required
-      />
-      <TextField
-        label={intl.formatMessage(messages.passwordLabel)}
-        name="password"
-        value={values.password}
-        errors={errors.password}
-        displayErrors={modified.password}
-        onChange={handleChange}
-        margin={{ bottom: 'small' }}
-        type="password"
-        required
-      />
-      <TextField
-        label={intl.formatMessage(messages.confirmNewPasswordLabel)}
-        name="confirmPassword"
-        value={values.confirmPassword}
-        errors={errors.confirmPassword}
-        displayErrors={modified.confirmPassword}
-        onChange={handleChange}
-        margin={{ bottom: 'small' }}
-        type="password"
-        required
-      />
-      <Box direction="row" justify="end" margin={{ top: 'small' }}>
-        <Button
-          primary
-          label={intl.formatMessage(messages.submitButtonLabel)}
-          disabled={!isModified || !isValid}
-          type="submit"
-        />
-      </Box>
-    </form>
+    <Formik
+      initialValues={{
+        previousPassword: '',
+        password: '',
+        confirmPassword: '',
+      }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      <Form>
+        <Box gap={'10px'}>
+          <FormikInput
+            type={'password'}
+            name={'previousPassword'}
+            label={intl.formatMessage(messages.previousPasswordLabel)}
+          />
+          <FormikInput
+            type={'password'}
+            name={'password'}
+            label={intl.formatMessage(messages.passwordLabel)}
+          />
+          <FormikInput
+            type={'password'}
+            name={'confirmPassword'}
+            label={intl.formatMessage(messages.confirmNewPasswordLabel)}
+          />
+          <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />
+        </Box>
+      </Form>
+    </Formik>
   );
 }

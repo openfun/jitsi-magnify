@@ -1,15 +1,12 @@
-import { Box, Button } from 'grommet';
-import React, { useEffect } from 'react';
-import TextField from '../../design-system/TextField';
+import React, {useMemo} from 'react';
+import * as Yup from 'yup';
 import { defineMessages, useIntl } from 'react-intl';
-import useFormState from '../../../hooks/useFormState';
-import validators, {
-  emailValidator,
-  requiredValidator,
-  usernameValidator,
-} from '../../../utils/validators';
-import { useController } from '../../../controller';
-import { useMutation } from 'react-query';
+import { Form, Formik } from 'formik';
+import { Box } from 'grommet';
+import FormikInput from '../../design-system/Formik/Input';
+import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
+import { validationMessages } from '../../../i18n/Messages';
+import {formLabelMessages} from "../../../i18n/Messages/formLabelMessages";
 
 export interface IdentityFormProps {
   id?: string;
@@ -19,11 +16,6 @@ export interface IdentityFormProps {
 }
 
 const messages = defineMessages({
-  nameLabel: {
-    defaultMessage: 'Name',
-    description: 'The label for the name field',
-    id: 'components.profile.identityForm.nameLabel',
-  },
   usernameLabel: {
     defaultMessage: 'Username',
     description: 'The label for the username field',
@@ -41,70 +33,45 @@ const messages = defineMessages({
   },
 });
 
+interface IdentityFormValues {
+  name: string;
+  username: string;
+  email: string;
+}
+
 export default function IdentityForm({ id, name, username, email }: IdentityFormProps) {
   const intl = useIntl();
-  const controller = useController();
-  const { mutate } = useMutation(controller.updateUser);
 
-  const { values, errors, modified, setValue, isValid, isModified } = useFormState(
-    { name, username, email },
-    {
-      name: validators(intl, requiredValidator),
-      username: validators(intl, requiredValidator, usernameValidator),
-      email: validators(intl, requiredValidator, emailValidator),
-    },
-  );
+  const validationSchema = useMemo(() => {
+    return Yup.object().shape({
+      name: Yup.string().required(),
+      username: Yup.string()
+          .min(3, intl.formatMessage(validationMessages.usernameInvalid))
+          .max(16, intl.formatMessage(validationMessages.usernameInvalid))
+          .required(),
+      email: Yup.string().email().required(),
+    });
+  }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
-    setValue(name as 'name' | 'username' | 'email', value);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (id) mutate({ id, ...values });
+  const handleSubmit = (values: IdentityFormValues) => {
+    console.log(id, values);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <TextField
-        label={intl.formatMessage(messages.nameLabel)}
-        name="name"
-        value={values.name}
-        errors={errors.name}
-        displayErrors={modified.name}
-        onChange={handleChange}
-        margin={{ bottom: 'small' }}
-        required
-      />
-      <TextField
-        label={intl.formatMessage(messages.usernameLabel)}
-        name="username"
-        value={values.username}
-        errors={errors.username}
-        displayErrors={modified.username}
-        onChange={handleChange}
-        margin={{ bottom: 'small' }}
-        required
-      />
-      <TextField
-        label={intl.formatMessage(messages.emailLabel)}
-        name="email"
-        value={values.email}
-        errors={errors.email}
-        displayErrors={modified.email}
-        onChange={handleChange}
-        margin={{ bottom: 'small' }}
-        required
-      />
-      <Box direction="row" justify="end" margin={{ top: 'small' }}>
-        <Button
-          primary
-          label={intl.formatMessage(messages.submitButtonLabel)}
-          disabled={!isModified || !isValid || !id}
-          type="submit"
-        />
-      </Box>
-    </form>
+    <Formik
+      validateOnChange={true}
+      initialValues={{ name, username, email }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      <Form>
+        <Box gap={'10px'}>
+          <FormikInput name={'name'} label={intl.formatMessage(formLabelMessages.name)} />
+          <FormikInput name={'username'} label={intl.formatMessage(messages.usernameLabel)} />
+          <FormikInput name={'email'} label={intl.formatMessage(messages.emailLabel)} />
+          <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />
+        </Box>
+      </Form>
+    </Formik>
   );
 }

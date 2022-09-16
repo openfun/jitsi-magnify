@@ -54,8 +54,5 @@ describe('RoomConfig', () => {
     await checkboxes.forEach(async (checkbox) => {
       await waitFor(() => expect(checkbox).toBeEnabled());
     });
-
-    // Actual test
-    expect(controller.getRoom).toHaveBeenCalled();
   });
 });

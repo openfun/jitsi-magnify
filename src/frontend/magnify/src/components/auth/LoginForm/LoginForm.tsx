@@ -1,15 +1,10 @@
-import { Box, Button, Heading, Text } from 'grommet';
-import { Close } from 'grommet-icons';
-import React from 'react';
-import { defineMessages, IntlShape, useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
-
-import { useController } from '../../../controller';
-import { useStore } from '../../../controller/ControllerProvider';
-import { LoginInput } from '../../../controller/interface';
-import useFormState from '../../../hooks/useFormState';
-import { validationMessages } from '../../../i18n/Messages';
-import { LoadingButton, TextField } from '../../design-system';
+import { Box, Heading, Text } from 'grommet';
+import React, { useMemo } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import { Form, Formik, FormikValues } from 'formik';
+import FormikInput from '../../design-system/Formik/Input';
+import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
+import * as Yup from 'yup';
 
 const messages = defineMessages({
   formTitle: {
@@ -49,104 +44,47 @@ const messages = defineMessages({
   },
 });
 
-const requiredValidator = (intl: IntlShape) => (value: string) => {
-  if (!value || value.length < 1) return [intl.formatMessage(validationMessages.required)];
-  return [];
-};
+const validationSchema = Yup.object().shape({
+  username: Yup.string().required(),
+  password: Yup.string().required(),
+});
 
 export default function LoginForm() {
   const intl = useIntl();
-  const controller = useController();
-  const { setUser } = useStore();
-  const { mutate, error, isLoading, reset } = useMutation(
-    async (input: LoginInput) => {
-      await controller.login(input);
-      return await controller.getMyProfile();
-    },
-    {
-      onSuccess: (data) => {
-        setUser(data);
-      },
-    },
-  );
 
-  const { values, errors, modified, setValue, isValid, isModified } = useFormState(
-    { username: '', password: '' },
-    {
-      username: requiredValidator(intl),
-      password: requiredValidator(intl),
-    },
-  );
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
-    setValue(name as 'username' | 'password', value);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setValue('password', '');
+  const handleSubmit = (values: FormikValues) => {
+    console.log(values);
   };
 
   return (
-    <>
-      <Heading level={2} color="brand">
-        {intl.formatMessage(messages.formTitle)}
-      </Heading>
-      <Text color="brand" margin={{ bottom: 'medium' }}>
-        {intl.formatMessage(messages.formExplanation)}
-      </Text>
-      {error && (
-        <Box
-          direction="row"
-          gap="small"
-          pad="small"
-          margin={{ vertical: 'small' }}
-          background="status-error"
-          round="xsmall"
-          justify="between"
-        >
-          <Text size="small">
-            {(error as { detail: string }).detail || intl.formatMessage(messages.UnknownError)}
-          </Text>
-          <Button>
-            <Close size="small" onClick={reset} />
-          </Button>
+    <Formik
+      initialValues={{ username: '', password: '' }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      <Form>
+        <Box gap={'xsmall'}>
+          <Heading
+            level={4}
+            color="brand"
+          >{intl.formatMessage(messages.formTitle)}</Heading>
+          <Text
+            color="brand"
+            margin={{ bottom: 'medium' }}
+          >{intl.formatMessage(messages.formExplanation)}</Text>
         </Box>
-      )}
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label={intl.formatMessage(messages.usernameLabel)}
-          name="username"
-          value={values.username}
-          errors={errors.username}
-          displayErrors={modified.username}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
-          required
-        />
-        <TextField
-          label={intl.formatMessage(messages.passwordLabel)}
-          name="password"
-          value={values.password}
-          errors={errors.password}
-          displayErrors={modified.password}
-          onChange={handleChange}
-          margin={{ bottom: 'small' }}
-          type="password"
-          required
-        />
-        <Box direction="row" justify="end" margin={{ top: 'small' }}>
-          <LoadingButton
-            primary
-            label={intl.formatMessage(messages.submitButtonLabel)}
-            disabled={!isModified || !isValid}
-            onClick={() => mutate(values)}
-            type="submit"
-            isLoading={isLoading}
+        <Box gap={'medium'}>
+          <FormikInput name={'username'} label={intl.formatMessage(messages.usernameLabel)} />
+          <FormikInput
+            name={'password'}
+            type={'password'}
+            label={intl.formatMessage(messages.passwordLabel)}
           />
+          <Box direction="row" justify="end" margin={{ top: 'small' }}>
+            <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />
+          </Box>
         </Box>
-      </form>
-    </>
+      </Form>
+    </Formik>
   );
 }
