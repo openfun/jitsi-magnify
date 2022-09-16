@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.18.2",
+    "@bbbtech/storybook-formik": "2.5.0",
     "@faker-js/faker": "7.3.0",
     "@formatjs/cli": "5.0.2",
     "@formatjs/intl-relativetimeformat": "11.0.2",
@@ -43,7 +44,8 @@
     "babel-plugin-react-intl": "8.2.25",
     "cljs-merge": "1.1.1",
     "eslint": "8.17.0",
-    "eslint-plugin-react": "7.30.0",
+    "eslint-plugin-react": "7.31.8",
+    "formik": "2.2.9",
     "intl-pluralrules": "1.3.1",
     "jest": "28.1.1",
     "jest-css-modules": "2.1.0",
@@ -59,7 +61,8 @@
     "ts-node": "10.8.1",
     "tslib": "2.4.0",
     "typescript": "4.7.3",
-    "typescript-plugin-css-modules": "3.4.0"
+    "typescript-plugin-css-modules": "3.4.0",
+    "yup": "0.32.11"
   },
   "module": "dist",
   "files": [
@@ -72,14 +75,19 @@
   "peerDependencies": {
     "@jitsi/react-sdk": "1.0.1",
     "axios": "0.27.2",
+    "formik": "2.2.9",
     "grommet": "2.24.0",
+    "grommet-icons": "4.8.0",
     "polished": "4.2.2",
     "react": "18.2.0",
     "react-intl": "6.0.4",
     "react-query": "3.39.1",
     "react-router-dom": "6.3.0",
     "styled-components": "5.3.5",
-    "validator": "13.7.0"
+    "validator": "13.7.0",
+    "yup": "0.32.11"
   },
-  "dependencies": {}
+  "dependencies": {
+    "use-debounce": "8.0.4"
+  }
 }
