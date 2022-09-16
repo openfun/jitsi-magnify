@@ -33,7 +33,7 @@ describe('RegisterRoom', () => {
     // 2) Fill in the form
     screen.getByRole('button', { name: 'Register room' });
     await user.type(screen.getByRole('textbox', { name: 'Name' }), roomToCreate.name);
-    await user.click(screen.getByRole('button', { name: `Register room ${roomToCreate.name}` }));
+    await user.click(screen.getByRole('button', { name: `Register room` }));
 
     // 4) Verify the dialog is closed
     await waitForElementToBeRemoved(() => screen.getByRole('dialog'));
