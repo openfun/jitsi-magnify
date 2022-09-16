@@ -54,6 +54,7 @@ export interface ToggleProps {
   title?: string;
   label?: string;
   variant?: ToggleVariant | 'plain' | 'primary';
+  name?: string;
   width?: WidthType;
   checked?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -68,6 +69,7 @@ export default function Toggle({
   width,
   checked = false,
   onChange,
+  ...props
 }: ToggleProps) {
   const theme = useTheme();
 
@@ -78,6 +80,7 @@ export default function Toggle({
           ? { background: 'light-3', pad: 'small', round: 'xsmall' }
           : {})}
         width={width}
+        direction={'row'}
       >
         <Stack margin={{ top: 'auto', bottom: 'auto', left: 'small' }} anchor="left">
           <CheckBox
@@ -88,6 +91,7 @@ export default function Toggle({
             onChange={onChange}
             title={title}
             label={label}
+            name={props.name}
             toggle
             aria-busy={loading}
           />
