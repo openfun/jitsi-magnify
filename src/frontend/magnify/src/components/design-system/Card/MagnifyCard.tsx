@@ -12,7 +12,9 @@ const MagnifyCard: FunctionComponent<MagnifyCardProps> = ({ ...props }) => {
     <Card background={'white'} height={'100%'} pad={'medium'} {...props}>
       {props.title && (
         <CardHeader>
-            <Heading color={'brand'} level={3}>{props.title}</Heading>
+          <Heading color={'brand'} level={3}>
+            {props.title}
+          </Heading>
         </CardHeader>
       )}
       <CardBody>{props.children}</CardBody>

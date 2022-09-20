@@ -33,10 +33,9 @@ const FormikInput: FunctionComponent<FormikInputProps> = (props) => {
   return (
     <Box gap={'5px'}>
       <label htmlFor={props.name}>
-        <Text
-          size={'xsmall'}
-          weight={'bold'}
-        >{props.label}</Text>
+        <Text size={'xsmall'} weight={'bold'}>
+          {props.label}
+        </Text>
       </label>
       <div>
         <Box style={{ position: 'relative' }}>
@@ -60,7 +59,9 @@ const FormikInput: FunctionComponent<FormikInputProps> = (props) => {
           name={props.name}
           render={(msg: string) => {
             return (
-                <Text size={'xsmall'} color={'accent-1'}>{msg}</Text>
+              <Text size={'xsmall'} color={'accent-1'}>
+                {msg}
+              </Text>
             );
           }}
         />

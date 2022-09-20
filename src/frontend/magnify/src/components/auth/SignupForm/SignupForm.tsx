@@ -6,7 +6,7 @@ import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 import * as Yup from 'yup';
 import { validationMessages } from '../../../i18n/Messages';
-import {formLabelMessages} from "../../../i18n/Messages/formLabelMessages";
+import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 
 const messages = defineMessages({
   formTitle: {
@@ -86,10 +86,9 @@ export default function SignupForm() {
     >
       <Form>
         <Box gap={'medium'}>
-          <Heading
-            level={4}
-            color="brand"
-          >{intl.formatMessage(messages.formTitle)}</Heading>
+          <Heading level={4} color="brand">
+            {intl.formatMessage(messages.formTitle)}
+          </Heading>
           <FormikInput name={'name'} label={intl.formatMessage(formLabelMessages.name)} />
           <FormikInput name={'email'} label={intl.formatMessage(messages.emailLabel)} />
           <FormikInput name={'username'} label={intl.formatMessage(messages.usernameLabel)} />

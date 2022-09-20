@@ -64,14 +64,12 @@ export default function LoginForm() {
     >
       <Form>
         <Box gap={'xsmall'}>
-          <Heading
-            level={4}
-            color="brand"
-          >{intl.formatMessage(messages.formTitle)}</Heading>
-          <Text
-            color="brand"
-            margin={{ bottom: 'medium' }}
-          >{intl.formatMessage(messages.formExplanation)}</Text>
+          <Heading level={4} color="brand">
+            {intl.formatMessage(messages.formTitle)}
+          </Heading>
+          <Text color="brand" margin={{ bottom: 'medium' }}>
+            {intl.formatMessage(messages.formExplanation)}
+          </Text>
         </Box>
         <Box gap={'medium'}>
           <FormikInput name={'username'} label={intl.formatMessage(messages.usernameLabel)} />
