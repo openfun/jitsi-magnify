@@ -1,7 +1,7 @@
 import { Button, TextInput } from 'grommet';
+import { View, Hide } from 'grommet-icons';
 import { MarginType } from 'grommet/utils';
 import React, { useState } from 'react';
-import { View, Hide } from 'grommet-icons';
 import Fieldset from '../Fieldset';
 
 export interface TextFieldProps {
@@ -68,20 +68,20 @@ export default function TextField<T>({
 
   return (
     <Fieldset
+      displayErrors={displayErrors}
+      errors={errors}
       label={label}
+      margin={margin}
       name={name}
       required={required}
-      displayErrors={displayErrors}
-      margin={margin}
-      errors={errors}
     >
       <TextInput
-        name={name}
         id={name}
-        value={value}
+        name={name}
         onChange={onChange}
         style={{ border: 'none' }}
         type={type === 'password' ? (revealPassword ? 'text' : 'password') : type}
+        value={value}
       />
       {type === 'password' && (
         <Button

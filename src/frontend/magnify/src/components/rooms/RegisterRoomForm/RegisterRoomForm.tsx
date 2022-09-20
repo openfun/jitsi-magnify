@@ -1,13 +1,13 @@
-import { defineMessages, useIntl } from 'react-intl';
-import React, { useMemo } from 'react';
 import { Form, Formik } from 'formik';
-import * as Yup from 'yup';
-import FormikInput from '../../design-system/Formik/Input';
-import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
+import React, { useMemo } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import { useMutation, useQueryClient } from 'react-query';
-import { Room } from '../../../types/room';
+import * as Yup from 'yup';
 import { useController } from '../../../controller';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
+import { Room } from '../../../types/room';
+import FormikInput from '../../design-system/Formik/Input';
+import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
 const messages = defineMessages({
   namePlaceholder: {
@@ -66,14 +66,14 @@ const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={validationSchema}
       onSubmit={handleSubmit}
+      validationSchema={validationSchema}
     >
       <Form>
         <FormikInput
+          label={intl.formatMessage(formLabelMessages.name)}
           name={'name'}
           placeholder={intl.formatMessage(messages.namePlaceholder)}
-          label={intl.formatMessage(formLabelMessages.name)}
         />
         <FormikSubmitButton label={intl.formatMessage(messages.registerRoomSubmitLabel)} />
       </Form>

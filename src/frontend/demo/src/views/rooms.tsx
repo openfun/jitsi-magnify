@@ -3,9 +3,9 @@ import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
   roomsViewTitle: {
-    id: 'app.roomsViewTitle',
-    description: 'Page title for the My rooms page',
     defaultMessage: 'My rooms',
+    description: 'Page title for the My rooms page',
+    id: 'app.roomsViewTitle',
   },
 });
 

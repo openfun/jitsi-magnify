@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import GroupUserList from './GroupUserList';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'Groups/GroupUserList',

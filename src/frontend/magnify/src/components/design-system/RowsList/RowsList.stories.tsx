@@ -1,6 +1,5 @@
-import React from 'react';
-import RowsList, { RowsListProps } from './RowsList';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 import {
   exampleActions,
   ExampleHeader,
@@ -8,6 +7,7 @@ import {
   ExampleRowProps,
   MinimalExampleRow,
 } from './DemoComponents';
+import RowsList, { RowsListProps } from './RowsList';
 
 export default {
   title: 'DesignSystem/RowsList',

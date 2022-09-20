@@ -1,11 +1,11 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react';
-import MeetingDisambiguation from './MeetingDisambiguation';
 import { createMeetingInProgress } from '../../../factories/meeting';
 import createRandomRoom from '../../../factories/room';
 import withToken from '../../../factories/withToken';
+import MeetingDisambiguation from './MeetingDisambiguation';
 
 describe('MeetingDisambiguation', () => {
   it('should render only meetings if it is not possible to join the room itself', async () => {
@@ -19,8 +19,8 @@ describe('MeetingDisambiguation', () => {
     render(
       <IntlProvider locale="en">
         <MeetingDisambiguation
-          roomSlug="my-room"
           possibilities={possibilities}
+          roomSlug="my-room"
           setCurrent={setCurrent}
         />
       </IntlProvider>,
@@ -46,8 +46,8 @@ describe('MeetingDisambiguation', () => {
     render(
       <IntlProvider locale="en">
         <MeetingDisambiguation
-          roomSlug="my-room"
           possibilities={possibilities}
+          roomSlug="my-room"
           setCurrent={setCurrent}
         />
       </IntlProvider>,

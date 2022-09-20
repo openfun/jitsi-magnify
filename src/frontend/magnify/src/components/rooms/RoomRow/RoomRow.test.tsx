@@ -1,13 +1,13 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import RoomRow from './RoomRow';
-import createRandomRoom from '../../../factories/room';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import DebugRoute from '../../../utils/DebugRoute';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { ControllerProvider, MockController } from '../../../controller';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { ControllerProvider, MockController } from '../../../controller';
+import createRandomRoom from '../../../factories/room';
+import DebugRoute from '../../../utils/DebugRoute';
+import RoomRow from './RoomRow';
 
 describe('RoomRow', () => {
   it('should render the row indicating that user is admin', async () => {
@@ -24,8 +24,8 @@ describe('RoomRow', () => {
           <QueryClientProvider client={queryClient}>
             <MemoryRouter>
               <Routes>
-                <Route path="/" element={<RoomRow room={room} baseJitsiUrl="/" />} />
-                <Route path="*" element={<DebugRoute />} />
+                <Route element={<RoomRow baseJitsiUrl="/" room={room} />} path="/" />
+                <Route element={<DebugRoute />} path="*" />
               </Routes>
             </MemoryRouter>
           </QueryClientProvider>

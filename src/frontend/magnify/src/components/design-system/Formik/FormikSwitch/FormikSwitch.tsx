@@ -1,6 +1,6 @@
+import { useField, useFormikContext } from 'formik';
 import * as React from 'react';
 import { ChangeEvent, FunctionComponent } from 'react';
-import { useField, useFormikContext } from 'formik';
 import Toggle, { ToggleProps } from '../../Toggle';
 
 export interface FormikSwitchProps extends ToggleProps {
@@ -16,7 +16,7 @@ const FormikSwitch: FunctionComponent<FormikSwitchProps> = ({ ...props }) => {
   };
 
   return (
-    <Toggle {...field} {...props} checked={field.value} variant="primary" onChange={onChange} />
+    <Toggle {...field} {...props} checked={field.value} onChange={onChange} variant="primary" />
   );
 };
 

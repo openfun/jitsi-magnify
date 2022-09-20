@@ -1,9 +1,9 @@
-import React from 'react';
-import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
-import RowsList from './RowsList';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
 import { exampleActions, ExampleHeader, ExampleRow, MinimalExampleRow } from './DemoComponents';
+import RowsList from './RowsList';
 
 // Mocks
 const mockedRows = [
@@ -18,14 +18,14 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Header={ExampleHeader}
+          Row={ExampleRow}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          Header={ExampleHeader}
         />
       </IntlProvider>,
     );
@@ -54,46 +54,50 @@ describe('RowsList', () => {
     expect(screen.queryByRole('menu', { name: 'Actions' })).not.toBeInTheDocument();
   });
 
-  it('should allow and pluralize buttons according to the number of examples selected', async () => {
-    const user = userEvent.setup();
-    render(
-      <IntlProvider locale="en">
-        <RowsList
-          label={{
-            id: 'examples.label',
-            defaultMessage:
-              '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
-          }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          Header={ExampleHeader}
-          actions={exampleActions}
-          actionsLabel="Actions"
-        />
-      </IntlProvider>,
-    );
+  it(
+    'should allow and pluralize buttons according' + ' to the number of examples selected',
+    async () => {
+      const user = userEvent.setup();
+      render(
+        <IntlProvider locale="en">
+          <RowsList
+            Header={ExampleHeader}
+            Row={ExampleRow}
+            actions={exampleActions}
+            actionsLabel="Actions"
+            rows={mockedRows}
+            label={{
+              id: 'examples.label',
+              defaultMessage:
+                '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} ' +
+                'other {examples}}',
+            }}
+          />
+        </IntlProvider>,
+      );
 
-    // Initial state: all checkboxes are unchecked; the number of examples is displayed
-    const checkboxes = screen.getAllByRole('checkbox', { name: 'Select' });
-    const actionMenu = screen.getByRole('menu', { name: 'Actions' });
+      // Initial state: all checkboxes are unchecked; the number of examples is displayed
+      const checkboxes = screen.getAllByRole('checkbox', { name: 'Select' });
+      const actionMenu = screen.getByRole('menu', { name: 'Actions' });
 
-    // No example selected: All actions are singular and disabled
-    await user.click(actionMenu);
-    expect(screen.getByText('Delete 0 example').parentElement).toBeDisabled();
-    expect(screen.getByText('Edit').parentElement).toBeDisabled();
+      // No example selected: All actions are singular and disabled
+      await user.click(actionMenu);
+      expect(screen.getByText('Delete 0 example').parentElement).toBeDisabled();
+      expect(screen.getByText('Edit').parentElement).toBeDisabled();
 
-    // 1 example selected: All actions are singular and enabled
-    await user.click(checkboxes[1]);
-    await user.click(actionMenu);
-    expect(screen.getByText('Delete 1 example').parentElement).not.toBeDisabled();
-    expect(screen.getByText('Edit').parentElement).not.toBeDisabled();
+      // 1 example selected: All actions are singular and enabled
+      await user.click(checkboxes[1]);
+      await user.click(actionMenu);
+      expect(screen.getByText('Delete 1 example').parentElement).not.toBeDisabled();
+      expect(screen.getByText('Edit').parentElement).not.toBeDisabled();
 
-    // 2 examples selected: All actions are plural and enabled
-    await user.click(checkboxes[2]);
-    await user.click(actionMenu);
-    expect(screen.getByText('Delete 2 examples').parentElement).not.toBeDisabled();
-    expect(screen.getByText('Edit').parentElement).toBeDisabled();
-  });
+      // 2 examples selected: All actions are plural and enabled
+      await user.click(checkboxes[2]);
+      await user.click(actionMenu);
+      expect(screen.getByText('Delete 2 examples').parentElement).not.toBeDisabled();
+      expect(screen.getByText('Edit').parentElement).toBeDisabled();
+    },
+  );
 
   it('should display actions and add button if provided', async () => {
     const onAdd = jest.fn();
@@ -109,18 +113,18 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Header={ExampleHeader}
+          Row={ExampleRow}
+          actions={mockedActions}
+          actionsLabel="Actions"
+          addLabel="Add example"
+          onAdd={onAdd}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          Header={ExampleHeader}
-          actions={mockedActions}
-          actionsLabel="Actions"
-          addLabel="Add example"
-          onAdd={onAdd}
         />
       </IntlProvider>,
     );
@@ -155,14 +159,14 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Row={ExampleRow}
+          actions={exampleActions}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          actions={exampleActions}
         />
       </IntlProvider>,
     );
@@ -174,14 +178,14 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Row={ExampleRow}
+          onAdd={() => {}}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={ExampleRow}
-          onAdd={() => {}}
         />
       </IntlProvider>,
     );
@@ -193,13 +197,13 @@ describe('RowsList', () => {
     render(
       <IntlProvider locale="en">
         <RowsList
+          Row={MinimalExampleRow}
+          rows={mockedRows}
           label={{
             id: 'examples.label',
             defaultMessage:
               '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
           }}
-          rows={mockedRows}
-          Row={MinimalExampleRow}
         />
       </IntlProvider>,
     );

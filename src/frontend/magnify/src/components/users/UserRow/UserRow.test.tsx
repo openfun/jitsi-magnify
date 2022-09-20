@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
 import { createRandomGroupMember } from '../../../factories/member';
 import UserRow from './UserRow';
-import userEvent from '@testing-library/user-event';
 
 describe('UserRow', () => {
   it('should render a non admn user', () => {
@@ -26,7 +26,7 @@ describe('UserRow', () => {
 
     render(
       <IntlProvider locale="en">
-        <UserRow user={user} isAdmin />
+        <UserRow isAdmin user={user} />
       </IntlProvider>,
     );
 
@@ -43,7 +43,7 @@ describe('UserRow', () => {
 
     render(
       <IntlProvider locale="en">
-        <UserRow user={displayedUser} onToggle={onToggle} />
+        <UserRow onToggle={onToggle} user={displayedUser} />
       </IntlProvider>,
     );
 

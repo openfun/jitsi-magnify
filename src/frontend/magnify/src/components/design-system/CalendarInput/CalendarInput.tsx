@@ -1,9 +1,9 @@
-import { useIntl } from 'react-intl';
-import React from 'react';
 import { DateInput, Text } from 'grommet';
-import { CalEventSVG } from '../svg-icons';
 import { MarginType } from 'grommet/utils';
+import React from 'react';
+import { useIntl } from 'react-intl';
 import Fieldset from '../Fieldset';
+import { CalEventSVG } from '../svg-icons';
 
 export interface CalendarInputProps {
   label: string;
@@ -17,8 +17,8 @@ const CalendarInput = ({ margin, label, name, value, onChange }: CalendarInputPr
   const intl = useIntl();
 
   return (
-    <Fieldset label={label} name={name} margin={margin}>
-      <DateInput value={value} onChange={onChange} icon={<CalEventSVG color="brand" />} />
+    <Fieldset label={label} margin={margin} name={name}>
+      <DateInput icon={<CalEventSVG color="brand" />} onChange={onChange} value={value} />
       <Text color="brand" margin={{ vertical: 'auto' }}>
         {intl.formatDate(new Date(value?.[0]))} - {intl.formatDate(new Date(value?.[1]))}
       </Text>

@@ -1,8 +1,8 @@
-import React from 'react';
-import DeleteAccountBlock from './DeleteAccountBlock';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 import InjectFakeUser from '../../../utils/InjectFakeUser';
 import { UserMenu } from '../../auth';
+import DeleteAccountBlock from './DeleteAccountBlock';
 
 export default {
   title: 'profile/DeleteAccountBlock',

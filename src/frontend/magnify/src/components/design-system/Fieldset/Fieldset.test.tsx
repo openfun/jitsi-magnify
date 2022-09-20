@@ -1,19 +1,19 @@
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
 import Fieldset from './Fieldset';
-import { render, screen } from '@testing-library/react';
 
 describe('Fieldset', () => {
   it('should render successfully a fieldset-like div with a label', () => {
     render(
       <IntlProvider locale="en">
         <Fieldset
-          name="test input"
+          required
+          displayErrors={true}
+          errors={['error1', 'error2']}
           label="test label"
           margin="small"
-          errors={['error1', 'error2']}
-          displayErrors={true}
-          required
+          name="test input"
         >
           Hello
         </Fieldset>

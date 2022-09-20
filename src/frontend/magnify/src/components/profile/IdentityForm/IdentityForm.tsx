@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import * as Yup from 'yup';
-import { defineMessages, useIntl } from 'react-intl';
 import { Form, Formik } from 'formik';
 import { Box } from 'grommet';
-import FormikInput from '../../design-system/Formik/Input';
-import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
+import React, { useMemo } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import * as Yup from 'yup';
 import { validationMessages } from '../../../i18n/Messages';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
+import FormikInput from '../../design-system/Formik/Input';
+import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
 export interface IdentityFormProps {
   id?: string;
@@ -59,16 +59,16 @@ export default function IdentityForm({ id, name, username, email }: IdentityForm
 
   return (
     <Formik
-      validateOnChange={true}
       initialValues={{ name, username, email }}
-      validationSchema={validationSchema}
       onSubmit={handleSubmit}
+      validateOnChange={true}
+      validationSchema={validationSchema}
     >
       <Form>
-        <Box gap={'10px'}>
-          <FormikInput name={'name'} label={intl.formatMessage(formLabelMessages.name)} />
-          <FormikInput name={'username'} label={intl.formatMessage(messages.usernameLabel)} />
-          <FormikInput name={'email'} label={intl.formatMessage(messages.emailLabel)} />
+        <Box gap="10px">
+          <FormikInput label={intl.formatMessage(formLabelMessages.name)} name="name" />
+          <FormikInput label={intl.formatMessage(messages.usernameLabel)} name="username" />
+          <FormikInput label={intl.formatMessage(messages.emailLabel)} name="email" />
           <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />
         </Box>
       </Form>

@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import PasswordUpdateBlock from './PasswordUpdateBlock';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'profile/PasswordUpdateBlock',

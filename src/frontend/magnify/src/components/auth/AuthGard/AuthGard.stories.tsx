@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import AuthGard from './AuthGard';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'Auth/AuthGard',

@@ -13,15 +13,15 @@ const CreateMeetingInRoomDialog = ({ open, onClose, roomSlug }: CreateMeetingInR
   if (!open) return null;
   return (
     <Layer
+      modal
       id="confirmDelete"
-      position="center"
       onClickOutside={onClose}
       onEsc={onClose}
+      position="center"
       role="dialog"
-      modal
     >
-      <Box pad="medium" width="large" overflow={'auto'}>
-        <CreateMeetingForm roomSlug={roomSlug} onCancel={onClose} onSuccess={onClose} />
+      <Box overflow={'auto'} pad="medium" width="large">
+        <CreateMeetingForm onCancel={onClose} onSuccess={onClose} roomSlug={roomSlug} />
       </Box>
     </Layer>
   );

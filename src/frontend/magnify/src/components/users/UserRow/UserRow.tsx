@@ -1,9 +1,9 @@
 import { Box, Card, CheckBox, Grid, Tag, Text } from 'grommet';
+import { Star } from 'grommet-icons';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Member } from '../../../types/member';
 import { SquareAvatar } from '../../design-system';
-import { Star } from 'grommet-icons';
 
 export interface UserRowProps {
   user: Member;
@@ -31,13 +31,16 @@ export default function UserRow({
   return (
     <Card
       background="light-2"
-      pad="small"
+      direction="row"
       elevation="0"
       margin={{ bottom: '10px' }}
-      direction="row"
+      pad="small"
     >
       <Grid
+        fill
+        align="center"
         columns={['auto', 'auto', 'auto', 'flex', 'auto']}
+        gap="small"
         rows={['auto']}
         areas={[
           { name: 'actions', start: [0, 0], end: [0, 0] },
@@ -46,9 +49,6 @@ export default function UserRow({
           { name: 'name', start: [3, 0], end: [3, 0] },
           { name: 'admin', start: [4, 0], end: [4, 0] },
         ]}
-        gap="small"
-        align="center"
-        fill
       >
         {onToggle && (
           <Box gridArea="actions">
@@ -58,7 +58,7 @@ export default function UserRow({
           </Box>
         )}
 
-        <Box gridArea="adminStar" width="24px" align="center">
+        <Box align="center" gridArea="adminStar" width="24px">
           {isAdmin && <Star color="brand" />}
         </Box>
 
@@ -75,8 +75,8 @@ export default function UserRow({
         <Box gridArea="admin">
           {isAdmin && (
             <Tag
-              value={intl.formatMessage(messages.admin)}
               as={(p) => <Text color="brand" {...p} />}
+              value={intl.formatMessage(messages.admin)}
             />
           )}
         </Box>

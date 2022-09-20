@@ -1,14 +1,14 @@
-import { defineMessages, useIntl } from 'react-intl';
-import React, { useRef } from 'react';
 import { JitsiMeeting as JitsiMeetingIframe } from '@jitsi/react-sdk';
 import IJitsiMeetExternalApi from '@jitsi/react-sdk/lib/types/IJitsiMeetExternalApi';
+import { Box, Button, Stack } from 'grommet';
+import React, { useRef } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 
 import { useController } from '../../../controller';
-import { Box, Button, Stack } from 'grommet';
+import { Nullable } from '../../../types/misc';
 import MeetingDisambiguation from '../MeetingDisambiguation';
 import { PossibleIFrameAccess } from '../MeetingDisambiguation/MeetingDisambiguation';
-import { Nullable } from '../../../types/misc';
 import { JitsiMeetingExamplePanel } from './JitsiMeetingExamplePanel';
 
 export interface JitsiMeetingProps {
@@ -106,8 +106,8 @@ const JitsiMeeting = ({ roomSlug, meetingId, jitsiDomain }: JitsiMeetingProps) =
   // Render
   return (
     <Box direction="row">
-      {openPanel && <JitsiMeetingExamplePanel users={users} groups={groups || []} />}
-      <Box width="100vw" height="100vh">
+      {openPanel && <JitsiMeetingExamplePanel groups={groups || []} users={users} />}
+      <Box height="100vh" width="100vw">
         {!current && data && data.length > 1 && roomSlug && (
           <MeetingDisambiguation
             possibilities={data}
@@ -119,24 +119,24 @@ const JitsiMeeting = ({ roomSlug, meetingId, jitsiDomain }: JitsiMeetingProps) =
           <Stack anchor="bottom-left">
             <JitsiMeetingIframe
               domain={jitsiDomain}
-              roomName={jitsiMeetingSettings.roomName}
-              onApiReady={handleApiReady}
               getIFrameRef={handleIFrameLoaded}
+              jwt={jitsiMeetingSettings.jwt}
+              onApiReady={handleApiReady}
+              roomName={jitsiMeetingSettings.roomName}
               configOverwrite={{
                 subject: jitsiMeetingSettings.roomSubject,
               }}
-              jwt={jitsiMeetingSettings.jwt}
             />
             <Box margin="small">
               <Button
+                primary
+                color="#040404"
+                onClick={() => setOpenPanel((pOpen) => !pOpen)}
                 label={
                   openPanel
                     ? intl.formatMessage(messages.closeMagnifyPanel)
                     : intl.formatMessage(messages.openMagnifyPanel)
                 }
-                primary
-                color="#040404"
-                onClick={() => setOpenPanel((pOpen) => !pOpen)}
               />
             </Box>
           </Stack>

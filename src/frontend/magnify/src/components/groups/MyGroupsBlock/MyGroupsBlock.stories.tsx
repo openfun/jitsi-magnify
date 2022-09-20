@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import MyGroupsBlock from './MyGroupsBlock';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'Groups/MyGroupsBlock',

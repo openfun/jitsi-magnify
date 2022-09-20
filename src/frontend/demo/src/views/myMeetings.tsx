@@ -3,9 +3,9 @@ import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
   meetingsViewTitle: {
-    id: 'app.meetingsViewTitle',
-    description: 'Page title for the My meetings page',
     defaultMessage: 'My meetings',
+    description: 'Page title for the My meetings page',
+    id: 'app.meetingsViewTitle',
   },
 });
 

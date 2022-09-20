@@ -1,8 +1,8 @@
-import React from 'react';
-import FormikInput from './FormikInput';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
 import withFormik from '@bbbtech/storybook-formik';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 import * as Yup from 'yup';
+import FormikInput from './FormikInput';
 
 const defaultSchema = Yup.object().shape({
   username: Yup.string().min(40, 'Too Short!').max(50, 'Too Long!'),

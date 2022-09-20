@@ -1,8 +1,8 @@
-import React from 'react';
 import { Box, Card, Grid, Heading, Text } from 'grommet';
-import PasswordUpdateForm from '../PasswordUpdateForm';
-import { defineMessages, useIntl } from 'react-intl';
 import { MarginType } from 'grommet/utils';
+import React from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import PasswordUpdateForm from '../PasswordUpdateForm';
 
 export interface PasswordUpdateBlockProps {
   margin?: MarginType;
@@ -29,15 +29,15 @@ export default function PasswordUpdateBlock({
   const intl = useIntl();
   return (
     <Card background="white" margin={margin}>
-      <Box margin="small" direction="row">
+      <Box direction="row" margin="small">
         <Grid
           columns={['flex', 'flex']}
+          gap="small"
           rows={['flex']}
           areas={[
             { name: 'header', start: [0, 0], end: [0, 0] },
             { name: 'body', start: [1, 0], end: [1, 0] },
           ]}
-          gap="small"
         >
           <Box gridArea="header" margin="large">
             <Heading color="brand" level={3}>

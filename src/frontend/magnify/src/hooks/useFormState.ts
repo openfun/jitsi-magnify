@@ -43,7 +43,8 @@ interface UseFormState<T extends Record<string, string | boolean | number>> {
  *          - [] if the field is valid
  *          - ["error message"] if the field as an error
  *          - ["err1", "err2"] if the field as multiple errors
- *      As input, each validator receive the new value of the field, and the values of all other fields.
+ *      As input, each validator receive the new value of the field, and the values of all other
+ *      fields.
  *      Currently, this support state where each field is a string, a boolead, or a number.
  * @returns UseFormState
  */

@@ -1,11 +1,11 @@
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import AddUserForm from './AddUserForm';
-import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import userEvent from '@testing-library/user-event';
 import { ControllerProvider, MockController } from '../../../controller';
 import createRandomGroup from '../../../factories/group';
+import AddUserForm from './AddUserForm';
 
 describe('AddUserForm', () => {
   it('should render successfully', async () => {

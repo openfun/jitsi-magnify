@@ -1,10 +1,10 @@
-import { defineMessages } from 'react-intl';
 import React from 'react';
-import { useController } from '../../../controller';
+import { defineMessages } from 'react-intl';
 import { useQuery } from 'react-query';
+import { useController } from '../../../controller';
 import { RowsList } from '../../design-system';
-import RoomRow from '../RoomRow';
 import RegisterRoom from '../RegisterRoom';
+import RoomRow from '../RoomRow';
 
 export interface MyRoomsProps {
   baseJitsiUrl: string;
@@ -24,11 +24,11 @@ const MyRooms = ({ baseJitsiUrl }: MyRoomsProps) => {
 
   return (
     <RowsList
+      Header={RegisterRoom}
+      Row={({ room }) => <RoomRow baseJitsiUrl={baseJitsiUrl} room={room} />}
+      isLoading={isLoading}
       label={messages.roomsListLabel}
       rows={(rooms || []).map((room) => ({ room, id: room.id }))}
-      Row={({ room }) => <RoomRow room={room} baseJitsiUrl={baseJitsiUrl} />}
-      isLoading={isLoading}
-      Header={RegisterRoom}
     />
   );
 };

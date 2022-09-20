@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { FunctionComponent } from 'react';
 import { Card, CardBody, CardHeader, Heading } from 'grommet';
 import { BoxTypes } from 'grommet/components/Box';
+import * as React from 'react';
+import { FunctionComponent } from 'react';
 
 export interface MagnifyCardProps extends BoxTypes {
   title?: string;

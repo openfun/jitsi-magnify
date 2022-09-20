@@ -9,9 +9,9 @@ import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
   profileViewTitle: {
-    id: 'app.profileViewTitle',
-    description: 'Page title for the profile page',
     defaultMessage: 'My account',
+    description: 'Page title for the profile page',
+    id: 'app.profileViewTitle',
   },
 });
 

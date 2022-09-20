@@ -36,18 +36,18 @@ export default function GroupsHeader({ groupsSelected, setGroupsSelected }: Grou
   const numberOfGroups = Object.keys(groupsSelected).length;
 
   return (
-    <Card background="light-3" pad="small" elevation="0" margin={{ bottom: '10px' }}>
+    <Card background="light-3" elevation="0" margin={{ bottom: '10px' }} pad="small">
       <Grid
         fill
+        columns={['xxsmall', 'flex']}
+        gap="small"
+        rows={['flex']}
         areas={[
           { name: 'action', start: [0, 0], end: [0, 0] },
           { name: 'title', start: [1, 0], end: [1, 0] },
         ]}
-        columns={['xxsmall', 'flex']}
-        rows={['flex']}
-        gap="small"
       >
-        <Box gridArea="action" align="center">
+        <Box align="center" gridArea="action">
           <Box margin="auto">
             <CheckBox
               checked={numberChecked === numberOfGroups}
@@ -59,7 +59,7 @@ export default function GroupsHeader({ groupsSelected, setGroupsSelected }: Grou
         </Box>
         <Box gridArea="title">
           <Box margin="auto 0px">
-            <Text size="medium" color="brand" weight="bold">
+            <Text color="brand" size="medium" weight="bold">
               {intl.formatMessage(messages.selectAllHeaderLabel)}
             </Text>
           </Box>

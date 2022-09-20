@@ -27,12 +27,12 @@ gridContentSection.args = {
   title: 'Grid Section',
   children: (
     <Grid columns={{ count: 'fit', size: 'small' }} gap="medium">
-      <Box height="150px" background="light-4" />
-      <Box height="150px" background="light-4" />
-      <Box height="150px" background="light-4" />
-      <Box height="150px" background="light-4" />
-      <Box height="150px" background="light-4" />
-      <Box height="150px" background="light-4" />
+      <Box background="light-4" height="150px" />
+      <Box background="light-4" height="150px" />
+      <Box background="light-4" height="150px" />
+      <Box background="light-4" height="150px" />
+      <Box background="light-4" height="150px" />
+      <Box background="light-4" height="150px" />
     </Grid>
   ),
 };

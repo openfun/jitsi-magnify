@@ -3,15 +3,15 @@ import { Box, Text } from 'grommet';
 import { defineMessages, useIntl } from 'react-intl';
 
 const messages = defineMessages({
-  notFoundTitle: {
-    id: 'app.notFoundTitle',
-    description: 'Page title for the 404 page',
-    defaultMessage: 'Page not found',
-  },
   notFoundMessage: {
-    id: 'app.notFoundMessage',
-    description: 'Message for the 404 page',
     defaultMessage: 'We are sorry, the page you are looking for does not exist.',
+    description: 'Message for the 404 page',
+    id: 'app.notFoundMessage',
+  },
+  notFoundTitle: {
+    defaultMessage: 'Page not found',
+    description: 'Page title for the 404 page',
+    id: 'app.notFoundTitle',
   },
 });
 

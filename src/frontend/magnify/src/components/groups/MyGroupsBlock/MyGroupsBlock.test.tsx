@@ -1,11 +1,11 @@
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import MyGroupsBlock from './MyGroupsBlock';
-import { render, screen } from '@testing-library/react';
-import { ControllerProvider, MockController } from '../../../controller';
-import createRandomGroups from '../../../factories/groups';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router-dom';
+import { ControllerProvider, MockController } from '../../../controller';
+import createRandomGroups from '../../../factories/groups';
+import MyGroupsBlock from './MyGroupsBlock';
 
 describe('MyGroupsBlock', () => {
   it('should load a list of groups', async () => {

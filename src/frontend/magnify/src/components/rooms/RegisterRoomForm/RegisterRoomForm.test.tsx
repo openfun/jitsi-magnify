@@ -1,12 +1,12 @@
-import React from 'react';
-import { IntlProvider } from 'react-intl';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { IntlProvider } from 'react-intl';
 
-import RegisterRoomForm from './RegisterRoomForm';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { ControllerProvider, MockController } from '../../../controller';
 import createRandomRoom from '../../../factories/room';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import RegisterRoomForm from './RegisterRoomForm';
 
 describe('RegisterRoomForm', () => {
   it('should be possible to submit the form', async () => {

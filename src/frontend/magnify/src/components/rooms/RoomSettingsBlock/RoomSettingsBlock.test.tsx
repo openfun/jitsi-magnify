@@ -46,7 +46,7 @@ describe('RoomSettingsBlock', () => {
     const room = createRandomRoom();
     render(
       <SettingWrapper controller={controller}>
-        <RoomSettingsBlock title="Settings" room={room} roomName={room.name} toggles={[]} />
+        <RoomSettingsBlock room={room} roomName={room.name} title="Settings" toggles={[]} />
       </SettingWrapper>,
     );
     expect(screen.getByText('Settings')).toBeInTheDocument();
@@ -59,9 +59,9 @@ describe('RoomSettingsBlock', () => {
     render(
       <SettingWrapper controller={controller}>
         <RoomSettingsBlock
-          title="Settings"
           room={room}
           roomName={room.name}
+          title="Settings"
           toggles={[
             [
               { label: 'Chat Toggle', settingKey: 'chatEnabled' },

@@ -36,12 +36,14 @@ const messages = defineMessages({
     id: 'components.groups.GroupsList.renameGroupButtonLabel',
   },
   createRoomButtonLabel: {
-    defaultMessage: `Create room for {numberOfSelected, plural, =0 {group} one {group} other {groups}}`,
+    defaultMessage: `Create room for {numberOfSelected, plural, 
+    =0 {group} one {group} other {groups}}`,
     description: 'Call to action on the button to create a room for a group',
     id: 'components.groups.GroupsList.createRoomButtonLabel',
   },
   createMeetingButtonLabel: {
-    defaultMessage: `Create meeting for {numberOfSelected, plural, =0 {group} one {group} other {groups}}`,
+    defaultMessage: `Create meeting for {numberOfSelected, plural, =0 {group} one {group} 
+    other {groups}}`,
     description: 'Call to action on the button to create a meeting for a group',
     id: 'components.groups.GroupsList.createMeetingButtonLabel',
   },
@@ -61,17 +63,17 @@ export default function GroupList({ groups }: GroupsListProps) {
   return (
     <>
       <RowsList
-        label={messages.numGroupsLabel}
-        addLabel={intl.formatMessage(messages.addGroupButtonLabel)}
-        onAdd={handleOpenGroupForm}
         actionsLabel={intl.formatMessage(messages.actionGroupLabel)}
+        addLabel={intl.formatMessage(messages.addGroupButtonLabel)}
+        label={messages.numGroupsLabel}
+        onAdd={handleOpenGroupForm}
+        rows={groups.map((group) => ({ group, id: group.id }))}
         Header={({ selected, setSelected }) => (
           <GroupsHeader groupsSelected={selected} setGroupsSelected={setSelected} />
         )}
         Row={({ group, selected, onToggle }) => (
-          <GroupRow group={group} selected={selected} onToggle={onToggle} />
+          <GroupRow group={group} onToggle={onToggle} selected={selected} />
         )}
-        rows={groups.map((group) => ({ group, id: group.id }))}
         actions={[
           { label: messages.deleteGroupButtonLabel, onClick: () => {}, disabled: (n) => n === 0 },
           { label: messages.renameGroupButtonLabel, onClick: () => {}, disabled: (n) => n !== 1 },

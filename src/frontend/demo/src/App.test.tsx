@@ -1,8 +1,8 @@
-import App from './App';
-import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { ControllerProvider, TranslationProvider, MockController } from '@jitsi-magnify/core';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { MemoryRouter } from 'react-router-dom';
+import App from './App';
 
 describe('App', () => {
   it('renders the test button', async () => {
@@ -11,7 +11,7 @@ describe('App', () => {
     controller.getExamples.mockResolvedValue([]);
     controller._jwt = 'access-token';
     render(
-      <TranslationProvider locale="en-US" defaultLocale="en-US" messages={{}}>
+      <TranslationProvider defaultLocale="en-US" locale="en-US" messages={{}}>
         <ControllerProvider controller={controller}>
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter>

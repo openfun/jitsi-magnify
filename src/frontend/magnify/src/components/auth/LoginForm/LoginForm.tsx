@@ -1,10 +1,10 @@
+import { Form, Formik, FormikValues } from 'formik';
 import { Box, Heading, Text } from 'grommet';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { Form, Formik, FormikValues } from 'formik';
+import * as Yup from 'yup';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
-import * as Yup from 'yup';
 
 const messages = defineMessages({
   formTitle: {
@@ -59,12 +59,12 @@ export default function LoginForm() {
   return (
     <Formik
       initialValues={{ username: '', password: '' }}
-      validationSchema={validationSchema}
       onSubmit={handleSubmit}
+      validationSchema={validationSchema}
     >
       <Form>
         <Box gap={'xsmall'}>
-          <Heading level={4} color="brand">
+          <Heading color="brand" level={4}>
             {intl.formatMessage(messages.formTitle)}
           </Heading>
           <Text color="brand" margin={{ bottom: 'medium' }}>
@@ -72,11 +72,11 @@ export default function LoginForm() {
           </Text>
         </Box>
         <Box gap={'medium'}>
-          <FormikInput name={'username'} label={intl.formatMessage(messages.usernameLabel)} />
+          <FormikInput label={intl.formatMessage(messages.usernameLabel)} name={'username'} />
           <FormikInput
+            label={intl.formatMessage(messages.passwordLabel)}
             name={'password'}
             type={'password'}
-            label={intl.formatMessage(messages.passwordLabel)}
           />
           <Box direction="row" justify="end" margin={{ top: 'small' }}>
             <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />

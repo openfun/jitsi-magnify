@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import RegisterRoomForm from './RegisterRoomForm';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'Rooms/RegisterRoomForm',

@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import userEvent from '@testing-library/user-event';
-import AuthForms from './AuthForms';
-import { ControllerProvider, MockController } from '../../../controller';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ControllerProvider, MockController } from '../../../controller';
+import AuthForms from './AuthForms';
 
 describe('AuthForms', () => {
   it('renders the login form by default', async () => {

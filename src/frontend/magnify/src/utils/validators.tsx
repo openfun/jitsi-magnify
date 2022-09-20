@@ -1,6 +1,6 @@
 import { IntlShape } from 'react-intl';
-import { validationMessages } from '../i18n/Messages';
 import validator from 'validator';
+import { validationMessages } from '../i18n/Messages';
 
 export type Validator<T> = (intl: IntlShape) => (value: string, others: T) => string[];
 

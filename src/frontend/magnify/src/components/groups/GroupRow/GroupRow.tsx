@@ -1,9 +1,9 @@
 import { Avatar, Box, Card, CheckBox, Grid, ResponsiveContext, Text } from 'grommet';
-import React, { ChangeEvent, useContext } from 'react';
 import { More } from 'grommet-icons';
+import React, { ChangeEvent, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { Group } from '../../../types/group';
 import { SquareAvatar } from '../../design-system';
-import { Link } from 'react-router-dom';
 
 export interface GroupRowProps {
   /**
@@ -36,20 +36,20 @@ export default function GroupRow({ group, onToggle, selected }: GroupRowProps) {
     }[screenSize] || 9;
 
   return (
-    <Card background="light-2" pad="small" elevation="0" margin={{ bottom: '10px' }}>
+    <Card background="light-2" elevation="0" margin={{ bottom: '10px' }} pad="small">
       <Grid
         fill
+        columns={['xxsmall', 'flex', 'flex', 'xsmall']}
+        gap="small"
+        rows={['flex']}
         areas={[
           { name: 'action', start: [0, 0], end: [0, 0] },
           { name: 'title', start: [1, 0], end: [1, 0] },
           { name: 'members', start: [2, 0], end: [2, 0] },
           { name: 'membersNumber', start: [3, 0], end: [3, 0] },
         ]}
-        columns={['xxsmall', 'flex', 'flex', 'xsmall']}
-        rows={['flex']}
-        gap="small"
       >
-        <Box gridArea="action" align="center">
+        <Box align="center" gridArea="action">
           <Box margin="auto">
             <CheckBox checked={selected} onChange={handleToggle} title="Select Group" />
           </Box>
@@ -57,36 +57,36 @@ export default function GroupRow({ group, onToggle, selected }: GroupRowProps) {
         <Box gridArea="title">
           <Box margin="auto 0px">
             <Link to={`/groups/${group.id}`}>
-              <Text size="medium" color="brand" weight="bold">
+              <Text color="brand" size="medium" weight="bold">
                 {group.name}
               </Text>
             </Link>
           </Box>
         </Box>
         <Box
-          gridArea="members"
           direction="row"
           gap="small"
+          gridArea="members"
           justify="end"
           margin={{ vertical: 'auto' }}
         >
           {group.members.slice(0, numberOfDisplayedMembers).map((member) => (
-            <SquareAvatar src={member.avatar} key={member.id} title={member.name} />
+            <SquareAvatar key={member.id} src={member.avatar} title={member.name} />
           ))}
           {numberOfDisplayedMembers < group.members.length ? (
             <SquareAvatar
+              more
               title={group.members
                 .slice(numberOfDisplayedMembers)
                 .map((member) => member.name)
                 .join(', ')}
-              more
             />
           ) : (
             <SquareAvatar />
           )}
         </Box>
         <Box gridArea="membersNumber" justify="center">
-          <Avatar background="brand" margin="auto" pad="small" size="26px" round="xsmall">
+          <Avatar background="brand" margin="auto" pad="small" round="xsmall" size="26px">
             {group.members.length}
           </Avatar>
         </Box>

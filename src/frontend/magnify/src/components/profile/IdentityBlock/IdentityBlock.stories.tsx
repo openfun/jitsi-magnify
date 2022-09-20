@@ -1,7 +1,7 @@
-import React from 'react';
-import IdentityBlock from './IdentityBlock';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 import InjectFakeUser from '../../../utils/InjectFakeUser';
+import IdentityBlock from './IdentityBlock';
 
 export default {
   title: 'profile/IdentityBlock',
