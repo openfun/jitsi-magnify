@@ -1,0 +1,71 @@
+{
+        "extends": [
+                "eslint:recommended",
+                "plugin:jsx-a11y/recommended",
+                "plugin:prettier/recommended",
+                "plugin:react/recommended"
+        ],
+        "plugins": ["@typescript-eslint","import","jsx-a11y","react"],
+        "rules": {
+                "prettier/prettier": "error",
+                "arrow-body-style": "off",
+                "prefer-arrow-callback": "off",
+                "@typescript-eslint/no-unused-vars": "warn",
+                "import/order": ["warn", {
+                        "alphabetize": {
+                                "order": "asc",
+                                "caseInsensitive": true
+                        }
+                }],
+                "linebreak-style": "warn",
+                "no-duplicate-imports": "error",
+                "no-unused-vars": "off",
+                "react/jsx-uses-react": "off",
+                "react/prop-types": "off",
+                "react/react-in-jsx-scope": "off",
+                "sort-keys": ["warn", "asc", {"caseSensitive": true, "natural": true, "minKeys": 2}],
+                "max-len": ["error",
+                        {
+                                "code": 100,
+                                "ignoreUrls": true,
+                                "ignorePattern": "d=(\"|')([\\s\\S]*?)(\"|')"
+                        }],
+                "react/jsx-sort-props": [1, {
+                        "callbacksLast": false,
+                        "shorthandFirst": true,
+                        "multiline": "last",
+                        "ignoreCase": false,
+                        "noSortAlphabetically": false,
+                        "reservedFirst": true
+                }]
+        },
+        "parser": "@typescript-eslint/parser",
+        "parserOptions": {
+                "ecmaVersion": 2021,
+                "sourceType": "module",
+                "ecmaFeatures": {
+                        "jsx": true
+                }
+        },
+        "root": true,
+        "env": {
+                "browser": true,
+                "es6": true,
+                "jest": true,
+                "node": true
+        },
+        "settings": {
+                "import/resolver": {
+                        "node": {
+                                "extensions": [".js", ".jsx", ".ts", ".tsx"]
+                        }
+                },
+                "react": {
+                        "version": "detect"
+                }
+        },
+        "globals": {
+                "React": true,
+                "JSX": true
+        }
+}
