@@ -8,8 +8,7 @@ import { Grommet } from 'grommet';
 import { IntlProvider } from 'react-intl';
 
 import FormikSwitch from './FormikSwitch';
-import {FormikValuesChange} from "../ValuesChange/FormikValuesChange";
-
+import { FormikValuesChange } from '../ValuesChange/FormikValuesChange';
 
 interface TestFormProps {
   handleSubmit: (values: { testSwitch: boolean }) => void;
@@ -35,7 +34,7 @@ describe('FormikSwitch', () => {
   it('should render as a checkbox', async () => {
     let values: { testSwitch: boolean } = { testSwitch: true };
     render(<TestForm handleSubmit={(newValues) => (values = newValues)} />);
-    const switchButton = screen.getByRole('checkbox', {name: 'testSwitch'});
+    const switchButton = screen.getByRole('checkbox', { name: 'testSwitch' });
     expect(switchButton).toBeInTheDocument();
     expect(switchButton).not.toEqual(null);
     expect(switchButton.getAttribute('name')).toEqual('testSwitch');
@@ -46,7 +45,7 @@ describe('FormikSwitch', () => {
       values = newValues;
     };
     render(<TestForm handleSubmit={handleSubmit} />);
-    const switchButton = screen.getByRole('checkbox', {name: 'testSwitch'});
+    const switchButton = screen.getByRole('checkbox', { name: 'testSwitch' });
     act(() => {
       fireEvent.click(switchButton);
     });

@@ -9,7 +9,10 @@ interface FormikValuesChangeProps {
   children?: React.ReactNode;
 }
 
-export const FormikValuesChange: FunctionComponent<FormikValuesChangeProps> = ({debounceTime = 800, ...props }) => {
+export const FormikValuesChange: FunctionComponent<FormikValuesChangeProps> = ({
+  debounceTime = 800,
+  ...props
+}) => {
   const formik = useFormikContext();
   const onValuesChange = useDebouncedCallback(() => {
     if (props.enableSubmit == null || props.enableSubmit) {

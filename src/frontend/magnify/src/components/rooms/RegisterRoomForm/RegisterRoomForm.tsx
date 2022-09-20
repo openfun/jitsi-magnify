@@ -7,7 +7,7 @@ import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/Form
 import { useMutation, useQueryClient } from 'react-query';
 import { Room } from '../../../types/room';
 import { useController } from '../../../controller';
-import {formLabelMessages} from "../../../i18n/Messages/formLabelMessages";
+import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 
 const messages = defineMessages({
   namePlaceholder: {
@@ -54,7 +54,7 @@ const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
 
   const initialValues: RegisterRoomFormValues = useMemo(
     () => ({
-      name: ''
+      name: '',
     }),
     [],
   );

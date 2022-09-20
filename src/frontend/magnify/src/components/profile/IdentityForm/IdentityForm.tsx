@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, { useMemo } from 'react';
 import * as Yup from 'yup';
 import { defineMessages, useIntl } from 'react-intl';
 import { Form, Formik } from 'formik';
@@ -6,7 +6,7 @@ import { Box } from 'grommet';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 import { validationMessages } from '../../../i18n/Messages';
-import {formLabelMessages} from "../../../i18n/Messages/formLabelMessages";
+import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 
 export interface IdentityFormProps {
   id?: string;
@@ -46,9 +46,9 @@ export default function IdentityForm({ id, name, username, email }: IdentityForm
     return Yup.object().shape({
       name: Yup.string().required(),
       username: Yup.string()
-          .min(3, intl.formatMessage(validationMessages.usernameInvalid))
-          .max(16, intl.formatMessage(validationMessages.usernameInvalid))
-          .required(),
+        .min(3, intl.formatMessage(validationMessages.usernameInvalid))
+        .max(16, intl.formatMessage(validationMessages.usernameInvalid))
+        .required(),
       email: Yup.string().email().required(),
     });
   }, []);

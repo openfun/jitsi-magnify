@@ -11,10 +11,9 @@ import React, { useContext } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Formik } from 'formik';
 
-
 import { FormikValuesChange } from '../../design-system/Formik/ValuesChange/FormikValuesChange';
 import FormikSwitch from '../../design-system/Formik/FormikSwitch';
-import MagnifyCard from "../../design-system/Card";
+import MagnifyCard from '../../design-system/Card';
 
 const messages = defineMessages({
   settingsTitle: {

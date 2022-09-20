@@ -12,7 +12,7 @@ import {
   LoadingButton,
   TextField,
 } from '../../design-system';
-import {formLabelMessages} from "../../../i18n/Messages/formLabelMessages";
+import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 
 export interface CreateMeetingFormProps {
   roomSlug?: string;
