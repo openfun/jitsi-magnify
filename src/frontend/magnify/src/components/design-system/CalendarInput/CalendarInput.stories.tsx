@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import CalendarInput from './CalendarInput';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'DesignSystem/CalendarInput',
@@ -36,7 +36,7 @@ export const basic = () => (
   <CalendarInput
     label="CalendarInput"
     name="date"
-    value={[new Date('2022-05-01').toUTCString(), new Date('2022-05-02').toUTCString()]}
     onChange={console.log}
+    value={[new Date('2022-05-01').toUTCString(), new Date('2022-05-02').toUTCString()]}
   />
 );

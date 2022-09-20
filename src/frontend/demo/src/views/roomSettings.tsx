@@ -4,9 +4,9 @@ import { Navigate, useParams } from 'react-router-dom';
 
 export const messages = defineMessages({
   roomSettingsTitle: {
-    id: 'app.roomSettingsTitle',
-    description: 'H1 page title for the room settings view',
     defaultMessage: 'Room Settings',
+    description: 'H1 page title for the room settings view',
+    id: 'app.roomSettingsTitle',
   },
 });
 
@@ -14,7 +14,7 @@ export default function RoomSettingsView() {
   const intl = useTranslations();
   const { slug } = useParams();
 
-  if (!slug) return <Navigate to="/room-not-found" replace />;
+  if (!slug) return <Navigate replace to="/room-not-found" />;
 
   return (
     <LayoutWithSidebar title={intl.formatMessage(messages.roomSettingsTitle)}>

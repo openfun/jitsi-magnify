@@ -1,14 +1,14 @@
-import { MockController } from '../../../controller';
-import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
-import { IntlProvider } from 'react-intl';
-import ControllerProvider, { useStore } from '../../../controller/ControllerProvider';
-import React from 'react';
-import SignupForm from './SignupForm';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup';
+import React from 'react';
+import { IntlProvider } from 'react-intl';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { MockController } from '../../../controller';
+import ControllerProvider, { useStore } from '../../../controller/ControllerProvider';
 import { SignupInput } from '../../../controller/interface';
 import { validationMessages } from '../../../i18n/Messages';
+import SignupForm from './SignupForm';
 
 const UserDisplayer = () => {
   const { user } = useStore();

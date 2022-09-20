@@ -2,10 +2,10 @@ import { Box, Button, Card, Grid, Text } from 'grommet';
 import { Projects, Play } from 'grommet-icons';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { Meeting } from '../../../types/meeting';
-import { getNextMeeting } from './getNextMeeting';
 import { Link, useNavigate } from 'react-router-dom';
+import { Meeting } from '../../../types/meeting';
 import formatDuration from './formatDuration';
+import { getNextMeeting } from './getNextMeeting';
 
 export interface MeetingRowProps {
   /**
@@ -75,14 +75,15 @@ export default function MeetingRow({ meeting, baseJitsiUrl, onJoin }: MeetingRow
   // Render the row
   return (
     <Card
-      background={inProgress ? 'light-3' : 'light-2'}
-      pad="small"
-      style={{ opacity: isOver ? 0.5 : 1 }}
       aria-disabled={isOver}
+      background={inProgress ? 'light-3' : 'light-2'}
       elevation="0"
       margin={{ bottom: 'small' }}
+      pad="small"
+      style={{ opacity: isOver ? 0.5 : 1 }}
     >
       <Grid
+        fill
         columns={['auto', 'xsmall', 'xsmall', 'small', 'flex', 'auto']}
         gap="medium"
         rows={['auto']}
@@ -94,13 +95,12 @@ export default function MeetingRow({ meeting, baseJitsiUrl, onJoin }: MeetingRow
           { name: 'title', start: [4, 0], end: [4, 0] },
           { name: 'actions', start: [5, 0], end: [5, 0] },
         ]}
-        fill
       >
         <Box gridArea="icon" margin="auto 0px">
           <Projects color="brand" />
         </Box>
 
-        <Box gridArea="date" direction="row" margin="auto 0px">
+        <Box direction="row" gridArea="date" margin="auto 0px">
           {nextMeeting ? (
             <Text color="brand" margin={{ left: '5px' }}>
               {intl.formatDate(nextMeeting!)}
@@ -112,7 +112,7 @@ export default function MeetingRow({ meeting, baseJitsiUrl, onJoin }: MeetingRow
           )}
         </Box>
 
-        <Box gridArea="times" margin="auto 0px" direction="column" align="center">
+        <Box align="center" direction="column" gridArea="times" margin="auto 0px">
           <Text color="brand" weight="bold">
             {meeting.start_time}
           </Text>
@@ -137,16 +137,16 @@ export default function MeetingRow({ meeting, baseJitsiUrl, onJoin }: MeetingRow
                 {weekDays.map((day, index) => (
                   <Box
                     key={day}
+                    align="center"
+                    background={holdOn[index] ? 'brand' : 'default'}
                     pad="xxsmall"
                     round="xsmall"
                     width="10%"
-                    background={holdOn[index] ? 'brand' : 'default'}
-                    align="center"
                   >
                     <Text
                       color={holdOn[index] ? 'light-1' : 'default'}
-                      weight={holdOn[index] ? 'bold' : 'normal'}
                       size="xsmall"
+                      weight={holdOn[index] ? 'bold' : 'normal'}
                     >
                       {intl.formatMessage(messages[day as keyof typeof messages])}
                     </Text>
@@ -157,9 +157,9 @@ export default function MeetingRow({ meeting, baseJitsiUrl, onJoin }: MeetingRow
           )}
         </Box>
 
-        <Box gridArea="title" margin="auto 0px" direction="row">
-          <Box margin="auto 10px">{inProgress ? <Play size="16px" color="status-ok" /> : ''}</Box>
-          <Text weight="bold" color="brand">
+        <Box direction="row" gridArea="title" margin="auto 0px">
+          <Box margin="auto 10px">{inProgress ? <Play color="status-ok" size="16px" /> : ''}</Box>
+          <Text color="brand" weight="bold">
             {meeting.name}
           </Text>
         </Box>
@@ -167,19 +167,19 @@ export default function MeetingRow({ meeting, baseJitsiUrl, onJoin }: MeetingRow
         <Box gridArea="actions" margin="auto 0px">
           {onJoin ? (
             <Button
-              label={intl.formatMessage(messages.joinLabel)}
               primary
               disabled={!maybeInProgress}
+              label={intl.formatMessage(messages.joinLabel)}
               onClick={() => onJoin(meeting)}
             />
           ) : (
             <Button
-              label={intl.formatMessage(messages.joinLabel)}
               primary
               disabled={!maybeInProgress}
+              label={intl.formatMessage(messages.joinLabel)}
               as={({ children, type, className }) =>
                 maybeInProgress ? (
-                  <Link type={type} className={className} to={`${baseJitsiUrl}/m/${meeting.id}`}>
+                  <Link className={className} to={`${baseJitsiUrl}/m/${meeting.id}`} type={type}>
                     {children}
                   </Link>
                 ) : (

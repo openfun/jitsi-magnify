@@ -24,14 +24,14 @@ export default function SidebarButton(props: SidebarButtonProps) {
         primary
         active={active}
         disabled={disabled}
-        label={label}
         icon={icon}
+        justify="start"
+        label={label}
         forwardedAs={({ children, type, className }) => (
-          <Link type={type} className={className} to={navigateTo}>
+          <Link className={className} to={navigateTo} type={type}>
             {children}
           </Link>
         )}
-        justify="start"
       />
     </Box>
   );

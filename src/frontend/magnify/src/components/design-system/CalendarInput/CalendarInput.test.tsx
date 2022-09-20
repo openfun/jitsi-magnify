@@ -1,7 +1,7 @@
-import React from 'react';
-import { IntlProvider } from 'react-intl';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { IntlProvider } from 'react-intl';
 import CalendarInput from './CalendarInput';
 
 describe('CalendarInput', () => {
@@ -14,8 +14,8 @@ describe('CalendarInput', () => {
         <CalendarInput
           label="calendar"
           name="date"
-          value={[new Date('2022-05-01').toUTCString(), new Date('2022-05-02').toUTCString()]}
           onChange={onChange}
+          value={[new Date('2022-05-01').toUTCString(), new Date('2022-05-02').toUTCString()]}
         />
       </IntlProvider>,
     );
@@ -32,7 +32,7 @@ describe('CalendarInput', () => {
       value: ['2022-05-12T00:00:00.000Z', '2022-05-12T00:00:00.000Z'],
     });
     expect(onChange).toHaveBeenNthCalledWith(2, {
-      value: ['2022-05-01T00:00:00.000Z', '2022-05-21T00:00:00.000Z'],
+      value: ['2022-05-12T00:00:00.000Z', '2022-05-21T00:00:00.000Z'],
     });
   });
 });

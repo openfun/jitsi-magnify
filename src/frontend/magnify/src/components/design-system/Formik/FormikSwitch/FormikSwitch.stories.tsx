@@ -1,6 +1,6 @@
-import React from 'react';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
 import withFormik from '@bbbtech/storybook-formik';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 import FormikSwitch from './FormikSwitch';
 
 export default {

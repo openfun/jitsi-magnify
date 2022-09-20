@@ -46,7 +46,8 @@ export function addToDate(
  * @param duration The duration of each meeting
  * @param options (including the margin of error for the duration)
  *
- * @returns the date of the next meeting, and if the meeting is running, or finished for less than the margin
+ * @returns the date of the next meeting, and if the meeting is running, or finished for
+ * less than the margin
  */
 export function getNextMeeting(
   start: string,
@@ -108,7 +109,8 @@ export function getNextMeeting(
   // relatively to either today or the start date of the meetings
   const previousMeetingDay = heldOn.findIndex((held, i) => i <= referenceDay && held);
 
-  // CASE 4, synthesis: Meeting is a multiple one, and there is a meeting sooner or later in the week
+  // CASE 4, synthesis: Meeting is a multiple one, and there is a meeting sooner or later in
+  // the week
   // Let's verify it's still before the end limit
   if (nextMeetingDay !== -1 || previousMeetingDay !== -1) {
     // Compute the date of the next meeting, either (+a few days) later,

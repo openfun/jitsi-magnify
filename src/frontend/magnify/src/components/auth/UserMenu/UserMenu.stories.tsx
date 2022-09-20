@@ -1,7 +1,7 @@
-import React from 'react';
-import UserMenu from './UserMenu';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 import InjectFakeUser from '../../../utils/InjectFakeUser';
+import UserMenu from './UserMenu';
 
 export default {
   title: 'Auth/UserMenu',

@@ -8,9 +8,9 @@ import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
   testTitle: {
-    id: 'app.testTitle',
-    description: 'Page title for the test',
     defaultMessage: 'Welcome to Magnify!',
+    description: 'Page title for the test',
+    id: 'app.testTitle',
   },
 });
 

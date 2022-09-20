@@ -1,7 +1,7 @@
-import { defineMessages, useIntl } from 'react-intl';
-import React, { useState } from 'react';
 import { Box, Button, Card, Layer, Text } from 'grommet';
 import { Add } from 'grommet-icons';
+import React, { useState } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import RegisterRoomForm from '../RegisterRoomForm';
 
 const messages = defineMessages({
@@ -29,34 +29,34 @@ const RegisterRoom = () => {
   return (
     <>
       <Card
-        elevation="0"
         border={{ style: 'dashed', size: '2px', color: 'brand' }}
-        pad="small"
-        margin={{ bottom: 'medium' }}
         direction="row"
+        elevation="0"
         justify="between"
+        margin={{ bottom: 'medium' }}
+        pad="small"
       >
         <Text color="brand" margin={{ vertical: 'auto' }}>
           {intl.formatMessage(messages.registerNewRoomLabel)}
         </Text>
         <Button
           primary
+          icon={<Add aria-label="Register new room" name="Register new room" size="20px" />}
           onClick={handleOpen}
-          type="button"
-          icon={<Add size="20px" name="Register new room" aria-label="Register new room" />}
           size="small"
           title="Register new room"
+          type="button"
         />
       </Card>
       {open && (
         <Layer
           id="confirmDelete"
-          position="center"
           onClickOutside={handleClose}
           onEsc={handleClose}
+          position="center"
           role="dialog"
         >
-          <Box width={'medium'} pad="medium">
+          <Box pad="medium" width={'medium'}>
             <RegisterRoomForm onSuccess={handleClose} />
           </Box>
         </Layer>

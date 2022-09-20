@@ -1,7 +1,7 @@
-import { defineMessages, useIntl } from 'react-intl';
-import React, { useState } from 'react';
 import { Box, Button, Heading, Layer, Select, Text } from 'grommet';
 import { FormClose } from 'grommet-icons';
+import React, { useState } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import { useMutation, useQuery } from 'react-query';
 
 import { useController } from '../../../controller';
@@ -37,29 +37,29 @@ const renderGroup = (group: Group | undefined, onRemove: (id: string) => void) =
   return (
     <Button
       key={group.id}
+      href="#"
+      onFocus={(event: React.FocusEvent) => event.stopPropagation()}
       onClick={(event: React.MouseEvent) => {
         event.preventDefault();
         event.stopPropagation();
         onRemove(group.id);
       }}
-      href="#"
-      onFocus={(event: React.FocusEvent) => event.stopPropagation()}
     >
       <Box
         align="center"
+        background="brand"
         direction="row"
         gap="xsmall"
-        pad={{ vertical: 'xsmall', horizontal: 'small' }}
+        height="calc(100% - 10px)"
         margin="xsmall"
-        background="brand"
+        pad={{ vertical: 'xsmall', horizontal: 'small' }}
         round="xsmall"
         width="small"
-        height="calc(100% - 10px)"
       >
         <Text size="small">
           {group.name} ({group.members?.length})
         </Text>
-        <Box round="full" margin={{ left: 'xsmall' }}>
+        <Box margin={{ left: 'xsmall' }} round="full">
           <FormClose size="small" style={{ width: '12px', height: '12px' }} />
         </Box>
       </Box>
@@ -93,22 +93,27 @@ const AddGroupToRoomDialog = ({ open, onClose, roomSlug }: AddGroupToRoomDialogP
   return (
     <Layer
       id="confirmDelete"
-      position="center"
       onClickOutside={onClose}
       onEsc={onClose}
+      position="center"
       role="dialog"
     >
       <Box pad="medium" width="large">
-        <Heading level={3} size="small" color="brand">
+        <Heading color="brand" level={3} size="small">
           {intl.formatMessage(messages.AddGroupToRoomDialogTitle)}
         </Heading>
         {groupsLoading ? (
           <WaitingRow />
         ) : (
           <Select
-            closeOnChange={false}
             multiple
+            closeOnChange={false}
             disabled={isLoading}
+            options={(groups || []).map((group) => group.name)}
+            selected={selected}
+            onChange={({ selected: newSelected }) => {
+              setSelected(newSelected);
+            }}
             value={
               <Box wrap direction="row">
                 {selected && selected.length > 0 ? (
@@ -118,26 +123,21 @@ const AddGroupToRoomDialog = ({ open, onClose, roomSlug }: AddGroupToRoomDialogP
                 )}
               </Box>
             }
-            options={(groups || []).map((group) => group.name)}
-            selected={selected}
-            onChange={({ selected: newSelected }) => {
-              setSelected(newSelected);
-            }}
           />
         )}
         <Box direction="row" justify="end" margin={{ top: 'medium' }}>
           <Button
             label={intl.formatMessage(messages.cancelLabel)}
+            margin={{ right: 'small' }}
             onClick={onClose}
             onFocus={(event: React.FocusEvent) => event.stopPropagation()}
-            margin={{ right: 'small' }}
           />
           <LoadingButton
-            label={intl.formatMessage(messages.addGroupsLabel, { numberSelected: selected.length })}
             primary
-            onClick={handleSubmit}
             disabled={groupsLoading || selected.length === 0}
             isLoading={isLoading}
+            label={intl.formatMessage(messages.addGroupsLabel, { numberSelected: selected.length })}
+            onClick={handleSubmit}
           />
         </Box>
       </Box>

@@ -1,11 +1,11 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
-import IdentityBlock from './IdentityBlock';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ControllerProvider, MockController } from '../../../controller';
 import { ConnexionStatus, Store } from '../../../controller/store';
 import { createRandomProfile } from '../../../factories/profile';
-import { ControllerProvider, MockController } from '../../../controller';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import IdentityBlock from './IdentityBlock';
 
 describe('IdentityBlock', () => {
   it('should render the avatar and identity forms with right default values', async () => {

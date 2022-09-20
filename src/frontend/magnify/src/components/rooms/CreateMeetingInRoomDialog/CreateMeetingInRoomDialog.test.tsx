@@ -14,7 +14,7 @@ describe('CreateMeetingInRoomDialog', () => {
       <IntlProvider locale="en">
         <ControllerProvider controller={controller}>
           <QueryClientProvider client={new QueryClient()}>
-            <CreateMeetingInRoomDialog open={true} onClose={onClose} roomSlug="room-slug" />
+            <CreateMeetingInRoomDialog onClose={onClose} open={true} roomSlug="room-slug" />
           </QueryClientProvider>
         </ControllerProvider>
       </IntlProvider>,
@@ -31,7 +31,7 @@ describe('CreateMeetingInRoomDialog', () => {
       <IntlProvider locale="en">
         <ControllerProvider controller={controller}>
           <QueryClientProvider client={new QueryClient()}>
-            <CreateMeetingInRoomDialog open={true} onClose={onClose} roomSlug="room-slug" />
+            <CreateMeetingInRoomDialog onClose={onClose} open={true} roomSlug="room-slug" />
           </QueryClientProvider>
         </ControllerProvider>
       </IntlProvider>,

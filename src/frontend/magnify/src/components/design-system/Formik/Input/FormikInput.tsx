@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { FunctionComponent, useState } from 'react';
 import { ErrorMessage, useField } from 'formik';
 import { Box, Text, TextInput, TextInputProps } from 'grommet';
-import styled, { css } from 'styled-components';
 import { Hide, View } from 'grommet-icons';
 import { normalizeColor } from 'grommet/utils';
+import { FunctionComponent, useState } from 'react';
+import * as React from 'react';
+import styled, { css } from 'styled-components';
 
 const CustomInput = styled(TextInput)`
   ${({ theme }) => css`
@@ -42,8 +42,8 @@ const FormikInput: FunctionComponent<FormikInputProps> = (props) => {
           <CustomInput {...field} {...props} ref={null} id={props.name} type={getInputType()} />
           {props.type === 'password' && (
             <Box
-              onClick={() => setShowPassword(!showPassword)}
               focusIndicator={false}
+              onClick={() => setShowPassword(!showPassword)}
               style={{
                 cursor: 'pointer',
                 position: 'absolute',
@@ -59,7 +59,7 @@ const FormikInput: FunctionComponent<FormikInputProps> = (props) => {
           name={props.name}
           render={(msg: string) => {
             return (
-              <Text size={'xsmall'} color={'accent-1'}>
+              <Text color={'accent-1'} size={'xsmall'}>
                 {msg}
               </Text>
             );

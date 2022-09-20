@@ -2,8 +2,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Grommet } from 'grommet';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import Toggle, { ToggleProps } from './Toggle';
 import theme from '../../../themes/theme';
+import Toggle, { ToggleProps } from './Toggle';
 
 function StatefullToggle(props: ToggleProps) {
   const [checked, setChecked] = React.useState(false);
@@ -15,7 +15,7 @@ describe('Toggle', () => {
     render(
       <Grommet>
         <IntlProvider locale="en">
-          <Toggle title="My toggle" label="This is a toggle" />
+          <Toggle label="This is a toggle" title="My toggle" />
         </IntlProvider>
       </Grommet>,
     );
@@ -26,7 +26,7 @@ describe('Toggle', () => {
     render(
       <Grommet theme={theme}>
         <IntlProvider locale="en">
-          <StatefullToggle title="My toggle" label="This is a toggle" />
+          <StatefullToggle label="This is a toggle" title="My toggle" />
         </IntlProvider>
       </Grommet>,
     );

@@ -1,6 +1,6 @@
+import { Box, Text } from 'grommet';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Box, Text } from 'grommet';
 
 export default function DebugRoute() {
   const { pathname, search, hash } = useLocation();

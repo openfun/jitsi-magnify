@@ -34,11 +34,11 @@ const RoomSettingsBlock = ({
         {toggles.map((row) => {
           const builtRow = row.map(({ label, settingKey }) => (
             <RoomSettingToggle
-              label={label}
+              key={settingKey}
               checked={room?.settings?.[settingKey]}
+              label={label}
               roomName={roomName}
               settingKey={settingKey}
-              key={settingKey}
             />
           ));
           if (size !== 'small')

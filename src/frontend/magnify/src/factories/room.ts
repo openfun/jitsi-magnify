@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
+import { Member } from '../types/member';
 import { Room, RoomSettings } from '../types/room';
 import createRandomGroups from './groups';
 import createRandomMeetings from './meetings';
-import { Member } from '../types/member';
 
 function settings(): (keyof RoomSettings)[] {
   return [

@@ -49,7 +49,8 @@ export interface RowsListProps<TRowProps extends Row> {
    * The component to use to render the header
    * It can accept the following props:
    * - numberSelected: the number of selected rows
-   * - setSelected: (selection: Record<string, boolean>) => void: callback to set the selection of the rows globally
+   * - setSelected: (selection: Record<string, boolean>) => void: callback to set the selection
+   * of the rows globally
    * If you don't want to use the header, you can ignore it
    */
   Header?: React.FC<HeaderProps>;
@@ -122,13 +123,13 @@ export default function RowsList<TRowProps extends Row>({
     <Card background="white" pad="medium">
       <Grid
         fill
+        columns={['flex', 'flex']}
+        gap="small"
+        rows={['flex']}
         areas={[
           { name: 'title', start: [0, 0], end: [0, 0] },
           { name: 'actions', start: [1, 0], end: [1, 0] },
         ]}
-        columns={['flex', 'flex']}
-        rows={['flex']}
-        gap="small"
       >
         <Box gridArea="title" pad={{ vertical: 'medium', horizontal: 'small' }}>
           <Box margin="auto 0px">
@@ -137,17 +138,17 @@ export default function RowsList<TRowProps extends Row>({
                 <WaitingRow />
               </Box>
             ) : (
-              <Text size="medium" color="brand" weight="bold">
+              <Text color="brand" size="medium" weight="bold">
                 ({intl.formatMessage(label, { numberOfRows: rows.length })})
               </Text>
             )}
           </Box>
         </Box>
         <Box
-          gridArea="actions"
-          pad={{ vertical: 'medium', horizontal: 'small' }}
           direction="row"
+          gridArea="actions"
           justify="end"
+          pad={{ vertical: 'medium', horizontal: 'small' }}
         >
           {onAdd && addLabel && (
             <Button
@@ -159,11 +160,11 @@ export default function RowsList<TRowProps extends Row>({
           )}
           {actions && actionsLabel && (
             <Menu
+              aria-label={actionsLabel}
+              label={actionsLabel}
+              margin={{ vertical: 'auto', horizontal: 'xsmall' }}
               name={actionsLabel}
               role="menu"
-              label={actionsLabel}
-              aria-label={actionsLabel}
-              margin={{ vertical: 'auto', horizontal: 'xsmall' }}
               items={actions.map(({ label, onClick, disabled }) => ({
                 label: intl.formatMessage(label, { numberOfSelected }),
                 onClick: () => onClick(selected),
@@ -179,8 +180,8 @@ export default function RowsList<TRowProps extends Row>({
           <Row
             key={row.id}
             {...row}
-            selected={selected[row.id]}
             onToggle={() => handleToggle(row.id)}
+            selected={selected[row.id]}
           />
         ))}
       {isLoading && Array.from({ length: 3 }, (_v, i) => <WaitingRow key={i} />)}

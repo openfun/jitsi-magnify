@@ -1,10 +1,10 @@
 import { Box, Heading } from 'grommet';
 import React from 'react';
 
+import styled from 'styled-components';
+import UserMenu from '../../auth/UserMenu';
 import MagnifySidebar from '../MagnifySidebar';
 import { SidebarButtonProps } from '../SidebarButton';
-import UserMenu from '../../auth/UserMenu';
-import styled from 'styled-components';
 
 export interface LayoutWithSidebarProps {
   itemZones?: SidebarButtonProps[][];
@@ -28,11 +28,11 @@ function LayoutWithSidebar({ children, title, itemZones }: LayoutWithSidebarProp
       </Box>
 
       <Content>
-        <Box justify="end" direction="row">
+        <Box direction="row" justify="end">
           <UserMenu />
         </Box>
         {title && (
-          <Heading level={1} color="brand" size="small">
+          <Heading color="brand" level={1} size="small">
             {title}
           </Heading>
         )}

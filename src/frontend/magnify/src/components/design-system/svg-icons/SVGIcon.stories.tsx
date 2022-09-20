@@ -21,8 +21,8 @@ export const Icons = () => {
           .map((key) => {
             const Ic = allIcons[key];
             return (
-              <Box pad="large" key={key}>
-                <Box border="all" height="fit-content" width="fit-content" margin={'auto'}>
+              <Box key={key} pad="large">
+                <Box border="all" height="fit-content" margin={'auto'} width="fit-content">
                   <Ic color="black" size="70px" />
                 </Box>
                 <Box margin={'auto'}>{key}</Box>

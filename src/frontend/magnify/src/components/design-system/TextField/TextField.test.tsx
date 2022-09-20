@@ -28,24 +28,24 @@ describe('TextField', () => {
 
   it('should apply the margin to the external box', () => {
     const { baseElement } = render(
-      <TextField label="My input" name="my-input" onChange={() => {}} value="" margin="large" />,
+      <TextField label="My input" margin="large" name="my-input" onChange={() => {}} value="" />,
     );
     expect(baseElement).toHaveStyle('margin: 8px');
   });
 
   it('should add a star for required fields', () => {
-    render(<TextField label="My input" name="my-input" onChange={() => {}} value="" required />);
+    render(<TextField required label="My input" name="my-input" onChange={() => {}} value="" />);
     screen.getByRole('textbox', { name: 'My input *' });
   });
 
   it('should render the error messages by default', () => {
     render(
       <TextField
+        errors={['This is an error', 'This is another error']}
         label="My input"
         name="my-input"
         onChange={() => {}}
         value=""
-        errors={['This is an error', 'This is another error']}
       />,
     );
 
@@ -55,12 +55,12 @@ describe('TextField', () => {
   it('should not render the error messages if displayErrors is false', () => {
     render(
       <TextField
+        displayErrors={false}
+        errors={['This is an error', 'This is another error']}
         label="My input"
         name="my-input"
         onChange={() => {}}
         value=""
-        errors={['This is an error', 'This is another error']}
-        displayErrors={false}
       />,
     );
 
@@ -74,8 +74,8 @@ describe('TextField', () => {
         label="My input"
         name="my-input"
         onChange={() => {}}
-        value="pass"
         type="password"
+        value="pass"
       />,
     );
 

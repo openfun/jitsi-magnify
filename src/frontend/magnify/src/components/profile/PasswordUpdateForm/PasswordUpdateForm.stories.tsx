@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import PasswordUpdateForm from './PasswordUpdateForm';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'profile/PasswordUpdateForm',

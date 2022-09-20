@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import IdentityForm from './IdentityForm';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'profile/IdentityForm',

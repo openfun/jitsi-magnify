@@ -52,25 +52,25 @@ export function SVGIcon({
   return (
     <StyledSVG
       height={size}
-      width={size}
       iconColor={normalizeColor(color ?? 'none', theme)}
       style={containerStyle}
+      width={size}
+      xmlns="http://www.w3.org/2000/svg"
       viewBox={
         viewBox
           ? `${-(24 - viewBox.width) / 2} ${-(24 - viewBox.height) / 2} ${24} ${24}`
           : undefined
       }
-      xmlns="http://www.w3.org/2000/svg"
     >
       {viewBox && (
         <StyledRect
           focusColor={normalizeColor(focusColor ?? 'none', theme)}
-          x={viewBox.x}
-          y={viewBox.y}
-          width={viewBox.width}
           height={viewBox.height}
           rx="6"
           ry="6"
+          width={viewBox.width}
+          x={viewBox.x}
+          y={viewBox.y}
         />
       )}
       {children}

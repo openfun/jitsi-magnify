@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Group } from '../types/group';
 import { Meeting } from '../types/meeting';
 import { Nullable } from '../types/misc';

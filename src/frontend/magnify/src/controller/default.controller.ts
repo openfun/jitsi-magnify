@@ -1,8 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
 import { Group } from '../types/group';
+import { Meeting } from '../types/meeting';
 import { Profile } from '../types/profile';
 import { Room } from '../types/room';
 import { AccessToken, Tokens } from '../types/tokens';
+import { WithToken } from '../types/withToken';
 import Controller, {
   AddGroupsToRoomInput,
   CreateGroupInput,
@@ -14,8 +16,6 @@ import Controller, {
   UpdateUserInput,
   UpdateUserPasswordInput,
 } from './interface';
-import { WithToken } from '../types/withToken';
-import { Meeting } from '../types/meeting';
 
 interface DefaultControllerSettings {
   url: string;

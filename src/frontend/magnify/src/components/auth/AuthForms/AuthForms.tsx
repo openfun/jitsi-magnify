@@ -32,34 +32,34 @@ export default function AuthForms() {
   const [login, setLogin] = React.useState(false);
 
   return (
-    <Box height="100vh" width="100%" background="light-1">
+    <Box background="light-1" height="100vh" width="100%">
       <Box margin="auto" width="80%">
-        <Card background="white" width="100%" margin={{ vertical: 'small' }} pad="large">
+        <Card background="white" margin={{ vertical: 'small' }} pad="large" width="100%">
           {login ? <LoginForm /> : <SignupForm />}
         </Card>
         <Card
           background="white"
-          width="100%"
           margin={{ vertical: 'small' }}
           pad={{ vertical: 'medium', horizontal: 'large' }}
+          width="100%"
         >
           <Text>
             {login ? (
               <>
                 {intl.formatMessage(messages.youDoNotHaveAnAccount)}{' '}
                 <Anchor
+                  label={intl.formatMessage(messages.signupInstead)}
                   onClick={() => setLogin(false)}
                   role="link"
-                  label={intl.formatMessage(messages.signupInstead)}
                 />
               </>
             ) : (
               <>
                 {intl.formatMessage(messages.youAlreadyHaveAnAccount)}{' '}
                 <Anchor
+                  label={intl.formatMessage(messages.loginInstead)}
                   onClick={() => setLogin(true)}
                   role="link"
-                  label={intl.formatMessage(messages.loginInstead)}
                 />
               </>
             )}

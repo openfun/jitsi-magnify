@@ -1,6 +1,6 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import AvatarForm from './AvatarForm';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
   title: 'profile/AvatarForm',

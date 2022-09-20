@@ -1,7 +1,7 @@
-import { Group } from '../types/group';
 import { faker } from '@faker-js/faker';
-import { createRandomGroupMembers } from './member';
+import { Group } from '../types/group';
 import { Member } from '../types/member';
+import { createRandomGroupMembers } from './member';
 
 export default function createRandomGroup(
   numberOfMembers: number,

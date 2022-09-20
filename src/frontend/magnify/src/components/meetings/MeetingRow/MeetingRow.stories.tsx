@@ -1,12 +1,12 @@
-import React from 'react';
-import MeetingRow, { MeetingRowProps } from './MeetingRow';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 import {
   createRandomSingleMeeting,
   createRandomMeeting,
   createMeetingInProgress,
   createMeetingOver,
 } from '../../../factories/meeting';
+import MeetingRow, { MeetingRowProps } from './MeetingRow';
 
 export default {
   title: 'Meetings/MeetingRow',

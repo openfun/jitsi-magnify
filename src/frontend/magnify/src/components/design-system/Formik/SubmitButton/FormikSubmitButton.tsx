@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { FunctionComponent } from 'react';
 import { useFormikContext } from 'formik';
 import { Box, Button, ButtonExtendedProps, Spinner, Tip } from 'grommet';
+import * as React from 'react';
+import { FunctionComponent } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Maybe } from '../../../../types/misc';
 
@@ -65,9 +65,9 @@ export const FormikSubmitButton: FunctionComponent<FormikSubmitButtonProps> = ({
       {canSubmit && (
         <Button
           {...props}
+          primary
           disabled={formik.isSubmitting}
           icon={formik.isSubmitting ? <Spinner size={'xsmall'} /> : undefined}
-          primary
           onClick={onSubmit}
         />
       )}

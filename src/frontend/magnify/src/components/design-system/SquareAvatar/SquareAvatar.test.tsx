@@ -10,7 +10,7 @@ describe('SquareAvatar', () => {
   });
 
   it('should render a 40px avatar with a more icon', () => {
-    render(<SquareAvatar title="others" more />);
+    render(<SquareAvatar more title="others" />);
     expect(screen.getByLabelText('More').tagName).toBe('svg');
     screen.getByTitle('others');
   });

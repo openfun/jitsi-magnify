@@ -36,7 +36,7 @@ describe('SettingToggle', () => {
 
     render(
       <SettingToggleWrapper controller={controller}>
-        <RoomSettingToggle label="My toggle" settingKey={getRandomSetting()} roomName="room-1" />
+        <RoomSettingToggle label="My toggle" roomName="room-1" settingKey={getRandomSetting()} />
       </SettingToggleWrapper>,
     );
 
@@ -57,10 +57,10 @@ describe('SettingToggle', () => {
       render(
         <SettingToggleWrapper controller={controller}>
           <RoomSettingToggle
-            label="My toggle"
-            settingKey={setting}
-            roomName={room.name}
             checked={room.settings[setting]}
+            label="My toggle"
+            roomName={room.name}
+            settingKey={setting}
           />
         </SettingToggleWrapper>,
       );

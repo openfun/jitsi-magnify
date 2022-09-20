@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { Button, ThemeType } from 'grommet';
+import styled from 'styled-components';
 
 const conditionalColor =
   (colorActive: string, colorInnactive: string) =>

@@ -1,14 +1,14 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import React from 'react';
 
 import { Formik } from 'formik';
-import theme from '../../../../themes/theme';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Grommet } from 'grommet';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import theme from '../../../../themes/theme';
 
-import FormikSwitch from './FormikSwitch';
 import { FormikValuesChange } from '../ValuesChange/FormikValuesChange';
+import FormikSwitch from './FormikSwitch';
 
 interface TestFormProps {
   handleSubmit: (values: { testSwitch: boolean }) => void;
@@ -21,7 +21,7 @@ function TestForm(props: TestFormProps) {
         <QueryClientProvider client={queryClient}>
           <Formik initialValues={{ testSwitch: true }} onSubmit={props.handleSubmit}>
             <FormikValuesChange>
-              <FormikSwitch name={'testSwitch'} label={'testSwitch'} />
+              <FormikSwitch label={'testSwitch'} name={'testSwitch'} />
             </FormikValuesChange>
           </Formik>
         </QueryClientProvider>

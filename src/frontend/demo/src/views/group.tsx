@@ -4,9 +4,9 @@ import { useParams } from 'react-router-dom';
 
 export const messages = defineMessages({
   groupViewTitle: {
-    id: 'app.groupViewTitle',
-    description: 'Page title for the My Group page',
     defaultMessage: 'Group',
+    description: 'Page title for the My Group page',
+    id: 'app.groupViewTitle',
   },
 });
 

@@ -79,23 +79,23 @@ export default function Toggle({
         {...(variant === ToggleVariant.PRIMARY
           ? { background: 'light-3', pad: 'small', round: 'xsmall' }
           : {})}
-        width={width}
         direction={'row'}
+        width={width}
       >
-        <Stack margin={{ top: 'auto', bottom: 'auto', left: 'small' }} anchor="left">
+        <Stack anchor="left" margin={{ top: 'auto', bottom: 'auto', left: 'small' }}>
           <CheckBox
+            toggle
             a11yTitle={title}
+            aria-busy={loading}
             aria-checked={checked}
             checked={checked}
             disabled={disabled}
-            onChange={onChange}
-            title={title}
             label={label}
             name={props.name}
-            toggle
-            aria-busy={loading}
+            onChange={onChange}
+            title={title}
           />
-          {loading && <Spinner size="xsmall" margin={{ left: '6px' }} />}
+          {loading && <Spinner margin={{ left: '6px' }} size="xsmall" />}
         </Stack>
       </Box>
     </ThemeContext.Extend>

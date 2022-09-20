@@ -1,11 +1,11 @@
+import { Form, Formik } from 'formik';
 import { Box } from 'grommet';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import * as Yup from 'yup';
-import { Form, Formik } from 'formik';
+import { validationMessages } from '../../../i18n/Messages';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
-import { validationMessages } from '../../../i18n/Messages';
 
 const messages = defineMessages({
   previousPasswordLabel: {
@@ -58,30 +58,30 @@ export default function PasswordUpdateForm() {
 
   return (
     <Formik
+      onSubmit={handleSubmit}
+      validationSchema={validationSchema}
       initialValues={{
         previousPassword: '',
         password: '',
         confirmPassword: '',
       }}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
     >
       <Form>
         <Box gap={'10px'}>
           <FormikInput
-            type={'password'}
-            name={'previousPassword'}
             label={intl.formatMessage(messages.previousPasswordLabel)}
+            name={'previousPassword'}
+            type={'password'}
           />
           <FormikInput
-            type={'password'}
-            name={'password'}
             label={intl.formatMessage(messages.passwordLabel)}
+            name={'password'}
+            type={'password'}
           />
           <FormikInput
-            type={'password'}
-            name={'confirmPassword'}
             label={intl.formatMessage(messages.confirmNewPasswordLabel)}
+            name={'confirmPassword'}
+            type={'password'}
           />
           <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />
         </Box>

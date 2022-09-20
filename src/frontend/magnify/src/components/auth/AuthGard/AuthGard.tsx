@@ -1,8 +1,8 @@
+import { Box } from 'grommet';
 import React, { useEffect } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { ConnexionStatus, useController, useStore } from '../../../controller';
-import { Box } from 'grommet';
-import { defineMessages, useIntl } from 'react-intl';
 
 const messages = defineMessages({
   loading: {
@@ -38,7 +38,7 @@ export default function AuthGard() {
 
   // While we are not sure if the user is connected, make him wait
   return (
-    <Box width="100vw" height="100vh" justify="center" align="center">
+    <Box align="center" height="100vh" justify="center" width="100vw">
       {connexionStatus === ConnexionStatus.CONNECTING
         ? intl.formatMessage(messages.loading)
         : intl.formatMessage(messages.redirecting)}

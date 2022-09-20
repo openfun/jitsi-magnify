@@ -4,11 +4,11 @@ import SVGIcon, { SvgProps } from '../SVGIcon';
 export default function SettingsSVG(svgProps: SvgProps) {
   return (
     <SVGIcon viewBox={{ x: 0, y: 0, width: 18, height: 18 }} {...svgProps}>
-      <g id="Bank" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+      <g fill="none" fillRule="evenodd" id="Bank" stroke="none" strokeWidth="1">
         <g
+          fill="#055FD2"
           id="Bank-Colors-&amp;-Iko"
           transform="translate(-971.000000, -1049.000000)"
-          fill="#055FD2"
         >
           <g id="•-icones" transform="translate(50.000000, 691.000000)">
             <g id="iko/settings" transform="translate(921.000000, 358.000000)">

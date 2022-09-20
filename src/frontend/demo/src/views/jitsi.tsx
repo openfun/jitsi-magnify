@@ -4,5 +4,5 @@ import { useParams } from 'react-router-dom';
 export default function JitsiView() {
   const { meetingId, roomSlug } = useParams();
 
-  return <JitsiMeeting meetingId={meetingId} roomSlug={roomSlug} jitsiDomain="localhost:8443" />;
+  return <JitsiMeeting jitsiDomain="localhost:8443" meetingId={meetingId} roomSlug={roomSlug} />;
 }

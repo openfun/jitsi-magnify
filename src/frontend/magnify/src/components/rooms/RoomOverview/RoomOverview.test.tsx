@@ -1,11 +1,11 @@
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import RoomOverview from './RoomOverview';
-import { render, screen } from '@testing-library/react';
-import { ControllerProvider, MockController } from '../../../controller';
-import createRandomRoom from '../../../factories/room';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router-dom';
+import { ControllerProvider, MockController } from '../../../controller';
+import createRandomRoom from '../../../factories/room';
+import RoomOverview from './RoomOverview';
 
 describe('RoomOverview', () => {
   it('should render successfully', async () => {
@@ -18,7 +18,7 @@ describe('RoomOverview', () => {
         <ControllerProvider controller={controller}>
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter>
-              <RoomOverview roomSlug={room.name} baseJitsiUrl="/jitsi" />
+              <RoomOverview baseJitsiUrl="/jitsi" roomSlug={room.name} />
             </MemoryRouter>
           </QueryClientProvider>
         </ControllerProvider>

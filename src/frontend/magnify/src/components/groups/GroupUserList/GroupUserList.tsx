@@ -1,10 +1,10 @@
-import { defineMessages, useIntl } from 'react-intl';
-import React from 'react';
-import { RowsList } from '../../design-system';
-import { useController } from '../../../controller';
-import { useQuery } from 'react-query';
-import { UserRow } from '../../users';
 import { Box, Layer } from 'grommet';
+import React from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
+import { useController } from '../../../controller';
+import { RowsList } from '../../design-system';
+import { UserRow } from '../../users';
 import AddUserForm from '../AddUserForm';
 
 export interface GroupUserListProps {
@@ -37,20 +37,20 @@ const GroupUserList = ({ groupId }: GroupUserListProps) => {
   return (
     <>
       <RowsList
-        label={messages.usersLabel}
-        addLabel={intl.formatMessage(messages.addUserToGroupLabel)}
-        onAdd={() => setOpenAddUser(true)}
         Row={({ user }) => <UserRow user={user} />}
-        rows={(group?.members || []).map((user) => ({ user, id: user.id }))}
+        addLabel={intl.formatMessage(messages.addUserToGroupLabel)}
         isLoading={isLoading}
+        label={messages.usersLabel}
+        onAdd={() => setOpenAddUser(true)}
+        rows={(group?.members || []).map((user) => ({ user, id: user.id }))}
       />
       {openAddUser && (
         <Layer onClickOutside={handleCloseAddUser} onEsc={handleCloseAddUser}>
           <Box pad="medium">
             <AddUserForm
               groupId={groupId}
-              onSuccess={handleCloseAddUser}
               onCancel={handleCloseAddUser}
+              onSuccess={handleCloseAddUser}
             />
           </Box>
         </Layer>

@@ -4,9 +4,9 @@ import { Navigate, useParams } from 'react-router-dom';
 
 export const messages = defineMessages({
   roomViewTitle: {
-    id: 'app.roomViewTitle',
-    description: 'Page title for the room view',
     defaultMessage: 'Room « {roomName} »',
+    description: 'Page title for the room view',
+    id: 'app.roomViewTitle',
   },
 });
 

@@ -1,12 +1,12 @@
+import { Form, Formik } from 'formik';
 import { Box, Heading } from 'grommet';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { Form, Formik } from 'formik';
-import FormikInput from '../../design-system/Formik/Input';
-import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 import * as Yup from 'yup';
 import { validationMessages } from '../../../i18n/Messages';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
+import FormikInput from '../../design-system/Formik/Input';
+import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
 const messages = defineMessages({
   formTitle: {
@@ -74,6 +74,8 @@ export default function SignupForm() {
 
   return (
     <Formik
+      onSubmit={(values) => console.log(values)}
+      validationSchema={validationSchema}
       initialValues={{
         name: '',
         email: '',
@@ -81,26 +83,24 @@ export default function SignupForm() {
         password: '',
         confirmPassword: '',
       }}
-      validationSchema={validationSchema}
-      onSubmit={(values) => console.log(values)}
     >
       <Form>
         <Box gap={'medium'}>
-          <Heading level={4} color="brand">
+          <Heading color="brand" level={4}>
             {intl.formatMessage(messages.formTitle)}
           </Heading>
-          <FormikInput name={'name'} label={intl.formatMessage(formLabelMessages.name)} />
-          <FormikInput name={'email'} label={intl.formatMessage(messages.emailLabel)} />
-          <FormikInput name={'username'} label={intl.formatMessage(messages.usernameLabel)} />
+          <FormikInput label={intl.formatMessage(formLabelMessages.name)} name={'name'} />
+          <FormikInput label={intl.formatMessage(messages.emailLabel)} name={'email'} />
+          <FormikInput label={intl.formatMessage(messages.usernameLabel)} name={'username'} />
           <FormikInput
+            label={intl.formatMessage(messages.passwordLabel)}
             name={'password'}
             type={'password'}
-            label={intl.formatMessage(messages.passwordLabel)}
           />
           <FormikInput
+            label={intl.formatMessage(messages.confirmPasswordLabel)}
             name={'confirmPassword'}
             type={'password'}
-            label={intl.formatMessage(messages.confirmPasswordLabel)}
           />
           <Box direction="row" justify="end" margin={{ top: 'small' }}>
             <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />

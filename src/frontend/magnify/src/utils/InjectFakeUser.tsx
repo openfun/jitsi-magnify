@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { ReactNode, useEffect } from 'react';
 import { ConnexionStatus, useStore } from '../controller';
 import { createRandomProfile } from '../factories/profile';

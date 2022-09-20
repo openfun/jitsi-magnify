@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { CheckBox, Text } from 'grommet';
+import React, { useState } from 'react';
 import { LogController } from '../controller';
 
 export default function DebugRefreshToken({ controller }: { controller: LogController }) {

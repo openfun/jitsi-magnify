@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ControllerProvider, MockController } from '../../../controller';
 import { createRandomMeeting, Hold } from '../../../factories/meeting';
-import MeetingRow from './MeetingRow';
-import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Meeting } from '../../../types/meeting';
 import DebugRoute from '../../../utils/DebugRoute';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import MeetingRow from './MeetingRow';
 
 // Let's assume we are on friday, 12:00:00, June 24, 2022
 function mockFridayMidday() {
@@ -28,8 +28,8 @@ function renderMeetingRow(meeting: Meeting) {
         <QueryClientProvider client={queryClient}>
           <MemoryRouter>
             <Routes>
-              <Route path="/" element={<MeetingRow meeting={meeting} baseJitsiUrl="" />} />
-              <Route path="*" element={<DebugRoute />} />
+              <Route element={<MeetingRow baseJitsiUrl="" meeting={meeting} />} path="/" />
+              <Route element={<DebugRoute />} path="*" />
             </Routes>
           </MemoryRouter>
         </QueryClientProvider>

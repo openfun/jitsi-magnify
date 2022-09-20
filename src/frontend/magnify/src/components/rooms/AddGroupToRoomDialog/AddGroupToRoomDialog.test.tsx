@@ -1,12 +1,12 @@
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import userEvent from '@testing-library/user-event';
-import { render, screen, waitFor } from '@testing-library/react';
-import AddGroupToRoomDialog from './AddGroupToRoomDialog';
-import { ControllerProvider, MockController } from '../../../controller';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ControllerProvider, MockController } from '../../../controller';
 import createRandomGroups from '../../../factories/groups';
 import createRandomRoom from '../../../factories/room';
+import AddGroupToRoomDialog from './AddGroupToRoomDialog';
 
 describe('AddGroupToRoomDialog', () => {
   it('should render successfully', async () => {
@@ -26,7 +26,7 @@ describe('AddGroupToRoomDialog', () => {
       <IntlProvider locale="en">
         <ControllerProvider controller={controller}>
           <QueryClientProvider client={new QueryClient()}>
-            <AddGroupToRoomDialog open={true} onClose={onClose} roomSlug="room-slug" />
+            <AddGroupToRoomDialog onClose={onClose} open={true} roomSlug="room-slug" />
           </QueryClientProvider>
         </ControllerProvider>
       </IntlProvider>,
