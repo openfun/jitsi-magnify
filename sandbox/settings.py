@@ -81,6 +81,7 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
 
     # Security
     ALLOWED_HOSTS = []
+    CSRF_TRUSTED_ORIGINS = values.ListValue([])
     SECRET_KEY = values.Value(None)
 
     # System check reference:
@@ -341,7 +342,7 @@ class Development(Base):
 
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
-    CSRF_TRUSTED_ORIGINS = ["http://localhost:8070"]
+    CSRF_TRUSTED_ORIGINS = ["http://localhost:8071"]
     API_URL = values.Value("http://localhost:8071")
 
 
