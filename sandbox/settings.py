@@ -81,7 +81,8 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
 
     # Security
     ALLOWED_HOSTS = []
-    SECRET_KEY = values.Value("ThisIsAnExampleKeyForDevPurposeOnly")
+    SECRET_KEY = values.Value(None)
+
     # System check reference:
     # https://docs.djangoproject.com/en/2.2/ref/checks/#security
     SILENCED_SYSTEM_CHECKS = values.ListValue(
