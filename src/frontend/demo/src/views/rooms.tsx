@@ -1,4 +1,4 @@
-import { LayoutWithSidebar, MyRooms, useTranslations } from '@jitsi-magnify/core';
+import { MyRooms, ResponsiveLayout, useTranslations } from '@jitsi-magnify/core';
 import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
@@ -12,8 +12,8 @@ export const messages = defineMessages({
 export default function RoomsView() {
   const intl = useTranslations();
   return (
-    <LayoutWithSidebar title={intl.formatMessage(messages.roomsViewTitle)}>
+    <ResponsiveLayout>
       <MyRooms baseJitsiUrl="/j" />
-    </LayoutWithSidebar>
+    </ResponsiveLayout>
   );
 }

@@ -1,4 +1,4 @@
-import { LayoutWithSidebar, RoomConfig, useTranslations } from '@jitsi-magnify/core';
+import { MagnifyPageContent, RoomConfig, useTranslations } from '@jitsi-magnify/core';
 import { defineMessages } from 'react-intl';
 import { Navigate, useParams } from 'react-router-dom';
 
@@ -17,8 +17,8 @@ export default function RoomSettingsView() {
   if (!slug) return <Navigate replace to="/room-not-found" />;
 
   return (
-    <LayoutWithSidebar title={intl.formatMessage(messages.roomSettingsTitle)}>
+    <MagnifyPageContent title={intl.formatMessage(messages.roomSettingsTitle)}>
       <RoomConfig roomName={slug} />
-    </LayoutWithSidebar>
+    </MagnifyPageContent>
   );
 }

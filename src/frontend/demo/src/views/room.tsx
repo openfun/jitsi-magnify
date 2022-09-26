@@ -1,4 +1,9 @@
-import { LayoutWithSidebar, RoomOverview, useTranslations } from '@jitsi-magnify/core';
+import {
+  MagnifyPageContent,
+  ResponsiveLayout,
+  RoomOverview,
+  useTranslations,
+} from '@jitsi-magnify/core';
 import { defineMessages } from 'react-intl';
 import { Navigate, useParams } from 'react-router-dom';
 
@@ -19,8 +24,10 @@ export default function RoomView() {
   }
 
   return (
-    <LayoutWithSidebar title={intl.formatMessage(messages.roomViewTitle, { roomName: slug })}>
-      <RoomOverview baseJitsiUrl="/j" roomSlug={slug} />
-    </LayoutWithSidebar>
+    <ResponsiveLayout>
+      <MagnifyPageContent title={intl.formatMessage(messages.roomViewTitle, { roomName: slug })}>
+        <RoomOverview baseJitsiUrl="/j" roomSlug={slug} />
+      </MagnifyPageContent>
+    </ResponsiveLayout>
   );
 }

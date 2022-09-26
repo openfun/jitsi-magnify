@@ -1,19 +1,15 @@
 import { AuthGard, ConnexionStatus, IntroductionLayout, useStore } from '@jitsi-magnify/core';
 import { Box } from 'grommet';
-import { Route, Routes } from 'react-router-dom';
-import NotFoundView from './views/404';
-import DefaultView from './views/default';
-import GroupView from './views/group';
-import GroupsView from './views/groups';
-import JitsiView from './views/jitsi';
+import { useIntl } from 'react-intl';
+import { createBrowserRouter, Navigate, RouteObject, RouterProvider } from 'react-router-dom';
+import { getAccountRoutes } from './utils/routes/account';
+import { getRoomsRoutes, RoomsPath } from './utils/routes/rooms';
+import { getRootRoute } from './utils/routes/root';
 import MyMeetings from './views/myMeetings';
-import ProfileView from './views/profile';
-import RoomView from './views/room';
-import RoomsView from './views/rooms';
-import RoomSettingsView from './views/roomSettings';
 
 export default function App() {
   const { connexionStatus } = useStore();
+  const intl = useIntl();
 
   if (connexionStatus === ConnexionStatus.CONNECTING) return <AuthGard />;
 
@@ -29,21 +25,17 @@ export default function App() {
     );
   }
 
-  return (
-    <Box background="linear-gradient(45deg, #fef1f3 0%, #d6e4f6 100%);" height="100vh">
-      <Routes>
-        <Route element={<DefaultView />} path="/" />
-        <Route element={<ProfileView />} path="/account" />
-        <Route element={<GroupsView />} path="/groups" />
-        <Route element={<GroupView />} path="/groups/:groupId" />
-        <Route element={<MyMeetings />} path="/meetings" />
-        <Route element={<RoomsView />} path="/rooms" />
-        <Route element={<RoomView />} path="/rooms/:slug" />
-        <Route element={<RoomSettingsView />} path="/rooms/:slug/settings" />
-        <Route element={<JitsiView />} path="/j/m/:meetingId" />
-        <Route element={<JitsiView />} path="/j/:roomSlug" />
-        <Route element={<NotFoundView />} path="*" />
-      </Routes>
-    </Box>
-  );
+  let routes: RouteObject[] = [
+    {
+      ...getRootRoute(intl, [
+        { index: true, element: <MyMeetings /> },
+        { path: '/meetings', element: <Navigate to={RoomsPath.ROOMS} /> },
+        { ...getAccountRoutes(intl) },
+        { ...getRoomsRoutes(intl) },
+      ]),
+    },
+  ];
+
+  let router = createBrowserRouter(routes);
+  return <RouterProvider router={router} />;
 }
