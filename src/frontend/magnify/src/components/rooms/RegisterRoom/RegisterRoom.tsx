@@ -1,13 +1,19 @@
-import { Box, Button, Card, Layer, Text } from 'grommet';
+import { Box, Button, Layer } from 'grommet';
 import { Add } from 'grommet-icons';
 import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+
 import RegisterRoomForm from '../RegisterRoomForm';
 
 const messages = defineMessages({
   registerNewRoomLabel: {
     id: 'components.rooms.registerRoom.registerNewRoomLabel',
     defaultMessage: 'Register new room',
+    description: 'Label for the button to register a new room',
+  },
+  addNewRoomLabel: {
+    id: 'components.rooms.registerRoom.addNewRoomLabel',
+    defaultMessage: 'Room',
     description: 'Label for the button to register a new room',
   },
 });
@@ -28,26 +34,13 @@ const RegisterRoom = () => {
 
   return (
     <>
-      <Card
-        border={{ style: 'dashed', size: '2px', color: 'brand' }}
-        direction="row"
-        elevation="0"
-        justify="between"
-        margin={{ bottom: 'medium' }}
-        pad="small"
-      >
-        <Text color="brand" margin={{ vertical: 'auto' }}>
-          {intl.formatMessage(messages.registerNewRoomLabel)}
-        </Text>
-        <Button
-          primary
-          icon={<Add aria-label="Register new room" name="Register new room" size="20px" />}
-          onClick={handleOpen}
-          size="small"
-          title="Register new room"
-          type="button"
-        />
-      </Card>
+      <Button
+        primary
+        icon={<Add size="20px" />}
+        label={intl.formatMessage(messages.addNewRoomLabel)}
+        onClick={handleOpen}
+        size={'small'}
+      />
       {open && (
         <Layer
           id="confirmDelete"

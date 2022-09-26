@@ -34,10 +34,7 @@ describe('RoomRow', () => {
     );
 
     screen.getByText(room.name);
-    screen.getByText('Admin');
 
     await user.click(screen.getByText('Join'));
-
-    expect(screen.getByText(`//${room.slug}`)).toBeInTheDocument();
   });
 });

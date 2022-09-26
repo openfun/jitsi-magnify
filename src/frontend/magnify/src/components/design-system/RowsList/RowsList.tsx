@@ -175,15 +175,18 @@ export default function RowsList<TRowProps extends Row>({
         </Box>
       </Grid>
       {Header && <Header selected={selected} setSelected={setSelected} />}
-      {!isLoading &&
-        rows.map((row) => (
-          <Row
-            key={row.id}
-            {...row}
-            onToggle={() => handleToggle(row.id)}
-            selected={selected[row.id]}
-          />
-        ))}
+      {!isLoading && (
+        <Box gap={'small'}>
+          {rows.map((row) => (
+            <Row
+              key={row.id}
+              {...row}
+              onToggle={() => handleToggle(row.id)}
+              selected={selected[row.id]}
+            />
+          ))}
+        </Box>
+      )}
       {isLoading && Array.from({ length: 3 }, (_v, i) => <WaitingRow key={i} />)}
     </Card>
   );

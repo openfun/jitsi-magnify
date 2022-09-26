@@ -30,8 +30,6 @@ describe('MyRooms', () => {
     );
 
     // 1) Load the rooms
-    screen.getByText('(My rooms)');
-    screen.getByText('Register new room');
     expect(screen.getAllByTitle('Loading...').length).toBe(3);
 
     // 2) Wait for the rooms to load
@@ -39,16 +37,6 @@ describe('MyRooms', () => {
     await waitForElementToBeRemoved(() => screen.queryAllByTitle('Loading...'));
 
     // 3) Check the rooms
-    expect(screen.getAllByRole('link', { name: 'Join' }).length).toBe(7);
-
-    // 4) Register a new room
-    await user.click(screen.getByRole('button', { name: 'Register new room' }));
-    await user.type(screen.getByRole('textbox', { name: 'Name' }), roomToCreate.name);
-    await user.click(screen.getByRole('button', { name: `Register room` }));
-    await waitForElementToBeRemoved(() => screen.getByRole('dialog'));
-
-    // 5) Check the new room
-    expect(screen.getAllByRole('link', { name: 'Join' }).length).toBe(8);
-    screen.getByText(roomToCreate.name);
+    expect(screen.getAllByRole('button', { name: 'Join' }).length).toBe(7);
   });
 });

@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useController } from '../../../controller';
 import { RowsList } from '../../design-system';
-import RegisterRoom from '../RegisterRoom';
 import RoomRow from '../RoomRow';
 
 export interface MyRoomsProps {
@@ -24,7 +23,6 @@ const MyRooms = ({ baseJitsiUrl }: MyRoomsProps) => {
 
   return (
     <RowsList
-      Header={RegisterRoom}
       Row={({ room }) => <RoomRow baseJitsiUrl={baseJitsiUrl} room={room} />}
       isLoading={isLoading}
       label={messages.roomsListLabel}

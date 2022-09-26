@@ -1,11 +1,14 @@
 import { defineMessages } from '@formatjs/intl';
-import { Box, Button, Card, Grid, Tag, Text } from 'grommet';
+import { Box, Button, Card, Text } from 'grommet';
+import { Configure } from 'grommet-icons';
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
+import { useIsSmallSize } from '../../../hooks/useIsMobile';
 import { Room } from '../../../types/room';
-import { SettingsSVG } from '../../design-system';
+
+import MagnifyRouterLink from '../../design-system/RouterLink/MagnifyRouterLink';
 
 export interface RoomRowProps {
   /**
@@ -34,58 +37,41 @@ const messages = defineMessages({
 
 export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
   const intl = useIntl();
+  const navigate = useNavigate();
+  const isSmallSize = useIsSmallSize();
 
   return (
-    <Card background="light-2" elevation="0" margin={{ bottom: '10px' }} pad="small">
-      <Grid
-        fill
-        columns={['flex', 'auto']}
-        gap="small"
-        rows={['flex']}
-        areas={[
-          { name: 'title', start: [0, 0], end: [0, 0] },
-          { name: 'action', start: [1, 0], end: [1, 0] },
-        ]}
+    <Card background="light-2" elevation="0" pad="small">
+      <Box
+        align={'center'}
+        direction={isSmallSize ? 'column' : 'row'}
+        gap={'20px'}
+        justify={isSmallSize ? 'center' : 'between'}
       >
-        <Box gridArea="title">
-          <Box direction="row" gap="small" margin="auto 0px">
-            <Box margin="auto 0px">
-              <Link to={`/rooms/${room.slug}`}>
-                <Text color="brand" size="medium" weight="bold">
-                  {room.name}
-                </Text>
-              </Link>
-            </Box>
-            {room.isAdmin && (
-              <Tag
-                as={(p) => <Text color="brand" {...p} />}
-                value={intl.formatMessage(messages.admin)}
-              />
-            )}
+        <Box direction="row" gap="small" margin="auto 0px">
+          <Box margin="auto 0px">
+            <Text color="brand" size="medium" truncate={'tip'} weight="bold">
+              <MagnifyRouterLink to={'/'}>{room.name}</MagnifyRouterLink>
+            </Text>
           </Box>
         </Box>
 
-        <Box align="center" gridArea="action">
-          <Box direction="row" margin="auto">
-            {room.isAdmin && (
-              <Box margin={{ vertical: 'auto', horizontal: 'small' }}>
-                <Link to={`/rooms/${room.slug}/settings`}>
-                  <SettingsSVG color="brand" />
-                </Link>
-              </Box>
-            )}
-            <Button
-              primary
-              label={intl.formatMessage(messages.join)}
-              as={({ children, type, className }) => (
-                <Link className={className} to={`${baseJitsiUrl}/${room.slug}`} type={type}>
-                  {children}
-                </Link>
-              )}
-            />
-          </Box>
+        <Box align={'center'} direction="row">
+          {room.isAdmin && (
+            <Box margin={{ left: 'small' }}>
+              <MagnifyRouterLink to={`/rooms/${room.slug}/settings`}>
+                <Configure color="brand" />
+              </MagnifyRouterLink>
+            </Box>
+          )}
+          <Button
+            primary
+            label={intl.formatMessage(messages.join)}
+            margin={{ left: 'small' }}
+            onClick={() => navigate(`/rooms/${room.slug}/meeting`)}
+          />
         </Box>
-      </Grid>
+      </Box>
     </Card>
   );
 }
