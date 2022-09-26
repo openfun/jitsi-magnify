@@ -23,7 +23,6 @@
                 "react/jsx-uses-react": "off",
                 "react/prop-types": "off",
                 "react/react-in-jsx-scope": "off",
-                "sort-keys": ["warn", "asc", {"caseSensitive": true, "natural": true, "minKeys": 2}],
                 "max-len": ["error",
                         {
                                 "code": 100,
