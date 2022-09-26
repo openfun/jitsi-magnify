@@ -1,4 +1,3 @@
-import { LayoutWithSidebar } from '@jitsi-magnify/core';
 import { Box, Text } from 'grommet';
 import { defineMessages, useIntl } from 'react-intl';
 
@@ -18,10 +17,8 @@ const messages = defineMessages({
 export default function NotFoundView() {
   const intl = useIntl();
   return (
-    <LayoutWithSidebar title={intl.formatMessage(messages.notFoundTitle)}>
-      <Box>
-        <Text>{intl.formatMessage(messages.notFoundMessage)}</Text>
-      </Box>
-    </LayoutWithSidebar>
+    <Box>
+      <Text>{intl.formatMessage(messages.notFoundMessage)}</Text>
+    </Box>
   );
 }

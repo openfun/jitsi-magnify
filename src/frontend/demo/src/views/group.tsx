@@ -1,4 +1,9 @@
-import { LayoutWithSidebar, useTranslations, GroupUserList } from '@jitsi-magnify/core';
+import {
+  GroupUserList,
+  MagnifyPageContent,
+  ResponsiveLayout,
+  useTranslations,
+} from '@jitsi-magnify/core';
 import { defineMessages } from 'react-intl';
 import { useParams } from 'react-router-dom';
 
@@ -16,8 +21,10 @@ export default function GroupView() {
 
   if (!groupId) return null;
   return (
-    <LayoutWithSidebar title={intl.formatMessage(messages.groupViewTitle)}>
-      <GroupUserList groupId={groupId} />
-    </LayoutWithSidebar>
+    <ResponsiveLayout>
+      <MagnifyPageContent title={intl.formatMessage(messages.groupViewTitle)}>
+        <GroupUserList groupId={groupId} />
+      </MagnifyPageContent>
+    </ResponsiveLayout>
   );
 }

@@ -1,5 +1,6 @@
 import {
-  LayoutWithSidebar,
+  MagnifyPageContent,
+  ResponsiveLayout,
   TestButton,
   TestButtonVariant,
   useTranslations,
@@ -17,8 +18,10 @@ export const messages = defineMessages({
 export default function DefaultView() {
   const intl = useTranslations();
   return (
-    <LayoutWithSidebar title={intl.formatMessage(messages.testTitle)}>
-      <TestButton variant={TestButtonVariant.BLUE} />
-    </LayoutWithSidebar>
+    <ResponsiveLayout>
+      <MagnifyPageContent title={intl.formatMessage(messages.testTitle)}>
+        <TestButton variant={TestButtonVariant.BLUE} />
+      </MagnifyPageContent>
+    </ResponsiveLayout>
   );
 }

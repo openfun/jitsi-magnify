@@ -1,9 +1,9 @@
-import { LayoutWithSidebar, MyMeetings, useTranslations } from '@jitsi-magnify/core';
+import { MagnifyPageContent, MyRooms, useTranslations } from '@jitsi-magnify/core';
 import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
   meetingsViewTitle: {
-    defaultMessage: 'My meetings',
+    defaultMessage: 'My Rooms',
     description: 'Page title for the My meetings page',
     id: 'app.meetingsViewTitle',
   },
@@ -12,8 +12,8 @@ export const messages = defineMessages({
 export default function MeetingsView() {
   const intl = useTranslations();
   return (
-    <LayoutWithSidebar title={intl.formatMessage(messages.meetingsViewTitle)}>
-      <MyMeetings baseJitsiUrl="/jitsi" />
-    </LayoutWithSidebar>
+    <MagnifyPageContent title={intl.formatMessage(messages.meetingsViewTitle)}>
+      <MyRooms baseJitsiUrl="/j" />
+    </MagnifyPageContent>
   );
 }

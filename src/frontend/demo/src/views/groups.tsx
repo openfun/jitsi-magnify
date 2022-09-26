@@ -1,4 +1,9 @@
-import { MyGroupsBlock, LayoutWithSidebar, useTranslations } from '@jitsi-magnify/core';
+import {
+  MagnifyPageContent,
+  MyGroupsBlock,
+  ResponsiveLayout,
+  useTranslations,
+} from '@jitsi-magnify/core';
 import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
@@ -12,8 +17,10 @@ export const messages = defineMessages({
 export default function GroupsView() {
   const intl = useTranslations();
   return (
-    <LayoutWithSidebar title={intl.formatMessage(messages.groupsViewTitle)}>
-      <MyGroupsBlock />
-    </LayoutWithSidebar>
+    <ResponsiveLayout>
+      <MagnifyPageContent title={intl.formatMessage(messages.groupsViewTitle)}>
+        <MyGroupsBlock />
+      </MagnifyPageContent>
+    </ResponsiveLayout>
   );
 }
