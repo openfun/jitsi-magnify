@@ -1,52 +1,14 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { Grommet } from 'grommet';
-import { createMemoryHistory, MemoryHistory } from 'history';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Router } from 'react-router-dom';
-import { ControllerProvider, MockController } from '../../../controller';
-import createRandomRoom from '../../../factories/room';
-import theme from '../../../themes/theme';
 import RoomConfig from './RoomConfig';
-
-function SettingWrapper({
-  children,
-  controller,
-  history,
-}: {
-  children: React.ReactNode;
-  controller: MockController;
-  history: MemoryHistory;
-}) {
-  const queryClient = new QueryClient();
-
-  return (
-    <Grommet theme={theme}>
-      <IntlProvider locale="en">
-        <QueryClientProvider client={queryClient}>
-          <ControllerProvider controller={controller}>
-            <Router location={history.location} navigator={history}>
-              {children}
-            </Router>
-          </ControllerProvider>
-        </QueryClientProvider>
-      </IntlProvider>
-    </Grommet>
-  );
-}
 
 describe('RoomConfig', () => {
   it('should fetch data from the controller', async () => {
-    const controller = new MockController();
-    controller.getRoom.mockResolvedValue(createRandomRoom());
-
-    const history = createMemoryHistory();
-
     render(
-      <SettingWrapper controller={controller} history={history}>
+      <IntlProvider locale="en">
         <RoomConfig roomName="room-1" />
-      </SettingWrapper>,
+      </IntlProvider>,
     );
 
     // Wait for loading to finish
