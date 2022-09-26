@@ -11,6 +11,7 @@ import {
 import React, { useContext } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import MagnifyCard from '../../design-system/Card';
 import FormikSwitch from '../../design-system/Formik/FormikSwitch';
 import { FormikValuesChange } from '../../design-system/Formik/ValuesChange/FormikValuesChange';
@@ -89,7 +90,7 @@ const RoomConfig = ({ roomName }: { roomName: string }) => {
     waitingRoomEnabled: true,
   };
 
-  const isMobile = size === 'small';
+  const isMobile = useIsMobile();
 
   const columns: Record<ResponsiveValue, GridColumnsType> = {
     small: ['auto'],
