@@ -5,6 +5,7 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
     '@bbbtech/storybook-formik/register',
+      'storybook-addon-react-router-v6'
   ],
   framework: '@storybook/react',
   core: {
