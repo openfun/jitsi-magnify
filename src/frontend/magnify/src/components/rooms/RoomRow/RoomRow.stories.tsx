@@ -1,11 +1,13 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
+import { withRouter } from 'storybook-addon-react-router-v6';
 import createRandomRoom from '../../../factories/room';
 import RoomRow, { RoomRowProps } from './RoomRow';
 
 export default {
   title: 'Rooms/RoomRow',
   component: RoomRow,
+  decorators: [withRouter],
 } as ComponentMeta<typeof RoomRow>;
 
 // Template
