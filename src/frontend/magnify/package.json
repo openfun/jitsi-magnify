@@ -63,6 +63,7 @@
     "rollup-plugin-peer-deps-external": "2.2.4",
     "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-terser": "7.0.2",
+    "storybook-addon-react-router-v6": "^0.2.1",
     "ts-jest": "28.0.4",
     "ts-node": "10.8.1",
     "tslib": "2.4.0",
@@ -82,7 +83,7 @@
     "@jitsi/react-sdk": "1.0.1",
     "axios": "0.27.2",
     "formik": "2.2.9",
-    "grommet": "2.24.0",
+    "grommet": "2.25.3",
     "grommet-icons": "4.8.0",
     "polished": "4.2.2",
     "react": "18.2.0",
@@ -94,6 +95,7 @@
     "yup": "0.32.11"
   },
   "dependencies": {
+    "react-router-dom": "6.4.1",
     "use-debounce": "8.0.4"
   }
 }
