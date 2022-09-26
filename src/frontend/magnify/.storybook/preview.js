@@ -29,7 +29,7 @@ const queryClient = new QueryClient({
 });
 
 // Grommet wrapper decorator
-const withGrommet = (storyFn) => <Grommet theme={defaultTheme}>{storyFn()}</Grommet>;
+const withGrommet = (storyFn) => <Grommet full theme={defaultTheme}>{storyFn()}</Grommet>;
 
 // Simulate router behavior
 
@@ -65,4 +65,4 @@ const withQuery = (storyFn) => (
 );
 
 // Decorators
-export const decorators = [withRouter, withGrommet, withIntl, withController, withQuery];
+export const decorators = [ withGrommet, withIntl, withController, withQuery];
