@@ -28,7 +28,7 @@
       ],
       "matchPackageNames": [
         "django-parler",
-        "djangorestframework",
+        "djangorestframework"
       ]
     }
   ]
