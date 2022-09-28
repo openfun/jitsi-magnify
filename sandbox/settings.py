@@ -84,6 +84,9 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
     CSRF_TRUSTED_ORIGINS = values.ListValue([])
     SECRET_KEY = values.Value(None)
 
+    # CORS headers
+    CORS_ALLOWED_ORIGINS = values.ListValue([], environ_name="CORS_ALLOWED_ORIGINS")
+
     # System check reference:
     # https://docs.djangoproject.com/en/2.2/ref/checks/#security
     SILENCED_SYSTEM_CHECKS = values.ListValue(
@@ -200,6 +203,7 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
         "django.middleware.locale.LocaleMiddleware",
         "django.middleware.common.CommonMiddleware",
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
+        "corsheaders.middleware.CorsMiddleware",
         "dockerflow.django.middleware.DockerflowMiddleware",
     )
 
@@ -217,6 +221,7 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
         "magnify.apps.core",
         "magnify",
         # Third party apps
+        "corsheaders",
         "dockerflow.django",
         "parler",
         "rest_framework",
@@ -342,6 +347,7 @@ class Development(Base):
 
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
+    CORS_ALLOW_ALL_ORIGINS = True
     CSRF_TRUSTED_ORIGINS = ["http://localhost:8071"]
     API_URL = values.Value("http://localhost:8071")
 
