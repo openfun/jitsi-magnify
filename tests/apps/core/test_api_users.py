@@ -13,6 +13,11 @@ from magnify.apps.core.models import User
 
 # pylint: disable=too-many-public-methods
 
+MOCK_TOKENS = tokens = {
+    "refresh": "myRefreshToken",
+    "access": "myAccessToken",
+}
+
 
 class UsersApiTestCase(APITestCase):
     """Test requests on magnify's core app User API endpoint."""
@@ -227,15 +232,18 @@ class UsersApiTestCase(APITestCase):
 
     def test_api_users_create_anonymous_successful(self):
         """Anonymous users should be able to create users."""
-        response = self.client.post(
-            "/api/users/",
-            {
-                "email": "thomas.jeffersion@example.com",
-                "name": "Thomas Jefferson",
-                "username": "thomas",
-                "password": "mypassword",
-            },
-        )
+        with mock.patch(
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
+        ):
+            response = self.client.post(
+                "/api/users/",
+                {
+                    "email": "thomas.jeffersion@example.com",
+                    "name": "Thomas Jefferson",
+                    "username": "thomas",
+                    "password": "mypassword",
+                },
+            )
         self.assertEqual(response.status_code, 201)
         self.assertEqual(User.objects.count(), 1)
 
@@ -247,21 +255,35 @@ class UsersApiTestCase(APITestCase):
         self.assertIn("pbkdf2_sha256", user.password)
         self.assertTrue(check_password("mypassword", user.password))
 
+        self.assertEqual(
+            response.json(),
+            {
+                "id": str(user.id),
+                "email": user.email,
+                "name": user.name,
+                "username": user.username,
+                "auth": MOCK_TOKENS,
+            },
+        )
+
     def test_api_users_create_authenticated_successful(self):
         """Authenticated users should be able to create users."""
         user = UserFactory()
         jwt_token = AccessToken.for_user(user)
 
-        response = self.client.post(
-            "/api/users/",
-            {
-                "email": "thomas.jeffersion@example.com",
-                "name": "Thomas Jefferson",
-                "username": "thomas",
-                "password": "mypassword",
-            },
-            HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
-        )
+        with mock.patch(
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
+        ):
+            response = self.client.post(
+                "/api/users/",
+                {
+                    "email": "thomas.jeffersion@example.com",
+                    "name": "Thomas Jefferson",
+                    "username": "thomas",
+                    "password": "mypassword",
+                },
+                HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
+            )
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(User.objects.count(), 2)
@@ -269,6 +291,20 @@ class UsersApiTestCase(APITestCase):
         user = User.objects.get(username="thomas")
         self.assertEqual(user.email, "thomas.jeffersion@example.com")
         self.assertEqual(user.name, "Thomas Jefferson")
+
+        self.assertIn("pbkdf2_sha256", user.password)
+        self.assertTrue(check_password("mypassword", user.password))
+
+        self.assertEqual(
+            response.json(),
+            {
+                "id": str(user.id),
+                "email": user.email,
+                "name": user.name,
+                "username": user.username,
+                "auth": MOCK_TOKENS,
+            },
+        )
 
     def test_api_users_create_authenticated_existing_username(self):
         """
@@ -433,29 +469,26 @@ class UsersApiTestCase(APITestCase):
 
     def test_api_users_login_successful(self):
         """Anonymous users should be able to login with credentials."""
-        UserFactory(username="thomas")
-        tokens = {
-            "refresh": "myRefreshToken",
-            "access": "myAccessToken",
-        }
+        user = UserFactory()
         with mock.patch(
-            "magnify.apps.core.api.get_tokens_for_user", return_value=tokens
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
         ):
             response = self.client.post(
                 "/api/users/login/",
                 {
-                    "username": "thomas",
+                    "username": user.username,
                     "password": "password",
                 },
             )
         self.assertEqual(response.status_code, 200)
-
         self.assertEqual(
             response.json(),
             {
-                "msg": "Login success",
-                "refresh": "myRefreshToken",
-                "access": "myAccessToken",
+                "id": str(user.id),
+                "email": user.email,
+                "name": user.name,
+                "username": user.username,
+                "auth": MOCK_TOKENS,
             },
         )
 
@@ -471,9 +504,9 @@ class UsersApiTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        tokens = response.json()
+        user_data = response.json()
         response = self.client.get(
-            "/api/users/me/", HTTP_AUTHORIZATION=f"Bearer {tokens['access']}"
+            "/api/users/me/", HTTP_AUTHORIZATION=f"Bearer {user_data['auth']['access']}"
         )
         self.assertEqual(
             response.json(),
@@ -488,12 +521,8 @@ class UsersApiTestCase(APITestCase):
     def test_api_users_login_credentials_missing(self):
         """Attempting a login with incomplete credentials should return an error."""
         UserFactory(username="thomas")
-        tokens = {
-            "refresh": "myRefreshToken",
-            "access": "myAccessToken",
-        }
         with mock.patch(
-            "magnify.apps.core.api.get_tokens_for_user", return_value=tokens
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
         ):
             response = self.client.post(
                 "/api/users/login/",
@@ -509,12 +538,8 @@ class UsersApiTestCase(APITestCase):
     def test_api_users_login_credentials_invalid(self):
         """Attempting a login with invalid credentials should return an error."""
         UserFactory(username="thomas")
-        tokens = {
-            "refresh": "myRefreshToken",
-            "access": "myAccessToken",
-        }
         with mock.patch(
-            "magnify.apps.core.api.get_tokens_for_user", return_value=tokens
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
         ):
             response = self.client.post(
                 "/api/users/login/",
@@ -554,12 +579,8 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 204)
 
         # Check that the password was actually changed
-        tokens = {
-            "refresh": "myRefreshToken",
-            "access": "myAccessToken",
-        }
         with mock.patch(
-            "magnify.apps.core.api.get_tokens_for_user", return_value=tokens
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
         ):
             # The old password should not work anymore
             response = self.client.post(
@@ -600,12 +621,8 @@ class UsersApiTestCase(APITestCase):
         )
 
         # Check that the password was not changed
-        tokens = {
-            "refresh": "myRefreshToken",
-            "access": "myAccessToken",
-        }
         with mock.patch(
-            "magnify.apps.core.api.get_tokens_for_user", return_value=tokens
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
         ):
             # The old password should still work
             response = self.client.post(

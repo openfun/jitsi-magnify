@@ -34,7 +34,6 @@ from .serializers import (
     RoomUserAccessSerializer,
     UserSerializer,
 )
-from .utils import get_tokens_for_user
 
 
 def exception_handler(exc, context):
@@ -149,8 +148,8 @@ class UserViewSet(
             password=request.data["password"],
         )
         if user is not None:
-            auth_data = get_tokens_for_user(user)
-            return Response({"msg": "Login success", **auth_data}, status=200)
+            serializer = RegistrationSerializer(instance=user)
+            return Response({**serializer.data}, status=200)
 
         return Response({"msg": "Invalid credentials"}, status=401)
 
