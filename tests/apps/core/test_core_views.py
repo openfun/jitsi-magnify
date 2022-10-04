@@ -1,7 +1,7 @@
 """
 Test suite for redirection to jitsi
 """
-from datetime import datetime
+import datetime
 from unittest import mock
 
 from django.test import TestCase
@@ -31,7 +31,7 @@ class RedirectTestCase(TestCase):
         We thus verify that this redirects as wanted, and that the token is correct
         """
         # Fetch response from "api/token/{room}"
-        now = datetime(2030, 6, 15, tzinfo=timezone.utc)
+        now = datetime.datetime(2030, 6, 15, tzinfo=datetime.timezone.utc)
         with mock.patch.object(timezone, "now", return_value=now):
             response = self.client.get("/api/token/test")
 
@@ -57,7 +57,7 @@ class RedirectTestCase(TestCase):
         user = UserFactory(username="mickael", email="mickael@example.com")
 
         # Fetch response from "api/token/{room}"
-        now = datetime(2030, 6, 15, tzinfo=timezone.utc)
+        now = datetime.datetime(2030, 6, 15, tzinfo=datetime.timezone.utc)
         with mock.patch.object(timezone, "now", return_value=now):
             self.client.login(username=user.username, password="password")
             response = self.client.get("/api/token/test")
@@ -87,7 +87,7 @@ class RedirectTestCase(TestCase):
         )
 
         # Fetch response from "api/token/{room}"
-        now = datetime(2030, 6, 15, tzinfo=timezone.utc)
+        now = datetime.datetime(2030, 6, 15, tzinfo=datetime.timezone.utc)
         with mock.patch.object(timezone, "now", return_value=now):
             self.client.login(username=user.username, password="password")
             response = self.client.get("/api/token/test")
