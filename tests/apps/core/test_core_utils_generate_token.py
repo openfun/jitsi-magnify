@@ -1,7 +1,7 @@
 """
 Test suite for redirection to jitsi
 """
-from datetime import datetime
+import datetime
 from unittest import mock
 
 from django.contrib.auth.models import AnonymousUser
@@ -29,7 +29,7 @@ class TokenUtilsTestCase(TestCase):
 
     def test_utils_generate_token_anonymous(self):
         """Generate a JWT token for a guest."""
-        now = datetime(2030, 6, 15, tzinfo=timezone.utc)
+        now = datetime.datetime(2030, 6, 15, tzinfo=datetime.timezone.utc)
         with mock.patch.object(timezone, "now", return_value=now):
             token = generate_token(AnonymousUser(), "my-room")
 
@@ -47,7 +47,7 @@ class TokenUtilsTestCase(TestCase):
     def test_utils_generate_token_authenticated(self):
         """Generate a token for a quidam user."""
         user = UserFactory(username="mickael", email="mickael@example.com")
-        now = datetime(2030, 6, 15, tzinfo=timezone.utc)
+        now = datetime.datetime(2030, 6, 15, tzinfo=datetime.timezone.utc)
         with mock.patch.object(timezone, "now", return_value=now):
             token = generate_token(user, "my-room")
 
@@ -67,7 +67,7 @@ class TokenUtilsTestCase(TestCase):
         user = UserFactory(
             username="mickael", email="mickael@example.com", is_staff=True
         )
-        now = datetime(2030, 6, 15, tzinfo=timezone.utc)
+        now = datetime.datetime(2030, 6, 15, tzinfo=datetime.timezone.utc)
         with mock.patch.object(timezone, "now", return_value=now):
             token = generate_token(user, "my-room")
 
