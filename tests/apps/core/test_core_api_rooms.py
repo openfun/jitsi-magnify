@@ -315,6 +315,7 @@ class RoomsApiTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, 401)
+        self.assertFalse(Room.objects.exists())
 
     def test_api_rooms_create_authenticated(self):
         """
@@ -334,6 +335,8 @@ class RoomsApiTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 201)
         room = Room.objects.get()
+        self.assertEqual(room.name, "my room")
+        self.assertEqual(room.slug, "my-room")
         self.assertTrue(
             room.user_accesses.filter(is_administrator=True, user=user).exists()
         )
