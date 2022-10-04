@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password
 
 from rest_framework import serializers
 
-from magnify.apps.core import models
+from magnify.apps.core import models, utils
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,13 +30,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ["email", "name", "username", "password"]
+        fields = ["id", "email", "name", "username", "password"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def save(self, *args, **kwargs):
         """Create the user then set the passsword."""
         kwargs["password"] = make_password(self.validated_data["password"])
         return super().save(*args, **kwargs)
+
+    def to_representation(self, instance):
+        """Add authentication tokens that are required upon registration."""
+        result = super().to_representation(instance)
+        result["auth"] = utils.get_tokens_for_user(instance)
+        return result
 
 
 # pylint: disable=abstract-method
