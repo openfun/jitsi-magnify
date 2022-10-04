@@ -31,6 +31,7 @@ class RoomsApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(room_public.id),
+                "is_administrable": False,
                 "jitsi": {
                     "room": f"{room_public.slug:s}-{room_public.id!s}",
                     "token": "the token",
@@ -88,6 +89,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "is_administrable": False,
                 "name": room.name,
                 "slug": room.slug,
             },
@@ -103,6 +105,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "is_administrable": False,
                 "name": room.name,
                 "slug": room.slug,
             },
@@ -123,6 +126,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "is_administrable": False,
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
                     "token": "the token",
@@ -156,6 +160,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "is_administrable": False,
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
                     "token": "the token",
@@ -185,6 +190,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "is_administrable": False,
                 "name": room.name,
                 "slug": room.slug,
             },
@@ -215,6 +221,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(
             response.json(),
             {
+                "id": str(room.id),
                 "groups": [
                     {
                         "id": str(group_access.id),
@@ -231,7 +238,7 @@ class RoomsApiTestCase(APITestCase):
                         "is_administrator": user_access.is_administrator,
                     }
                 ],
-                "id": str(room.id),
+                "is_administrable": True,
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
                     "token": "the token",
@@ -270,6 +277,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(
             response.json(),
             {
+                "id": str(room.id),
                 "groups": [
                     {
                         "id": str(group_access.id),
@@ -286,7 +294,7 @@ class RoomsApiTestCase(APITestCase):
                         "is_administrator": user_access.is_administrator,
                     }
                 ],
-                "id": str(room.id),
+                "is_administrable": True,
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
                     "token": "the token",
