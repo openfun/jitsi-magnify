@@ -173,6 +173,14 @@ class Room(BaseModel):
         Group, through="RoomGroupAccess", blank=True, related_name="rooms"
     )
     labels = models.ManyToManyField(Label, blank=True, related_name="is_room_label_of")
+    configuration = models.JSONField(
+        blank=True,
+        default=dict,
+        verbose_name=_("Jitsi room configuration"),
+        help_text=_(
+            "Values for Jitsi parameters to configure the room via the iframe API."
+        ),
+    )
 
     class Meta:
         db_table = "magnify_room"
@@ -532,17 +540,3 @@ class MeetingGroupAccess(BaseModel):
     def __str__(self):
         admin_status = " (admin)" if self.is_administrator else ""
         return f"{capfirst(self.meeting.name):s} / {capfirst(self.group.name):s}{admin_status:s}"
-
-
-class JitsiConfiguration(BaseModel):
-    """Model for the Jitsi configuration of a room or a meeting"""
-
-    meeting = models.ForeignKey(
-        Meeting, on_delete=models.CASCADE, null=True, blank=True
-    )
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, blank=True)
-
-    class Meta:
-        db_table = "magnify_jitsi_configuration"
-        verbose_name = _("Jitsi configuration")
-        verbose_name_plural = _("Jitsi configurations")
