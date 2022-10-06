@@ -31,6 +31,7 @@ class RoomsApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(room_public.id),
+                "configuration": {},
                 "is_administrable": False,
                 "jitsi": {
                     "room": f"{room_public.slug:s}-{room_public.id!s}",
@@ -89,6 +90,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "configuration": {},
                 "is_administrable": False,
                 "name": room.name,
                 "slug": room.slug,
@@ -105,6 +107,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "configuration": {},
                 "is_administrable": False,
                 "name": room.name,
                 "slug": room.slug,
@@ -126,6 +129,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "configuration": {},
                 "is_administrable": False,
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
@@ -160,6 +164,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "configuration": {},
                 "is_administrable": False,
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
@@ -190,6 +195,7 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
+                "configuration": {},
                 "is_administrable": False,
                 "name": room.name,
                 "slug": room.slug,
@@ -239,6 +245,7 @@ class RoomsApiTestCase(APITestCase):
                     }
                 ],
                 "is_administrable": True,
+                "configuration": {},
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
                     "token": "the token",
@@ -295,6 +302,7 @@ class RoomsApiTestCase(APITestCase):
                     }
                 ],
                 "is_administrable": True,
+                "configuration": {},
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
                     "token": "the token",
@@ -389,13 +397,19 @@ class RoomsApiTestCase(APITestCase):
 
         response = self.client.put(
             f"/api/rooms/{room.id!s}/",
-            {"name": "New name", "slug": "should-be-ignored"},
+            {
+                "name": "New name",
+                "slug": "should-be-ignored",
+                "configuration": {"the_key": "the_value"},
+            },
+            format="json",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
         room.refresh_from_db()
         self.assertEqual(room.name, "New name")
         self.assertEqual(room.slug, "new-name")
+        self.assertEqual(room.configuration, {"the_key": "the_value"})
 
     def test_api_rooms_update_administrator_groups(self):
         """Users who are administrators of a room via a group should be allowed to update it."""
