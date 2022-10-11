@@ -20,6 +20,7 @@ export const formikSubmitButtonMessages = defineMessages({
 
 interface FormikSubmitButtonProps extends ButtonExtendedProps {
   overrideSubmit?: (values: unknown) => void;
+  isLoading?: boolean;
 }
 
 export const FormikSubmitButton: FunctionComponent<FormikSubmitButtonProps> = ({ ...props }) => {
@@ -66,8 +67,8 @@ export const FormikSubmitButton: FunctionComponent<FormikSubmitButtonProps> = ({
         <Button
           {...props}
           primary
-          disabled={formik.isSubmitting}
-          icon={formik.isSubmitting ? <Spinner size={'xsmall'} /> : undefined}
+          disabled={formik.isSubmitting || props.isLoading}
+          icon={formik.isSubmitting || props.isLoading ? <Spinner size={'xsmall'} /> : undefined}
           onClick={onSubmit}
         />
       )}
