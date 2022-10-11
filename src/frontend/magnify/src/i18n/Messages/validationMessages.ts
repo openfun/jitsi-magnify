@@ -18,7 +18,7 @@ export const validationMessages = defineMessages({
     id: 'validationMesssages.emailInvalid',
   },
   confirmDoesNotMatch: {
-    defaultMessage: "New password and it's confirmation do not match",
+    defaultMessage: 'New password and its confirmation do not match',
     description: 'The error message for the confirm new password field',
     id: 'validationMesssages.confirmDoesNotMatch',
   },

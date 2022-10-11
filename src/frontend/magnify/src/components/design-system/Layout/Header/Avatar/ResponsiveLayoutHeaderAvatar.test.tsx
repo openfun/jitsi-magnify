@@ -1,15 +1,19 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { commonMessages } from '../../../../../i18n/Messages/commonMessages';
+import { MagnifyTestingProvider } from '../../../../app';
 import { ResponsiveLayoutHeaderAvatar } from './ResponsiveLayoutHeaderAvatar';
 
 describe('Should show a ResponsiveLayoutHeaderAvatar', () => {
   it('display ResponsiveLayoutHeaderAvatar', async () => {
     render(<ResponsiveLayoutHeaderAvatar />, {
-      wrapper: BrowserRouter,
+      wrapper: MagnifyTestingProvider,
     });
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', '/account');
+    const button = screen.getByRole('button', { name: 'Open Menu' });
+
+    fireEvent.click(button);
+    screen.getByText(commonMessages.account.defaultMessage);
+    screen.getByText(commonMessages.logout.defaultMessage);
     screen.getByText('NP');
   });
 });
