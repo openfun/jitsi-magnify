@@ -1,11 +1,12 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Form, Formik } from 'formik';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
-import { useController } from '../../../controller';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
-import { Room } from '../../../types/room';
+import { RoomsRepository } from '../../../services/rooms/rooms.repository';
+import { Room } from '../../../types/entities/room';
+import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
@@ -32,23 +33,25 @@ export interface RegisterRoomFormProps {
    * Function to call when the form is successfully submited,
    * after the request to register the room has succeeded
    */
-  onSuccess: () => void;
+  onSuccess: (room?: Room) => void;
 }
 
 interface RegisterRoomFormValues {
   name: string;
 }
 
-const validationSchema = Yup.object().shape({ name: Yup.string().required() });
-
 const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
   const intl = useIntl();
+  const validationSchema = Yup.object().shape({ name: Yup.string().required() });
   const queryClient = useQueryClient();
-  const controller = useController();
-  const { mutate } = useMutation(controller.registerRoom, {
-    onSuccess: (data) => {
-      queryClient.setQueryData('rooms', (rooms?: Room[]) => [...(rooms || []), data]);
-      onSuccess();
+  const { mutate, isLoading } = useMutation(RoomsRepository.create, {
+    onSuccess: (newRoom) => {
+      queryClient.setQueryData([MagnifyQueryKeys.ROOMS], (rooms: Room[] = []) => {
+        const newRooms = [...rooms];
+        newRooms.push(newRoom);
+        return newRooms;
+      });
+      onSuccess(newRoom);
     },
   });
 
@@ -60,7 +63,7 @@ const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
   );
 
   const handleSubmit = (values: RegisterRoomFormValues) => {
-    mutate(values.name);
+    mutate(values);
   };
 
   return (
@@ -75,7 +78,10 @@ const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
           name={'name'}
           placeholder={intl.formatMessage(messages.namePlaceholder)}
         />
-        <FormikSubmitButton label={intl.formatMessage(messages.registerRoomSubmitLabel)} />
+        <FormikSubmitButton
+          isLoading={isLoading}
+          label={intl.formatMessage(messages.registerRoomSubmitLabel)}
+        />
       </Form>
     </Formik>
   );

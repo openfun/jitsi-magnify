@@ -1,2 +1,2 @@
-export { default as JitsiMeeting } from './JitsiMeeting';
+export * from './MagnifyMeeting';
 export { default as MeetingDisambiguation } from './MeetingDisambiguation';

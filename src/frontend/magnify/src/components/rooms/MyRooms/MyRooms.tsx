@@ -1,33 +1,21 @@
+import { Card } from 'grommet';
 import React from 'react';
-import { defineMessages } from 'react-intl';
-import { useQuery } from 'react-query';
-import { useController } from '../../../controller';
-import { RowsList } from '../../design-system';
+import { Room } from '../../../types/entities/room';
 import RoomRow from '../RoomRow';
 
 export interface MyRoomsProps {
   baseJitsiUrl: string;
+  rooms?: Room[] | undefined;
+  isLoading?: boolean;
 }
 
-const messages = defineMessages({
-  roomsListLabel: {
-    id: 'components.rooms.myRooms.roomsListLabel',
-    defaultMessage: 'My rooms',
-    description: 'Label for the list of rooms',
-  },
-});
-
-const MyRooms = ({ baseJitsiUrl }: MyRoomsProps) => {
-  const controller = useController();
-  const { data: rooms, isLoading } = useQuery('rooms', controller.getMyRooms);
-
+const MyRooms = ({ baseJitsiUrl, ...props }: MyRoomsProps) => {
   return (
-    <RowsList
-      Row={({ room }) => <RoomRow baseJitsiUrl={baseJitsiUrl} room={room} />}
-      isLoading={isLoading}
-      label={messages.roomsListLabel}
-      rows={(rooms || []).map((room) => ({ room, id: room.id }))}
-    />
+    <Card background={'white'} gap={'small'} pad={'medium'}>
+      {props.rooms?.map((room) => {
+        return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
+      })}
+    </Card>
   );
 };
 

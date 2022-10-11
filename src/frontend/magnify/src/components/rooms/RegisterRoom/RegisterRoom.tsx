@@ -3,6 +3,7 @@ import { Add } from 'grommet-icons';
 import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
+import { Room } from '../../../types/entities/room';
 import RegisterRoomForm from '../RegisterRoomForm';
 
 const messages = defineMessages({
@@ -18,7 +19,11 @@ const messages = defineMessages({
   },
 });
 
-const RegisterRoom = () => {
+export interface RegisterRoomProps {
+  onAddRoom?: (room: Room) => void;
+}
+
+const RegisterRoom = ({ ...props }: RegisterRoomProps) => {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
 
@@ -30,6 +35,10 @@ const RegisterRoom = () => {
   const handleClose = (event?: React.MouseEvent | React.KeyboardEvent) => {
     event?.preventDefault();
     setOpen(false);
+  };
+
+  const onAddSuccess = (room?: Room): void => {
+    handleClose();
   };
 
   return (
@@ -50,7 +59,7 @@ const RegisterRoom = () => {
           role="dialog"
         >
           <Box pad="medium" width={'medium'}>
-            <RegisterRoomForm onSuccess={handleClose} />
+            <RegisterRoomForm onSuccess={onAddSuccess} />
           </Box>
         </Layer>
       )}
