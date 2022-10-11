@@ -1,6 +1,6 @@
+import { ProfileAccountView } from '@jitsi-magnify/core';
 import { defineMessages, IntlShape } from 'react-intl';
 import { RouteObject } from 'react-router-dom';
-import ProfileView from '../../../views/profile';
 
 export enum AccountPath {
   ACCOUNT = '/account',
@@ -17,7 +17,7 @@ const roomRouteLabels = defineMessages({
 export const getAccountRoutes = (intl: IntlShape): RouteObject => {
   return {
     path: AccountPath.ACCOUNT,
-    element: <ProfileView />,
+    element: <ProfileAccountView />,
     handle: {
       crumb: () => {
         return intl.formatMessage(roomRouteLabels[AccountPath.ACCOUNT]);
