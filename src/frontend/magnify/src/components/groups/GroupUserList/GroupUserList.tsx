@@ -1,7 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
 import { Box, Layer } from 'grommet';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
 import { useController } from '../../../controller';
 import { RowsList } from '../../design-system';
 import { UserRow } from '../../users';

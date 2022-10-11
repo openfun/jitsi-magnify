@@ -1,10 +1,10 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { Formik } from 'formik';
 import { Grommet } from 'grommet';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import theme from '../../../../themes/theme';
 
 import { FormikValuesChange } from '../ValuesChange/FormikValuesChange';

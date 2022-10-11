@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { useQuery } from 'react-query';
 import { useController } from '../../../controller';
 import { RowsList } from '../../design-system';
 import MeetingRow from '../MeetingRow';
@@ -19,7 +19,7 @@ const messages = defineMessages({
 
 const MyMeetings = ({ baseJitsiUrl }: MyMeetingsProps) => {
   const controller = useController();
-  const { data: meetings, isLoading } = useQuery('meetings', controller.getMyMeetings);
+  const { data: meetings, isLoading } = useQuery(['meetings'], controller.getMyMeetings);
 
   return (
     <RowsList

@@ -1,13 +1,11 @@
-import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup';
 import React from 'react';
-import { IntlProvider } from 'react-intl';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { MockController } from '../../../controller';
-import ControllerProvider, { useStore } from '../../../controller/ControllerProvider';
+import { useStore } from '../../../controller/ControllerProvider';
 import { SignupInput } from '../../../controller/interface';
 import { validationMessages } from '../../../i18n/Messages';
+import { render, screen } from '../../../utils/test-utils';
 import SignupForm from './SignupForm';
 
 const UserDisplayer = () => {
@@ -24,16 +22,7 @@ const UserDisplayer = () => {
 
 const renderWithController = (controller: MockController) => {
   const user = userEvent.setup();
-  render(
-    <ControllerProvider controller={controller}>
-      <QueryClientProvider client={new QueryClient()}>
-        <IntlProvider locale="en">
-          <UserDisplayer />
-          <SignupForm />
-        </IntlProvider>
-      </QueryClientProvider>
-    </ControllerProvider>,
-  );
+  render(<SignupForm />);
   return user;
 };
 

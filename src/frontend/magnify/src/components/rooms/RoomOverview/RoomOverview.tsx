@@ -1,7 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
 import { Box, Button, Card } from 'grommet';
 import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { useController } from '../../../controller';
 import { RowsList, SettingsSVG } from '../../design-system';

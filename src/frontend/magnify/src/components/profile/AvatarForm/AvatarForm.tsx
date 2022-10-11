@@ -1,8 +1,8 @@
+import { useMutation } from '@tanstack/react-query';
 import { Avatar, Box, Button, Card } from 'grommet';
-import { User, Trash } from 'grommet-icons';
+import { Trash, User } from 'grommet-icons';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
 import { useController } from '../../../controller';
 
 export interface AvatarFormProps {

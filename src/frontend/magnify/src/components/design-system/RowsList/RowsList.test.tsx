@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
+import { render, screen } from '../../../utils/test-utils';
 import { exampleActions, ExampleHeader, ExampleRow, MinimalExampleRow } from './DemoComponents';
 import RowsList from './RowsList';
 
@@ -16,23 +16,21 @@ describe('RowsList', () => {
   it('should be selectable example by example and globally', async () => {
     const user = userEvent.setup();
     render(
-      <IntlProvider locale="en">
-        <RowsList
-          Header={ExampleHeader}
-          Row={ExampleRow}
-          rows={mockedRows}
-          label={{
-            id: 'examples.label',
-            defaultMessage:
-              '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
-          }}
-        />
-      </IntlProvider>,
+      <RowsList
+        Header={ExampleHeader}
+        Row={ExampleRow}
+        rows={mockedRows}
+        label={{
+          id: 'examples.label',
+          defaultMessage:
+            '{numberOfRows} {numberOfRows, plural, =0 {example} one {example} other {examples}}',
+        }}
+      />,
     );
 
     // Initial state: all rows are unselected;
     screen.getByText('Header, 0 selected');
-    screen.getByText('(3 examples)');
+    screen.getByText('3 examples');
     const checkboxes = screen.getAllByRole('checkbox', { name: 'Select' });
     expect(checkboxes).toHaveLength(3);
 
@@ -208,7 +206,7 @@ describe('RowsList', () => {
       </IntlProvider>,
     );
 
-    screen.getByText('(3 examples)');
+    screen.getByText('3 examples');
     screen.getByText('Hello Example 1 (1)');
     screen.getByText('Hello Example 2 (2)');
     screen.getByText('Hello Example 3 (3)');

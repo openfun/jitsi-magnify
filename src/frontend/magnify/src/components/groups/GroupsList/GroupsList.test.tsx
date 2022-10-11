@@ -1,11 +1,7 @@
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { IntlProvider } from 'react-intl';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { MemoryRouter } from 'react-router-dom';
-import { ControllerProvider, MockController } from '../../../controller';
 import createRandomGroup from '../../../factories/group';
+import { render, screen, waitForElementToBeRemoved } from '../../../utils/test-utils';
 import GroupsList from './GroupsList';
 
 // Mocks
@@ -17,17 +13,7 @@ const mockedGroups = [
 ];
 
 const renderGroupList = () => {
-  render(
-    <IntlProvider locale="en">
-      <ControllerProvider controller={new MockController()}>
-        <QueryClientProvider client={new QueryClient()}>
-          <MemoryRouter>
-            <GroupsList groups={mockedGroups} />
-          </MemoryRouter>
-        </QueryClientProvider>
-      </ControllerProvider>
-    </IntlProvider>,
-  );
+  render(<GroupsList groups={mockedGroups} />);
 };
 
 describe('GroupsList', () => {
@@ -38,7 +24,7 @@ describe('GroupsList', () => {
     // Initial state: all checkboxes are unchecked; the number of groups is displayed
     const checkboxes = screen.queryAllByTitle('Select Group');
     checkboxes.forEach((checkbox) => expect(checkbox).not.toBeChecked());
-    screen.getByText('(4 groups)');
+    screen.getByText('4 groups');
 
     // Select one group
     await user.click(checkboxes[1]);

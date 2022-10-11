@@ -1,6 +1,6 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { WidthType } from 'grommet/utils';
 import React from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import { useController } from '../../../controller';
 import { RoomSettings } from '../../../types/room';
 import { Toggle } from '../../design-system';

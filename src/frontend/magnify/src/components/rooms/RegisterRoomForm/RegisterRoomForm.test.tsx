@@ -1,53 +1,40 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { faker } from '@faker-js/faker';
 import userEvent from '@testing-library/user-event';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 import React from 'react';
-import { IntlProvider } from 'react-intl';
-
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ControllerProvider, MockController } from '../../../controller';
-import createRandomRoom from '../../../factories/room';
+import { buildApiUrl } from '../../../services/http/http.service';
+import { Room } from '../../../types/entities/room';
+import { render, screen } from '../../../utils/test-utils';
 import RegisterRoomForm from './RegisterRoomForm';
 
 describe('RegisterRoomForm', () => {
+  const room: Room = {
+    id: faker.datatype.uuid(),
+    name: 'test',
+    slug: faker.lorem.slug(),
+    is_administrable: true,
+  };
+  const server = setupServer(
+    rest.post(buildApiUrl('rooms/'), (req, res, ctx) => {
+      return res(ctx.json({ data: room }));
+    }),
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   it('should be possible to submit the form', async () => {
-    const controller = new MockController();
-    const roomToCreate = createRandomRoom();
-    const queryClient = new QueryClient();
-    queryClient.setQueryData = jest.fn();
-    controller.registerRoom.mockResolvedValue(roomToCreate);
     const onSuccess = jest.fn();
     const user = userEvent.setup();
-
-    render(
-      <ControllerProvider controller={controller}>
-        <QueryClientProvider client={queryClient}>
-          <IntlProvider locale="en">
-            <RegisterRoomForm onSuccess={onSuccess} />
-          </IntlProvider>
-        </QueryClientProvider>
-      </ControllerProvider>,
-    );
+    render(<RegisterRoomForm onSuccess={onSuccess} />);
 
     // 1) Fill in the form
     screen.getByRole('button', { name: 'Register room' });
-    await user.type(screen.getByRole('textbox', { name: 'Name' }), roomToCreate.name);
+    await user.type(screen.getByRole('textbox', { name: 'Name' }), room.name ?? '');
     await user.click(screen.getByRole('button', { name: `Register room` }));
 
-    // 2) Verify that mutation is called
-    await waitFor(() => {
-      expect(controller.registerRoom).toHaveBeenCalledWith(roomToCreate.name);
-    });
-
-    // 3) Verify that the query data is updated
-    await waitFor(() => {
-      expect(queryClient.setQueryData).toHaveBeenCalled();
-      const key = (queryClient.setQueryData as jest.Mock).mock.calls[0][0];
-      const value = (queryClient.setQueryData as jest.Mock).mock.calls[0][1]([]);
-      expect(key).toBe('rooms');
-      expect(value).toEqual([roomToCreate]);
-    });
-
-    // 4) Verify that the onSuccess callback is called
+    // 3) Verify that the onSuccess callback is called
     expect(onSuccess).toHaveBeenCalled();
   });
 });

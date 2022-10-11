@@ -1,10 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { IntlProvider } from 'react-intl';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ControllerProvider, MockController } from '../../../controller';
-import { validationMessages } from '../../../i18n/Messages';
+import { MockController } from '../../../controller';
+import { fireEvent, render, screen } from '../../../utils/test-utils';
 import IdentityForm from './IdentityForm';
 
 describe('IdentityForm', () => {
@@ -12,15 +9,7 @@ describe('IdentityForm', () => {
     const user = userEvent.setup();
     const controller = new MockController();
 
-    render(
-      <ControllerProvider controller={controller}>
-        <QueryClientProvider client={new QueryClient()}>
-          <IntlProvider locale="en">
-            <IdentityForm email="john.doe@test.fr" id="123" name="John Doe" username="johndoe3" />
-          </IntlProvider>
-        </QueryClientProvider>
-      </ControllerProvider>,
-    );
+    render(<IdentityForm email="john.doe@test.fr" id="123" name="John Doe" username="johndoe3" />);
 
     const nameInput = screen.getByRole('textbox', { name: 'Name' });
     const usernameInput = screen.getByRole('textbox', { name: 'Username' });
@@ -37,27 +26,31 @@ describe('IdentityForm', () => {
     await screen.findByText('name is a required field');
     await user.type(nameInput, 'John Watson');
 
-    // Username field and validators
-    await user.clear(usernameInput);
-    fireEvent.blur(usernameInput);
-    await screen.findByText('username is a required field');
-    await user.type(usernameInput, '@test');
-    await user.clear(usernameInput);
-    await user.type(usernameInput, '2t');
-    await screen.findByText(validationMessages.usernameInvalid.defaultMessage);
-    await user.clear(usernameInput);
-    await user.type(usernameInput, 'atoolongusername7azertyui');
-    await screen.findByText(validationMessages.usernameInvalid.defaultMessage);
-    await user.clear(usernameInput);
-    await user.type(usernameInput, 'JoshWatson3');
-
-    // Email field and validators
-    await user.clear(emailInput);
-    fireEvent.blur(emailInput);
-    await screen.findByText('email is a required field');
-    await user.type(emailInput, 'watson@test');
-    await screen.findByText('email must be a valid email');
-    await user.type(emailInput, '.fr');
-    expect(screen.queryByText('email must be a valid email')).not.toBeInTheDocument();
+    /**
+     * At the moment, the fields are disabled, so we can't
+     * perform actions on them, but soon this won't be the case.
+     */
+    // // Username field and validators
+    // await user.clear(usernameInput);
+    // fireEvent.blur(usernameInput);
+    // await screen.findByText('username is a required field');
+    // await user.type(usernameInput, '@test');
+    // await user.clear(usernameInput);
+    // await user.type(usernameInput, '2t');
+    // await screen.findByText(validationMessages.usernameInvalid.defaultMessage);
+    // await user.clear(usernameInput);
+    // await user.type(usernameInput, 'atoolongusername7azertyui');
+    // await screen.findByText(validationMessages.usernameInvalid.defaultMessage);
+    // await user.clear(usernameInput);
+    // await user.type(usernameInput, 'JoshWatson3');
+    //
+    // // Email field and validators
+    // await user.clear(emailInput);
+    // fireEvent.blur(emailInput);
+    // await screen.findByText('email is a required field');
+    // await user.type(emailInput, 'watson@test');
+    // await screen.findByText('email must be a valid email');
+    // await user.type(emailInput, '.fr');
+    // expect(screen.queryByText('email must be a valid email')).not.toBeInTheDocument();
   }, 10000);
 });
