@@ -1,0 +1,91 @@
+import {
+  LoginResponse,
+  RefreshTokenResponse,
+  SignUpData,
+  UpdateUserData,
+  UserResponse,
+} from '../../types/api/auth';
+import { UsersRoutes } from '../../utils/routes/api/users.routes';
+import {
+  MagnifyApi,
+  MagnifyAuthApi,
+  SESSION_ACCESS_TOKEN_KEY,
+  SESSION_REFRESH_ACCESS_TOKEN_KEY,
+} from '../http/http.service';
+import { RoutesBuilderService } from '../routes/RoutesBuilder.service';
+
+export class UsersRepository {
+  public static setTokens(access?: string, refresh?: string): void {
+    if (access != null) {
+      sessionStorage.setItem(SESSION_ACCESS_TOKEN_KEY, access);
+      MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+    }
+
+    if (refresh != null) {
+      sessionStorage.setItem(SESSION_REFRESH_ACCESS_TOKEN_KEY, refresh);
+    }
+  }
+
+  public static async refreshToken(): Promise<string> {
+    const response = await MagnifyAuthApi.post<RefreshTokenResponse>(UsersRoutes.REFRESH_TOKEN, {
+      refresh: UsersRepository.getRefreshToken(),
+    });
+    UsersRepository.setTokens(response.data.access);
+    return response.data.access;
+  }
+
+  public static async login(username: string, password: string): Promise<LoginResponse> {
+    const response = await MagnifyAuthApi.post<LoginResponse>(UsersRoutes.LOGIN, {
+      username,
+      password,
+    });
+    UsersRepository.setTokens(response.data.auth.access, response.data.auth.refresh);
+    return response.data;
+  }
+
+  public static getAccessToken(): string | null {
+    return sessionStorage.getItem(SESSION_ACCESS_TOKEN_KEY);
+  }
+
+  public static getRefreshToken(): string | null {
+    return sessionStorage.getItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
+  }
+
+  public static logout(): void {
+    sessionStorage.removeItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(SESSION_ACCESS_TOKEN_KEY);
+    MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${null}`;
+  }
+
+  public static async signIn(data?: SignUpData): Promise<UserResponse> {
+    const response = await MagnifyAuthApi.post<UserResponse>(UsersRoutes.CREATE, data);
+    return response.data;
+  }
+
+  public static async me(): Promise<UserResponse | undefined> {
+    const response = await MagnifyApi.get<UserResponse>(UsersRoutes.ME);
+    return response.data;
+  }
+
+  public static async update(userId: string, updatedData: UpdateUserData): Promise<UserResponse> {
+    const url = RoutesBuilderService.build(UsersRoutes.UPDATE, { id: userId });
+    const response = await MagnifyApi.patch<UserResponse>(url, updatedData);
+    return response.data;
+  }
+
+  public static async changePassword(
+    current_password: string,
+    new_password: string,
+  ): Promise<UserResponse> {
+    const response = await MagnifyApi.post<UserResponse>(UsersRoutes.CHANGE_PASSWORD, {
+      current_password,
+      new_password,
+    });
+    return response.data;
+  }
+
+  public static async delete(updatedData: UpdateUserData, userId: string): Promise<void> {
+    const url = RoutesBuilderService.build(UsersRoutes.DELETE, { id: userId });
+    await MagnifyApi.delete<UserResponse>(url);
+  }
+}
