@@ -1,10 +1,13 @@
+import { useMutation } from '@tanstack/react-query';
 import { Form, Formik } from 'formik';
 import { Box } from 'grommet';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import * as Yup from 'yup';
+import { useAuthContext } from '../../../context';
 import { validationMessages } from '../../../i18n/Messages';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
+import { UsersRepository } from '../../../services/users/users.repository';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
@@ -41,6 +44,7 @@ interface IdentityFormValues {
 
 export default function IdentityForm({ id, name, username, email }: IdentityFormProps) {
   const intl = useIntl();
+  const authContext = useAuthContext();
 
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
@@ -53,23 +57,53 @@ export default function IdentityForm({ id, name, username, email }: IdentityForm
     });
   }, []);
 
+  const { mutate: updateUser, isLoading } = useMutation(
+    async (data: IdentityFormValues) => {
+      if (authContext.user?.id == null) {
+        return;
+      }
+      return await UsersRepository.update(authContext.user.id, data);
+    },
+    {
+      retry: 0,
+      onSuccess: (user) => {
+        authContext.updateUser(user);
+      },
+    },
+  );
+
   const handleSubmit = (values: IdentityFormValues) => {
-    console.log(id, values);
+    updateUser(values);
   };
 
   return (
     <Formik
-      initialValues={{ name, username, email }}
       onSubmit={handleSubmit}
       validateOnChange={true}
       validationSchema={validationSchema}
+      initialValues={{
+        name: authContext.user?.name ?? '',
+        username: authContext.user?.username ?? '',
+        email: authContext.user?.email ?? '',
+      }}
     >
       <Form>
         <Box gap="10px">
           <FormikInput label={intl.formatMessage(formLabelMessages.name)} name="name" />
-          <FormikInput label={intl.formatMessage(messages.usernameLabel)} name="username" />
-          <FormikInput label={intl.formatMessage(messages.emailLabel)} name="email" />
-          <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />
+          <FormikInput
+            disabled={true}
+            label={intl.formatMessage(messages.usernameLabel)}
+            name="username"
+          />
+          <FormikInput
+            disabled={true}
+            label={intl.formatMessage(messages.emailLabel)}
+            name="email"
+          />
+          <FormikSubmitButton
+            isLoading={isLoading}
+            label={intl.formatMessage(messages.submitButtonLabel)}
+          />
         </Box>
       </Form>
     </Formik>
