@@ -1,8 +1,13 @@
-import { Form, Formik, FormikValues } from 'formik';
+import { useMutation } from '@tanstack/react-query';
+import { Form, Formik } from 'formik';
 import { Box, Heading, Text } from 'grommet';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import { useAuthContext, useNotification } from '../../../context';
+
+import { UsersRepository } from '../../../services/users/users.repository';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
@@ -32,28 +37,56 @@ const messages = defineMessages({
     description: 'The label for the submit button',
     id: 'components.auth.LoginForm.submitButtonLabel',
   },
-  InvalidCredentials: {
+  invalidCredentialsTitle: {
     defaultMessage: 'Invalid credentials',
     description: 'The error message if the credentials are invalid',
-    id: 'components.auth.LoginForm.InvalidCredentials',
+    id: 'components.auth.LoginForm.invalidCredentialsTitle',
   },
-  UnknownError: {
-    defaultMessage: 'Something went wrong, please try again later',
-    description: 'The error message if an unknown error occured during the login',
-    id: 'components.auth.LoginForm.UnknownError',
+  invalidCredentialsContent: {
+    defaultMessage: 'Your username or password is incorrect. Check your credentials',
+    description: 'The error message if the credentials are invalid',
+    id: 'components.auth.LoginForm.invalidCredentialsContent',
   },
 });
 
-const validationSchema = Yup.object().shape({
-  username: Yup.string().required(),
-  password: Yup.string().required(),
-});
+interface FormValues {
+  username: string;
+  password: string;
+}
 
 export default function LoginForm() {
   const intl = useIntl();
+  const validationSchema = Yup.object().shape({
+    username: Yup.string().required(),
+    password: Yup.string().required(),
+  });
+  const authContext = useAuthContext();
+  const navigate = useNavigate();
+  const notification = useNotification();
 
-  const handleSubmit = (values: FormikValues) => {
-    console.log(values);
+  const { mutate, isLoading } = useMutation(
+    async (data: FormValues) => {
+      await UsersRepository.login(data.username, data.password);
+      return await UsersRepository.me();
+    },
+    {
+      retry: 0,
+      onSuccess: (user) => {
+        authContext.updateUser(user);
+        navigate('/rooms');
+      },
+      onError: () => {
+        notification.showNotification({
+          status: 'critical',
+          title: intl.formatMessage(messages.invalidCredentialsTitle),
+          message: intl.formatMessage(messages.invalidCredentialsContent),
+        });
+      },
+    },
+  );
+
+  const handleSubmit = (values: FormValues) => {
+    mutate(values);
   };
 
   return (
@@ -79,7 +112,10 @@ export default function LoginForm() {
             type={'password'}
           />
           <Box direction="row" justify="end" margin={{ top: 'small' }}>
-            <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />
+            <FormikSubmitButton
+              isLoading={isLoading}
+              label={intl.formatMessage(messages.submitButtonLabel)}
+            />
           </Box>
         </Box>
       </Form>

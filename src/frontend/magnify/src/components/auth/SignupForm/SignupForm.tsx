@@ -1,10 +1,17 @@
-import { Form, Formik } from 'formik';
+import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { Form, Formik, FormikHelpers } from 'formik';
 import { Box, Heading } from 'grommet';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import { useAuthContext } from '../../../context';
 import { validationMessages } from '../../../i18n/Messages';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
+
+import { UsersRepository } from '../../../services/users/users.repository';
+import { SignUpData, UserResponse } from '../../../types/api/auth';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
@@ -51,8 +58,47 @@ const messages = defineMessages({
   },
 });
 
+interface FormErrors {
+  current_password?: string[];
+  new_password?: string[];
+}
+interface FormValues {
+  name: string;
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export default function SignupForm() {
   const intl = useIntl();
+  const navigate = useNavigate();
+  const authContext = useAuthContext();
+
+  const mutation = useMutation<UserResponse | undefined, AxiosError, FormValues>(
+    async (data: SignUpData) => {
+      await UsersRepository.signIn(data);
+      await UsersRepository.login(data.username, data.password);
+      return await UsersRepository.me();
+    },
+    {
+      onSuccess: (user?: UserResponse) => {
+        authContext.updateUser(user);
+        navigate('/rooms');
+      },
+    },
+  );
+
+  const handleSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
+    mutation.mutate(values, {
+      onError: (error) => {
+        const formErrors: FormErrors = error?.response?.data as FormErrors;
+        Object.entries(formErrors).forEach(([key, value]) => {
+          actions.setFieldError(key, value.join(','));
+        });
+      },
+    });
+  };
 
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
@@ -72,17 +118,19 @@ export default function SignupForm() {
     });
   }, []);
 
+  const initialValues: FormValues = {
+    name: '',
+    email: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+  };
+
   return (
     <Formik
-      onSubmit={(values) => console.log(values)}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
       validationSchema={validationSchema}
-      initialValues={{
-        name: '',
-        email: '',
-        username: '',
-        password: '',
-        confirmPassword: '',
-      }}
     >
       <Form>
         <Box gap={'medium'}>
@@ -103,7 +151,10 @@ export default function SignupForm() {
             type={'password'}
           />
           <Box direction="row" justify="end" margin={{ top: 'small' }}>
-            <FormikSubmitButton label={intl.formatMessage(messages.submitButtonLabel)} />
+            <FormikSubmitButton
+              isLoading={mutation.isLoading}
+              label={intl.formatMessage(messages.submitButtonLabel)}
+            />
           </Box>
         </Box>
       </Form>
