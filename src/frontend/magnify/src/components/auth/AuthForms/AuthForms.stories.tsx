@@ -7,6 +7,8 @@ export default {
   component: AuthForms,
 };
 
-const Template: ComponentStory<typeof AuthForms> = () => <AuthForms />;
+const Template: ComponentStory<typeof AuthForms> = () => (
+  <AuthForms isLogin={true}>Hello !</AuthForms>
+);
 
 export const Simple = Template.bind({});

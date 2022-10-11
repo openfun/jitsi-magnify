@@ -1,6 +1,8 @@
 import { ComponentStory } from '@storybook/react';
 import { Box } from 'grommet';
 import React from 'react';
+import { withRouter } from 'storybook-addon-react-router-v6';
+import { AuthLoginView } from '../../../views/auth/login';
 import filename from './example-cover.svg';
 import IntroductionLayout from './IntroductionLayout';
 import logo from './logo-fun.svg';
@@ -8,11 +10,14 @@ import logo from './logo-fun.svg';
 export default {
   title: 'auth/IntroductionLayout',
   component: IntroductionLayout,
+  decorators: [withRouter],
 };
 
 const Template: ComponentStory<typeof IntroductionLayout> = (args) => (
   <Box height="100vh" width="100vw">
-    <IntroductionLayout {...args} />
+    <IntroductionLayout {...args}>
+      <AuthLoginView />
+    </IntroductionLayout>
   </Box>
 );
 
