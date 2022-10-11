@@ -8,3 +8,4 @@ export * from './users';
 export * from './rooms';
 export * from './meetings';
 export * from './jitsi';
+export * from './app';
