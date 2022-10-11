@@ -11,6 +11,3 @@ const Template: ComponentStory<typeof RoomConfig> = (args) => <RoomConfig {...ar
 
 // create the template and stories
 export const roomConfigPage = Template.bind({});
-roomConfigPage.args = {
-  roomName: 'room-1',
-};

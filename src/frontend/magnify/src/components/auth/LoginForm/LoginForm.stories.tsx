@@ -1,23 +1,23 @@
 import { ComponentStory } from '@storybook/react';
 import React from 'react';
+import { withRouter } from 'storybook-addon-react-router-v6';
+import { useAuthContext } from '../../../context';
 import { useStore } from '../../../controller/ControllerProvider';
 import LoginForm from './LoginForm';
 
 export default {
   title: 'auth/LoginForm',
   component: LoginForm,
+  decorators: [withRouter],
 };
 
 const UserDisplayer = () => {
   const { user } = useStore();
-  return <pre>Controller auth state: {JSON.stringify({ user }, null, 2)}</pre>;
+  const context = useAuthContext();
+  return <pre>AuthContext auth state: {JSON.stringify(context.user, null, 2)}</pre>;
 };
 const Template: ComponentStory<typeof LoginForm> = () => (
   <div>
-    <pre>
-      Use &quot;username&quot;, &quot;password&quot; for a successful Login{'\n'}
-      Use &quot;username&quot;, &quot;bad-password&quot; for a failed Login
-    </pre>
     <UserDisplayer />
     <LoginForm />
   </div>
