@@ -1,70 +1,44 @@
 import { Anchor, Box, Card, Text } from 'grommet';
 import React from 'react';
-import { defineMessages, useIntl } from 'react-intl';
-import LoginForm from '../LoginForm';
-import SignupForm from '../SignupForm';
+import { useNavigate } from 'react-router-dom';
 
-const messages = defineMessages({
-  youDoNotHaveAnAccount: {
-    defaultMessage: 'You do not have an account?',
-    description: 'The explanation for the link to the signup form',
-    id: 'components.auth.authForm.youDoNotHaveAnAccount',
-  },
-  signupInstead: {
-    defaultMessage: 'Signup instead',
-    description: 'The text for the link to the signup form',
-    id: 'components.auth.authForm.signupInstead',
-  },
-  youAlreadyHaveAnAccount: {
-    defaultMessage: 'You already have an account?',
-    description: 'The explanation for the link to the login form',
-    id: 'components.auth.authForm.youAlreadyHaveAnAccount',
-  },
-  loginInstead: {
-    defaultMessage: 'Login instead',
-    description: 'The text for the link to the login form',
-    id: 'components.auth.authForm.loginInstead',
-  },
-});
+export interface AuthFormsProps {
+  isLogin?: boolean;
+  showFooter?: boolean;
+  footerLabel?: string;
+  footerRoute?: string;
+  footerRouteLabel?: string;
+  children: React.ReactNode;
+}
 
-export default function AuthForms() {
-  const intl = useIntl();
-  const [login, setLogin] = React.useState(false);
+export default function AuthForms({ showFooter = true, ...props }: AuthFormsProps) {
+  const navigate = useNavigate();
 
   return (
     <Box background="light-1" height="100vh" width="100%">
       <Box margin="auto" width="80%">
         <Card background="white" margin={{ vertical: 'small' }} pad="large" width="100%">
-          {login ? <LoginForm /> : <SignupForm />}
+          {props.children}
         </Card>
-        <Card
-          background="white"
-          margin={{ vertical: 'small' }}
-          pad={{ vertical: 'medium', horizontal: 'large' }}
-          width="100%"
-        >
-          <Text>
-            {login ? (
+        {showFooter && (
+          <Card
+            background="white"
+            margin={{ vertical: 'small' }}
+            pad={{ vertical: 'medium', horizontal: 'large' }}
+            width="100%"
+          >
+            <Text>
               <>
-                {intl.formatMessage(messages.youDoNotHaveAnAccount)}{' '}
+                {props.footerLabel}{' '}
                 <Anchor
-                  label={intl.formatMessage(messages.signupInstead)}
-                  onClick={() => setLogin(false)}
+                  label={props.footerRouteLabel}
+                  onClick={() => navigate(props.footerRoute ?? '')}
                   role="link"
                 />
               </>
-            ) : (
-              <>
-                {intl.formatMessage(messages.youAlreadyHaveAnAccount)}{' '}
-                <Anchor
-                  label={intl.formatMessage(messages.loginInstead)}
-                  onClick={() => setLogin(true)}
-                  role="link"
-                />
-              </>
-            )}
-          </Text>
-        </Card>
+            </Text>
+          </Card>
+        )}
       </Box>
     </Box>
   );

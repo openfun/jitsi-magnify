@@ -1,18 +1,19 @@
 import { Box, Grid, Image, Stack } from 'grommet';
 import React from 'react';
 import { useIsMobile } from '../../../hooks/useIsMobile';
-import AuthForms from '../AuthForms';
 
 export interface IntroductionLayoutProps {
   urlCover: string;
   urlLogo: string;
   background: string;
+  children: React.ReactNode;
 }
 
 export default function IntroductionLayout({
   urlCover,
   urlLogo,
   background,
+  children,
 }: IntroductionLayoutProps) {
   const isMobile = useIsMobile();
   return (
@@ -32,9 +33,7 @@ export default function IntroductionLayout({
           </Stack>
         </Box>
       )}
-      <Box background={'light-2'}>
-        <AuthForms />
-      </Box>
+      <Box background={'light-2'}>{children}</Box>
     </Grid>
   );
 }
