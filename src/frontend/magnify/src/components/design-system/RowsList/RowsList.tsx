@@ -1,6 +1,6 @@
 import { Box, Button, Card, Grid, Menu, Text } from 'grommet';
 import React, { useState } from 'react';
-import { useIntl, MessageDescriptor } from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
 import WaitingRow from '../WaitingRow';
 
 export interface Row {
@@ -22,7 +22,7 @@ export interface RowsListProps<TRowProps extends Row> {
    * The intl message for the title of the group
    * It should be pluralized with the number of groups
    */
-  label: MessageDescriptor;
+  label?: MessageDescriptor;
   /**
    * Add label
    */
@@ -132,17 +132,19 @@ export default function RowsList<TRowProps extends Row>({
         ]}
       >
         <Box gridArea="title" pad={{ vertical: 'medium', horizontal: 'small' }}>
-          <Box margin="auto 0px">
-            {titleIsLoading ? (
-              <Box width="small">
-                <WaitingRow />
-              </Box>
-            ) : (
-              <Text color="brand" size="medium" weight="bold">
-                ({intl.formatMessage(label, { numberOfRows: rows.length })})
-              </Text>
-            )}
-          </Box>
+          {label && (
+            <Box margin="auto 0px">
+              {titleIsLoading ? (
+                <Box width="small">
+                  <WaitingRow />
+                </Box>
+              ) : (
+                <Text color="brand" size="medium" weight="bold">
+                  {intl.formatMessage(label, { numberOfRows: rows.length })}
+                </Text>
+              )}
+            </Box>
+          )}
         </Box>
         <Box
           direction="row"
