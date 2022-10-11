@@ -1,7 +1,7 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Box, Button, Heading } from 'grommet';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useMutation, useQueryClient } from 'react-query';
 import { useController } from '../../../controller';
 import useFormState from '../../../hooks/useFormState';
 import { Group } from '../../../types/group';
@@ -42,7 +42,7 @@ const AddGroupForm = ({ onSuccess, onCancel }: AddGroupFormProps) => {
   const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation(controller.createGroup, {
     onSuccess: (data) => {
-      queryClient.setQueryData('groups', (groups?: Group[]) => [...(groups || []), data]);
+      queryClient.setQueryData(['groups'], (groups?: Group[]) => [...(groups || []), data]);
       onSuccess?.();
     },
   });

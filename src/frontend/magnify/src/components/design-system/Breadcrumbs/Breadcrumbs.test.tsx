@@ -1,29 +1,14 @@
-import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { render, screen } from '../../../utils/test-utils';
 import ResponsiveLayout from '../Layout';
 import Breadcrumbs from './Breadcrumbs';
 
 describe('Breadcrumbs', () => {
   it('should render successfully a breadcrumbs', async () => {
     render(
-      <RouterProvider
-        router={createBrowserRouter([
-          {
-            path: '*',
-            handle: {
-              crumb: () => {
-                return 'Home';
-              },
-            },
-            element: (
-              <ResponsiveLayout>
-                <Breadcrumbs />
-              </ResponsiveLayout>
-            ),
-          },
-        ])}
-      />,
+      <ResponsiveLayout>
+        <Breadcrumbs />
+      </ResponsiveLayout>,
     );
 
     screen.getByRole('list');

@@ -1,23 +1,22 @@
-import { render, screen } from '@testing-library/react';
+import { act } from '@testing-library/react';
+import { ResponsiveContext } from 'grommet';
 import React from 'react';
-import { IntlProvider } from 'react-intl';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ControllerProvider, MockController } from '../../../controller';
-import IntroductionLayout from './IntroductionLayout';
+import { render, screen } from '../../../utils/test-utils';
+import { IntroductionLayout } from '../index';
 
 describe('Introduction Layout', () => {
-  it('should render the signup form by default', () => {
-    render(
-      <ControllerProvider controller={new MockController()}>
-        <QueryClientProvider client={new QueryClient()}>
-          <IntlProvider locale="en">
-            <IntroductionLayout background="light-2" urlCover="cover.png" urlLogo="logo.png" />
-          </IntlProvider>
-        </QueryClientProvider>
-      </ControllerProvider>,
-    );
+  it('should render the signup form by default', async () => {
+    await act(async () => {
+      render(
+        <ResponsiveContext.Provider value={'large'}>
+          <IntroductionLayout background="light-2" urlCover="cover.png" urlLogo="logo.png">
+            <div>Hello !</div>
+          </IntroductionLayout>
+        </ResponsiveContext.Provider>,
+      );
+    });
 
-    screen.getByText('Create an account');
+    screen.getByText('Hello !');
     expect(screen.getByAltText('logo')).toHaveAttribute('src', 'logo.png');
     expect(screen.getByAltText('illustration')).toHaveAttribute('src', 'cover.png');
   });

@@ -1,12 +1,11 @@
-import { Card } from 'grommet';
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { useQuery } from 'react-query';
 import { useController } from '../../../controller';
 import GroupsList from '../GroupsList';
 
 const MyGroupsBlock = () => {
   const controller = useController();
-  const { data } = useQuery('groups', controller.getGroups);
+  const { data } = useQuery(['groups'], controller.getGroups);
 
   if (!data) {
     return null;

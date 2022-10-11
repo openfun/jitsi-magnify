@@ -1,8 +1,8 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Box, Button, Heading, Layer, Select, Text } from 'grommet';
 import { FormClose } from 'grommet-icons';
 import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useMutation, useQuery } from 'react-query';
 
 import { useController } from '../../../controller';
 import { Group } from '../../../types/group';
@@ -76,7 +76,7 @@ export interface AddGroupToRoomDialogProps {
 const AddGroupToRoomDialog = ({ open, onClose, roomSlug }: AddGroupToRoomDialogProps) => {
   const intl = useIntl();
   const controller = useController();
-  const { data: groups, isLoading: groupsLoading } = useQuery('groups', controller.getGroups);
+  const { data: groups, isLoading: groupsLoading } = useQuery(['groups'], controller.getGroups);
   const { mutate, isLoading } = useMutation(controller.addGroupsToRoom, {
     onSuccess: () => onClose(),
   });

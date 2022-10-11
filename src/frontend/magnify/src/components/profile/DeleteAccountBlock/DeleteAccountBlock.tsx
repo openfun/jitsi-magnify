@@ -1,8 +1,8 @@
+import { useMutation } from '@tanstack/react-query';
 import { Box, Button, Card, Heading, Layer, Text } from 'grommet';
 import { MarginType } from 'grommet/utils';
 import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
 import { useController, useStore } from '../../../controller';
 
 export interface DeleteAccountBlockProps {

@@ -1,10 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Box, Button, Heading } from 'grommet';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useMutation, useQueryClient } from 'react-query';
 import { useController } from '../../../controller';
 import useFormState from '../../../hooks/useFormState';
-import { Group } from '../../../types/group';
 import validators, { emailValidator, requiredValidator } from '../../../utils/validators';
 import { LoadingButton, TextField } from '../../design-system';
 
