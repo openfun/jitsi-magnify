@@ -1,11 +1,10 @@
+import { RoomSettingsView, RoomsListView } from '@jitsi-magnify/core';
 import { defineMessages, IntlShape } from 'react-intl';
 import { Link, RouteObject } from 'react-router-dom';
-import MyMeetings from '../../../views/myMeetings';
-import RoomSettingsView from '../../../views/roomSettings';
 
 export enum RoomsPath {
   ROOMS = '/rooms',
-  ROOMS_SETTINGS = ':slug/settings',
+  ROOMS_SETTINGS = ':id/settings',
 }
 
 const roomRouteLabels = defineMessages({
@@ -30,7 +29,7 @@ export const getRoomsRoutes = (intl: IntlShape): RouteObject => {
       ),
     },
     children: [
-      { element: <MyMeetings />, index: true },
+      { element: <RoomsListView />, index: true },
       {
         element: <RoomSettingsView />,
         path: RoomsPath.ROOMS_SETTINGS,

@@ -1,6 +1,6 @@
 import { ControllerProvider, MockController, TranslationProvider } from '@jitsi-magnify/core';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import App from './App';
 
 describe('App', () => {

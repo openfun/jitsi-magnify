@@ -1,4 +1,5 @@
-import { ResponsiveLayout } from '@jitsi-magnify/core';
+import { RequireUser, ResponsiveLayout } from '@jitsi-magnify/core';
+
 import { defineMessages, IntlShape } from 'react-intl';
 import { Link, Outlet, RouteObject } from 'react-router-dom';
 
@@ -24,7 +25,9 @@ export const getRootRoute = (intl: IntlShape, children: RouteObject[]): RouteObj
     },
     element: (
       <ResponsiveLayout>
-        <Outlet />
+        <RequireUser>
+          <Outlet />
+        </RequireUser>
       </ResponsiveLayout>
     ),
     children,
