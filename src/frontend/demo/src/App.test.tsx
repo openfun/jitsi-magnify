@@ -1,26 +1,15 @@
-import { ControllerProvider, MockController, TranslationProvider } from '@jitsi-magnify/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, waitFor } from '@testing-library/react';
+import { MagnifyProvider } from '@jitsi-magnify/core';
+import { act, render } from '@testing-library/react';
 import App from './App';
 
 describe('App', () => {
-  it('renders the test button', async () => {
-    const controller = new MockController();
-    controller.getMyProfile.mockResolvedValue({ name: 'John Doe' });
-    controller.getMyRooms.mockResolvedValue([]);
-    controller._jwt = 'access-token';
-    render(
-      <TranslationProvider defaultLocale="en-US" locale="en-US" messages={{}}>
-        <ControllerProvider controller={controller}>
-          <QueryClientProvider client={new QueryClient()}>
-            <App />
-          </QueryClientProvider>
-        </ControllerProvider>
-      </TranslationProvider>,
-    );
-
-    // Wait for the loading of the examples (initial fetch)
-    await waitFor(() => expect(controller.getMyProfile).toHaveBeenCalled());
-    await waitFor(() => expect(controller.getMyRooms).toHaveBeenCalled());
+  it('Render the app', async () => {
+    await act(() => {
+      render(
+        <MagnifyProvider>
+          <App />
+        </MagnifyProvider>,
+      );
+    });
   });
 });
