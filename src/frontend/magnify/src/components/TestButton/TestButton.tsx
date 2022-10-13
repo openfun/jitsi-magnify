@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import styled from 'styled-components';
 import { useController } from '../../controller';
+import { UsersRepository } from '../../services/users/users.repository';
 
 export enum TestButtonVariant {
   BLUE = 'blue',
@@ -39,6 +40,7 @@ const TestButton = ({ variant }: TestButtonProps) => {
 
   const handleClick = () => {
     controller.sendTest('Test Button clicked');
+    UsersRepository.login('Nathan', 'azerty').then(() => {});
   };
 
   return (

@@ -35,6 +35,11 @@ export const MagnifyMeeting = ({ ...props }: MagnifyMeetingProps) => {
     apiRef.current?.addListener('participantLeft', handleParticipantsChanged);
     apiRef.current?.addListener('videoConferenceJoined', handleParticipantsChanged);
     apiRef.current?.addListener('videoConferenceLeft', handleParticipantsChanged);
+    apiRef.current?.addListener('participantRoleChanged', (event: any) => {
+      if (props.configuration?.askForPassword && event.role === 'moderator') {
+        apiRef.current?.executeCommand('password', props.configuration.roomPassword);
+      }
+    });
     handleParticipantsChanged();
   };
   const handleIFrameLoaded = (iframe: HTMLDivElement) => {
