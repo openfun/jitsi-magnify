@@ -1,6 +1,46 @@
 {
+  "app.groupViewTitle": {
+    "description": "Page title for the My Group page",
+    "message": "Group"
+  },
+  "app.groupsViewTitle": {
+    "description": "Page title for the My Groups page",
+    "message": "My Groups"
+  },
+  "app.meetingsViewTitle": {
+    "description": "Page title for the My meetings page",
+    "message": "My Rooms"
+  },
+  "app.notFoundMessage": {
+    "description": "Message for the 404 page",
+    "message": "We are sorry, the page you are looking for does not exist."
+  },
+  "app.notFoundTitle": {
+    "description": "Page title for the 404 page",
+    "message": "Page not found"
+  },
+  "app.roomViewTitle": {
+    "description": "Page title for the room view",
+    "message": "Room « {roomName} »"
+  },
   "app.testTitle": {
-    "description": "H1 page title for the test",
+    "description": "Page title for the test",
     "message": "Welcome to Magnify!"
+  },
+  "utils.routes.account.account.label": {
+    "description": "Label of the account view.",
+    "message": "My account"
+  },
+  "utils.routes.rooms.rooms.label": {
+    "description": "The label of the rooms view.",
+    "message": "Rooms"
+  },
+  "utils.routes.rooms.roomsSettings.label": {
+    "description": "The label of the rooms settings view.",
+    "message": "Settings"
+  },
+  "utils.routes.root.root.label": {
+    "description": "Label of the home view.",
+    "message": "Home"
   }
 }
