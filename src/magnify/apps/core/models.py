@@ -4,6 +4,7 @@ Declare and configure the models for the customers part
 import uuid
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin, UserManager
 from django.core.exceptions import ValidationError
@@ -11,6 +12,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import F, Q
 from django.utils import timezone
+from django.utils.functional import lazy
 from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -71,6 +73,12 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
         null=True,
     )
     email = models.EmailField(max_length=255, unique=True)
+    language = models.CharField(
+        max_length=10,
+        choices=lazy(lambda: settings.LANGUAGES, tuple)(),
+        verbose_name=_("language"),
+        help_text=_("The language in which the user wants to see the interface."),
+    )
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,

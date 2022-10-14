@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ["id", "email", "name", "username"]
+        fields = ["id", "email", "language", "name", "username"]
         read_only_fields = ["id", "email", "username"]
 
     def to_representation(self, instance):
@@ -30,7 +30,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ["id", "email", "name", "username", "password"]
+        fields = ["id", "email", "language", "name", "username", "password"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def save(self, *args, **kwargs):

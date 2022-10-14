@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import make_password
 from django.utils.text import slugify
 
 import factory
+from factory import fuzzy
 
 from . import models as core_models
 
@@ -23,6 +24,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     username = factory.Faker("user_name")
     email = factory.Faker("email")
+    language = fuzzy.FuzzyChoice([lang[0] for lang in settings.LANGUAGES])
     name = factory.Faker("name")
     password = make_password("password")
 

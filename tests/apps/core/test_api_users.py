@@ -203,6 +203,7 @@ class UsersApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(user.id),
+                "language": user.language,
                 "name": user.name,
                 "email": user.email,
                 "username": user.username,
@@ -239,6 +240,7 @@ class UsersApiTestCase(APITestCase):
                 "/api/users/",
                 {
                     "email": "thomas.jeffersion@example.com",
+                    "language": "fr",
                     "name": "Thomas Jefferson",
                     "username": "thomas",
                     "password": "mypassword",
@@ -259,9 +261,10 @@ class UsersApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(user.id),
-                "email": user.email,
-                "name": user.name,
-                "username": user.username,
+                "email": "thomas.jeffersion@example.com",
+                "language": "fr",
+                "name": "Thomas Jefferson",
+                "username": "thomas",
                 "auth": MOCK_TOKENS,
             },
         )
@@ -278,19 +281,20 @@ class UsersApiTestCase(APITestCase):
                 "/api/users/",
                 {
                     "email": "thomas.jeffersion@example.com",
+                    "language": "fr",
                     "name": "Thomas Jefferson",
                     "username": "thomas",
                     "password": "mypassword",
                 },
                 HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
             )
-
         self.assertEqual(response.status_code, 201)
         self.assertEqual(User.objects.count(), 2)
 
         user = User.objects.get(username="thomas")
         self.assertEqual(user.email, "thomas.jeffersion@example.com")
         self.assertEqual(user.name, "Thomas Jefferson")
+        self.assertEqual(user.language, "fr")
 
         self.assertIn("pbkdf2_sha256", user.password)
         self.assertTrue(check_password("mypassword", user.password))
@@ -299,9 +303,10 @@ class UsersApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(user.id),
-                "email": user.email,
-                "name": user.name,
-                "username": user.username,
+                "email": "thomas.jeffersion@example.com",
+                "language": "fr",
+                "name": "Thomas Jefferson",
+                "username": "thomas",
                 "auth": MOCK_TOKENS,
             },
         )
@@ -318,6 +323,7 @@ class UsersApiTestCase(APITestCase):
             "/api/users/",
             {
                 "email": "thomas.jeffersion@example.com",
+                "language": "fr",
                 "name": "Thomas Jefferson",
                 "username": user.username,
                 "password": "mypassword",
@@ -342,6 +348,7 @@ class UsersApiTestCase(APITestCase):
             "/api/users/",
             {
                 "email": user.email,
+                "language": "fr",
                 "name": "Thomas Jefferson",
                 "username": "Thomas",
                 "password": "mypassword",
@@ -368,6 +375,7 @@ class UsersApiTestCase(APITestCase):
             {
                 "name": "New name",
                 "email": "new@example.com",
+                "language": "fr",
                 "username": "new-username",
             },
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
@@ -486,6 +494,7 @@ class UsersApiTestCase(APITestCase):
             {
                 "id": str(user.id),
                 "email": user.email,
+                "language": user.language,
                 "name": user.name,
                 "username": user.username,
                 "auth": MOCK_TOKENS,
@@ -511,8 +520,9 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(
             response.json(),
             {
-                "email": user.email,
                 "id": str(user.id),
+                "email": user.email,
+                "language": user.language,
                 "name": user.name,
                 "username": user.username,
             },
