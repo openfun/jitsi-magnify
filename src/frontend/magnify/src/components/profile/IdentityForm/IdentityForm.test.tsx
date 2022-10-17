@@ -1,13 +1,11 @@
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { MockController } from '../../../controller';
 import { fireEvent, render, screen } from '../../../utils/test-utils';
 import IdentityForm from './IdentityForm';
 
 describe('IdentityForm', () => {
   it('should render a form that can be filled and submited', async () => {
     const user = userEvent.setup();
-    const controller = new MockController();
 
     render(<IdentityForm email="john.doe@test.fr" id="123" name="John Doe" username="johndoe3" />);
 

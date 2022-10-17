@@ -8,7 +8,6 @@ import {
   ModalContextProvider,
   NotificationContextProvider,
 } from '../../../context';
-import { ControllerProvider, LogController } from '../../../controller';
 import { TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
 import { defaultTheme } from '../../../themes';
@@ -31,7 +30,6 @@ const queryClient = new QueryClient({
 });
 
 const locale = 'en-US';
-const controller = new LogController(process.env.REACT_APP_TEST_TOKEN as string);
 
 export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   const getRouter = (): RemixRouter => {
@@ -67,13 +65,11 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
               name: 'John Doe',
             }}
           >
-            <ControllerProvider controller={controller}>
-              <NotificationContextProvider>
-                <ModalContextProvider>
-                  <RouterProvider router={getRouter()} />
-                </ModalContextProvider>
-              </NotificationContextProvider>
-            </ControllerProvider>
+            <NotificationContextProvider>
+              <ModalContextProvider>
+                <RouterProvider router={getRouter()} />
+              </ModalContextProvider>
+            </NotificationContextProvider>
           </AuthContextProvider>
         </QueryClientProvider>
       </Grommet>

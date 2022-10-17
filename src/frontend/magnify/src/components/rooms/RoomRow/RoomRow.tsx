@@ -5,9 +5,9 @@ import { Box, Button, ButtonExtendedProps, Card, Menu, Notification, Spinner, Te
 import { Configure, FormTrash, MoreVertical } from 'grommet-icons';
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
 
 import { useModal } from '../../../context/modals';
+import { useRouting } from '../../../context/routing';
 import { useIsSmallSize } from '../../../hooks/useIsMobile';
 
 import { commonMessages } from '../../../i18n/Messages/commonMessages';
@@ -15,7 +15,6 @@ import { RoomsRepository } from '../../../services/rooms/rooms.repository';
 import { Room } from '../../../types/entities/room';
 import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
 import { MagnifyModalTypes } from '../../design-system/Modal';
-import MagnifyRouterLink from '../../design-system/RouterLink/MagnifyRouterLink';
 import { MagnifyMeeting } from '../../jitsi';
 
 export interface RoomRowProps {
@@ -56,7 +55,8 @@ const messages = defineMessages({
 
 export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
   const intl = useIntl();
-  const navigate = useNavigate();
+  const routing = useRouting();
+
   const isSmallSize = useIsSmallSize();
   const modals = useModal();
   const queryClient = useQueryClient();
@@ -127,7 +127,7 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
             {intl.formatMessage(commonMessages.settings)}
           </Box>
         ),
-        onClick: () => navigate(`/rooms/${room.id}/settings`),
+        onClick: () => routing.goToRoomSettings(room.id),
       });
     }
 
@@ -164,7 +164,7 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
         <Box direction="row" gap="small" margin="auto 0px">
           <Box margin="auto 0px">
             <Text color="brand" size="medium" truncate={'tip'} weight="bold">
-              <MagnifyRouterLink to={'/'}>{room.name}</MagnifyRouterLink>
+              {room.name}
             </Text>
           </Box>
         </Box>

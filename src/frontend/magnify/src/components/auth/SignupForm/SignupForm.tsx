@@ -62,7 +62,7 @@ interface FormErrors {
   current_password?: string[];
   new_password?: string[];
 }
-interface FormValues {
+export interface SignupFormValues {
   name: string;
   email: string;
   username: string;
@@ -75,7 +75,7 @@ export default function SignupForm() {
   const navigate = useNavigate();
   const authContext = useAuthContext();
 
-  const mutation = useMutation<UserResponse | undefined, AxiosError, FormValues>(
+  const mutation = useMutation<UserResponse | undefined, AxiosError, SignupFormValues>(
     async (data: SignUpData) => {
       await UsersRepository.signIn(data);
       await UsersRepository.login(data.username, data.password);
@@ -89,7 +89,10 @@ export default function SignupForm() {
     },
   );
 
-  const handleSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
+  const handleSubmit = async (
+    values: SignupFormValues,
+    actions: FormikHelpers<SignupFormValues>,
+  ) => {
     mutation.mutate(values, {
       onError: (error) => {
         const formErrors: FormErrors = error?.response?.data as FormErrors;
@@ -118,7 +121,7 @@ export default function SignupForm() {
     });
   }, []);
 
-  const initialValues: FormValues = {
+  const initialValues: SignupFormValues = {
     name: '',
     email: '',
     username: '',

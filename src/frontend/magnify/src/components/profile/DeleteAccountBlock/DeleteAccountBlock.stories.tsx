@@ -1,7 +1,5 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import InjectFakeUser from '../../../utils/InjectFakeUser';
-import { UserMenu } from '../../auth';
 import DeleteAccountBlock from './DeleteAccountBlock';
 
 export default {
@@ -9,12 +7,7 @@ export default {
   component: DeleteAccountBlock,
 } as ComponentMeta<typeof DeleteAccountBlock>;
 
-const Template: ComponentStory<typeof DeleteAccountBlock> = () => (
-  <InjectFakeUser>
-    <DeleteAccountBlock />
-    <UserMenu />
-  </InjectFakeUser>
-);
+const Template: ComponentStory<typeof DeleteAccountBlock> = () => <DeleteAccountBlock />;
 
 // create the template and 2 stories for variants blue and red
 export const Simple = Template.bind({});

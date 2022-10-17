@@ -2,7 +2,6 @@ import { ComponentStory } from '@storybook/react';
 import { Box } from 'grommet';
 import React from 'react';
 import { withRouter } from 'storybook-addon-react-router-v6';
-import { AuthLoginView } from '../../../views/auth/login';
 import filename from './example-cover.svg';
 import IntroductionLayout from './IntroductionLayout';
 import logo from './logo-fun.svg';
@@ -16,7 +15,7 @@ export default {
 const Template: ComponentStory<typeof IntroductionLayout> = (args) => (
   <Box height="100vh" width="100vw">
     <IntroductionLayout {...args}>
-      <AuthLoginView />
+      <div>Hello !</div>
     </IntroductionLayout>
   </Box>
 );

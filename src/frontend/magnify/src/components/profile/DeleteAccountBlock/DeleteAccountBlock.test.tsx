@@ -3,27 +3,18 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { ControllerProvider, MockController } from '../../../controller';
-import { createRandomProfile } from '../../../factories/profile';
-import InjectFakeUser from '../../../utils/InjectFakeUser';
 import DeleteAccountBlock from './DeleteAccountBlock';
 
 describe('DeleteAccountBlock', () => {
   it('should render the form and an explanation', async () => {
     const user = userEvent.setup();
-    const controller = new MockController();
-    const fakeUser = createRandomProfile();
 
     render(
-      <ControllerProvider controller={controller}>
-        <QueryClientProvider client={new QueryClient()}>
-          <IntlProvider locale="en">
-            <InjectFakeUser user={fakeUser}>
-              <DeleteAccountBlock />
-            </InjectFakeUser>
-          </IntlProvider>
-        </QueryClientProvider>
-      </ControllerProvider>,
+      <QueryClientProvider client={new QueryClient()}>
+        <IntlProvider locale="en">
+          <DeleteAccountBlock />
+        </IntlProvider>
+      </QueryClientProvider>,
     );
 
     // Verify we get the explanation with appropriate warnings
@@ -42,6 +33,5 @@ describe('DeleteAccountBlock', () => {
     screen.getByRole('button', { name: 'Cancel' });
     const confirmButton = screen.getByRole('button', { name: 'Confirm delete account' });
     await user.click(confirmButton);
-    expect(controller.deleteUser).toHaveBeenCalledWith(fakeUser.id);
   });
 });

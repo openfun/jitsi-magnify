@@ -95,7 +95,7 @@ const RoomConfig = ({ room }: Props) => {
 
   const { mutate } = useMutation(
     async (settings: RoomSettings) => {
-      if (room?.id == null) {
+      if (room == null) {
         return;
       }
       return await RoomsRepository.update(room.id, { configuration: settings });
