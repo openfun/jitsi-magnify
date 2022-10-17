@@ -363,8 +363,7 @@ class UsersApiTestCase(APITestCase):
 
     def test_api_users_update_authenticated_self(self):
         """
-        Authenticated users should be allowed to update their own user but not the username and
-        the email.
+        Authenticated users should be allowed to update their own user but not the email.
         Before allowing updating the email, we will have to implement email validation.
         """
         user = UserFactory(email="old@example.com", username="old-username")
@@ -384,9 +383,9 @@ class UsersApiTestCase(APITestCase):
 
         user.refresh_from_db()
         self.assertEqual(user.name, "New name")
+        self.assertEqual(user.username, "new-username")
 
-        # The username and the email fields should be readonly
-        self.assertEqual(user.username, "old-username")
+        # The email field should be readonly
         self.assertEqual(user.email, "old@example.com")
 
     def test_api_users_update_authenticated_other(self):

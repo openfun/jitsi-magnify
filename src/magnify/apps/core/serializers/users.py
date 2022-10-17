@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
         fields = ["id", "email", "language", "name", "username"]
-        read_only_fields = ["id", "email", "username"]
+        read_only_fields = ["id", "email"]
 
     def to_representation(self, instance):
         """Remove private fields for user instances other than the logged-in user."""
