@@ -1,60 +1,28 @@
 import userEvent from '@testing-library/user-event';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup';
 import React from 'react';
-import { MockController } from '../../../controller';
-import { useStore } from '../../../controller/ControllerProvider';
-import { SignupInput } from '../../../controller/interface';
 import { validationMessages } from '../../../i18n/Messages';
 import { render, screen } from '../../../utils/test-utils';
-import SignupForm from './SignupForm';
-
-const UserDisplayer = () => {
-  const { user } = useStore();
-  if (!user) return null;
-  return (
-    <>
-      {Object.entries(user).map(([k, v]) => (
-        <p key={k}>{`${k}:${v}`}</p>
-      ))}
-    </>
-  );
-};
-
-const renderWithController = (controller: MockController) => {
-  const user = userEvent.setup();
-  render(<SignupForm />);
-  return user;
-};
-
-const fillInForm = async (
-  user: UserEvent,
-  input: SignupInput & { passwordConfirm: string } = {
-    email: 'valid@test.fr',
-    username: 'valid_username',
-    password: 'testPassword!',
-    passwordConfirm: 'testPassword!',
-    name: 'Valid Name',
-  },
-) => {
-  await user.type(screen.getByRole('textbox', { name: 'Name' }), input.passwordConfirm);
-  await user.type(screen.getByRole('textbox', { name: 'Email' }), input.email);
-  await user.type(screen.getByRole('textbox', { name: 'Username' }), input.username);
-  await user.type(screen.getByLabelText('Password'), input.password);
-  await user.type(screen.getByLabelText('Confirm Password'), input.passwordConfirm);
-  await user.click(screen.getByRole('button', { name: 'Signup' }));
-};
+import SignupForm, { SignupFormValues } from './SignupForm';
 
 describe('SignupForm', () => {
   it('shoud display the errors when the form is invalid', async () => {
-    const user = renderWithController(new MockController());
+    const user = userEvent.setup();
+    render(<SignupForm />);
 
-    await fillInForm(user, {
+    const input: SignupFormValues = {
       email: 'invalid@email',
       username: 'invalid@!',
       password: '123',
-      passwordConfirm: '1234',
+      confirmPassword: '1234',
       name: 'valid',
-    });
+    };
+
+    await user.type(screen.getByRole('textbox', { name: 'Name' }), input.confirmPassword);
+    await user.type(screen.getByRole('textbox', { name: 'Email' }), input.email);
+    await user.type(screen.getByRole('textbox', { name: 'Username' }), input.username);
+    await user.type(screen.getByLabelText('Password'), input.password);
+    await user.type(screen.getByLabelText('Confirm Password'), input.confirmPassword);
+    await user.click(screen.getByRole('button', { name: 'Signup' }));
 
     await screen.findByText('email must be a valid email');
     expect(screen.queryByText(validationMessages.usernameInvalid.defaultMessage)).toBeNull();

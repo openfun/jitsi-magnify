@@ -2,16 +2,13 @@ import { waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-import { MockController } from '../../../controller';
 import createRandomRoom from '../../../factories/room';
 import { render, screen } from '../../../utils/test-utils';
 import RegisterRoom from './RegisterRoom';
 
 describe('RegisterRoom', () => {
   it('should render successfully', async () => {
-    const controller = new MockController();
     const roomToCreate = createRandomRoom();
-    controller.registerRoom.mockResolvedValue(roomToCreate);
     const user = userEvent.setup();
 
     render(<RegisterRoom />);

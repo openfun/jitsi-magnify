@@ -9,7 +9,6 @@ import {
   ModalContextProvider,
   NotificationContextProvider,
 } from '../../../context';
-import { ControllerProvider, LogController } from '../../../controller';
 import { loadLocaleData, TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
 import { AuthMiddleware } from '../../../middleware';
@@ -48,7 +47,6 @@ export interface MagnifyProviderProps {
 }
 
 const locale = 'en-US';
-const controller = new LogController(process.env.REACT_APP_TEST_TOKEN as string);
 
 export function MagnifyProvider({ ...props }: MagnifyProviderProps) {
   const [translations, setTranslations] = useState<
@@ -69,11 +67,9 @@ export function MagnifyProvider({ ...props }: MagnifyProviderProps) {
           <ReactQueryDevtools initialIsOpen={false} />
           <AuthContextProvider initialUser={props.initialUser}>
             <AuthMiddleware>
-              <ControllerProvider controller={controller}>
-                <NotificationContextProvider>
-                  <ModalContextProvider>{props.children}</ModalContextProvider>
-                </NotificationContextProvider>
-              </ControllerProvider>
+              <NotificationContextProvider>
+                <ModalContextProvider>{props.children}</ModalContextProvider>
+              </NotificationContextProvider>
             </AuthMiddleware>
           </AuthContextProvider>
         </QueryClientProvider>

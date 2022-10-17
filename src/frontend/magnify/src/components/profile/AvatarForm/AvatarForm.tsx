@@ -1,9 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
 import { Avatar, Box, Button, Card } from 'grommet';
 import { Trash, User } from 'grommet-icons';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useController } from '../../../controller';
 
 export interface AvatarFormProps {
   id?: string;
@@ -30,15 +28,12 @@ const messages = defineMessages({
 
 export default function AvatarForm({ id, src: defaultSrc = '' }: AvatarFormProps) {
   const intl = useIntl();
-  const controller = useController();
-  const { mutate } = useMutation(controller.updateUserAvatar);
   const [src, setSrc] = React.useState<string>(defaultSrc);
   const [changed, setChanged] = React.useState<boolean>(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    if (id && changed) mutate({ id, formData });
   };
 
   const handleRemove = () => {
