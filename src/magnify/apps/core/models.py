@@ -52,9 +52,9 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     """
 
     username_validator = RegexValidator(
-        "^[a-zA-Z0-9_-]*$",
+        "^[a-z0-9_-]*$",
         message=_(
-            "Username must contain only letters, numbers, underscores and hyphens."
+            "Username must contain only lower case letters, numbers, underscores and hyphens."
         ),
     )
 

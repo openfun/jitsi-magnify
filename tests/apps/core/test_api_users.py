@@ -350,7 +350,7 @@ class UsersApiTestCase(APITestCase):
                 "email": user.email,
                 "language": "fr",
                 "name": "Thomas Jefferson",
-                "username": "Thomas",
+                "username": "thomas",
                 "password": "mypassword",
             },
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
