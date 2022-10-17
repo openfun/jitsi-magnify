@@ -43,7 +43,33 @@ class UsersModelsTestCase(TestCase):
 
         self.assertEqual(
             context.exception.messages,
-            ["Username must contain only letters, numbers, underscores and hyphens."],
+            [
+                "Username must contain only lower case letters, numbers, underscores and hyphens."
+            ],
+        )
+
+    def test_models_users_username_lower_case(self):
+        """The username field should only contain lower case characters."""
+        with self.assertRaises(ValidationError) as context:
+            UserFactory(username="John")
+
+        self.assertEqual(
+            context.exception.messages,
+            [
+                "Username must contain only lower case letters, numbers, underscores and hyphens."
+            ],
+        )
+
+    def test_models_users_username_ascii(self):
+        """The username field should only accept ASCII characters."""
+        with self.assertRaises(ValidationError) as context:
+            UserFactory(username="rené")
+
+        self.assertEqual(
+            context.exception.messages,
+            [
+                "Username must contain only lower case letters, numbers, underscores and hyphens."
+            ],
         )
 
     def test_models_users_ordering(self):
