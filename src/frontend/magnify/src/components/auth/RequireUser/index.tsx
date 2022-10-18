@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Box, Spinner } from 'grommet';
 import * as React from 'react';
-import { Navigate } from 'react-router-dom';
 import { useAuthContext } from '../../../context';
+import { useRouting } from '../../../context/routing';
 import { UsersRepository } from '../../../services/users/users.repository';
 import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
 
@@ -12,7 +12,7 @@ interface Props {
 
 export const RequireUser = ({ children }: Props) => {
   const authContext = useAuthContext();
-
+  const routing = useRouting();
   const {
     isLoading,
     data: user,
@@ -37,7 +37,8 @@ export const RequireUser = ({ children }: Props) => {
 
   const getContent = () => {
     if (!user) {
-      return <Navigate replace={true} state={{ from: '/rooms' }} to={'/auth'} />;
+      routing.goToLogin();
+      return null;
     }
 
     return children;

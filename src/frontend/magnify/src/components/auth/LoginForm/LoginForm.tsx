@@ -3,10 +3,11 @@ import { Form, Formik } from 'formik';
 import { Box, Heading, Text } from 'grommet';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
+
 import * as Yup from 'yup';
 import { useAuthContext, useNotification } from '../../../context';
 
+import { useRouting } from '../../../context/routing';
 import { UsersRepository } from '../../../services/users/users.repository';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
@@ -61,7 +62,7 @@ export default function LoginForm() {
     password: Yup.string().required(),
   });
   const authContext = useAuthContext();
-  const navigate = useNavigate();
+  const routing = useRouting();
   const notification = useNotification();
 
   const { mutate, isLoading } = useMutation(
@@ -73,7 +74,7 @@ export default function LoginForm() {
       retry: 0,
       onSuccess: (user) => {
         authContext.updateUser(user);
-        navigate('/rooms');
+        routing.goToRoomsList();
       },
       onError: () => {
         notification.showNotification({

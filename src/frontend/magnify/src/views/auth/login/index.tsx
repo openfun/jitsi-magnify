@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { AuthForms, LoginForm } from '../../../components';
+import { useRouting } from '../../../context/routing';
 
 export const authLoginViewMessages = defineMessages({
   youDoNotHaveAnAccount: {
@@ -17,10 +18,11 @@ export const authLoginViewMessages = defineMessages({
 
 export function AuthLoginView() {
   const intl = useIntl();
+  const routing = useRouting();
   return (
     <AuthForms
       footerLabel={intl.formatMessage(authLoginViewMessages.youDoNotHaveAnAccount)}
-      footerRoute={'/auth/register'}
+      footerRedirect={routing.goToRegister}
       footerRouteLabel={intl.formatMessage(authLoginViewMessages.signupInstead)}
       isLogin={true}
     >

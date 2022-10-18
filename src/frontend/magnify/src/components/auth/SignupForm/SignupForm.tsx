@@ -4,9 +4,9 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { Box, Heading } from 'grommet';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { useAuthContext } from '../../../context';
+import { useRouting } from '../../../context/routing';
 import { validationMessages } from '../../../i18n/Messages';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 
@@ -72,7 +72,7 @@ export interface SignupFormValues {
 
 export default function SignupForm() {
   const intl = useIntl();
-  const navigate = useNavigate();
+  const routing = useRouting();
   const authContext = useAuthContext();
 
   const mutation = useMutation<UserResponse | undefined, AxiosError, SignupFormValues>(
@@ -84,7 +84,7 @@ export default function SignupForm() {
     {
       onSuccess: (user?: UserResponse) => {
         authContext.updateUser(user);
-        navigate('/rooms');
+        routing.goToRoomsList();
       },
     },
   );

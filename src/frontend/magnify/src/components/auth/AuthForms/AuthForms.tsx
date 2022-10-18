@@ -1,19 +1,16 @@
 import { Anchor, Box, Card, Text } from 'grommet';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export interface AuthFormsProps {
   isLogin?: boolean;
   showFooter?: boolean;
   footerLabel?: string;
-  footerRoute?: string;
+  footerRedirect?: () => void;
   footerRouteLabel?: string;
   children: React.ReactNode;
 }
 
 export default function AuthForms({ showFooter = true, ...props }: AuthFormsProps) {
-  const navigate = useNavigate();
-
   return (
     <Box background="light-1" height="100vh" width="100%">
       <Box margin="auto" width="80%">
@@ -30,11 +27,7 @@ export default function AuthForms({ showFooter = true, ...props }: AuthFormsProp
             <Text>
               <>
                 {props.footerLabel}{' '}
-                <Anchor
-                  label={props.footerRouteLabel}
-                  onClick={() => navigate(props.footerRoute ?? '')}
-                  role="link"
-                />
+                <Anchor label={props.footerRouteLabel} onClick={props.footerRedirect} role="link" />
               </>
             </Text>
           </Card>

@@ -4,7 +4,8 @@ import { Logout, User } from 'grommet-icons';
 import * as React from 'react';
 import { FunctionComponent, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
+
+import { useRouting } from '../../../../../context/routing';
 import { commonMessages } from '../../../../../i18n/Messages/commonMessages';
 import { UsersRepository } from '../../../../../services/users/users.repository';
 import { MagnifyQueryKeys } from '../../../../../utils/constants/react-query';
@@ -15,13 +16,13 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
 }) => {
   const intl = useIntl();
   const avatarRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  const routing = useRouting();
 
   const queryClient = useQueryClient();
   const { mutate: logoutUser } = useMutation(async () => UsersRepository.logout(), {
     onSuccess: () => {
       queryClient.setQueryData([MagnifyQueryKeys.AUTH_USER], undefined);
-      navigate('/auth');
+      routing.goToLogin();
     },
   });
 
@@ -32,7 +33,7 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
         items={[
           {
             icon: <User />,
-            onClick: () => navigate('/account'),
+            onClick: () => routing.goToAccount(),
             label: (
               <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
                 {intl.formatMessage(commonMessages.account)}
