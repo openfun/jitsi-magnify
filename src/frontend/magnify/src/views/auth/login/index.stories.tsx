@@ -14,7 +14,7 @@ const Template: ComponentStory<typeof AuthLoginView> = (args) => {
       router={createBrowserRouter([
         {
           path: '*',
-          element: <AuthLoginView {...args} />,
+          element: <AuthLoginView />,
         },
       ])}
     />

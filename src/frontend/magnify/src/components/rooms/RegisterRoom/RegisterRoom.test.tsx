@@ -2,7 +2,7 @@ import { waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-import createRandomRoom from '../../../factories/room';
+import createRandomRoom from '../../../factories/rooms';
 import { render, screen } from '../../../utils/test-utils';
 import RegisterRoom from './RegisterRoom';
 

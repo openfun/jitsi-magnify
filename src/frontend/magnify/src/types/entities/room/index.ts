@@ -10,10 +10,10 @@ export interface RoomSettings {
 }
 
 export interface Room {
-  id?: string;
-  name?: string;
-  slug?: string;
-  is_administrable?: boolean;
+  id: string;
+  name: string;
+  slug: string;
+  is_administrable: boolean;
   jitsi?: {
     room: string;
     token: string;

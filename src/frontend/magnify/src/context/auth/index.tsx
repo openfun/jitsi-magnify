@@ -1,7 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-import { Maybe } from 'yup/es/types';
+
 import { User } from '../../types/entities/user';
+import { Maybe } from '../../types/misc';
 import { MagnifyQueryKeys } from '../../utils/constants/react-query';
 
 export interface AuthContextInterface {

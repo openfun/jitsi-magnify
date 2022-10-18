@@ -4,7 +4,7 @@ import { LoginResponse, RefreshTokenResponse, UserResponse } from '../../../type
 import { User } from '../../../types/entities/user';
 import { UsersRoutes } from '../../../utils/routes/api/users.routes';
 
-const defaultUser: User = {
+export const defaultUser: User = {
   id: '123',
   name: 'John Doe',
   email: 'john.doe@gmail.com',
