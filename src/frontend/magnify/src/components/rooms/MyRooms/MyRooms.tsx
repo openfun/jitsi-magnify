@@ -9,10 +9,10 @@ export interface MyRoomsProps {
   isLoading?: boolean;
 }
 
-const MyRooms = ({ baseJitsiUrl, ...props }: MyRoomsProps) => {
+const MyRooms = ({ baseJitsiUrl, rooms = [], ...props }: MyRoomsProps) => {
   return (
     <Card background={'white'} gap={'small'} pad={'medium'}>
-      {props.rooms?.map((room) => {
+      {rooms.map((room) => {
         return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
       })}
     </Card>

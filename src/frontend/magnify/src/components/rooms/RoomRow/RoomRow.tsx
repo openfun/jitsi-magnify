@@ -62,7 +62,7 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
   const queryClient = useQueryClient();
 
   const { mutate, isLoading } = useMutation(
-    async (roomId?: string) => {
+    async (roomId: string) => {
       return await RoomsRepository.delete(roomId);
     },
     {
@@ -106,7 +106,7 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
           configuration={room.configuration}
           jitsiDomain={'meeting.education'}
           jwt={room.jitsi?.token}
-          roomName={room.jitsi?.room ?? 'magnify-room'}
+          roomName={room.jitsi?.room ?? `${room.name}-${room.id}`}
         />
       ),
     });

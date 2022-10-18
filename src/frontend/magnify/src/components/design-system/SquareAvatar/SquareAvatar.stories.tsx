@@ -1,6 +1,6 @@
 import { ComponentStory } from '@storybook/react';
 import React from 'react';
-import { createRandomGroupMember } from '../../../factories/member';
+import { defaultUser } from '../../../mocks/handlers/login/loginHandlers';
 import SquareAvatar from './SquareAvatar';
 
 export default {
@@ -10,11 +10,11 @@ export default {
 
 const Template: ComponentStory<typeof SquareAvatar> = (args) => <SquareAvatar {...args} />;
 
-const fakeUser = createRandomGroupMember();
+const fakeUser = defaultUser;
 
 export const Simple = Template.bind({});
 Simple.args = {
-  src: fakeUser.avatar,
+  src: '',
   title: fakeUser.name,
 };
 

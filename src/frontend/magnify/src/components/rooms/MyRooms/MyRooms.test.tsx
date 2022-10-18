@@ -5,7 +5,10 @@ import MyRooms from './MyRooms';
 describe('MyRooms', () => {
   it('should render successfully', async () => {
     render(
-      <MyRooms baseJitsiUrl="" rooms={[{ id: 'Test', slug: 'room-test', name: 'Room Test' }]} />,
+      <MyRooms
+        baseJitsiUrl=""
+        rooms={[{ id: 'Test', slug: 'room-test', name: 'Room Test', is_administrable: true }]}
+      />,
     );
 
     // 3) Check the rooms

@@ -25,7 +25,7 @@ export class RoomsRepository {
     return response.data;
   }
 
-  public static async update(roomId: string, data: UpdateRoomData): Promise<RoomResponse> {
+  public static async update(roomId: string, data: Partial<UpdateRoomData>): Promise<RoomResponse> {
     const url = RoutesBuilderService.build(RoomsApiRoutes.UPDATE, { id: roomId });
     const response = await MagnifyApi.patch<RoomResponse>(url, data);
     return response.data;

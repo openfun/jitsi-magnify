@@ -1,7 +1,7 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import { withRouter } from 'storybook-addon-react-router-v6';
-import createRandomRoom from '../../../factories/room';
+import createRandomRoom from '../../../factories/rooms';
 import RoomRow, { RoomRowProps } from './RoomRow';
 
 export default {
