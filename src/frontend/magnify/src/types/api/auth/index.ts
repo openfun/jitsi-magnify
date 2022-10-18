@@ -18,6 +18,7 @@ export interface SignUpData {
   email: string;
   password: string;
   name?: string;
+  language?: string;
 }
 
 export interface UpdateUserData {

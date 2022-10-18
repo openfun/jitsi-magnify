@@ -9,7 +9,6 @@ import {
   ModalContextProvider,
   NotificationContextProvider,
 } from '../../../context';
-import { RoutingContextInterface, RoutingContextProvider } from '../../../context/routing';
 import { loadLocaleData, TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
 import { AuthMiddleware } from '../../../middleware';
@@ -45,7 +44,6 @@ export interface MagnifyProviderProps {
   children?: React.ReactNode;
   initialUser?: User;
   translations?: any;
-  routes: RoutingContextInterface;
 }
 
 const locale = 'en-US';
@@ -65,18 +63,16 @@ export function MagnifyProvider({ ...props }: MagnifyProviderProps) {
     <TranslationProvider defaultLocale="en-US" locale={locale} messages={translations || {}}>
       <FormErrors />
       <Grommet full theme={defaultTheme}>
-        <RoutingContextProvider routes={props.routes}>
-          <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            <AuthContextProvider initialUser={props.initialUser}>
-              <AuthMiddleware>
-                <NotificationContextProvider>
-                  <ModalContextProvider>{props.children}</ModalContextProvider>
-                </NotificationContextProvider>
-              </AuthMiddleware>
-            </AuthContextProvider>
-          </QueryClientProvider>
-        </RoutingContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <AuthContextProvider initialUser={props.initialUser}>
+            <AuthMiddleware>
+              <NotificationContextProvider>
+                <ModalContextProvider>{props.children}</ModalContextProvider>
+              </NotificationContextProvider>
+            </AuthMiddleware>
+          </AuthContextProvider>
+        </QueryClientProvider>
       </Grommet>
     </TranslationProvider>
   );

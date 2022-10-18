@@ -77,7 +77,7 @@ export default function SignupForm() {
 
   const mutation = useMutation<UserResponse | undefined, AxiosError, SignupFormValues>(
     async (data: SignUpData) => {
-      await UsersRepository.signIn(data);
+      await UsersRepository.signIn({ ...data, language: 'fr' });
       await UsersRepository.login(data.username, data.password);
       return await UsersRepository.me();
     },
