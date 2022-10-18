@@ -3,8 +3,8 @@ import { defineMessages, IntlShape } from 'react-intl';
 import { Link, RouteObject } from 'react-router-dom';
 
 export enum RoomsPath {
-  ROOMS = '/rooms',
-  ROOMS_SETTINGS = ':id/settings',
+  ROOMS = '/app/rooms',
+  ROOMS_SETTINGS = '/app/rooms/:id/settings',
 }
 
 const roomRouteLabels = defineMessages({

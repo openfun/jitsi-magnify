@@ -4,7 +4,7 @@ import { defineMessages, IntlShape } from 'react-intl';
 import { Link, Outlet, RouteObject } from 'react-router-dom';
 
 export enum RootPath {
-  ROOT = '/',
+  ROOT = '/app',
 }
 
 const rootRouteLabels = defineMessages({

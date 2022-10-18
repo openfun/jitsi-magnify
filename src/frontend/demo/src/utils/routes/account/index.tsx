@@ -3,7 +3,7 @@ import { defineMessages, IntlShape } from 'react-intl';
 import { RouteObject } from 'react-router-dom';
 
 export enum AccountPath {
-  ACCOUNT = '/account',
+  ACCOUNT = '/app/account',
 }
 
 const roomRouteLabels = defineMessages({
