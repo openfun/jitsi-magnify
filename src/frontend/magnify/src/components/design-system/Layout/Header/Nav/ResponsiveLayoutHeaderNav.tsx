@@ -2,6 +2,7 @@ import { Box } from 'grommet';
 import { AppsRounded } from 'grommet-icons';
 import * as React from 'react';
 import { FunctionComponent } from 'react';
+import { useRouting } from '../../../../../context/routing';
 import { useIsSmallSize } from '../../../../../hooks/useIsMobile';
 import {
   ResponsiveLayoutHeaderNavItem,
@@ -10,18 +11,19 @@ import {
 
 interface ResponsiveLayoutHeaderNavProps {}
 
-export const navItems: ResponsiveLayoutHeaderNavItemProps[] = [
-  {
-    icon: <AppsRounded aria-label={''} color={'plain'} size={'18px'} />,
-    route: '/rooms',
-    label: 'Rooms',
-  },
-];
-
 export const ResponsiveLayoutHeaderNav: FunctionComponent<ResponsiveLayoutHeaderNavProps> = ({
   ...props
 }) => {
   const isSmall = useIsSmallSize();
+  const routing = useRouting();
+
+  const navItems: ResponsiveLayoutHeaderNavItemProps[] = [
+    {
+      icon: <AppsRounded aria-label={''} color={'plain'} size={'18px'} />,
+      label: 'Rooms',
+      goToRoute: routing.goToRoomsList,
+    },
+  ];
 
   return (
     <Box
@@ -33,7 +35,7 @@ export const ResponsiveLayoutHeaderNav: FunctionComponent<ResponsiveLayoutHeader
       round={'small'}
     >
       {navItems.map((item) => {
-        return <ResponsiveLayoutHeaderNavItem key={item.route} {...item} />;
+        return <ResponsiveLayoutHeaderNavItem key={item.label} {...item} />;
       })}
     </Box>
   );

@@ -1,4 +1,4 @@
-import {MagnifyProvider} from '../src';
+import {MagnifyTestingProvider} from '../src';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -13,13 +13,13 @@ export const parameters = {
 
 
 const withMagnify = (storyFn) => (
-    <MagnifyProvider initialUser={{
+    <MagnifyTestingProvider initialUser={{
       email: 'john.doe@gmail.com',
       username: 'JohnDoe',
       name: 'John Doe'
     }}>
       {storyFn()}
-    </MagnifyProvider>
+    </MagnifyTestingProvider>
 );
 
 // Decorators

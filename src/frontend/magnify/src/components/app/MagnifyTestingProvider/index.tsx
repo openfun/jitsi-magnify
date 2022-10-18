@@ -1,20 +1,19 @@
-import { Router as RemixRouter } from '@remix-run/router/dist/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Grommet } from 'grommet';
 import * as React from 'react';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import {
   AuthContextProvider,
   ModalContextProvider,
   NotificationContextProvider,
 } from '../../../context';
+import { RoutingContextInterface, RoutingContextProvider } from '../../../context/routing';
 import { TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
 import { defaultTheme } from '../../../themes';
 
 export interface MagnifyTestingProviderProps {
   children?: React.ReactNode;
-  router?: RemixRouter;
 }
 
 const queryClient = new QueryClient({
@@ -32,47 +31,41 @@ const queryClient = new QueryClient({
 const locale = 'en-US';
 
 export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
-  const getRouter = (): RemixRouter => {
-    if (props.router != null) {
-      return props.router;
-    }
+  const getRouter = (): RoutingContextInterface => {
+    const result: RoutingContextInterface = {
+      goToDefaultPage: () => console.log('goToDefaultPage'),
+      goToLogout: () => console.log('goToLogout'),
+      goToLogin: () => console.log('goToLogin'),
+      goToRegister: () => console.log('goToRegister'),
+      goToAccount: () => console.log('goToAccount'),
+      goToRoomsList: () => console.log('goToRoomsList'),
+      goToRoomSettings: () => console.log('goToRoomSettings'),
+    };
 
-    return createMemoryRouter(
-      [
-        {
-          path: '/',
-          handle: {
-            crumb: () => {
-              return 'Home';
-            },
-          },
-          element: <>{props.children}</>,
-        },
-      ],
-      { initialEntries: ['/'], initialIndex: 1 },
-    );
+    return result;
   };
 
   return (
     <TranslationProvider defaultLocale="en-US" locale={locale} messages={{}}>
       <FormErrors />
-      <Grommet full theme={defaultTheme}>
-        <QueryClientProvider client={queryClient}>
-          <AuthContextProvider
-            initialUser={{
-              email: 'john.doe@gmail.com',
-              username: 'JohnDoe',
-              name: 'John Doe',
-            }}
-          >
-            <NotificationContextProvider>
-              <ModalContextProvider>
-                <RouterProvider router={getRouter()} />
-              </ModalContextProvider>
-            </NotificationContextProvider>
-          </AuthContextProvider>
-        </QueryClientProvider>
-      </Grommet>
+      <RoutingContextProvider routes={getRouter()}>
+        <Grommet full theme={defaultTheme}>
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <AuthContextProvider
+              initialUser={{
+                email: 'john.doe@gmail.com',
+                username: 'JohnDoe',
+                name: 'John Doe',
+              }}
+            >
+              <NotificationContextProvider>
+                <ModalContextProvider>{props.children}</ModalContextProvider>
+              </NotificationContextProvider>
+            </AuthContextProvider>
+          </QueryClientProvider>
+        </Grommet>
+      </RoutingContextProvider>
     </TranslationProvider>
   );
 };
