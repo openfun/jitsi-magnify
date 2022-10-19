@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 import { server } from '../../mocks/server';
-import { UsersRoutes } from '../../utils/routes/api/users.routes';
+import { UsersApiRoutes } from '../../utils/routes/api/users/usersApiRoutes';
 import { buildApiUrl, HttpService, MagnifyApi } from './http.service';
 
 describe('HttpService', () => {
@@ -17,7 +17,7 @@ describe('HttpService', () => {
   });
   it('it sends a request as a logged-out user', async () => {
     server.use(
-      rest.post(buildApiUrl(UsersRoutes.REFRESH_TOKEN), (req, res, ctx) => {
+      rest.post(buildApiUrl(UsersApiRoutes.REFRESH_TOKEN), (req, res, ctx) => {
         return res(ctx.status(401));
       }),
     );

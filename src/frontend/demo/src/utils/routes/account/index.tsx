@@ -1,6 +1,6 @@
-import { ProfileAccountView } from '@jitsi-magnify/core';
 import { defineMessages, IntlShape } from 'react-intl';
 import { RouteObject } from 'react-router-dom';
+import { ProfileAccountView } from '../../../views/profile/account';
 
 export enum AccountPath {
   ACCOUNT = '/app/account',

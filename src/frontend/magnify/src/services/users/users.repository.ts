@@ -5,7 +5,7 @@ import {
   UpdateUserData,
   UserResponse,
 } from '../../types/api/auth';
-import { UsersRoutes } from '../../utils/routes/api/users.routes';
+import { UsersApiRoutes } from '../../utils/routes/api/users/usersApiRoutes';
 import {
   MagnifyApi,
   MagnifyAuthApi,
@@ -27,7 +27,7 @@ export class UsersRepository {
   }
 
   public static async refreshToken(): Promise<string> {
-    const response = await MagnifyAuthApi.post<RefreshTokenResponse>(UsersRoutes.REFRESH_TOKEN, {
+    const response = await MagnifyAuthApi.post<RefreshTokenResponse>(UsersApiRoutes.REFRESH_TOKEN, {
       refresh: UsersRepository.getRefreshToken(),
     });
     UsersRepository.setTokens(response.data.access);
@@ -35,7 +35,7 @@ export class UsersRepository {
   }
 
   public static async login(username: string, password: string): Promise<LoginResponse> {
-    const response = await MagnifyAuthApi.post<LoginResponse>(UsersRoutes.LOGIN, {
+    const response = await MagnifyAuthApi.post<LoginResponse>(UsersApiRoutes.LOGIN, {
       username,
       password,
     });
@@ -58,17 +58,17 @@ export class UsersRepository {
   }
 
   public static async signIn(data?: SignUpData): Promise<UserResponse> {
-    const response = await MagnifyAuthApi.post<UserResponse>(UsersRoutes.CREATE, data);
+    const response = await MagnifyAuthApi.post<UserResponse>(UsersApiRoutes.CREATE, data);
     return response.data;
   }
 
   public static async me(): Promise<UserResponse | undefined> {
-    const response = await MagnifyApi.get<UserResponse>(UsersRoutes.ME);
+    const response = await MagnifyApi.get<UserResponse>(UsersApiRoutes.ME);
     return response.data;
   }
 
   public static async update(userId: string, updatedData: UpdateUserData): Promise<UserResponse> {
-    const url = RoutesBuilderService.build(UsersRoutes.UPDATE, { id: userId });
+    const url = RoutesBuilderService.build(UsersApiRoutes.UPDATE, { id: userId });
     const response = await MagnifyApi.patch<UserResponse>(url, updatedData);
     return response.data;
   }
@@ -77,7 +77,7 @@ export class UsersRepository {
     current_password: string,
     new_password: string,
   ): Promise<UserResponse> {
-    const response = await MagnifyApi.post<UserResponse>(UsersRoutes.CHANGE_PASSWORD, {
+    const response = await MagnifyApi.post<UserResponse>(UsersApiRoutes.CHANGE_PASSWORD, {
       current_password,
       new_password,
     });
@@ -85,7 +85,7 @@ export class UsersRepository {
   }
 
   public static async delete(updatedData: UpdateUserData, userId: string): Promise<void> {
-    const url = RoutesBuilderService.build(UsersRoutes.DELETE, { id: userId });
+    const url = RoutesBuilderService.build(UsersApiRoutes.DELETE, { id: userId });
     await MagnifyApi.delete<UserResponse>(url);
   }
 }

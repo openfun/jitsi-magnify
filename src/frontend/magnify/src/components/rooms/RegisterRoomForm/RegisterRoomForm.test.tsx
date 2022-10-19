@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { defaultRoom } from '../../../mocks/handlers/rooms/roomsHandlers';
+import { defaultRoom } from '../../../mocks/allHandlers/rooms/roomsHandlers';
 import { render, screen } from '../../../utils/test-utils';
 import RegisterRoomForm from './RegisterRoomForm';
 

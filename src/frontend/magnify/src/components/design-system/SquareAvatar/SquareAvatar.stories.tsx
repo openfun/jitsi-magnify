@@ -1,6 +1,6 @@
 import { ComponentStory } from '@storybook/react';
 import React from 'react';
-import { defaultUser } from '../../../mocks/handlers/login/loginHandlers';
+import { defaultUser } from '../../../mocks/allHandlers/login/loginHandlers';
 import SquareAvatar from './SquareAvatar';
 
 export default {
