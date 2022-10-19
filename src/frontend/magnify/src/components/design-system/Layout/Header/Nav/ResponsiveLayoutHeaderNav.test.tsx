@@ -17,8 +17,6 @@ describe('Should show a ResponsiveLayoutHeaderNav', () => {
         goToRoute: () => {},
       },
     ];
-    const links = screen.getAllByRole('link');
-    expect(links.length).toBe(1);
     navItems.map((item) => {
       screen.getByLabelText(item.label);
     });

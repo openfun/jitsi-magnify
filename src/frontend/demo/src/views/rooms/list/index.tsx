@@ -1,5 +1,4 @@
 import {
-  MagnifyPageContent,
   MagnifyQueryKeys,
   MyRooms,
   RegisterRoom,
@@ -9,6 +8,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
+import { DefaultPage } from '../../../components/DefaultPage';
 
 export const roomsListMessages = defineMessages({
   roomsListViewTitle: {
@@ -29,11 +29,11 @@ export function RoomsListView() {
   const { data: rooms, isLoading } = useQuery([MagnifyQueryKeys.ROOMS], RoomsRepository.getAll);
 
   return (
-    <MagnifyPageContent
+    <DefaultPage
       actions={<RegisterRoom />}
       title={intl.formatMessage(roomsListMessages.roomsListViewTitle)}
     >
       <MyRooms baseJitsiUrl={'/j'} isLoading={isLoading} rooms={rooms ?? []} />
-    </MagnifyPageContent>
+    </DefaultPage>
   );
 }

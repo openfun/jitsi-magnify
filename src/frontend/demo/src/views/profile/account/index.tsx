@@ -1,12 +1,12 @@
 import {
   DeleteAccountBlock,
   IdentityBlock,
-  MagnifyPageContent,
   PasswordUpdateBlock,
   useTranslations,
 } from '@jitsi-magnify/core';
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
+import { DefaultPage } from '../../../components/DefaultPage';
 
 const messages = defineMessages({
   profileViewTitle: {
@@ -19,10 +19,10 @@ const messages = defineMessages({
 export function ProfileAccountView() {
   const intl = useTranslations();
   return (
-    <MagnifyPageContent title={intl.formatMessage(messages.profileViewTitle)}>
+    <DefaultPage title={intl.formatMessage(messages.profileViewTitle)}>
       <IdentityBlock />
       <PasswordUpdateBlock />
       <DeleteAccountBlock />
-    </MagnifyPageContent>
+    </DefaultPage>
   );
 }

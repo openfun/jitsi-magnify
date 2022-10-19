@@ -1,5 +1,4 @@
 import {
-  MagnifyPageContent,
   MagnifyQueryKeys,
   RoomConfig,
   RoomsRepository,
@@ -10,6 +9,7 @@ import { Spinner } from 'grommet';
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
 import { useParams } from 'react-router-dom';
+import { DefaultPage } from '../../../components/DefaultPage';
 
 export const roomSettingsMessages = defineMessages({
   roomSettingsTitle: {
@@ -28,9 +28,9 @@ export function RoomSettingsView() {
   });
 
   return (
-    <MagnifyPageContent title={intl.formatMessage(roomSettingsMessages.roomSettingsTitle)}>
+    <DefaultPage title={intl.formatMessage(roomSettingsMessages.roomSettingsTitle)}>
       {isLoading && <Spinner />}
       {!isLoading && room && <RoomConfig room={room} />}
-    </MagnifyPageContent>
+    </DefaultPage>
   );
 }

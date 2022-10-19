@@ -1,1 +1,1 @@
-export { default, MagnifyPageContentProps } from './MagnifyPageContent';
+export * from './MagnifyPageContent';
