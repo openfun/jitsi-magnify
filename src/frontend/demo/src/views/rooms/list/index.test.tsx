@@ -1,10 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { buildApiUrl, MagnifyTestingProvider, Room } from '@jitsi-magnify/core';
+import { buildApiUrl, Room } from '@jitsi-magnify/core';
 
 import { render, screen, waitFor } from '@testing-library/react';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import React from 'react';
+import { TestingContainer } from '../../../components/TestingContainer';
 import { RoomsListView } from './index';
 
 describe('RoomsListView', () => {
@@ -26,9 +27,9 @@ describe('RoomsListView', () => {
 
   it('Render list view with ', async () => {
     render(
-      <MagnifyTestingProvider>
+      <TestingContainer>
         <RoomsListView />
-      </MagnifyTestingProvider>,
+      </TestingContainer>,
     );
     await waitFor(() => {
       screen.getByText('test-room');

@@ -7,6 +7,7 @@ export interface MagnifyPageContentProps {
   children: React.ReactNode;
   title: string;
   actions?: JSX.Element;
+  breadcrumb?: React.ReactNode;
 }
 
 function MagnifyPageContent({ ...props }: MagnifyPageContentProps) {
@@ -42,7 +43,7 @@ function MagnifyPageContent({ ...props }: MagnifyPageContentProps) {
           {props.actions}
         </Box>
 
-        <Box gridArea={'breadcrumbs'}>{/*<Breadcrumbs />*/}</Box>
+        <Box gridArea={'breadcrumbs'}>{props.breadcrumb}</Box>
       </Grid>
 
       {props.children}
@@ -50,4 +51,4 @@ function MagnifyPageContent({ ...props }: MagnifyPageContentProps) {
   );
 }
 
-export default MagnifyPageContent;
+export { MagnifyPageContent };

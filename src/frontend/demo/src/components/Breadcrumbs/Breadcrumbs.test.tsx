@@ -1,14 +1,14 @@
+import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { render, screen } from '../../../utils/test-utils';
-import ResponsiveLayout from '../Layout';
+import { TestingContainer } from '../TestingContainer';
 import Breadcrumbs from './Breadcrumbs';
 
 describe('Breadcrumbs', () => {
   it('should render successfully a breadcrumbs', async () => {
     render(
-      <ResponsiveLayout>
+      <TestingContainer>
         <Breadcrumbs />
-      </ResponsiveLayout>,
+      </TestingContainer>,
     );
 
     screen.getByRole('list');
