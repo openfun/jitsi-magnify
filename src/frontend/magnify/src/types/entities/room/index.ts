@@ -1,6 +1,7 @@
 export interface RoomSettings {
   askForAuthentication?: boolean;
   askForPassword?: boolean;
+  roomPassword?: string;
   waitingRoomEnabled?: boolean;
   enableLobbyChat?: boolean;
   startAudioMuted?: boolean;
