@@ -2,7 +2,6 @@ import { AreasType, Box } from 'grommet';
 import { Grid, Heading } from 'grommet/components';
 import * as React from 'react';
 import { useIsMobile } from '../../../hooks/useIsMobile';
-import Breadcrumbs from '../Breadcrumbs';
 
 export interface MagnifyPageContentProps {
   children: React.ReactNode;
@@ -43,9 +42,7 @@ function MagnifyPageContent({ ...props }: MagnifyPageContentProps) {
           {props.actions}
         </Box>
 
-        <Box gridArea={'breadcrumbs'}>
-          <Breadcrumbs />
-        </Box>
+        <Box gridArea={'breadcrumbs'}>{/*<Breadcrumbs />*/}</Box>
       </Grid>
 
       {props.children}

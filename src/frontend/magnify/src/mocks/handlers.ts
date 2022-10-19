@@ -1,4 +1,4 @@
-import { loginHandlers } from './handlers/login/loginHandlers';
-import { roomsHandlers } from './handlers/rooms/roomsHandlers';
+import { loginHandlers } from './allHandlers/login/loginHandlers';
+import { roomsHandlers } from './allHandlers/rooms/roomsHandlers';
 
 export const handlers = [...loginHandlers, ...roomsHandlers];

@@ -41,3 +41,5 @@ export class RoomsRepository {
     return response.data;
   }
 }
+
+export default RoomsRepository;

@@ -1,5 +1,7 @@
-import { AuthLoginView, AuthRegisterView, IntroductionLayout } from '@jitsi-magnify/core';
+import { IntroductionLayout } from '@jitsi-magnify/core';
 import { Navigate, Outlet, RouteObject } from 'react-router-dom';
+import { AuthLoginView } from '../../../views/auth/login';
+import { AuthRegisterView } from '../../../views/auth/register';
 
 export enum AuthPath {
   AUTH = '/auth',
