@@ -155,7 +155,7 @@ lint-back-diff: ## lint back-end python sources, but only what has changed since
 
 lint-back-black: ## lint back-end python sources with black
 	@echo 'lint:black started…'
-	@$(COMPOSE_TEST_RUN_APP) black . 
+	@$(COMPOSE_TEST_RUN_APP) black .
 .PHONY: lint-back-black
 
 lint-back-flake8: ## lint back-end python sources with flake8

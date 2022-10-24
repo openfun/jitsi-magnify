@@ -46,7 +46,7 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   };
 
   return (
-    <TranslationProvider defaultLocale="en-US" locale={locale} messages={{}}>
+    <TranslationProvider defaultLocale="en-US" locale={locale}>
       <FormErrors />
       <RoutingContextProvider routes={getRouter()}>
         <Grommet full theme={defaultTheme}>

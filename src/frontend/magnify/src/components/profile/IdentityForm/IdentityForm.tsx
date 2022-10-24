@@ -7,8 +7,12 @@ import * as Yup from 'yup';
 import { useAuthContext } from '../../../context';
 import { validationMessages } from '../../../i18n/Messages';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
+import { localesTranslations } from '../../../i18n/Messages/localesTranslations';
+import { useLocale } from '../../../i18n/TranslationProvider/TranslationsProvider';
 import { UsersRepository } from '../../../services/users/users.repository';
+import { MagnifyLocales } from '../../../utils';
 import FormikInput from '../../design-system/Formik/Input';
+import { FormikSelect } from '../../design-system/Formik/Select';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
 export interface IdentityFormProps {
@@ -40,11 +44,13 @@ interface IdentityFormValues {
   name: string;
   username: string;
   email: string;
+  language: string;
 }
 
-export default function IdentityForm({ id, name, username, email }: IdentityFormProps) {
+export default function IdentityForm() {
   const intl = useIntl();
   const authContext = useAuthContext();
+  const locales = useLocale();
 
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
@@ -54,6 +60,7 @@ export default function IdentityForm({ id, name, username, email }: IdentityForm
         .max(16, intl.formatMessage(validationMessages.usernameInvalid))
         .required(),
       email: Yup.string().email().required(),
+      language: Yup.string().required(),
     });
   }, []);
 
@@ -62,6 +69,7 @@ export default function IdentityForm({ id, name, username, email }: IdentityForm
       if (authContext.user?.id == null) {
         return;
       }
+
       return await UsersRepository.update(authContext.user.id, data);
     },
     {
@@ -85,11 +93,25 @@ export default function IdentityForm({ id, name, username, email }: IdentityForm
         name: authContext.user?.name ?? '',
         username: authContext.user?.username ?? '',
         email: authContext.user?.email ?? '',
+        language: authContext.user?.language ?? MagnifyLocales.FR,
       }}
     >
       <Form>
         <Box gap="10px">
           <FormikInput label={intl.formatMessage(formLabelMessages.name)} name="name" />
+          <FormikSelect
+            label={'language'}
+            labelKey="label"
+            name={'language'}
+            valueKey={{ key: 'value', reduce: true }}
+            changeCallback={(locale: string) => {
+              locales.setCurrentLocale(locale);
+            }}
+            options={[
+              { value: MagnifyLocales.FR, label: intl.formatMessage(localesTranslations.fr) },
+              { value: MagnifyLocales.EN, label: intl.formatMessage(localesTranslations.en) },
+            ]}
+          />
           <FormikInput
             disabled={true}
             label={intl.formatMessage(messages.usernameLabel)}

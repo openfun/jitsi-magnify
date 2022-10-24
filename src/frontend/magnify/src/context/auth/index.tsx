@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 
+import { useLocale } from '../../i18n/TranslationProvider/TranslationsProvider';
 import { User } from '../../types/entities/user';
 import { Maybe } from '../../types/misc';
 import { MagnifyQueryKeys } from '../../utils/constants/react-query';
@@ -20,6 +21,7 @@ type AuthContextProviderProps = {
 export const AuthContextProvider = ({ children, ...props }: AuthContextProviderProps) => {
   const [user, setUser] = useState<Maybe<User> | null>(props.initialUser ?? undefined);
   const queryClient = useQueryClient();
+  const locales = useLocale();
 
   useEffect(() => {
     if (props.initialUser != null) {
@@ -33,6 +35,9 @@ export const AuthContextProvider = ({ children, ...props }: AuthContextProviderP
       updateUser: (user: Maybe<User> | null) => {
         queryClient.setQueryData([MagnifyQueryKeys.AUTH_USER], user);
         setUser(user);
+        if (user && user.language && locales.currentLocale !== user.language) {
+          locales.setCurrentLocale(user.language);
+        }
       },
     }),
     [user],

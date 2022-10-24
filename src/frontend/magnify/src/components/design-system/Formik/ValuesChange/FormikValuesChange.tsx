@@ -21,12 +21,13 @@ export const FormikValuesChange: FunctionComponent<FormikValuesChangeProps> = ({
   }, debounceTime);
 
   React.useEffect(() => {
+    console.log(formik.values);
     if (!formik.dirty) {
       return;
     }
 
     onValuesChange();
-  }, [formik.dirty]);
+  }, [formik.values]);
 
   return <Form>{props.children}</Form>;
 };
