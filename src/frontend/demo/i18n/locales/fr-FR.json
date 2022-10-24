@@ -1,6 +1,46 @@
 {
+  "app.groupViewTitle": {
+    "description": "Page title for the My Group page",
+    "message": "Groupe"
+  },
+  "app.groupsViewTitle": {
+    "description": "Page title for the My Groups page",
+    "message": "Mes groupes"
+  },
+  "app.meetingsViewTitle": {
+    "description": "Page title for the My meetings page",
+    "message": "Mes salles"
+  },
+  "app.notFoundMessage": {
+    "description": "Message for the 404 page",
+    "message": "Désolé, la page que vous recherchez n'existe pas."
+  },
+  "app.notFoundTitle": {
+    "description": "Page title for the 404 page",
+    "message": "Page non trouvée"
+  },
+  "app.roomViewTitle": {
+    "description": "Page title for the room view",
+    "message": "Salle « {roomName}»"
+  },
   "app.testTitle": {
-    "description": "H1 page title for the test",
+    "description": "Page title for the test",
     "message": "Bienvenue sur Magnify!"
+  },
+  "utils.routes.account.account.label": {
+    "description": "Label of the account view.",
+    "message": "Mon compte"
+  },
+  "utils.routes.rooms.rooms.label": {
+    "description": "The label of the rooms view.",
+    "message": "Salles"
+  },
+  "utils.routes.rooms.roomsSettings.label": {
+    "description": "The label of the rooms settings view.",
+    "message": "Réglages"
+  },
+  "utils.routes.root.root.label": {
+    "description": "Label of the home view.",
+    "message": "Accueil"
   }
 }

@@ -1,1 +1,1 @@
-{ "app.testTitle": "Bienvenue sur Magnify!" }
+{"app.groupViewTitle":"Groupe","app.groupsViewTitle":"Mes groupes","app.meetingsViewTitle":"Mes salles","app.notFoundMessage":"Désolé, la page que vous recherchez n'existe pas.","app.notFoundTitle":"Page non trouvée","app.roomViewTitle":"Salle « {roomName}»","app.testTitle":"Bienvenue sur Magnify!","utils.routes.account.account.label":"Mon compte","utils.routes.rooms.rooms.label":"Salles","utils.routes.rooms.roomsSettings.label":"Réglages","utils.routes.root.root.label":"Accueil"}
