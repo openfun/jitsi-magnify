@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { validationMessages } from '../../../i18n/Messages';
+import { MagnifyLocales } from '../../../utils';
 import { render, screen } from '../../../utils/test-utils';
 import SignupForm, { SignupFormValues } from './SignupForm';
 
@@ -15,6 +16,7 @@ describe('SignupForm', () => {
       password: '123',
       confirmPassword: '1234',
       name: 'valid',
+      language: MagnifyLocales.EN,
     };
 
     await user.type(screen.getByRole('textbox', { name: 'Name' }), input.confirmPassword);

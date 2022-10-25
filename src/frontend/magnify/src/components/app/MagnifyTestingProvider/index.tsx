@@ -11,6 +11,7 @@ import { RoutingContextInterface, RoutingContextProvider } from '../../../contex
 import { TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
 import { defaultTheme } from '../../../themes';
+import { MagnifyLocales } from '../../../utils';
 
 export interface MagnifyTestingProviderProps {
   children?: React.ReactNode;
@@ -46,7 +47,7 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   };
 
   return (
-    <TranslationProvider defaultLocale="en-US" locale={locale} messages={{}}>
+    <TranslationProvider defaultLocale="en-US" initTranslation={false} locale={locale}>
       <FormErrors />
       <RoutingContextProvider routes={getRouter()}>
         <Grommet full theme={defaultTheme}>
@@ -57,6 +58,7 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
                 email: 'john.doe@gmail.com',
                 username: 'JohnDoe',
                 name: 'John Doe',
+                language: MagnifyLocales.EN,
               }}
             >
               <NotificationContextProvider>

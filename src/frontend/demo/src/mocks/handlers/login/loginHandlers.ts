@@ -1,6 +1,7 @@
 import {
   buildApiUrl,
   LoginResponse,
+  MagnifyLocales,
   RoomResponse,
   User,
   UserResponse,
@@ -14,6 +15,7 @@ export const defaultUser: User = {
   name: 'John Doe',
   email: 'john.doe@gmail.com',
   username: 'JohnDoe',
+  language: MagnifyLocales.EN,
 };
 
 export const loginHandlers = [

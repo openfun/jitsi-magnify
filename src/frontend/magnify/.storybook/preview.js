@@ -13,11 +13,7 @@ export const parameters = {
 
 
 const withMagnify = (storyFn) => (
-    <MagnifyTestingProvider initialUser={{
-      email: 'john.doe@gmail.com',
-      username: 'JohnDoe',
-      name: 'John Doe'
-    }}>
+    <MagnifyTestingProvider>
       {storyFn()}
     </MagnifyTestingProvider>
 );

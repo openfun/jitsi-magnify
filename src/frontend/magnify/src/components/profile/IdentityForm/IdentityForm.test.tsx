@@ -7,7 +7,7 @@ describe('IdentityForm', () => {
   it('should render a form that can be filled and submited', async () => {
     const user = userEvent.setup();
 
-    render(<IdentityForm email="john.doe@test.fr" id="123" name="John Doe" username="johndoe3" />);
+    render(<IdentityForm />);
 
     const nameInput = screen.getByRole('textbox', { name: 'Name' });
     const usernameInput = screen.getByRole('textbox', { name: 'Username' });

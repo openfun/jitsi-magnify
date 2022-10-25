@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import IdentityForm from './IdentityForm';
 
@@ -7,7 +7,7 @@ export default {
   component: IdentityForm,
 } as ComponentMeta<typeof IdentityForm>;
 
-const Template: ComponentStory<typeof IdentityForm> = (args) => <IdentityForm {...args} />;
+const Template: ComponentStory<typeof IdentityForm> = () => <IdentityForm />;
 
 // create the template and 2 stories for variants blue and red
 export const Simple = Template.bind({});

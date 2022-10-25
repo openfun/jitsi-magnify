@@ -26,7 +26,7 @@ export const FormikValuesChange: FunctionComponent<FormikValuesChangeProps> = ({
     }
 
     onValuesChange();
-  }, [formik.dirty]);
+  }, [formik.values]);
 
   return <Form>{props.children}</Form>;
 };
