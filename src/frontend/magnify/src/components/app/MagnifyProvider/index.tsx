@@ -2,31 +2,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Grommet } from 'grommet';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { MessageFormatElement } from 'react-intl';
+import { PropsWithChildren } from 'react';
 import {
   AuthContextProvider,
   ModalContextProvider,
   NotificationContextProvider,
 } from '../../../context';
-import { loadLocaleData, TranslationProvider } from '../../../i18n';
+import { TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
 import { AuthMiddleware } from '../../../middleware';
 import { defaultTheme } from '../../../themes';
 import { User } from '../../../types/entities/user';
-import { Maybe } from '../../../types/misc';
-
-async function getTranslation(
-  locale: string,
-): Promise<Maybe<Record<string, string> | Record<string, MessageFormatElement[]>>> {
-  let translatedMessages: Maybe<Record<string, string> | Record<string, MessageFormatElement[]>>;
-  try {
-    translatedMessages = await loadLocaleData(locale);
-  } catch (error) {
-    translatedMessages = {};
-  }
-  return translatedMessages;
-}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,26 +27,14 @@ const queryClient = new QueryClient({
 });
 
 export interface MagnifyProviderProps {
-  children?: React.ReactNode;
   initialUser?: User;
   translations?: any;
+  locale?: string;
 }
 
-const locale = 'en-US';
-
-export function MagnifyProvider({ ...props }: MagnifyProviderProps) {
-  const [translations, setTranslations] = useState<
-    Maybe<Record<string, string> | Record<string, MessageFormatElement[]>>
-  >({});
-
-  useEffect(() => {
-    getTranslation(locale).then((initTranslation) => {
-      setTranslations(initTranslation);
-    });
-  }, []);
-
+export function MagnifyProvider({ locale, ...props }: PropsWithChildren<MagnifyProviderProps>) {
   return (
-    <TranslationProvider defaultLocale="en-US" locale={locale} messages={translations || {}}>
+    <TranslationProvider locale={locale}>
       <FormErrors />
       <Grommet full theme={defaultTheme}>
         <QueryClientProvider client={queryClient}>

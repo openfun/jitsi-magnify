@@ -21,13 +21,7 @@ export default function IdentityBlock({ margin = { vertical: 'small' } }: Identi
           <AvatarForm key={user?.id || ''} id={user?.id} />
         </Box>
         <Box margin="medium" style={{ flexGrow: 1 }} width={isSmall ? '100%' : 'auto'}>
-          <IdentityForm
-            key={user?.id || ''}
-            email={user?.email || ''}
-            id={user?.id}
-            name={user?.name || ''}
-            username={user?.username || ''}
-          />
+          <IdentityForm />
         </Box>
       </Box>
     </Card>

@@ -2,6 +2,7 @@ import { rest } from 'msw';
 import { buildApiUrl } from '../../../services/http/http.service';
 import { LoginResponse, RefreshTokenResponse, UserResponse } from '../../../types/api/auth';
 import { User } from '../../../types/entities/user';
+import { MagnifyLocales } from '../../../utils';
 import { UsersApiRoutes } from '../../../utils/routes/api/users/usersApiRoutes';
 
 export const defaultUser: User = {
@@ -9,6 +10,7 @@ export const defaultUser: User = {
   name: 'John Doe',
   email: 'john.doe@gmail.com',
   username: 'JohnDoe',
+  language: MagnifyLocales.EN,
 };
 
 export const loginHandlers = [

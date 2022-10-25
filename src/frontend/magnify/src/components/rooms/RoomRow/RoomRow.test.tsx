@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { Room } from '../../../types/entities/room';
+import { Room } from '../../../types';
 import { MagnifyTestingProvider } from '../../app';
 import RoomRow from './RoomRow';
 

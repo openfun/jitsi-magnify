@@ -13,6 +13,7 @@ export interface AuthMiddlewareProps {
 
 export const AuthMiddleware = ({ children }: AuthMiddlewareProps) => {
   const authContext = useAuthContext();
+
   const { isLoading } = useQuery([MagnifyQueryKeys.AUTH_USER], () => UsersRepository.me(), {
     enabled: authContext.user == null,
     onError: () => {

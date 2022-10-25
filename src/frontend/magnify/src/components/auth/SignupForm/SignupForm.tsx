@@ -10,9 +10,12 @@ import { useRouting } from '../../../context/routing';
 import { validationMessages } from '../../../i18n/Messages';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 
+import { useLocale } from '../../../i18n/TranslationProvider/TranslationsProvider';
 import { UsersRepository } from '../../../services/users/users.repository';
 import { SignUpData, UserResponse } from '../../../types/api/auth';
+import { MagnifyLocales } from '../../../utils';
 import FormikInput from '../../design-system/Formik/Input';
+import FormikSelectLanguage from '../../design-system/Formik/Select/Language';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
 const messages = defineMessages({
@@ -68,16 +71,18 @@ export interface SignupFormValues {
   username: string;
   password: string;
   confirmPassword: string;
+  language: string;
 }
 
 export default function SignupForm() {
   const intl = useIntl();
   const routing = useRouting();
+  const locale = useLocale();
   const authContext = useAuthContext();
 
   const mutation = useMutation<UserResponse | undefined, AxiosError, SignupFormValues>(
     async (data: SignUpData) => {
-      await UsersRepository.signIn({ ...data, language: 'fr' });
+      await UsersRepository.signIn({ ...data });
       await UsersRepository.login(data.username, data.password);
       return await UsersRepository.me();
     },
@@ -111,6 +116,7 @@ export default function SignupForm() {
         .min(3, intl.formatMessage(validationMessages.usernameInvalid))
         .max(16, intl.formatMessage(validationMessages.usernameInvalid))
         .required(),
+      language: Yup.string().required(),
       password: Yup.string().required(),
       confirmPassword: Yup.string()
         .oneOf(
@@ -127,6 +133,7 @@ export default function SignupForm() {
     username: '',
     password: '',
     confirmPassword: '',
+    language: MagnifyLocales.EN,
   };
 
   return (
@@ -143,6 +150,9 @@ export default function SignupForm() {
           <FormikInput label={intl.formatMessage(formLabelMessages.name)} name={'name'} />
           <FormikInput label={intl.formatMessage(messages.emailLabel)} name={'email'} />
           <FormikInput label={intl.formatMessage(messages.usernameLabel)} name={'username'} />
+          <FormikSelectLanguage
+            changeCallback={(newLocale) => locale.setCurrentLocale(newLocale)}
+          />
           <FormikInput
             label={intl.formatMessage(messages.passwordLabel)}
             name={'password'}
