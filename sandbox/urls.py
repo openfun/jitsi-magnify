@@ -9,6 +9,7 @@ from django.urls import include, path
 from django.views.static import serve
 
 from magnify.apps.core.urls import urlpatterns as core_urlpatterns
+from magnify.apps.core.views import SignupEmailDebugView
 
 # For now, we use URLPathVersioning to be consistent with fonzie. Fonzie uses it
 # because DRF OpenAPI only supports URLPathVersioning for now.
@@ -35,7 +36,12 @@ if settings.DEBUG:
                 r"media/<path:path>",
                 serve,
                 {"document_root": settings.MEDIA_ROOT, "show_indexes": True},
-            )
+            ),
+            path(
+                r"__debug__/email/signup.<str:extension>",
+                SignupEmailDebugView.as_view(),
+                name="debug_email_signup",
+            ),
         ]
         + staticfiles_urlpatterns()
         + urlpatterns

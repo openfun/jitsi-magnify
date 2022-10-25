@@ -26,6 +26,12 @@ src/magnify/static/magnify/
 # Settings
 local.py
 
+# Npm
+node_modules
+
+# Email
+src/magnify/apps/core/templates/email/
+
 # Unit test / coverage reports
 htmlcov/
 .coverage

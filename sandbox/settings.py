@@ -292,6 +292,15 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
     # when their preferred language, whatever it is, is unavailable
     LANGUAGES = (("en", _("English")), ("fr", _("French")))
 
+    # Email
+    EMAIL_BACKEND = values.Value("django.core.mail.backends.smtp.EmailBackend")
+    EMAIL_HOST = values.Value(None)
+    EMAIL_HOST_USER = values.Value(None)
+    EMAIL_HOST_PASSWORD = values.Value(None)
+    EMAIL_PORT = values.PositiveIntegerValue(1025)
+    EMAIL_USE_TLS = values.BooleanValue(False)
+    EMAIL_FROM = values.Value(None)
+
     # Logging
     LOGGING = {
         "version": 1,
