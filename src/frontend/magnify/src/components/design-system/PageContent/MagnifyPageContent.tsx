@@ -5,7 +5,7 @@ import { useIsMobile } from '../../../hooks/useIsMobile';
 
 export interface MagnifyPageContentProps {
   children: React.ReactNode;
-  title: string;
+  title?: string;
   actions?: JSX.Element;
   breadcrumb?: React.ReactNode;
 }
@@ -31,7 +31,7 @@ function MagnifyPageContent({ ...props }: MagnifyPageContentProps) {
         rows={isOnMobile ? ['auto', 'auto', 'auto'] : ['auto', 'auto']}
       >
         <Heading truncate gridArea={'title'} level={3} margin={{ vertical: 'none' }} size="small">
-          {props.title}
+          {props?.title}
         </Heading>
 
         <Box

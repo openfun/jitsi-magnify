@@ -39,6 +39,7 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
       goToLogin: () => console.log('goToLogin'),
       goToRegister: () => console.log('goToRegister'),
       goToAccount: () => console.log('goToAccount'),
+      goToJitsiRoom: () => console.log('goToJitsiRoom'),
       goToRoomsList: () => console.log('goToRoomsList'),
       goToRoomSettings: () => console.log('goToRoomSettings'),
     };

@@ -84,11 +84,11 @@ export const roomConfigMessages = defineMessages({
   },
 });
 
-interface Props {
+export interface RoomConfigProps {
   room: Maybe<Room>;
 }
 
-const RoomConfig = ({ room }: Props) => {
+const RoomConfig = ({ room }: RoomConfigProps) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();

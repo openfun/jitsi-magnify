@@ -14,9 +14,20 @@ export interface Room {
   name: string;
   slug: string;
   is_administrable: boolean;
-  jitsi?: {
+  jitsi: {
     room: string;
     token: string;
   };
   configuration?: RoomSettings;
 }
+
+export const defaultConfiguration: RoomSettings = {
+  askForAuthentication: true,
+  askForPassword: false,
+  roomPassword: '',
+  waitingRoomEnabled: true,
+  enableLobbyChat: true,
+  startAudioMuted: false,
+  startWithVideoMuted: true,
+  screenSharingEnabled: true,
+};

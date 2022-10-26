@@ -12,7 +12,6 @@ export interface MagnifyMeetingProps {
   roomSlug?: string;
   roomName: string;
   meetingId?: string;
-  jitsiDomain: string;
   configuration?: RoomSettings;
   jwt?: string;
 }
@@ -73,7 +72,7 @@ export const MagnifyMeeting = ({ ...props }: MagnifyMeetingProps) => {
   return (
     <JitsiMeeting
       configOverwrite={getConfig()}
-      domain={props.jitsiDomain}
+      domain={process.env.REACT_APP_JITSI_MAIN_DOMAIN}
       getIFrameRef={handleIFrameLoaded}
       jwt={props.jwt}
       onApiReady={handleApiReady}

@@ -4,7 +4,7 @@ import { Button, Card } from 'grommet';
 import React from 'react';
 
 import ResponsiveLayout from '../Layout';
-import MagnifyPageContent from './MagnifyPageContent';
+import { MagnifyPageContent } from './MagnifyPageContent';
 
 export default {
   title: 'Layout/PageContent',
