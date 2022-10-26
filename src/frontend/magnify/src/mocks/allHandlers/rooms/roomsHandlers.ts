@@ -7,6 +7,10 @@ export const defaultRoom: Room = {
   id: '123',
   name: 'test-room',
   slug: 'test-room',
+  jitsi: {
+    room: 'test-room',
+    token: '123',
+  },
   is_administrable: true,
 };
 

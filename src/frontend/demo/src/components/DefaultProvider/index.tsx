@@ -21,6 +21,9 @@ export const DefaultProvider = ({ ...props }: DefaultProviderProps) => {
         goToLogin: () => navigate(AuthPath.LOGIN),
         goToRegister: () => navigate(AuthPath.REGISTER),
         goToAccount: () => navigate(AccountPath.ACCOUNT),
+        goToJitsiRoom: (roomId: string) => {
+          navigate(RoomsPath.ROOMS_JITSI.replace(':id', roomId));
+        },
         goToRoomsList: () => navigate(RoomsPath.ROOMS),
         goToRoomSettings: (roomId?: string) => {
           if (roomId) {

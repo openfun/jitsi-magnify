@@ -13,6 +13,10 @@ describe('RoomsListView', () => {
     id: faker.datatype.uuid(),
     name: 'test-room',
     slug: faker.lorem.slug(),
+    jitsi: {
+      room: 'test-room',
+      token: '123',
+    },
     is_administrable: true,
   };
   const server = setupServer(

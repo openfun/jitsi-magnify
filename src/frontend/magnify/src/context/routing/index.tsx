@@ -7,6 +7,7 @@ export interface RoutingContextInterface {
   goToDefaultPage: () => void;
   goToRegister: () => void;
   goToAccount: () => void;
+  goToJitsiRoom: (roomId: string) => void;
   goToRoomsList: () => void;
   goToRoomSettings: (roomId?: string) => void;
 }

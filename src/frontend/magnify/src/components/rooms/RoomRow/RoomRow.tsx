@@ -15,7 +15,6 @@ import { RoomsRepository } from '../../../services/rooms/rooms.repository';
 import { Room } from '../../../types/entities/room';
 import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
 import { MagnifyModalTypes } from '../../design-system/Modal';
-import { MagnifyMeeting } from '../../jitsi';
 
 export interface RoomRowProps {
   /**
@@ -96,22 +95,6 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
     });
   };
 
-  const openJitsiMeetingModal = () => {
-    modals.showModal({
-      modalUniqueId: 'jitsiMeetingModal',
-      showFooter: false,
-      full: true,
-      children: (
-        <MagnifyMeeting
-          configuration={room.configuration}
-          jitsiDomain={'meeting.education'}
-          jwt={room.jitsi?.token}
-          roomName={room.jitsi?.room ?? `${room.name}-${room.id}`}
-        />
-      ),
-    });
-  };
-
   const getMoreActionsItems = (): ButtonExtendedProps[] => {
     const result: ButtonExtendedProps[] = [];
 
@@ -174,7 +157,7 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
             primary
             label={intl.formatMessage(messages.join)}
             margin={{ left: 'small' }}
-            onClick={() => openJitsiMeetingModal()}
+            onClick={() => routing.goToJitsiRoom(room.id)}
           />
           <Menu
             dropProps={{ align: { top: 'bottom', left: 'left' } }}
