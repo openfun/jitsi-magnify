@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Form, Formik } from 'formik';
+import { AxiosError } from 'axios';
+import { Form, Formik, FormikHelpers } from 'formik';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import * as Yup from 'yup';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
-import { RoomsRepository } from '../../../services/rooms/rooms.repository';
+import { RoomsRepository } from '../../../services';
 import { Room } from '../../../types/entities/room';
+import { Maybe } from '../../../types/misc';
 import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
@@ -40,16 +42,18 @@ interface RegisterRoomFormValues {
   name: string;
 }
 
+interface FormErrors {
+  slug?: string[];
+}
+
 const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
   const intl = useIntl();
   const validationSchema = Yup.object().shape({ name: Yup.string().required() });
   const queryClient = useQueryClient();
-  const { mutate, isLoading } = useMutation(RoomsRepository.create, {
+  const mutation = useMutation<Room, AxiosError, RegisterRoomFormValues>(RoomsRepository.create, {
     onSuccess: (newRoom) => {
       queryClient.setQueryData([MagnifyQueryKeys.ROOMS], (rooms: Room[] = []) => {
-        const newRooms = [...rooms];
-        newRooms.push(newRoom);
-        return newRooms;
+        return [...rooms, newRoom];
       });
       onSuccess(newRoom);
     },
@@ -62,8 +66,18 @@ const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
     [],
   );
 
-  const handleSubmit = (values: RegisterRoomFormValues) => {
-    mutate(values);
+  const handleSubmit = (
+    values: RegisterRoomFormValues,
+    actions: FormikHelpers<RegisterRoomFormValues>,
+  ) => {
+    mutation.mutate(values, {
+      onError: (error) => {
+        const formErrors = error?.response?.data as Maybe<FormErrors>;
+        if (formErrors?.slug) {
+          actions.setFieldError('name', formErrors.slug.join(','));
+        }
+      },
+    });
   };
 
   return (
@@ -79,7 +93,7 @@ const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
           placeholder={intl.formatMessage(messages.namePlaceholder)}
         />
         <FormikSubmitButton
-          isLoading={isLoading}
+          isLoading={mutation.isLoading}
           label={intl.formatMessage(messages.registerRoomSubmitLabel)}
         />
       </Form>
