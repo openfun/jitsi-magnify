@@ -9,7 +9,7 @@ from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt import views as jwt_views
 
-from magnify.apps.core import api, views
+from magnify.apps.core import api
 
 SchemaView = get_schema_view(
     openapi.Info(
@@ -31,7 +31,6 @@ router.register("groups", api.GroupViewSet, basename="groups")
 # To appear on the swagger URL,
 # the views need to extend APIView from the rest_framework.views package.
 urlpatterns = [
-    path("token/<room>", views.RoomTokenView.as_view()),
     path("", include(router.urls)),
     path(
         "accounts/token-refresh/",

@@ -3,11 +3,16 @@ Tests for Rooms API endpoints in Magnify's core app.
 """
 from unittest import mock
 
+from django.contrib.auth.models import AnonymousUser
+from django.test.utils import override_settings
+
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
 
 from magnify.apps.core.factories import GroupFactory, RoomFactory, UserFactory
 from magnify.apps.core.models import Room
+
+# pylint: disable=too-many-public-methods
 
 
 class RoomsApiTestCase(APITestCase):
@@ -114,12 +119,46 @@ class RoomsApiTestCase(APITestCase):
             },
         )
 
+    @override_settings(ALLOW_UNREGISTERED_ROOMS=True)
+    @mock.patch("magnify.apps.core.utils.generate_token", return_value="the token")
+    def test_api_rooms_retrieve_anonymous_unregistered_allowed(self, mock_token):
+        """
+        Retrieving an unregistered room should return a Jitsi token if unregistered rooms
+        are allowed.
+        """
+        response = self.client.get("/api/rooms/unregistered-room/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "id": None,
+                "jitsi": {
+                    "room": "unregistered-room",
+                    "token": "the token",
+                },
+            },
+        )
+        mock_token.assert_called_once_with(
+            AnonymousUser(), "unregistered-room", is_admin=True
+        )
+
+    @override_settings(ALLOW_UNREGISTERED_ROOMS=False)
+    def test_api_rooms_retrieve_anonymous_unregistered_not_allowed(self):
+        """
+        Retrieving an unregistered room should return a 404 if unregistered rooms are not allowed.
+        """
+        response = self.client.get("/api/rooms/unregistered-room/")
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), {"detail": "Not found."})
+
     @mock.patch(
         "magnify.apps.core.serializers.rooms.generate_token", return_value="the token"
     )
     def test_api_rooms_retrieve_anonymous_public(self, mock_token):
         """
-        Anonymous users should be able to retrieve a room provded it is public.
+        Anonymous users should be able to retrieve a room with a token provided it is public.
         """
         room = RoomFactory(is_public=True)
         response = self.client.get(f"/api/rooms/{room.id!s}/")
@@ -174,7 +213,9 @@ class RoomsApiTestCase(APITestCase):
                 "slug": room.slug,
             },
         )
-        mock_token.assert_called_once_with(user, f"{room.slug:s}-{room.id!s}")
+        mock_token.assert_called_once_with(
+            user, f"{room.slug:s}-{room.id!s}", is_admin=False
+        )
 
     def test_api_rooms_retrieve_authenticated(self):
         """
@@ -255,8 +296,7 @@ class RoomsApiTestCase(APITestCase):
             },
         )
         mock_token.assert_called_once_with(
-            user,
-            f"{room.slug:s}-{room.id!s}",
+            user, f"{room.slug:s}-{room.id!s}", is_admin=True
         )
 
     @mock.patch(
@@ -311,7 +351,9 @@ class RoomsApiTestCase(APITestCase):
                 "slug": room.slug,
             },
         )
-        mock_token.assert_called_once_with(administrator, f"{room.slug:s}-{room.id!s}")
+        mock_token.assert_called_once_with(
+            administrator, f"{room.slug:s}-{room.id!s}", is_admin=True
+        )
 
     def test_api_rooms_create_anonymous(self):
         """Anonymous users should not be allowed to create rooms."""

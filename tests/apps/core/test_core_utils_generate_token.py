@@ -2,12 +2,16 @@
 Test suite for redirection to jitsi
 """
 import datetime
+import random
 from unittest import mock
 
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
+
+import jwt
 
 from magnify.apps.core.factories import UserFactory
 from magnify.apps.core.utils import generate_token
@@ -30,8 +34,10 @@ class TokenUtilsTestCase(TestCase):
     def test_utils_generate_token_anonymous(self):
         """Generate a JWT token for a guest."""
         now = datetime.datetime(2030, 6, 15, tzinfo=datetime.timezone.utc)
+
+        # Test token with a fix admin status
         with mock.patch.object(timezone, "now", return_value=now):
-            token = generate_token(AnonymousUser(), "my-room")
+            token = generate_token(AnonymousUser(), "my-room", is_admin=True)
 
         self.assertEqual(
             token,
@@ -44,12 +50,41 @@ class TokenUtilsTestCase(TestCase):
             ),
         )
 
+        # Test payload with a random admin status
+        is_admin = random.choice([True, False])  # nosec
+        with mock.patch.object(timezone, "now", return_value=now):
+            token = generate_token(AnonymousUser(), "my-room", is_admin=is_admin)
+
+        payload = jwt.decode(
+            token,
+            settings.JWT_CONFIGURATION["jitsi_secret_key"],
+            audience="jitsi",
+            algorithms=["HS256"],
+        )
+        self.assertEqual(
+            payload,
+            {
+                "exp": 1907712600,
+                "iat": 1907712000,
+                "moderator": is_admin,
+                "aud": "jitsi",
+                "iss": "app_id",
+                "sub": "meet.jitsi",
+                "room": "my-room",
+                "context": {
+                    "user": {"avatar": "avatar.jpg", "name": "guest", "email": ""}
+                },
+            },
+        )
+
     def test_utils_generate_token_authenticated(self):
         """Generate a token for a quidam user."""
         user = UserFactory(username="mickael", email="mickael@example.com")
         now = datetime.datetime(2030, 6, 15, tzinfo=datetime.timezone.utc)
+
+        # Test token with a fix admin status
         with mock.patch.object(timezone, "now", return_value=now):
-            token = generate_token(user, "my-room")
+            token = generate_token(user, "my-room", is_admin=True)
 
         self.assertEqual(
             token,
@@ -60,6 +95,37 @@ class TokenUtilsTestCase(TestCase):
                 "uanBnIiwibmFtZSI6Im1pY2thZWwiLCJlbWFpbCI6Im1pY2thZWxAZXhhbXBsZS5jb20ifX19.sU6tEi"
                 "0SKOAheTcS4BCXMhYz1ntiTvKi1uAAiuPNP3k"
             ),
+        )
+
+        # Test payload with a random admin status
+        is_admin = random.choice([True, False])  # nosec
+        with mock.patch.object(timezone, "now", return_value=now):
+            token = generate_token(user, "my-room", is_admin=is_admin)
+
+        payload = jwt.decode(
+            token,
+            settings.JWT_CONFIGURATION["jitsi_secret_key"],
+            audience="jitsi",
+            algorithms=["HS256"],
+        )
+        self.assertEqual(
+            payload,
+            {
+                "exp": 1907712600,
+                "iat": 1907712000,
+                "moderator": is_admin,
+                "aud": "jitsi",
+                "iss": "app_id",
+                "sub": "meet.jitsi",
+                "room": "my-room",
+                "context": {
+                    "user": {
+                        "avatar": "avatar.jpg",
+                        "name": "mickael",
+                        "email": "mickael@example.com",
+                    }
+                },
+            },
         )
 
     def test_utils_generate_token_staff(self):
@@ -68,8 +134,10 @@ class TokenUtilsTestCase(TestCase):
             username="mickael", email="mickael@example.com", is_staff=True
         )
         now = datetime.datetime(2030, 6, 15, tzinfo=datetime.timezone.utc)
+        is_admin = random.choice([True, False])  # nosec
+
         with mock.patch.object(timezone, "now", return_value=now):
-            token = generate_token(user, "my-room")
+            token = generate_token(user, "my-room", is_admin=is_admin)
 
         self.assertEqual(
             token,
@@ -80,4 +148,30 @@ class TokenUtilsTestCase(TestCase):
                 "uanBnIiwibmFtZSI6Im1pY2thZWwiLCJlbWFpbCI6Im1pY2thZWxAZXhhbXBsZS5jb20ifX19.sU6tEi"
                 "0SKOAheTcS4BCXMhYz1ntiTvKi1uAAiuPNP3k"
             ),
+        )
+
+        payload = jwt.decode(
+            token,
+            settings.JWT_CONFIGURATION["jitsi_secret_key"],
+            audience="jitsi",
+            algorithms=["HS256"],
+        )
+        self.assertEqual(
+            payload,
+            {
+                "exp": 1907712600,
+                "iat": 1907712000,
+                "moderator": True,
+                "aud": "jitsi",
+                "iss": "app_id",
+                "sub": "meet.jitsi",
+                "room": "my-room",
+                "context": {
+                    "user": {
+                        "avatar": "avatar.jpg",
+                        "name": "mickael",
+                        "email": "mickael@example.com",
+                    }
+                },
+            },
         )

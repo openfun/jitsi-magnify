@@ -220,7 +220,7 @@ class Room(BaseModel):
         return f"{self.slug:s}-{self.id!s}"
 
     def is_administrator(self, user):
-        """check if a user is administrator of the room."""
+        """Check if a user is administrator of the room."""
         if not user.is_authenticated:
             return False
 
@@ -230,6 +230,14 @@ class Room(BaseModel):
                 Q(group__members=user) | Q(group__administrators=user),
                 is_administrator=True,
             ).exists()
+        )
+
+    def has_access(self, user):
+        """Check if a user has access to the room."""
+        return self.user_accesses.filter(
+            user=user
+        ).exists() or self.group_accesses.filter(
+            Q(group__members=user) | Q(group__administrators=user)
         )
 
 
