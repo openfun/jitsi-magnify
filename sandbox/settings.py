@@ -126,6 +126,8 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
         ),
     }
 
+    ALLOW_UNREGISTERED_ROOMS = values.BooleanValue(True, environ_prefix=None)
+
     # Database
     DATABASES = {
         "default": {

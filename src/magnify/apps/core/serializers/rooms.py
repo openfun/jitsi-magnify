@@ -77,21 +77,7 @@ class RoomSerializer(serializers.ModelSerializer):
             return output
         user = request.user
 
-        if instance.is_public or (
-            user.is_authenticated
-            and (
-                instance.user_accesses.filter(user=user)
-                or instance.group_accesses.filter(
-                    Q(group__members=user) | Q(group__administrators=user)
-                )
-            )
-        ):
-            output["jitsi"] = {
-                "room": instance.jitsi_name,
-                "token": generate_token(user, instance.jitsi_name),
-            }
-
-        if is_admin := instance.is_administrator(request.user):
+        if is_admin := instance.is_administrator(user):
             groups_serializer = RoomGroupAccessSerializer(
                 instance.group_accesses.all(), many=True
             )
@@ -105,5 +91,11 @@ class RoomSerializer(serializers.ModelSerializer):
                 }
             )
         output["is_administrable"] = is_admin
+
+        if instance.is_public or (user.is_authenticated and instance.has_access(user)):
+            output["jitsi"] = {
+                "room": instance.jitsi_name,
+                "token": generate_token(user, instance.jitsi_name, is_admin=is_admin),
+            }
 
         return output

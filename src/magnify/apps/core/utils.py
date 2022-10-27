@@ -44,13 +44,13 @@ def get_nth_week_number(original_date):
     return nb_weeks
 
 
-def create_token_payload(user, room):
+def create_token_payload(user, room, is_admin=False):
     """Create the payload so that it contains each information jitsi requires"""
     expiration_seconds = int(settings.JWT_CONFIGURATION.get("token_expiration_seconds"))
     token_payload = {
         "exp": timezone.now() + timedelta(seconds=expiration_seconds),
         "iat": timezone.now(),
-        "moderator": True,
+        "moderator": is_admin or user.is_staff,
         "aud": "jitsi",
         "iss": settings.JWT_CONFIGURATION["jitsi_app_id"],
         "sub": settings.JWT_CONFIGURATION["jitsi_xmpp_domain"],
@@ -69,9 +69,9 @@ def create_token_payload(user, room):
     return token_payload
 
 
-def generate_token(user, room):
+def generate_token(user, room, is_admin=False):
     """Generate the access token that will give access to the room"""
-    token_payload = create_token_payload(user, room)
+    token_payload = create_token_payload(user, room, is_admin=is_admin)
     token = jwt.encode(
         token_payload,
         settings.JWT_CONFIGURATION["jitsi_secret_key"],

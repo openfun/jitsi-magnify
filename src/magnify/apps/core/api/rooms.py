@@ -2,7 +2,9 @@
 import uuid
 from datetime import date
 
+from django.conf import settings
 from django.db.models import F, Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 from rest_framework import decorators as drf_decorators
@@ -10,13 +12,12 @@ from rest_framework import mixins, permissions, response, viewsets
 
 from .. import forms, models
 from .. import permissions as magnify_permissions
-from .. import serializers
+from .. import serializers, utils
 
 
 class RoomViewSet(
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
@@ -41,6 +42,30 @@ class RoomViewSet(
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)
         return obj
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Allow unregistered rooms when activated.
+        For unregistered rooms we only return a null id and the jitsi room and token.
+        """
+        try:
+            instance = self.get_object()
+        except Http404:
+            if not settings.ALLOW_UNREGISTERED_ROOMS:
+                raise
+            data = {
+                "id": None,
+                "jitsi": {
+                    "room": self.kwargs["pk"],
+                    "token": utils.generate_token(
+                        request.user, self.kwargs["pk"], is_admin=True
+                    ),
+                },
+            }
+        else:
+            data = self.get_serializer(instance).data
+
+        return response.Response(data)
 
     def list(self, request, *args, **kwargs):
         """Limit listed rooms to the ones related to the authenticated user."""
