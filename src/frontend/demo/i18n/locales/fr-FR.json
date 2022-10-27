@@ -1,31 +1,7 @@
 {
-  "app.groupViewTitle": {
-    "description": "Page title for the My Group page",
-    "message": "Groupe"
-  },
-  "app.groupsViewTitle": {
-    "description": "Page title for the My Groups page",
-    "message": "Mes groupes"
-  },
-  "app.meetingsViewTitle": {
-    "description": "Page title for the My meetings page",
-    "message": "Mes salles"
-  },
-  "app.notFoundMessage": {
-    "description": "Message for the 404 page",
-    "message": "Désolé, la page que vous recherchez n'existe pas."
-  },
-  "app.notFoundTitle": {
-    "description": "Page title for the 404 page",
-    "message": "Page non trouvée"
-  },
-  "app.roomViewTitle": {
-    "description": "Page title for the room view",
-    "message": "Salle « {roomName}»"
-  },
-  "app.testTitle": {
-    "description": "Page title for the test",
-    "message": "Bienvenue sur Magnify!"
+  "app.profileViewTitle": {
+    "description": "Page title for the profile page",
+    "message": "Mon compte"
   },
   "utils.routes.account.account.label": {
     "description": "Label of the account view.",
@@ -42,5 +18,33 @@
   "utils.routes.root.root.label": {
     "description": "Label of the home view.",
     "message": "Accueil"
+  },
+  "view.rooms.list.roomsListLabel": {
+    "description": "Label for the list of rooms",
+    "message": "Mes salles"
+  },
+  "view.rooms.list.roomsListViewTitle": {
+    "description": "Page title for the rooms list page",
+    "message": "Mes Salles"
+  },
+  "view.rooms.settings.roomSettingsTitle": {
+    "description": "Page title for the rooms settings page",
+    "message": "Paramètres de la salle"
+  },
+  "views.auth.login.signupInstead": {
+    "description": "The text for the link to the signup form",
+    "message": "Je souhaite plutôt m'inscrire"
+  },
+  "views.auth.login.youDoNotHaveAnAccount": {
+    "description": "The explanation for the link to the signup form",
+    "message": "Vous n'avez pas de compte ?"
+  },
+  "views.auth.register.loginInstead": {
+    "description": "The text for the link to the login form",
+    "message": "Aller plutôt se connecter"
+  },
+  "views.auth.register.youAlreadyHaveAnAccount": {
+    "description": "The explanation for the link to the login form",
+    "message": "Vous avez déjà un compte ?"
   }
 }
