@@ -28,7 +28,7 @@ export const MagnifyApi = axios.create({
   },
 });
 
-MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem(
+MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(
   SESSION_ACCESS_TOKEN_KEY,
 )}`;
 

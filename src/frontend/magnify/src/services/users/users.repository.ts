@@ -17,12 +17,12 @@ import { RoutesBuilderService } from '../routes/RoutesBuilder.service';
 export class UsersRepository {
   public static setTokens(access?: string, refresh?: string): void {
     if (access != null) {
-      sessionStorage.setItem(SESSION_ACCESS_TOKEN_KEY, access);
+      localStorage.setItem(SESSION_ACCESS_TOKEN_KEY, access);
       MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${access}`;
     }
 
     if (refresh != null) {
-      sessionStorage.setItem(SESSION_REFRESH_ACCESS_TOKEN_KEY, refresh);
+      localStorage.setItem(SESSION_REFRESH_ACCESS_TOKEN_KEY, refresh);
     }
   }
 
@@ -44,16 +44,16 @@ export class UsersRepository {
   }
 
   public static getAccessToken(): string | null {
-    return sessionStorage.getItem(SESSION_ACCESS_TOKEN_KEY);
+    return localStorage.getItem(SESSION_ACCESS_TOKEN_KEY);
   }
 
   public static getRefreshToken(): string | null {
-    return sessionStorage.getItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
+    return localStorage.getItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
   }
 
   public static logout(): void {
-    sessionStorage.removeItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
-    sessionStorage.removeItem(SESSION_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(SESSION_ACCESS_TOKEN_KEY);
     MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${null}`;
   }
 
