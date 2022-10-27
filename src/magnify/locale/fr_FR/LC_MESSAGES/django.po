@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: jitsi-magnify\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-18 14:08+0000\n"
-"PO-Revision-Date: 2022-10-20 08:56\n"
+"PO-Revision-Date: 2022-10-27 14:21\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -31,7 +31,7 @@ msgstr "clé primaire pour l'enregistrement sous forme d'UUID"
 
 #: apps/core/models.py:57
 msgid "Username must contain only lower case letters, numbers, underscores and hyphens."
-msgstr ""
+msgstr "Le nom d'utilisateur doit uniquement contenir des lettres en minuscule, des nombres, des points et des tirets bas."
 
 #: apps/core/models.py:62
 msgid "username"
@@ -39,19 +39,19 @@ msgstr "nom d'utilisateur"
 
 #: apps/core/models.py:67
 msgid "A user with that username already exists."
-msgstr "Ce nom d'utilisateur existe déjà."
+msgstr "Ce nom d'utilisateur est déjà réservé."
 
 #: apps/core/models.py:79
 msgid "language"
-msgstr ""
+msgstr "langue"
 
 #: apps/core/models.py:80
 msgid "The language in which the user wants to see the interface."
-msgstr ""
+msgstr "La langue dans laquelle l'utilisateur veut voir l'interface."
 
 #: apps/core/models.py:83
 msgid "staff status"
-msgstr ""
+msgstr "statut d'équipe"
 
 #: apps/core/models.py:85
 msgid "Designates whether the user can log into this admin site."
@@ -99,7 +99,7 @@ msgstr "Configuration de la salle Jitsi"
 
 #: apps/core/models.py:189
 msgid "Values for Jitsi parameters to configure the room via the iframe API."
-msgstr "Valeurs pour les paramètres Jitsi pour configurer la salle via l'API iframe."
+msgstr "Valeurs des paramètres Jitsi pour configurer la salle via l'API iframe."
 
 #: apps/core/models.py:196
 msgid "Room"
@@ -123,7 +123,7 @@ msgstr "Accès du groupe à cette salle"
 
 #: apps/core/models.py:275
 msgid "Room group accesses"
-msgstr ""
+msgstr "Groupes ayant accès à cette salle"
 
 #: apps/core/models.py:288
 msgid "Daily"
@@ -171,21 +171,21 @@ msgstr "Accès utilisateur à la réunion"
 
 #: apps/core/models.py:524
 msgid "Meeting user accesses"
-msgstr ""
+msgstr "Utilisateurs ayant accès à cette réunion"
 
 #: apps/core/models.py:545
 msgid "Meeting group access"
-msgstr ""
+msgstr "Groupes ayant accès à cette réunion"
 
 #: apps/core/models.py:546
 msgid "Meeting group accesses"
-msgstr ""
+msgstr "Groupes ayant accès à cette réunion"
 
 #: apps/core/serializers/groups.py:22
 msgid "The group must have at least one administrator."
-msgstr ""
+msgstr "Le groupe doit avoir au moins un administrateur."
 
 #: apps/core/serializers/rooms.py:36
 msgid "You must be administrator of a room to add accesses to it."
-msgstr ""
+msgstr "Vous devez être administrateur d'une pièce pour y ajouter des accès."
 

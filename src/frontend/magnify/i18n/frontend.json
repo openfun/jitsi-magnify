@@ -1,16 +1,4 @@
 {
-  "app.profileViewTitle": {
-    "description": "Page title for the profile page",
-    "message": "My account"
-  },
-  "components.TestButton.testButtonLabel": {
-    "description": "Call to action on the test button",
-    "message": "Test Button"
-  },
-  "components.auth.LoginForm.UnknownError": {
-    "description": "The error message if an unknown error occured during the login",
-    "message": "Something went wrong, please try again later"
-  },
   "components.auth.LoginForm.formExplanation": {
     "description": "The explanation of the login form",
     "message": "Please login to your account"
@@ -82,158 +70,6 @@
   "components.designSystem.waitingRow.title": {
     "description": "Accessibility label for the blinking card when waiting for a list of row",
     "message": "Loading..."
-  },
-  "components.groups.AddGroupForm.addGroupButtonLabel": {
-    "description": "Add group button label",
-    "message": "Add group {name}"
-  },
-  "components.groups.AddGroupForm.addGroupTitle": {
-    "description": "Add group heading label",
-    "message": "Add group"
-  },
-  "components.groups.AddGroupForm.cancel": {
-    "description": "Cancel button label",
-    "message": "Cancel"
-  },
-  "components.groups.AddGroupForm.name": {
-    "description": "Group name label",
-    "message": "Name"
-  },
-  "components.groups.AddUserForm.addUserHeading": {
-    "description": "Add user heading",
-    "message": "Add user to group"
-  },
-  "components.groups.AddUserForm.addUserSubmitLabel": {
-    "description": "Add user button label",
-    "message": "Add user"
-  },
-  "components.groups.AddUserForm.cancel": {
-    "description": "Cancel button label",
-    "message": "Cancel"
-  },
-  "components.groups.AddUserForm.email": {
-    "description": "Email label",
-    "message": "Email"
-  },
-  "components.groups.GroupUserList.addUserToGroupLabel": {
-    "description": "Add user to group label",
-    "message": "Add user to group"
-  },
-  "components.groups.GroupUserList.usersLabel": {
-    "description": "Users label",
-    "message": "Users"
-  },
-  "components.groups.GroupsHeader.selectAllHeaderLabel": {
-    "description": "The label for the select all checkbox",
-    "message": "Select all"
-  },
-  "components.groups.GroupsList.actionGroupLabel": {
-    "description": "The label for the action menu",
-    "message": "Actions"
-  },
-  "components.groups.GroupsList.addGroupButtonLabel": {
-    "description": "Call to action on the button to add a group",
-    "message": "Add group"
-  },
-  "components.groups.GroupsList.createMeetingButtonLabel": {
-    "description": "Call to action on the button to create a meeting for a group",
-    "message": "Create meeting for {numberOfSelected, plural, =0 {group} one {group} other {groups}}"
-  },
-  "components.groups.GroupsList.createRoomButtonLabel": {
-    "description": "Call to action on the button to create a room for a group",
-    "message": "Create room for {numberOfSelected, plural, =0 {group} one {group} other {groups}}"
-  },
-  "components.groups.GroupsList.deleteGroupButtonLabel": {
-    "description": "Call to action on the button to delete a group",
-    "message": "Delete {numberOfSelected, plural, =0 {group} one {group} other {groups}}"
-  },
-  "components.groups.GroupsList.numGroupsLabel": {
-    "description": "The label for the number of groups",
-    "message": "{numberOfRows, plural, =0 {No group yet} one {# group} other {# groups}}"
-  },
-  "components.groups.GroupsList.renameGroupButtonLabel": {
-    "description": "Call to action on the button to rename a group",
-    "message": "Rename group"
-  },
-  "components.jitsi.MeetingDisambiguation.joinRoomItSelf": {
-    "description": "The label of the button to join the room",
-    "message": "Join the room itself"
-  },
-  "components.jitsi.MeetingDisambiguation.meetingDisambiguationExplanation": {
-    "message": "Welcome to the room {roomSlug}. Thre are several meetings in progress. Please select the meeting you want to join."
-  },
-  "components.jitsi.MeetingDisambiguation.meetingDisambiguationTitle": {
-    "description": "The title of the meeting disambiguation modal",
-    "message": "Meeting Disambiguation"
-  },
-  "components.jitsi.MeetingDisambiguation.meetings": {
-    "description": "The label of the meetings section",
-    "message": "Meetings"
-  },
-  "components.meetings.CreateMeetingForm.cancelLabel": {
-    "description": "Label for the cancel button",
-    "message": "Cancel"
-  },
-  "components.meetings.CreateMeetingForm.createMeetingFormTitle": {
-    "description": "Title of the create meeting form",
-    "message": "Create Meeting"
-  },
-  "components.meetings.CreateMeetingForm.datesLabel": {
-    "description": "Label for the dates field",
-    "message": "Dates"
-  },
-  "components.meetings.CreateMeetingForm.daysLabel": {
-    "description": "Label for the days field",
-    "message": "Days"
-  },
-  "components.meetings.CreateMeetingForm.durationLabel": {
-    "description": "Label for the duration field",
-    "message": "Duration"
-  },
-  "components.meetings.CreateMeetingForm.startTimeLabel": {
-    "description": "Label for the start time field",
-    "message": "Start Time"
-  },
-  "components.meetings.CreateMeetingForm.submitLabel": {
-    "description": "Label for the submit button",
-    "message": "Create meeting"
-  },
-  "components.meetings.MeetingRow.endedLabel": {
-    "description": "Meeting row, label for ended meeting",
-    "message": "Ended"
-  },
-  "components.meetings.MeetingRow.friday": {
-    "message": "F"
-  },
-  "components.meetings.MeetingRow.fromDateToDate": {
-    "description": "Meeting row, description of repetition from <start date> to <end date>",
-    "message": "from {fromDate,date} to {toDate,date}"
-  },
-  "components.meetings.MeetingRow.joinLabel": {
-    "description": "Meeting row, label for join button",
-    "message": "Join"
-  },
-  "components.meetings.MeetingRow.monday": {
-    "message": "M"
-  },
-  "components.meetings.MeetingRow.saturday": {
-    "message": "S"
-  },
-  "components.meetings.MeetingRow.sunday": {
-    "message": "S"
-  },
-  "components.meetings.MeetingRow.thursday": {
-    "message": "T"
-  },
-  "components.meetings.MeetingRow.tuesday": {
-    "message": "T"
-  },
-  "components.meetings.MeetingRow.wednesday": {
-    "message": "W"
-  },
-  "components.meetings.myMeetings.meetingsListLabel": {
-    "description": "Label for the list of meetings",
-    "message": "My meetings"
   },
   "components.profile.AvatarForm.loadNewButtonLabel": {
     "description": "Call to action on the load new avatar button",
@@ -315,22 +151,6 @@
     "description": "The label for the submit button on the password update form",
     "message": "Save new password"
   },
-  "components.rooms.AddGroupToRoomDialog.AddGroupToRoomDialogTitle": {
-    "description": "Title of the add group to room dialog",
-    "message": "Add groups to room"
-  },
-  "components.rooms.AddGroupToRoomDialog.addGroupsLabel": {
-    "description": "Label for the add groups button",
-    "message": "Add {numberSelected} {numberSelected, plural, =0 {group} one {group} other {groups}}"
-  },
-  "components.rooms.AddGroupToRoomDialog.cancelLabel": {
-    "description": "Label for the cancel button",
-    "message": "Cancel"
-  },
-  "components.rooms.AddGroupToRoomDialog.selectGroupsToAdd": {
-    "description": "Label for the select groups to add",
-    "message": "Select groups to add"
-  },
   "components.rooms.RoomRow.admin": {
     "description": "Indicates that the user is an admin of the room",
     "message": "Admin"
@@ -354,6 +174,14 @@
   "components.rooms.config.askForPassword": {
     "description": "Label for the toggle in the room configuration (security) that enables asking for a password when joining a room",
     "message": "Ask for password"
+  },
+  "components.rooms.config.askForPasswordInputLabel": {
+    "description": "Label for the room password input",
+    "message": "Room password"
+  },
+  "components.rooms.config.askForPasswordInputPlaceholder": {
+    "description": "Placeholder for the room password input",
+    "message": "Choose password"
   },
   "components.rooms.config.enableChat": {
     "description": "Label for the toggle in the room configuration that enables chat",
@@ -407,34 +235,6 @@
     "description": "Label for the submit button to register a new room",
     "message": "Register room"
   },
-  "components.rooms.roomOverview.addGroupLabel": {
-    "description": "Label for the button to add a group to a room",
-    "message": "Add group"
-  },
-  "components.rooms.roomOverview.configureRoomLabel": {
-    "description": "Label for the button to configure a room",
-    "message": "Configure room"
-  },
-  "components.rooms.roomOverview.createMeetingLabel": {
-    "description": "Label for the button to create a meeting in a room",
-    "message": "New meeting"
-  },
-  "components.rooms.roomOverview.groupsListTitle": {
-    "description": "Title for the list of groups in a room",
-    "message": "{numberOfRows, plural, =0 {No groups} one {1 group} other {{numberOfRows} groups}} in this room"
-  },
-  "components.rooms.roomOverview.joinRoomLabel": {
-    "description": "Label for the button to join a room",
-    "message": "Join room"
-  },
-  "components.rooms.roomOverview.meetingListTitle": {
-    "description": "Title for the list of meetings in a room",
-    "message": "{numberOfRows, plural, =0 {No meetings} one {1 meeting} other {{numberOfRows} meetings}} in this room"
-  },
-  "components.users.userList.admin": {
-    "description": "Admin label",
-    "message": "Admin"
-  },
   "i18n.Messages.commonTranslation.account": {
     "description": "Account label",
     "message": "Account"
@@ -467,6 +267,14 @@
     "description": "Name label for input",
     "message": "Name"
   },
+  "i18n.Messages.localesTranslations.en": {
+    "description": "English locale translation",
+    "message": "English"
+  },
+  "i18n.Messages.localesTranslations.fr": {
+    "description": "French locale translation",
+    "message": "Français"
+  },
   "validationMessages.required": {
     "description": "Messages shown when a field is required but the user did not provide any value",
     "message": "This field is required"
@@ -482,33 +290,5 @@
   "validationMesssages.emailInvalid": {
     "description": "The error message for the email field",
     "message": "Email is invalid"
-  },
-  "view.rooms.list.roomsListLabel": {
-    "description": "Label for the list of rooms",
-    "message": "My rooms"
-  },
-  "view.rooms.list.roomsListViewTitle": {
-    "description": "Page title for the rooms list page",
-    "message": "My Rooms"
-  },
-  "view.rooms.settings.roomSettingsTitle": {
-    "description": "Page title for the rooms settings page",
-    "message": "Room settings"
-  },
-  "views.auth.login.signupInstead": {
-    "description": "The text for the link to the signup form",
-    "message": "Signup instead"
-  },
-  "views.auth.login.youDoNotHaveAnAccount": {
-    "description": "The explanation for the link to the signup form",
-    "message": "You do not have an account?"
-  },
-  "views.auth.register.loginInstead": {
-    "description": "The text for the link to the login form",
-    "message": "Login instead"
-  },
-  "views.auth.register.youAlreadyHaveAnAccount": {
-    "description": "The explanation for the link to the login form",
-    "message": "You already have an account?"
   }
 }

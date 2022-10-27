@@ -1,13 +1,14 @@
 {
-  "app.groupViewTitle": "Groupe",
-  "app.groupsViewTitle": "Mes groupes",
-  "app.meetingsViewTitle": "Mes salles",
-  "app.notFoundMessage": "Désolé, la page que vous recherchez n'existe pas.",
-  "app.notFoundTitle": "Page non trouvée",
-  "app.roomViewTitle": "Salle « {roomName}»",
-  "app.testTitle": "Bienvenue sur Magnify!",
+  "app.profileViewTitle": "Mon compte",
   "utils.routes.account.account.label": "Mon compte",
   "utils.routes.rooms.rooms.label": "Salles",
   "utils.routes.rooms.roomsSettings.label": "Réglages",
-  "utils.routes.root.root.label": "Accueil"
+  "utils.routes.root.root.label": "Accueil",
+  "view.rooms.list.roomsListLabel": "Mes salles",
+  "view.rooms.list.roomsListViewTitle": "Mes Salles",
+  "view.rooms.settings.roomSettingsTitle": "Paramètres de la salle",
+  "views.auth.login.signupInstead": "Je souhaite plutôt m'inscrire",
+  "views.auth.login.youDoNotHaveAnAccount": "Vous n'avez pas de compte ?",
+  "views.auth.register.loginInstead": "Aller plutôt se connecter",
+  "views.auth.register.youAlreadyHaveAnAccount": "Vous avez déjà un compte ?"
 }
