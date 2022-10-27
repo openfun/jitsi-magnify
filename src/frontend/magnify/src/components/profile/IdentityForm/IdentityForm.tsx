@@ -86,8 +86,8 @@ export default function IdentityForm() {
 
   return (
     <Formik
+      enableReinitialize={true}
       onSubmit={handleSubmit}
-      validateOnChange={true}
       validationSchema={validationSchema}
       initialValues={{
         name: authContext.user?.name ?? '',

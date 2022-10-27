@@ -14,6 +14,6 @@ describe('Should show a ResponsiveLayoutHeaderAvatar', () => {
     fireEvent.click(button);
     screen.getByText(commonMessages.account.defaultMessage);
     screen.getByText(commonMessages.logout.defaultMessage);
-    screen.getByText('NP');
+    screen.getByText('JD');
   });
 });
