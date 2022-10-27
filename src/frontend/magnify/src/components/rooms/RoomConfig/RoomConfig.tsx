@@ -157,11 +157,7 @@ const RoomConfig = ({ room }: RoomConfigProps) => {
   };
 
   return (
-    <Formik
-      enableReinitialize={true}
-      initialValues={initialValues}
-      onSubmit={(values) => mutate(values)}
-    >
+    <Formik initialValues={initialValues} onSubmit={(values) => mutate(values)}>
       {(props) => (
         <FormikValuesChange>
           <Grid
