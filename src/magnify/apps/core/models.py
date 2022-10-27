@@ -76,6 +76,7 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     language = models.CharField(
         max_length=10,
         choices=lazy(lambda: settings.LANGUAGES, tuple)(),
+        default=settings.LANGUAGE_CODE,
         verbose_name=_("language"),
         help_text=_("The language in which the user wants to see the interface."),
     )
