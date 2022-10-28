@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
+import { RefreshTokenResponse } from '../../types';
+import { UsersApiRoutes } from '../../utils';
 import { DEFAULT_BASE_API_URL } from '../../utils/constants/config';
-import { UsersRepository } from '../users/users.repository';
 
 export const SESSION_ACCESS_TOKEN_KEY = 'access_token';
 export const SESSION_REFRESH_ACCESS_TOKEN_KEY = 'refresh_token';
@@ -15,6 +16,33 @@ export const buildApiUrl = (route: string) => {
 export class HttpService {
   // To know if a particular url has already been retried or not.
   static retry: Map<string, boolean> = new Map<string, boolean>();
+
+  public static setTokens(access?: string, refresh?: string): void {
+    if (access != null) {
+      localStorage.setItem(SESSION_ACCESS_TOKEN_KEY, access);
+      MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+    }
+
+    if (refresh != null) {
+      localStorage.setItem(SESSION_REFRESH_ACCESS_TOKEN_KEY, refresh);
+    }
+  }
+
+  public static getAccessToken(): string | null {
+    return localStorage.getItem(SESSION_ACCESS_TOKEN_KEY);
+  }
+
+  public static getRefreshToken(): string | null {
+    return localStorage.getItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
+  }
+
+  public static async refreshToken(): Promise<string> {
+    const response = await MagnifyAuthApi.post<RefreshTokenResponse>(UsersApiRoutes.REFRESH_TOKEN, {
+      refresh: HttpService.getRefreshToken(),
+    });
+    HttpService.setTokens(response.data.access);
+    return response.data.access;
+  }
 }
 
 export const MagnifyAuthApi = axios.create({
@@ -42,7 +70,7 @@ MagnifyApi.interceptors.response.use(
     const isRetry = HttpService.retry.get(originalRequest.url + '');
     if (error.response?.status === 401 && originalRequest.url && !isRetry) {
       HttpService.retry.set(originalRequest.url, true);
-      const access_token = await UsersRepository.refreshToken();
+      const access_token = await HttpService.refreshToken();
       MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       originalRequest.headers = {
         ...originalRequest.headers,
