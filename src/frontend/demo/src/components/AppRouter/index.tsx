@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom';
 import { getAccountRoutes } from '../../utils/routes/account';
 import { getAuthRoute } from '../../utils/routes/auth';
+import { getJitsiRoutes } from '../../utils/routes/jitsi';
 import { getRoomsRoutes, RoomsPath } from '../../utils/routes/rooms';
 import { getRootRoute } from '../../utils/routes/root';
 import { DefaultProvider } from '../DefaultProvider';
@@ -33,6 +34,7 @@ export const AppRouter = () => {
           ]),
         },
         { ...getAuthRoute() },
+        { ...getJitsiRoutes() },
         { index: true, element: <Navigate to={'/app'} /> },
         { path: '*', element: <Navigate to={'/app'} /> },
       ],
