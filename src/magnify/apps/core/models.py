@@ -399,7 +399,8 @@ class Meeting(BaseModel):
                     raise ValidationError(
                         {"weekdays": _("Weekdays should contain the start date.")}
                     )
-
+            else:
+                self.weekdays = None
             if self.recurrence:
                 if self.recurring_until:
                     if self.recurring_until < self.start:
