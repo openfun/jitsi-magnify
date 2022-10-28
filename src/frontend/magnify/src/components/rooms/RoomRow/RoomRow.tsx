@@ -157,7 +157,7 @@ export default function RoomRow({ room, baseJitsiUrl }: RoomRowProps) {
             primary
             label={intl.formatMessage(messages.join)}
             margin={{ left: 'small' }}
-            onClick={() => routing.goToJitsiRoom(room.id)}
+            onClick={() => routing.goToJitsiRoom(room.slug)}
           />
           <Menu
             dropProps={{ align: { top: 'bottom', left: 'left' } }}

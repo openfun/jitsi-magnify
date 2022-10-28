@@ -20,6 +20,7 @@ export const authLoginViewMessages = defineMessages({
 export function AuthLoginView() {
   const intl = useIntl();
   const navigate = useNavigate();
+
   return (
     <AuthForms
       footerLabel={intl.formatMessage(authLoginViewMessages.youDoNotHaveAnAccount)}

@@ -1,7 +1,8 @@
+import { AxiosResponse } from 'axios';
 import { CreateRoomData, RoomResponse, UpdateRoomData } from '../../types/api/room';
 import { Room } from '../../types/entities/room';
 import { RoomsApiRoutes } from '../../utils/routes/api';
-import { MagnifyApi } from '../http/http.service';
+import { MagnifyApi, MagnifyAuthApi } from '../http/http.service';
 import { RoutesBuilderService } from '../routes/RoutesBuilder.service';
 
 export class RoomsRepository {
@@ -10,13 +11,21 @@ export class RoomsRepository {
     return response.data;
   }
 
-  public static async get(roomId?: string): Promise<RoomResponse | null> {
+  public static async get(
+    roomId?: string,
+    asAuthenticatedUser: boolean = true,
+  ): Promise<RoomResponse | null> {
     if (!roomId) {
       console.error('RoomsRepository - get, roomId is null');
       return null;
     }
     const url = RoutesBuilderService.build(RoomsApiRoutes.GET, { id: roomId });
-    const response = await MagnifyApi.get<RoomResponse>(url);
+    let response: AxiosResponse<RoomResponse>;
+    if (asAuthenticatedUser) {
+      response = await MagnifyApi.get<RoomResponse>(url);
+    } else {
+      response = await MagnifyAuthApi.get<RoomResponse>(url);
+    }
     return response.data;
   }
 
