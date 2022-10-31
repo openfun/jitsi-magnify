@@ -119,6 +119,23 @@ class RoomsApiTestCase(APITestCase):
             },
         )
 
+    def test_api_rooms_retrieve_anonymous_private_slug_not_normalized(self):
+        """Getting a room by a slug that is not normalized should work."""
+        room = RoomFactory(name="Réunion", is_public=False)
+        response = self.client.get("/api/rooms/Réunion/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "id": str(room.id),
+                "configuration": {},
+                "is_administrable": False,
+                "name": room.name,
+                "slug": room.slug,
+            },
+        )
+
     @override_settings(ALLOW_UNREGISTERED_ROOMS=True)
     @mock.patch("magnify.apps.core.utils.generate_token", return_value="the token")
     def test_api_rooms_retrieve_anonymous_unregistered_allowed(self, mock_token):
@@ -142,6 +159,30 @@ class RoomsApiTestCase(APITestCase):
         mock_token.assert_called_once_with(
             AnonymousUser(), "unregistered-room", is_admin=True
         )
+
+    @override_settings(ALLOW_UNREGISTERED_ROOMS=True)
+    @mock.patch("magnify.apps.core.utils.generate_token", return_value="the token")
+    def test_api_rooms_retrieve_anonymous_unregistered_allowed_not_normalized(
+        self, mock_token
+    ):
+        """
+        Getting an unregistered room by a slug that is not normalized should work and use the Jitsi
+        room on the slugified name.
+        """
+        response = self.client.get("/api/rooms/Réunion/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "id": None,
+                "jitsi": {
+                    "room": "reunion",
+                    "token": "the token",
+                },
+            },
+        )
+        mock_token.assert_called_once_with(AnonymousUser(), "reunion", is_admin=True)
 
     @override_settings(ALLOW_UNREGISTERED_ROOMS=False)
     def test_api_rooms_retrieve_anonymous_unregistered_not_allowed(self):

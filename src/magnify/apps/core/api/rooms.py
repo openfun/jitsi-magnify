@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db.models import F, Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.utils.text import slugify
 
 from rest_framework import decorators as drf_decorators
 from rest_framework import mixins, permissions, response, viewsets
@@ -35,7 +36,7 @@ class RoomViewSet(
             uuid.UUID(self.kwargs["pk"])
             filter_kwargs = {"pk": self.kwargs["pk"]}
         except ValueError:
-            filter_kwargs = {"slug": self.kwargs["pk"]}
+            filter_kwargs = {"slug": slugify(self.kwargs["pk"])}
 
         queryset = self.filter_queryset(self.get_queryset())
         obj = get_object_or_404(queryset, **filter_kwargs)
@@ -53,13 +54,12 @@ class RoomViewSet(
         except Http404:
             if not settings.ALLOW_UNREGISTERED_ROOMS:
                 raise
+            slug = slugify(self.kwargs["pk"])
             data = {
                 "id": None,
                 "jitsi": {
-                    "room": self.kwargs["pk"],
-                    "token": utils.generate_token(
-                        request.user, self.kwargs["pk"], is_admin=True
-                    ),
+                    "room": slug,
+                    "token": utils.generate_token(request.user, slug, is_admin=True),
                 },
             }
         else:
