@@ -45,10 +45,9 @@ const RegisterRoom = ({ ...props }: RegisterRoomProps) => {
     <>
       <Button
         primary
-        icon={<Add size="20px" />}
+        icon={<Add size="15px" />}
         label={intl.formatMessage(messages.addNewRoomLabel)}
         onClick={handleOpen}
-        size={'small'}
       />
       {open && (
         <Layer
