@@ -4,6 +4,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
+    "@fontsource/roboto": "4.5.8",
     "@jitsi-magnify/core": "0.1.0",
     "@jitsi/react-sdk": "1.1.0",
     "@tanstack/react-query": "4.7.2",
