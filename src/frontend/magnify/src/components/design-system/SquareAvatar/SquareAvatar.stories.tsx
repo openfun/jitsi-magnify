@@ -1,5 +1,6 @@
 import { ComponentStory } from '@storybook/react';
 import React from 'react';
+import { _users } from '../../../factories/users';
 import { defaultUser } from '../../../mocks/allHandlers/login/loginHandlers';
 import SquareAvatar from './SquareAvatar';
 
@@ -9,7 +10,7 @@ export default {
 };
 
 const Template: ComponentStory<typeof SquareAvatar> = (args) => <SquareAvatar {...args} />;
-
+console.log(_users);
 const fakeUser = defaultUser;
 
 export const Simple = Template.bind({});
