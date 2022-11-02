@@ -1,5 +1,6 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
+import createRandomRoom from '../../../factories/rooms';
 import MyRooms from './MyRooms';
 
 export default {
@@ -7,7 +8,9 @@ export default {
   component: MyRooms,
 } as ComponentMeta<typeof MyRooms>;
 
-const Template: ComponentStory<typeof MyRooms> = (args) => <MyRooms {...args} />;
+const Template: ComponentStory<typeof MyRooms> = (args) => (
+  <MyRooms {...args} rooms={[createRandomRoom(), createRandomRoom()]} />
+);
 
 // create the template and stories
 export const basicMyRooms = Template.bind({});
