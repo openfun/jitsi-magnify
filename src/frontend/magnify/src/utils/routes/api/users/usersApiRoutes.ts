@@ -5,5 +5,6 @@ export enum UsersApiRoutes {
   CHANGE_PASSWORD = '/users/change-password/',
   UPDATE = '/users/:id/',
   DELETE = '/users/:id/',
+  GET = '/users/:id/',
   CREATE = '/users/',
 }

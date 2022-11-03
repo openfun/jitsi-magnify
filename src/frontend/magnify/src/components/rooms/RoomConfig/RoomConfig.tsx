@@ -1,10 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Formik } from 'formik';
-import { AreasType, Box, Grid, GridColumnsType, GridSizeType, ResponsiveValue } from 'grommet';
-import React from 'react';
+import {
+  AreasType,
+  Box,
+  Button,
+  Grid,
+  GridColumnsType,
+  GridSizeType,
+  ResponsiveValue,
+} from 'grommet';
+import React, { useEffect, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import { _users } from '../../../factories/users';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import { UsersRepository } from '../../../services';
 import { RoomsRepository } from '../../../services/rooms/rooms.repository';
+import { User } from '../../../types';
 import { Room, RoomSettings } from '../../../types/entities/room';
 import { Maybe } from '../../../types/misc';
 import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
@@ -12,6 +23,8 @@ import MagnifyCard from '../../design-system/Card';
 import FormikSwitch from '../../design-system/Formik/FormikSwitch';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikValuesChange } from '../../design-system/Formik/ValuesChange/FormikValuesChange';
+import MagnifyList from '../../design-system/List';
+import { UserRow } from '../../users/row';
 
 export const roomConfigMessages = defineMessages({
   askForAuthentication: {
@@ -82,6 +95,11 @@ export const roomConfigMessages = defineMessages({
     description: 'Title for the room configuration section with general settings',
     id: 'components.rooms.config.settingsTitle',
   },
+  addUser: {
+    defaultMessage: 'Add user',
+    description: 'Label for the addUser button',
+    id: 'components.rooms.config.defaultMessage',
+  },
 });
 
 export interface RoomConfigProps {
@@ -92,6 +110,30 @@ const RoomConfig = ({ room }: RoomConfigProps) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    if (!room || !room?.users || room.users.length === 0) {
+      return;
+    }
+    const allUsers: User[] = [];
+    room.users.forEach(async (user) => {
+      const newUser = await UsersRepository.get(user.user);
+      allUsers.push(newUser);
+    });
+    setUsers(allUsers);
+  }, [room]);
+
+  const addUser = (): void => {
+    if (!room) {
+      return;
+    }
+    RoomsRepository.addUser(room.id, 'b7434205-77be-4bfe-8dfc-0eacedb26038', true).then(
+      (response) => {
+        console.log(response);
+      },
+    );
+  };
 
   const { mutate } = useMutation(
     async (settings: RoomSettings) => {
@@ -157,77 +199,89 @@ const RoomConfig = ({ room }: RoomConfigProps) => {
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={(values) => mutate(values)}>
-      {(props) => (
-        <FormikValuesChange>
-          <Grid
-            areas={isMobile ? areas.small : areas.medium}
-            columns={isMobile ? columns.small : columns.medium}
-            gap={'20px'}
-            rows={isMobile ? rows.small : rows.medium}
-          >
-            <Box gridArea={'settings'}>
-              <MagnifyCard title={intl.formatMessage(roomConfigMessages.settingsTitle)}>
-                <Box gap={'10px'}>
-                  <FormikSwitch
-                    label={intl.formatMessage(roomConfigMessages.enableChat)}
-                    name={'enableLobbyChat'}
-                  />
-                  <FormikSwitch
-                    label={intl.formatMessage(roomConfigMessages.enableScreenSharing)}
-                    name={'screenSharingEnabled'}
-                  />
-                </Box>
-              </MagnifyCard>
-            </Box>
-            <Box gap={'10px'} gridArea={'moderation'}>
-              <MagnifyCard title={intl.formatMessage(roomConfigMessages.moderationTitle)}>
-                <Box gap={'medium'} height={'100%'}>
-                  <FormikSwitch
-                    label={intl.formatMessage(roomConfigMessages.everyoneStartsMuted)}
-                    name={'startAudioMuted'}
-                  />
-                  <FormikSwitch
-                    label={intl.formatMessage(roomConfigMessages.everyoneStartsWithoutCamera)}
-                    name={'startWithVideoMuted'}
-                  />
-                </Box>
-              </MagnifyCard>
-            </Box>
-
-            <Box gap={'10px'} gridArea={'security'}>
-              <MagnifyCard title={intl.formatMessage(roomConfigMessages.securityTitle)}>
-                <Box gap={'medium'}>
-                  <FormikSwitch
-                    label={intl.formatMessage(roomConfigMessages.enableWaitingRoom)}
-                    name={'waitingRoomEnabled'}
-                  />
+    <Box gap={'20px'} margin={{ bottom: 'small' }}>
+      <Formik initialValues={initialValues} onSubmit={(values) => mutate(values)}>
+        {(props) => (
+          <FormikValuesChange>
+            <Grid
+              areas={isMobile ? areas.small : areas.medium}
+              columns={isMobile ? columns.small : columns.medium}
+              gap={'20px'}
+              rows={isMobile ? rows.small : rows.medium}
+            >
+              <Box gridArea={'settings'}>
+                <MagnifyCard title={intl.formatMessage(roomConfigMessages.settingsTitle)}>
                   <Box gap={'10px'}>
                     <FormikSwitch
-                      label={intl.formatMessage(roomConfigMessages.askForPassword)}
-                      name={'askForPassword'}
+                      label={intl.formatMessage(roomConfigMessages.enableChat)}
+                      name={'enableLobbyChat'}
                     />
-                    {props.values.askForPassword === true && (
-                      <FormikInput
-                        label={intl.formatMessage(roomConfigMessages.askForPasswordInputLabel)}
-                        name={'roomPassword'}
-                        placeholder={intl.formatMessage(
-                          roomConfigMessages.askForPasswordInputPlaceholder,
-                        )}
-                      />
-                    )}
+                    <FormikSwitch
+                      label={intl.formatMessage(roomConfigMessages.enableScreenSharing)}
+                      name={'screenSharingEnabled'}
+                    />
                   </Box>
-                  <FormikSwitch
-                    label={intl.formatMessage(roomConfigMessages.askForAuthentication)}
-                    name={'askForAuthentication'}
-                  />
-                </Box>
-              </MagnifyCard>
-            </Box>
-          </Grid>
-        </FormikValuesChange>
-      )}
-    </Formik>
+                </MagnifyCard>
+              </Box>
+              <Box gap={'10px'} gridArea={'moderation'}>
+                <MagnifyCard title={intl.formatMessage(roomConfigMessages.moderationTitle)}>
+                  <Box gap={'medium'} height={'100%'}>
+                    <FormikSwitch
+                      label={intl.formatMessage(roomConfigMessages.everyoneStartsMuted)}
+                      name={'startAudioMuted'}
+                    />
+                    <FormikSwitch
+                      label={intl.formatMessage(roomConfigMessages.everyoneStartsWithoutCamera)}
+                      name={'startWithVideoMuted'}
+                    />
+                  </Box>
+                </MagnifyCard>
+              </Box>
+
+              <Box gap={'10px'} gridArea={'security'}>
+                <MagnifyCard title={intl.formatMessage(roomConfigMessages.securityTitle)}>
+                  <Box gap={'medium'}>
+                    <FormikSwitch
+                      label={intl.formatMessage(roomConfigMessages.enableWaitingRoom)}
+                      name={'waitingRoomEnabled'}
+                    />
+                    <Box gap={'10px'}>
+                      <FormikSwitch
+                        label={intl.formatMessage(roomConfigMessages.askForPassword)}
+                        name={'askForPassword'}
+                      />
+                      {props.values.askForPassword === true && (
+                        <FormikInput
+                          label={intl.formatMessage(roomConfigMessages.askForPasswordInputLabel)}
+                          name={'roomPassword'}
+                          placeholder={intl.formatMessage(
+                            roomConfigMessages.askForPasswordInputPlaceholder,
+                          )}
+                        />
+                      )}
+                    </Box>
+                    <FormikSwitch
+                      label={intl.formatMessage(roomConfigMessages.askForAuthentication)}
+                      name={'askForAuthentication'}
+                    />
+                  </Box>
+                </MagnifyCard>
+              </Box>
+            </Grid>
+          </FormikValuesChange>
+        )}
+      </Formik>
+      <MagnifyCard gapContent={'medium'} title={'administrators'}>
+        <Box direction={'row'} justify={'end'}>
+          <Button
+            primary
+            label={intl.formatMessage(roomConfigMessages.addUser)}
+            onClick={addUser}
+          />
+        </Box>
+        <MagnifyList Row={(props) => <UserRow {...props} user={props.item} />} rows={_users} />
+      </MagnifyCard>
+    </Box>
   );
 };
 

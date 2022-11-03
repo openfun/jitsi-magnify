@@ -14,7 +14,6 @@ export interface RowPropsExtended<T> {
 
 export interface MagnifyListProps<TRowProps extends Row> {
   rows: TRowProps[];
-  renderRow: (item: TRowProps) => React.ReactNode;
   Row: React.FC<RowPropsExtended<TRowProps>>;
 }
 

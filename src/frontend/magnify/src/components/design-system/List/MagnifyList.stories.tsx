@@ -5,7 +5,7 @@ import { UserRow } from '../../users/row';
 import MagnifyList from './index';
 
 export default {
-  title: 'DesignSystem/List/MagnifyList',
+  title: 'DesignSystem/MagnifyList',
   component: MagnifyList,
 } as ComponentMeta<typeof MagnifyList>;
 

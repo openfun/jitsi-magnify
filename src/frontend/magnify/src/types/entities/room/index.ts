@@ -8,6 +8,12 @@ export interface RoomSettings {
   startWithVideoMuted?: boolean;
   screenSharingEnabled?: boolean;
 }
+export interface RoomUser {
+  id: string;
+  is_administrable: boolean;
+  room: string;
+  user: string;
+}
 
 export interface Room {
   id: string;
@@ -18,6 +24,7 @@ export interface Room {
     room: string;
     token: string;
   };
+  users?: RoomUser[];
   configuration?: RoomSettings;
 }
 

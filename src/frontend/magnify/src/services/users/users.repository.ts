@@ -1,3 +1,4 @@
+import { User } from '../../types';
 import { LoginResponse, SignUpData, UpdateUserData, UserResponse } from '../../types/api/auth';
 import { UsersApiRoutes } from '../../utils/routes/api/users/usersApiRoutes';
 import {
@@ -23,6 +24,12 @@ export class UsersRepository {
     localStorage.removeItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
     localStorage.removeItem(SESSION_ACCESS_TOKEN_KEY);
     MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${null}`;
+  }
+
+  public static async get(userId: string): Promise<User> {
+    const url = RoutesBuilderService.build(UsersApiRoutes.GET, { id: userId });
+    const response = await MagnifyApi.get<UserResponse>(url);
+    return response.data;
   }
 
   public static async signIn(data?: SignUpData): Promise<UserResponse> {

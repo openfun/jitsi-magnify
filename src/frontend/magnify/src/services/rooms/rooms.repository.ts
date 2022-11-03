@@ -49,6 +49,25 @@ export class RoomsRepository {
     const response = await MagnifyApi.delete<RoomResponse>(url);
     return response.data;
   }
+
+  public static async addUser(
+    roomId: string,
+    userId: string,
+    isAdmin: boolean = false,
+  ): Promise<any> {
+    const url = RoutesBuilderService.build(RoomsApiRoutes.ADD_USER, { id: roomId });
+    const response = await MagnifyApi.post<RoomResponse>(url, {
+      user: userId,
+      is_administrator: isAdmin,
+    });
+    return response.data;
+  }
+
+  public static async getUser(roomId: string, userId: string): Promise<any> {
+    const url = RoutesBuilderService.build(RoomsApiRoutes.GET_USER, { id: roomId, userId: userId });
+    const response = await MagnifyApi.get<RoomResponse>(url);
+    return response.data;
+  }
 }
 
 export default RoomsRepository;

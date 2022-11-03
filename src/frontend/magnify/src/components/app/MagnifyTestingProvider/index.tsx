@@ -49,11 +49,12 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
     <TranslationProvider defaultLocale="en-US" initTranslation={false} locale={locale}>
       <FormErrors />
       <RoutingContextProvider routes={getRouter()}>
-        <Grommet full theme={defaultTheme}>
+        <Grommet theme={defaultTheme}>
           <QueryClientProvider client={queryClient}>
             <ReactQueryDevtools initialIsOpen={false} />
             <AuthContextProvider
               initialUser={{
+                id: '123',
                 email: 'john.doe@gmail.com',
                 username: 'JohnDoe',
                 name: 'John Doe',
