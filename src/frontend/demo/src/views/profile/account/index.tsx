@@ -1,9 +1,4 @@
-import {
-  DeleteAccountBlock,
-  IdentityBlock,
-  PasswordUpdateBlock,
-  useTranslations,
-} from '@jitsi-magnify/core';
+import { IdentityBlock, PasswordUpdateBlock, useTranslations } from '@jitsi-magnify/core';
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
 import { DefaultPage } from '../../../components/DefaultPage';
@@ -22,7 +17,6 @@ export function ProfileAccountView() {
     <DefaultPage title={intl.formatMessage(messages.profileViewTitle)}>
       <IdentityBlock />
       <PasswordUpdateBlock />
-      <DeleteAccountBlock />
     </DefaultPage>
   );
 }
