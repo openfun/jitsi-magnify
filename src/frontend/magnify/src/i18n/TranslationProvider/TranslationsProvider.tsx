@@ -1,6 +1,7 @@
 import { Box, Spinner } from 'grommet';
 import React, { useEffect, useMemo, useState } from 'react';
 import { IntlProvider, MessageFormatElement, useIntl } from 'react-intl';
+import { getLocaleStorageLang, HttpService } from '../../services';
 import { Maybe } from '../../types/misc';
 import { MAGNIFY_LOCALE_KEY, MagnifyLocales } from '../../utils';
 import { loadLocaleData } from '../Loaders';
@@ -47,9 +48,12 @@ export default function TranslationProvider({
   defaultLocale = MagnifyLocales.EN,
   initTranslation = true,
 }: TranslationProviderProps) {
-  const [currentLocale, setCurrentLocale] = useState(
-    localStorage.getItem(MAGNIFY_LOCALE_KEY) ?? locale,
-  );
+  const [currentLocale, setCurrentLocale] = useState(getLocaleStorageLang(locale));
+
+  useEffect(() => {
+    HttpService.setRequestLanguage(currentLocale);
+  }, [currentLocale]);
+
   const [translations, setTranslations] =
     useState<Maybe<Record<string, string> | Record<string, MessageFormatElement[]>>>(undefined);
 

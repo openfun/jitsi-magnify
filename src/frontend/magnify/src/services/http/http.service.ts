@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
+
 import { RefreshTokenResponse } from '../../types';
-import { UsersApiRoutes } from '../../utils';
+import { MAGNIFY_LOCALE_KEY, MagnifyLocales, UsersApiRoutes } from '../../utils';
 import { DEFAULT_BASE_API_URL } from '../../utils/constants/config';
 
 export const SESSION_ACCESS_TOKEN_KEY = 'access_token';
@@ -11,6 +12,10 @@ export const getBaseUrl = () => {
 
 export const buildApiUrl = (route: string) => {
   return `${getBaseUrl()}${route}`;
+};
+
+export const getLocaleStorageLang = (defaultLang: string = MagnifyLocales.EN): string => {
+  return localStorage.getItem(MAGNIFY_LOCALE_KEY) ?? defaultLang;
 };
 
 export class HttpService {
@@ -43,16 +48,30 @@ export class HttpService {
     HttpService.setTokens(response.data.access);
     return response.data.access;
   }
+
+  public static setRequestLanguage(lang: string): void {
+    MagnifyApi.defaults.headers.common['Content-Language'] = lang;
+    MagnifyApi.defaults.headers.common['Accept-Language'] = lang;
+    MagnifyAuthApi.defaults.headers.common['Content-Language'] = lang;
+    MagnifyAuthApi.defaults.headers.common['Accept-Language'] = lang;
+  }
 }
 
 export const MagnifyAuthApi = axios.create({
   baseURL: getBaseUrl(),
+  headers: {
+    'Content-type': 'application/json',
+    'Accept-Language': getLocaleStorageLang(),
+    'Content-Language': getLocaleStorageLang(),
+  },
 });
 
 export const MagnifyApi = axios.create({
   baseURL: getBaseUrl(),
   headers: {
     'Content-type': 'application/json',
+    'Accept-Language': getLocaleStorageLang(),
+    'Content-Language': getLocaleStorageLang(),
   },
 });
 
