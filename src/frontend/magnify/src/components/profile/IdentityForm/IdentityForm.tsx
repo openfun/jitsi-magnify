@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { Form, Formik } from 'formik';
+import { Formik } from 'formik';
 import { Box } from 'grommet';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
@@ -12,6 +12,7 @@ import { UsersRepository } from '../../../services/users/users.repository';
 
 import { MagnifyLocales } from '../../../utils';
 import FormikInput from '../../design-system/Formik/Input';
+import { LocalizedForm } from '../../design-system/Formik/LanguageChange';
 import FormikSelectLanguage from '../../design-system/Formik/Select/Language';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
@@ -62,7 +63,7 @@ export default function IdentityForm() {
       email: Yup.string().email().required(),
       language: Yup.string().required(),
     });
-  }, []);
+  }, [locales.currentLocale]);
 
   const { mutate: updateUser, isLoading } = useMutation(
     async (data: IdentityFormValues) => {
@@ -96,7 +97,7 @@ export default function IdentityForm() {
         language: authContext.user?.language ?? MagnifyLocales.EN,
       }}
     >
-      <Form>
+      <LocalizedForm>
         <Box gap="10px">
           <FormikInput label={intl.formatMessage(formLabelMessages.name)} name="name" />
           <FormikSelectLanguage
@@ -119,7 +120,7 @@ export default function IdentityForm() {
             label={intl.formatMessage(messages.submitButtonLabel)}
           />
         </Box>
-      </Form>
+      </LocalizedForm>
     </Formik>
   );
 }

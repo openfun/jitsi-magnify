@@ -21,7 +21,7 @@ describe('IdentityForm', () => {
     await user.clear(nameInput);
     fireEvent.blur(nameInput);
 
-    await screen.findByText('name is a required field');
+    await screen.findByText('This field is required');
     await user.type(nameInput, 'John Watson');
 
     /**
