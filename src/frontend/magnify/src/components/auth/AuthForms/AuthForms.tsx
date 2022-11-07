@@ -12,7 +12,7 @@ export interface AuthFormsProps {
 
 export default function AuthForms({ showFooter = true, ...props }: AuthFormsProps) {
   return (
-    <Box background="light-1" height="100vh" width="100%">
+    <Box background="light-1" height={{ min: '100vh' }} width="100%">
       <Box margin="auto" width="80%">
         <Card background="white" margin={{ vertical: 'small' }} pad="large" width="100%">
           {props.children}
