@@ -33,7 +33,7 @@ const locale = 'en-US';
 
 export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   const getRouter = (): RoutingContextInterface => {
-    const result: RoutingContextInterface = {
+    return {
       goToDefaultPage: () => console.log('goToDefaultPage'),
       goToLogout: () => console.log('goToLogout'),
       goToLogin: () => console.log('goToLogin'),
@@ -43,8 +43,6 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
       goToRoomsList: () => console.log('goToRoomsList'),
       goToRoomSettings: () => console.log('goToRoomSettings'),
     };
-
-    return result;
   };
 
   return (
