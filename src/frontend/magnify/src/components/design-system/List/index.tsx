@@ -26,6 +26,8 @@ export default function MagnifyList<TRowProps extends Row>({
     Object.fromEntries(rows.map((row) => [row.id, false])),
   );
 
+  console.log(rows);
+
   const numberOfSelected = Object.values(selected).filter((selected) => selected).length;
 
   const handleToggle = (groupId: string) => {

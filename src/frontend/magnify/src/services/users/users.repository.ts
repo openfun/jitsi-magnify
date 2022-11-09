@@ -26,6 +26,15 @@ export class UsersRepository {
     MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${null}`;
   }
 
+  public static async search(term: string): Promise<User[]> {
+    const response = await MagnifyApi.get<UserResponse[]>(UsersApiRoutes.SEARCH, {
+      params: {
+        q: term,
+      },
+    });
+    return response.data;
+  }
+
   public static async get(userId: string): Promise<User> {
     const url = RoutesBuilderService.build(UsersApiRoutes.GET, { id: userId });
     const response = await MagnifyApi.get<UserResponse>(url);

@@ -29,7 +29,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const locale = 'en-US';
+const locale = MagnifyLocales.EN;
 
 export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   const getRouter = (): RoutingContextInterface => {
@@ -46,7 +46,7 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   };
 
   return (
-    <TranslationProvider defaultLocale="en-US" initTranslation={false} locale={locale}>
+    <TranslationProvider initTranslation={false}>
       <FormErrors />
       <RoutingContextProvider routes={getRouter()}>
         <Grommet theme={defaultTheme}>

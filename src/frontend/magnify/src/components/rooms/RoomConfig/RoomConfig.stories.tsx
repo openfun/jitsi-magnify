@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import RoomConfig from './RoomConfig';
+import { RoomConfig } from './RoomConfig';
 
 export default {
   title: 'Rooms/RoomConfig',

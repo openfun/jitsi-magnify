@@ -6,6 +6,11 @@ export const commonMessages = defineMessages({
     description: 'Delete message',
     defaultMessage: 'Delete',
   },
+  add: {
+    id: 'i18n.Messages.commonTranslation.add',
+    description: 'Add message',
+    defaultMessage: 'Add',
+  },
   cancel: {
     id: 'i18n.Messages.commonTranslation.cancel',
     description: 'Cancel message',

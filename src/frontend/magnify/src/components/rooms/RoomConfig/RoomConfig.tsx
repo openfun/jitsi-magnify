@@ -1,21 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Formik } from 'formik';
-import {
-  AreasType,
-  Box,
-  Button,
-  Grid,
-  GridColumnsType,
-  GridSizeType,
-  ResponsiveValue,
-} from 'grommet';
-import React, { useEffect, useState } from 'react';
+import { AreasType, Box, Grid, GridColumnsType, GridSizeType, ResponsiveValue } from 'grommet';
+import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { _users } from '../../../factories/users';
 import { useIsMobile } from '../../../hooks/useIsMobile';
-import { UsersRepository } from '../../../services';
 import { RoomsRepository } from '../../../services/rooms/rooms.repository';
-import { User } from '../../../types';
 import { Room, RoomSettings } from '../../../types/entities/room';
 import { Maybe } from '../../../types/misc';
 import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
@@ -23,8 +12,6 @@ import MagnifyCard from '../../design-system/Card';
 import FormikSwitch from '../../design-system/Formik/FormikSwitch';
 import FormikInput from '../../design-system/Formik/Input';
 import { FormikValuesChange } from '../../design-system/Formik/ValuesChange/FormikValuesChange';
-import MagnifyList from '../../design-system/List';
-import { UserRow } from '../../users/row';
 
 export const roomConfigMessages = defineMessages({
   askForAuthentication: {
@@ -106,23 +93,10 @@ export interface RoomConfigProps {
   room: Maybe<Room>;
 }
 
-const RoomConfig = ({ room }: RoomConfigProps) => {
+export const RoomConfig = ({ room }: RoomConfigProps) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
-  const [users, setUsers] = useState<User[]>([]);
-
-  useEffect(() => {
-    if (!room || !room?.users || room.users.length === 0) {
-      return;
-    }
-    const allUsers: User[] = [];
-    room.users.forEach(async (user) => {
-      const newUser = await UsersRepository.get(user.user);
-      allUsers.push(newUser);
-    });
-    setUsers(allUsers);
-  }, [room]);
 
   const addUser = (): void => {
     if (!room) {
@@ -271,18 +245,6 @@ const RoomConfig = ({ room }: RoomConfigProps) => {
           </FormikValuesChange>
         )}
       </Formik>
-      <MagnifyCard gapContent={'medium'} title={'administrators'}>
-        <Box direction={'row'} justify={'end'}>
-          <Button
-            primary
-            label={intl.formatMessage(roomConfigMessages.addUser)}
-            onClick={addUser}
-          />
-        </Box>
-        <MagnifyList Row={(props) => <UserRow {...props} user={props.item} />} rows={_users} />
-      </MagnifyCard>
     </Box>
   );
 };
-
-export default RoomConfig;

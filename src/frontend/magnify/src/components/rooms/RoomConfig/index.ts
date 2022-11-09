@@ -1,1 +1,2 @@
-export { default } from './RoomConfig';
+export * from './RoomConfig';
+export * from './Users';

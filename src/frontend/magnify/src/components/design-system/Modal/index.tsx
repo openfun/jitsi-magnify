@@ -1,6 +1,7 @@
 import { Box, Button, Heading, Layer, LayerProps } from 'grommet';
 import { Close } from 'grommet-icons';
 import * as React from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { commonMessages } from '../../../i18n/Messages/commonMessages';
 
@@ -91,3 +92,24 @@ export function MagnifyModal({
     </>
   );
 }
+
+export const useMagnifyModal = () => {
+  const [open, setOpen] = useState(false);
+  const openModal = (openCallback?: () => void): void => {
+    setOpen(true);
+    openCallback?.();
+  };
+
+  const closeModal = (closeCallback?: () => void): void => {
+    setOpen(false);
+    closeCallback?.();
+  };
+
+  return {
+    isOpen: open,
+    onClickOutside: () => closeModal(),
+    onClose: () => closeModal(),
+    openModal,
+    closeModal,
+  };
+};

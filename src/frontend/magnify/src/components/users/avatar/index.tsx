@@ -30,12 +30,12 @@ const USER_DEFAULT_AVATAR_COLORS = [
 
 export const UserAvatar = ({ user }: UserAvatarProps) => {
   const initials = useMemo(() => {
-    if (user) {
+    if (user && user.name) {
       const splitName = user.name.split(' ');
       const initials = splitName[0][0] + splitName[1][0];
       return initials.toUpperCase();
     }
-    return '';
+    return user.username[0];
   }, [user]);
 
   const getBackgroundColor = (): string => {
