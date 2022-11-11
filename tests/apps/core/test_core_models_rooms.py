@@ -97,3 +97,8 @@ class RoomsModelsTestCase(TestCase):
         room.labels.add(label)
         room.refresh_from_db()
         self.assertEqual(list(room.labels.all()), [label])
+
+    def test_models_rooms_is_public_default(self):
+        """A room should not be public by default."""
+        room = Room.objects.create(name="room")
+        self.assertFalse(room.is_public)
