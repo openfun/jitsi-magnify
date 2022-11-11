@@ -78,7 +78,7 @@ class RoomViewSet(
                 | Q(users=user)
                 | Q(groups__members=user)
                 | Q(groups__administrators=user)
-            )
+            ).distinct()
         else:
             queryset = queryset.filter(is_public=True)
 
