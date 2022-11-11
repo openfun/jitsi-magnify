@@ -541,8 +541,8 @@ class RoomsApiTestCase(APITestCase):
 
     def test_api_rooms_delete_authenticated(self):
         """
-        Authenticated users should not be allowed to delete a room for which they are not
-        administrator.
+        Authenticated users should not be allowed to delete a room to which they are not
+        related.
         """
         room = RoomFactory()
         user = UserFactory()
@@ -550,6 +550,22 @@ class RoomsApiTestCase(APITestCase):
 
         response = self.client.delete(
             f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Room.objects.count(), 1)
+
+    def test_api_rooms_delete_related_users(self):
+        """
+        Authenticated users should not be allowed to delete a room for which they are not
+        administrator.
+        """
+        user = UserFactory()
+        room = RoomFactory(users=[(user, False)])  # as user declared in the room but not administrator
+        jwt_token = AccessToken.for_user(user)
+
+        response = self.client.delete(
+            f"/api/rooms/{room.id}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
         )
 
         self.assertEqual(response.status_code, 403)
