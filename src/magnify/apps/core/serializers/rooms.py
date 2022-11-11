@@ -62,7 +62,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Room
-        fields = ["id", "name", "slug", "configuration"]
+        fields = ["id", "name", "slug", "configuration", "is_public"]
         read_only_fields = ["id", "slug"]
 
     def to_representation(self, instance):

@@ -38,6 +38,7 @@ class RoomsApiTestCase(APITestCase):
                 "id": str(room_public.id),
                 "configuration": {},
                 "is_administrable": False,
+                "is_public": True,
                 "jitsi": {
                     "room": f"{room_public.slug:s}-{room_public.id!s}",
                     "token": "the token",
@@ -97,6 +98,7 @@ class RoomsApiTestCase(APITestCase):
                 "id": str(room.id),
                 "configuration": {},
                 "is_administrable": False,
+                "is_public": False,
                 "name": room.name,
                 "slug": room.slug,
             },
@@ -114,6 +116,7 @@ class RoomsApiTestCase(APITestCase):
                 "id": str(room.id),
                 "configuration": {},
                 "is_administrable": False,
+                "is_public": False,
                 "name": room.name,
                 "slug": room.slug,
             },
@@ -131,6 +134,7 @@ class RoomsApiTestCase(APITestCase):
                 "id": str(room.id),
                 "configuration": {},
                 "is_administrable": False,
+                "is_public": False,
                 "name": room.name,
                 "slug": room.slug,
             },
@@ -211,6 +215,7 @@ class RoomsApiTestCase(APITestCase):
                 "id": str(room.id),
                 "configuration": {},
                 "is_administrable": False,
+                "is_public": True,
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
                     "token": "the token",
@@ -230,7 +235,7 @@ class RoomsApiTestCase(APITestCase):
         which they are not related, provided the room is public.
         They should not see related users and groups.
         """
-        room = RoomFactory()
+        room = RoomFactory(is_public=True)
 
         user = UserFactory()
         jwt_token = AccessToken.for_user(user)
@@ -246,6 +251,7 @@ class RoomsApiTestCase(APITestCase):
                 "id": str(room.id),
                 "configuration": {},
                 "is_administrable": False,
+                "is_public": True,
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
                     "token": "the token",
@@ -279,6 +285,7 @@ class RoomsApiTestCase(APITestCase):
                 "id": str(room.id),
                 "configuration": {},
                 "is_administrable": False,
+                "is_public": False,
                 "name": room.name,
                 "slug": room.slug,
             },
@@ -298,7 +305,8 @@ class RoomsApiTestCase(APITestCase):
 
         jwt_token = AccessToken.for_user(user)
 
-        with self.assertNumQueries(5):
+        expected_number_of_queries = 5 if room.is_public else 6
+        with self.assertNumQueries(expected_number_of_queries):
             response = self.client.get(
                 f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
             )
@@ -327,6 +335,7 @@ class RoomsApiTestCase(APITestCase):
                     }
                 ],
                 "is_administrable": True,
+                "is_public": room.is_public,
                 "configuration": {},
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
@@ -383,6 +392,7 @@ class RoomsApiTestCase(APITestCase):
                     }
                 ],
                 "is_administrable": True,
+                "is_public": room.is_public,
                 "configuration": {},
                 "jitsi": {
                     "room": f"{room.slug:s}-{room.id!s}",
@@ -472,17 +482,73 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(room.name, "Old name")
         self.assertEqual(room.slug, "old-name")
 
+    def test_api_rooms_update_related_users(self):
+        """Users related to a room but not administrators should not be allowed to update it."""
+        user = UserFactory()
+        room = RoomFactory(name="Old name", users=[(user, False)])
+        jwt_token = AccessToken.for_user(user)
+
+        new_is_public = not room.is_public
+        response = self.client.put(
+            f"/api/rooms/{room.id!s}/",
+            {
+                "name": "New name",
+                "slug": "should-be-ignored",
+                "is_public": new_is_public,
+                "configuration": {"the_key": "the_value"},
+            },
+            format="json",
+            HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
+        )
+        self.assertEqual(response.status_code, 403)
+        room.refresh_from_db()
+        self.assertEqual(room.name, "Old name")
+        self.assertEqual(room.slug, "old-name")
+        self.assertEqual(room.is_public, not new_is_public)
+        self.assertEqual(room.configuration, {})
+
+    def test_api_rooms_update_related_groups(self):
+        """
+        Users related to a room via a group but not administrators should not be allowed
+        to update it.
+        """
+        user = UserFactory()
+        group = GroupFactory(members=[user])
+        room = RoomFactory(name="Old name", groups=[(group, False)])
+        jwt_token = AccessToken.for_user(user)
+
+        new_is_public = not room.is_public
+        response = self.client.put(
+            f"/api/rooms/{room.id!s}/",
+            {
+                "name": "New name",
+                "slug": "should-be-ignored",
+                "is_public": new_is_public,
+                "configuration": {"the_key": "the_value"},
+            },
+            format="json",
+            HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
+        )
+        self.assertEqual(response.status_code, 403)
+        room.refresh_from_db()
+        self.assertEqual(room.name, "Old name")
+        self.assertEqual(room.slug, "old-name")
+        self.assertEqual(room.is_public, not new_is_public)
+        self.assertEqual(room.configuration, {})
+
     def test_api_rooms_update_administrator_users(self):
         """Direct administrators of a room should be allowed to update it."""
         user = UserFactory()
         room = RoomFactory(users=[(user, True)])
         jwt_token = AccessToken.for_user(user)
 
+        new_is_public = not room.is_public
         response = self.client.put(
             f"/api/rooms/{room.id!s}/",
             {
                 "name": "New name",
                 "slug": "should-be-ignored",
+                "is_public": new_is_public,
                 "configuration": {"the_key": "the_value"},
             },
             format="json",
@@ -492,6 +558,7 @@ class RoomsApiTestCase(APITestCase):
         room.refresh_from_db()
         self.assertEqual(room.name, "New name")
         self.assertEqual(room.slug, "new-name")
+        self.assertEqual(room.is_public, new_is_public)
         self.assertEqual(room.configuration, {"the_key": "the_value"})
 
     def test_api_rooms_update_administrator_groups(self):
@@ -501,15 +568,24 @@ class RoomsApiTestCase(APITestCase):
         room = RoomFactory(groups=[(group, True)])
         jwt_token = AccessToken.for_user(user)
 
+        new_is_public = not room.is_public
         response = self.client.put(
             f"/api/rooms/{room.id!s}/",
-            {"name": "New name", "slug": "should-be-ignored"},
+            {
+                "name": "New name",
+                "slug": "should-be-ignored",
+                "is_public": new_is_public,
+                "configuration": {"the_key": "the_value"},
+            },
+            format="json",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
         room.refresh_from_db()
         self.assertEqual(room.name, "New name")
         self.assertEqual(room.slug, "new-name")
+        self.assertEqual(room.is_public, new_is_public)
+        self.assertEqual(room.configuration, {"the_key": "the_value"})
 
     def test_api_rooms_update_administrator_of_another(self):
         """Being administrator of a room should not grant authorization to update another room."""
