@@ -83,6 +83,23 @@ class RoomsApiTestCase(APITestCase):
         results_id = {r["id"] for r in results}
         self.assertEqual(expected_ids, results_id)
 
+    def test_api_rooms_list_authenticated_distinct(self):
+        """A public room with several related users should only be listed once."""
+        user = UserFactory()
+        other_user = UserFactory()
+        jwt_token = AccessToken.for_user(user)
+
+
+        RoomFactory(is_public=True, users=[user, other_user])
+
+        response = self.client.get(
+            "/api/rooms/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        results = response.json()
+        self.assertEqual(len(results), 1)
+
     def test_api_rooms_retrieve_anonymous_private_pk(self):
         """
         Anonymous users should be allowed to retrieve a private room but should not be
