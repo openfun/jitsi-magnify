@@ -76,15 +76,17 @@ class UsersApiTestCase(APITestCase):
 
     def test_api_users_list_authenticated_by_username(self):
         """
-        Authenticated users should be able to search users with an exact query on the username.
+        Authenticated users should be able to search users with a case insensitive and
+        similar query on the username.
         """
         user = UserFactory()
-        users = UserFactory.create_batch(2)
+        user1 = UserFactory(username="jeff-burns")
+        UserFactory()
         jwt_token = AccessToken.for_user(user)
 
         # Partial query should not work
         response = self.client.get(
-            f"/api/users/?q={users[0].username[:-1]}",
+            "/api/users/?q=jeff-burn",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
 
@@ -94,7 +96,7 @@ class UsersApiTestCase(APITestCase):
 
         # Full query should work
         response = self.client.get(
-            f"/api/users/?q={users[0].username}",
+            "/api/users/?q=jeff-burns",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
 
@@ -105,22 +107,42 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(
             results[0],
             {
-                "id": str(users[0].id),
-                "username": users[0].username,
+                "id": str(user1.id),
+                "username": "jeff-burns",
+            },
+        )
+
+        # Username resulting in the same slug should work
+        response = self.client.get(
+            "/api/users/?q=Jêff Burns",
+            HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        results = response.json()
+        self.assertEqual(len(results), 1)
+
+        self.assertEqual(
+            results[0],
+            {
+                "id": str(user1.id),
+                "username": "jeff-burns",
             },
         )
 
     def test_api_users_list_authenticated_by_email(self):
         """
-        Authenticated users should be able to search users with an exact query on the email.
+        Authenticated users should be able to search users with a case insensitive query
+        on the email.
         """
         user = UserFactory()
-        users = UserFactory.create_batch(2)
+        user1 = UserFactory(email="my-address@example.com")
+        UserFactory()
         jwt_token = AccessToken.for_user(user)
 
         # Partial query should not work
         response = self.client.get(
-            f"/api/users/?q={users[0].email[:-1]}",
+            f"/api/users/?q={user1.email[:-1]}",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
 
@@ -130,7 +152,8 @@ class UsersApiTestCase(APITestCase):
 
         # Full query should work
         response = self.client.get(
-            f"/api/users/?q={users[0].email}", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+            "/api/users/?q=my-address@example.com",
+            HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
 
         self.assertEqual(response.status_code, 200)
@@ -140,8 +163,26 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(
             results[0],
             {
-                "id": str(users[0].id),
-                "username": users[0].username,
+                "id": str(user1.id),
+                "username": user1.username,
+            },
+        )
+
+        # Email resulting in the same slug should work
+        response = self.client.get(
+            "/api/users/?q=My-Address@example.com",
+            HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        results = response.json()
+        self.assertEqual(len(results), 1)
+
+        self.assertEqual(
+            results[0],
+            {
+                "id": str(user1.id),
+                "username": user1.username,
             },
         )
 
