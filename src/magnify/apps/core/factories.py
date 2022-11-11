@@ -162,6 +162,7 @@ class RoomFactory(factory.django.DjangoModelFactory):
 
     name = factory.Faker("catch_phrase")
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
+    is_public = factory.Faker("boolean", chance_of_getting_true=50)
 
     @factory.post_generation
     def users(self, create, extracted, **kwargs):
