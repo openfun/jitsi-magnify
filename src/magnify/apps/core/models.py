@@ -175,7 +175,7 @@ class Room(BaseModel):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
 
-    is_public = models.BooleanField(default=True)
+    is_public = models.BooleanField(default=False)
 
     users = models.ManyToManyField(User, through="RoomUserAccess", related_name="rooms")
     groups = models.ManyToManyField(
