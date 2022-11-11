@@ -89,7 +89,6 @@ class RoomsApiTestCase(APITestCase):
         other_user = UserFactory()
         jwt_token = AccessToken.for_user(user)
 
-
         RoomFactory(is_public=True, users=[user, other_user])
 
         response = self.client.get(
@@ -654,7 +653,9 @@ class RoomsApiTestCase(APITestCase):
         administrator.
         """
         user = UserFactory()
-        room = RoomFactory(users=[(user, False)])  # as user declared in the room but not administrator
+        room = RoomFactory(
+            users=[(user, False)]
+        )  # as user declared in the room but not administrator
         jwt_token = AccessToken.for_user(user)
 
         response = self.client.delete(

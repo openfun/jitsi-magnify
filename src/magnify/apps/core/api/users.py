@@ -2,6 +2,7 @@
 from django.contrib.auth import authenticate
 from django.core.cache import cache
 from django.db.models import Q
+from django.utils.text import slugify
 
 from rest_framework import decorators as drf_decorators
 from rest_framework import exceptions as drf_exceptions
@@ -41,7 +42,7 @@ class UserViewSet(
         user = self.request.user
         query = self.request.GET.get("q", "")
         queryset = self.filter_queryset(self.get_queryset()).filter(
-            Q(username=query) | Q(email=query)
+            Q(username=slugify(query)) | Q(email=query.lower())
         )
 
         if not user.is_authenticated:
