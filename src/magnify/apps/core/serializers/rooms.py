@@ -1,3 +1,5 @@
+
+
 """Serializers for the core Magnify app."""
 from django.utils.translation import gettext_lazy as _
 

@@ -1,4 +1,4 @@
-import { Box, Card, Text } from 'grommet';
+import { Box, Card, Text, Spinner } from 'grommet';
 import { Heading } from 'grommet/components';
 import React from 'react';
 import { defineMessages } from 'react-intl';
@@ -47,6 +47,11 @@ const MyRooms = ({ baseJitsiUrl, rooms = [], ...props }: MyRoomsProps) => {
         <Text alignSelf="center" size="small">
           {intl.formatMessage(messages.emptyRoomListMessage)}
         </Text>
+      )}
+      {props.isLoading && (
+        <Box align={'center'} height={'100px'} justify={'center'}>
+          <Spinner />
+        </Box>
       )}
     </Card>
   );

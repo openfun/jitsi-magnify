@@ -35,6 +35,18 @@ export function RoomSettingsView() {
       RoomsRepository.addUser(data.roomId, data.userId, data.isAdmin),
     {
       onSuccess: (newRoom) => {
+        queryClient.invalidateQueries([MagnifyQueryKeys.ROOM, id]);
+        console.log(newRoom);
+      },
+    },
+  );
+
+  const deleteMutation = useMutation(
+    (data: { roomId: string; userId: string }) =>
+      RoomsRepository.removeUser(data.roomId, data.userId),
+    {
+      onSuccess: (newRoom) => {
+        queryClient.invalidateQueries([MagnifyQueryKeys.ROOM, id]);
         console.log(newRoom);
       },
     },
@@ -47,10 +59,17 @@ export function RoomSettingsView() {
         <>
           <RoomConfig room={room} />
           <RoomUsersConfig
+            loading={mutation.isLoading || isLoading}
             onSearchUser={UsersRepository.search}
             users={room.users ?? []}
             addUser={(user) =>
               mutation.mutate({
+                roomId: room.id,
+                userId: user.id,
+              })
+            }
+            onDeleteUser={(user) =>
+              deleteMutation.mutate({
                 roomId: room.id,
                 userId: user.id,
               })

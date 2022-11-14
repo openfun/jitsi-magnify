@@ -3,8 +3,6 @@ import { MoreVertical } from 'grommet-icons';
 import { ButtonExtendedProps } from 'grommet/components/Button';
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
-import { useTranslations } from '../../../i18n';
-import { commonMessages } from '../../../i18n/Messages/commonMessages';
 import { User } from '../../../types';
 import { UserAvatar } from '../avatar';
 
@@ -21,7 +19,6 @@ export interface UserRowProps extends BoxProps {
   isSelected?: boolean;
   showSelect?: boolean;
   onToggle?: () => void;
-  onDeleteUser?: (user: User) => void;
   onClick?: (user: User) => void;
   rightContent?: React.ReactNode;
   moreActions?: ButtonExtendedProps[];
@@ -30,19 +27,7 @@ export interface UserRowProps extends BoxProps {
 }
 
 export const UserRow = ({ user, showActions = true, ...props }: UserRowProps) => {
-  const intl = useTranslations();
-  const getMoreItems = (): ButtonExtendedProps[] => {
-    const defaultItems = [
-      {
-        label: intl.formatMessage(commonMessages.delete),
-        onClick: () => props.onDeleteUser?.(user),
-      },
-    ];
-    if (!props.moreActions) {
-      return defaultItems;
-    }
-    return [...defaultItems, ...props.moreActions];
-  };
+  const showMoreMenu = showActions && props.moreActions && props.moreActions.length > 0;
 
   return (
     <Box
@@ -73,11 +58,11 @@ export const UserRow = ({ user, showActions = true, ...props }: UserRowProps) =>
         </Box>
       </Box>
       <Box align={'center'} direction={'row'} gap={'small'}>
-        {showActions && (
+        {showActions && props.moreActions && props.moreActions.length > 0 && (
           <Menu
             dropProps={{ align: { top: 'bottom', right: 'right' } }}
             icon={<MoreVertical size={'15px'} />}
-            items={getMoreItems()}
+            items={props.moreActions}
           />
         )}
       </Box>

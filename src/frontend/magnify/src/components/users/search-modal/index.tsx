@@ -99,7 +99,6 @@ export const UserSearchModal = ({ onSelectUser, onSearchUser, ...props }: UserSe
                       <UserRow
                         key={user.id}
                         onClick={(user) => setSelectedUser(user)}
-                        showActions={false}
                         user={user}
                         style={{
                           border: `1px solid ${

@@ -1,7 +1,10 @@
-import { Box, Button } from 'grommet';
+import { Box, Button, Spinner } from 'grommet';
+import { ButtonExtendedProps } from 'grommet/components/Button';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useAuthContext } from '../../../../context';
+import { commonMessages } from '../../../../i18n/Messages/commonMessages';
 import { UsersRepository } from '../../../../services';
 import { RoomUser, User } from '../../../../types';
 import MagnifyCard from '../../../design-system/Card';
@@ -13,25 +16,31 @@ import { roomConfigMessages } from '../RoomConfig';
 
 export interface RoomUsersConfigProps {
   addUser: (user: User) => void;
+  loading?: boolean;
   users?: RoomUser[];
   onSearchUser: (term: string) => Promise<User[]>;
+  onDeleteUser: (user: User) => void;
 }
 
 export const RoomUsersConfig = ({ onSearchUser, users = [], ...props }: RoomUsersConfigProps) => {
   const intl = useIntl();
   const addUserModal = useMagnifyModal();
+  const user = useAuthContext();
+  const [currentUserIsAdmin, setCurrentUserIsAdmin] = useState(false);
 
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [fetchUsersLoading, setFetchUsersLoading] = useState(false);
 
   const getAllUsers = async (newUsers: RoomUser[]): Promise<void> => {
     const allUsers: User[] = [];
+    setFetchUsersLoading(true);
     await Promise.all(
       newUsers.map(async (item) => {
         const newUser = await UsersRepository.get(item.user);
-        console.log('newUser', newUser);
         allUsers.push(newUser);
       }),
     );
+    setFetchUsersLoading(false);
     setAllUsers(allUsers);
   };
 
@@ -47,13 +56,35 @@ export const RoomUsersConfig = ({ onSearchUser, users = [], ...props }: RoomUser
     if (!user) {
       return;
     }
-
     props.addUser(user);
+  };
+
+  const handleDeleteUser = (user: User): void => {
+    props.onDeleteUser(user);
+  };
+
+  const getUserMoreActions = (user: User): ButtonExtendedProps[] => {
+    return [
+      {
+        label: intl.formatMessage(commonMessages.delete),
+        onClick: () => handleDeleteUser(user),
+      },
+    ];
   };
 
   return (
     <>
-      <MagnifyCard gapContent={'medium'} title={'administrators'}>
+      <MagnifyCard gapContent={'medium'} style={{ position: 'relative' }} title={'administrators'}>
+        {(props.loading || fetchUsersLoading) && (
+          <Box
+            align={'center'}
+            background={'light-2'}
+            justify={'center'}
+            style={{ opacity: 0.65, position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+          >
+            <Spinner />
+          </Box>
+        )}
         <Box direction={'row'} justify={'end'}>
           <Button
             primary
@@ -61,7 +92,12 @@ export const RoomUsersConfig = ({ onSearchUser, users = [], ...props }: RoomUser
             onClick={() => addUserModal.openModal()}
           />
         </Box>
-        <MagnifyList Row={(props) => <UserRow {...props} user={props.item} />} rows={allUsers} />
+        <MagnifyList
+          rows={allUsers}
+          Row={(props) => (
+            <UserRow {...props} moreActions={getUserMoreActions(props.item)} user={props.item} />
+          )}
+        />
       </MagnifyCard>
       <UserSearchModal
         {...addUserModal}

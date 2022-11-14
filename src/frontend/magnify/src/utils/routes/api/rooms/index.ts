@@ -6,4 +6,5 @@ export enum RoomsApiRoutes {
   DELETE = '/rooms/:id/',
   ADD_USER = '/rooms/:id/users/',
   GET_USER = '/rooms/:id/users/:userId/',
+  REMOVE_USER = '/rooms/:id/users/:userId/',
 }

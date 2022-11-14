@@ -7,7 +7,10 @@ import { RoutesBuilderService } from '../routes/RoutesBuilder.service';
 
 export class RoomsRepository {
   public static async create(data: CreateRoomData): Promise<Room> {
-    const response = await MagnifyApi.post<Room>(RoomsApiRoutes.CREATE, data);
+    const response = await MagnifyApi.post<Room>(RoomsApiRoutes.CREATE, {
+      ...data,
+      is_public: false,
+    });
     return response.data;
   }
 
@@ -66,6 +69,15 @@ export class RoomsRepository {
   public static async getUser(roomId: string, userId: string): Promise<any> {
     const url = RoutesBuilderService.build(RoomsApiRoutes.GET_USER, { id: roomId, userId: userId });
     const response = await MagnifyApi.get<RoomResponse>(url);
+    return response.data;
+  }
+
+  public static async removeUser(roomId: string, userId: string): Promise<any> {
+    const url = RoutesBuilderService.build(RoomsApiRoutes.REMOVE_USER, {
+      id: roomId,
+      userId: userId,
+    });
+    const response = await MagnifyApi.delete<RoomResponse>(url);
     return response.data;
   }
 }

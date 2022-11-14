@@ -10,7 +10,7 @@ export default {
 } as ComponentMeta<typeof RoomUsersConfig>;
 
 const Template: ComponentStory<typeof RoomUsersConfig> = (args) => {
-  const search = async (term: string): Promise<User[]> => {
+  const search = async (): Promise<User[]> => {
     return [createRandomUser()];
   };
   return <RoomUsersConfig {...args} onSearchUser={search} />;
