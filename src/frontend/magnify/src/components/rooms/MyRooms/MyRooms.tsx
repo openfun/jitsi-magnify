@@ -17,7 +17,7 @@ const messages = defineMessages({
     id: 'components.rooms.myRooms.emptyRoomListMessage',
     defaultMessage: 'No room was created yet. Click on the button " + Room" to create one.',
     description: 'The message to display when there are no rooms.',
-  }
+  },
 });
 
 export interface MyRoomsProps {
@@ -39,12 +39,11 @@ const MyRooms = ({ baseJitsiUrl, rooms = [], ...props }: MyRoomsProps) => {
           <RegisterRoom />
         </div>
       </Box>
-      {rooms?.length > 0 
+      {rooms?.length > 0
         ? rooms.map((room) => {
             return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
-          }) 
-        : intl.formatMessage(messages.emptyRoomListMessage)
-      }
+          })
+        : intl.formatMessage(messages.emptyRoomListMessage)}
     </Card>
   );
 };
