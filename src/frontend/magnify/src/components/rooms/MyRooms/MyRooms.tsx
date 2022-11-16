@@ -1,4 +1,4 @@
-import { Box, Card } from 'grommet';
+import { Box, Card, Text } from 'grommet';
 import { Heading } from 'grommet/components';
 import React from 'react';
 import { defineMessages } from 'react-intl';
@@ -12,6 +12,11 @@ const messages = defineMessages({
     id: 'components.rooms.myRooms.myRoomCardTitle',
     defaultMessage: 'List of rooms',
     description: 'Label for the button to register a new room',
+  },
+  emptyRoomListMessage: {
+    id: 'components.rooms.myRooms.emptyRoomListMessage',
+    defaultMessage: 'No room was created yet. Click on the button " + Room" to create one.',
+    description: 'The message to display when there are no rooms.',
   },
 });
 
@@ -34,9 +39,15 @@ const MyRooms = ({ baseJitsiUrl, rooms = [], ...props }: MyRoomsProps) => {
           <RegisterRoom />
         </div>
       </Box>
-      {rooms.map((room) => {
-        return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
-      })}
+      {rooms?.length > 0 ? (
+        rooms.map((room) => {
+          return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
+        })
+      ) : (
+        <Text alignSelf="center" size="small">
+          {intl.formatMessage(messages.emptyRoomListMessage)}
+        </Text>
+      )}
     </Card>
   );
 };
