@@ -13,6 +13,11 @@ const messages = defineMessages({
     defaultMessage: 'List of rooms',
     description: 'Label for the button to register a new room',
   },
+  emptyRoomListMessage: {
+    id: 'components.rooms.myRooms.emptyRoomListMessage',
+    defaultMessage: 'No room was created yet. Click on the button " + Room" to create one.',
+    description: 'The message to display when there are no rooms.',
+  }
 });
 
 export interface MyRoomsProps {
@@ -34,9 +39,12 @@ const MyRooms = ({ baseJitsiUrl, rooms = [], ...props }: MyRoomsProps) => {
           <RegisterRoom />
         </div>
       </Box>
-      {rooms.map((room) => {
-        return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
-      })}
+      {rooms?.length > 0 
+        ? rooms.map((room) => {
+            return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
+          }) 
+        : intl.formatMessage(messages.emptyRoomListMessage)
+      }
     </Card>
   );
 };
