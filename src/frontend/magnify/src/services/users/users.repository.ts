@@ -1,12 +1,7 @@
-import {
-  LoginResponse,
-  RefreshTokenResponse,
-  SignUpData,
-  UpdateUserData,
-  UserResponse,
-} from '../../types/api/auth';
+import { LoginResponse, SignUpData, UpdateUserData, UserResponse } from '../../types/api/auth';
 import { UsersApiRoutes } from '../../utils/routes/api/users/usersApiRoutes';
 import {
+  HttpService,
   MagnifyApi,
   MagnifyAuthApi,
   SESSION_ACCESS_TOKEN_KEY,
@@ -15,40 +10,13 @@ import {
 import { RoutesBuilderService } from '../routes/RoutesBuilder.service';
 
 export class UsersRepository {
-  public static setTokens(access?: string, refresh?: string): void {
-    if (access != null) {
-      localStorage.setItem(SESSION_ACCESS_TOKEN_KEY, access);
-      MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${access}`;
-    }
-
-    if (refresh != null) {
-      localStorage.setItem(SESSION_REFRESH_ACCESS_TOKEN_KEY, refresh);
-    }
-  }
-
-  public static async refreshToken(): Promise<string> {
-    const response = await MagnifyAuthApi.post<RefreshTokenResponse>(UsersApiRoutes.REFRESH_TOKEN, {
-      refresh: UsersRepository.getRefreshToken(),
-    });
-    UsersRepository.setTokens(response.data.access);
-    return response.data.access;
-  }
-
   public static async login(username: string, password: string): Promise<LoginResponse> {
     const response = await MagnifyAuthApi.post<LoginResponse>(UsersApiRoutes.LOGIN, {
       username,
       password,
     });
-    UsersRepository.setTokens(response.data.auth.access, response.data.auth.refresh);
+    HttpService.setTokens(response.data.auth.access, response.data.auth.refresh);
     return response.data;
-  }
-
-  public static getAccessToken(): string | null {
-    return localStorage.getItem(SESSION_ACCESS_TOKEN_KEY);
-  }
-
-  public static getRefreshToken(): string | null {
-    return localStorage.getItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
   }
 
   public static logout(): void {

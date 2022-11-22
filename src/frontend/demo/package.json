@@ -4,6 +4,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
+    "@fontsource/roboto": "4.5.8",
     "@jitsi-magnify/core": "0.1.0",
     "@jitsi/react-sdk": "1.1.0",
     "@tanstack/react-query": "4.7.2",
@@ -49,7 +50,7 @@
     "typescript": "4.7.3"
   },
   "scripts": {
-    "compile-translations": "./i18n/compile-translations.js",
+    "compile-translations": "../node_modules/@jitsi-magnify/core/i18n/compile-translations.js ./i18n/locales/*.json",
     "extract-translations": "formatjs extract './**/*.ts*' --ignore ./node_modules --ignore './**/*.d.ts' --ignore './**/*.stories.ts*' --out-file './i18n/frontend.json' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --format crowdin",
     "start": "react-scripts start",
     "build": "react-scripts build",

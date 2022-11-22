@@ -2,8 +2,8 @@ import { ErrorMessage, useField } from 'formik';
 import { Box, Text, TextInput, TextInputProps } from 'grommet';
 import { Hide, View } from 'grommet-icons';
 import { normalizeColor } from 'grommet/utils';
-import { FunctionComponent, useState } from 'react';
 import * as React from 'react';
+import { FunctionComponent, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const CustomInput = styled(TextInput)`
@@ -32,14 +32,23 @@ const FormikInput: FunctionComponent<FormikInputProps> = (props) => {
 
   return (
     <Box gap={'5px'}>
-      <label htmlFor={props.name}>
-        <Text size={'xsmall'} weight={'bold'}>
-          {props.label}
-        </Text>
-      </label>
+      {props.label != '' && (
+        <label htmlFor={props.name}>
+          <Text size={'xsmall'} weight={'bold'}>
+            {props.label}
+          </Text>
+        </label>
+      )}
       <div>
         <Box style={{ position: 'relative' }}>
-          <CustomInput {...field} {...props} ref={null} id={props.name} type={getInputType()} />
+          <CustomInput
+            {...field}
+            {...props}
+            ref={null}
+            aria-label={props.label !== '' ? props.label : props.name}
+            id={props.name}
+            type={getInputType()}
+          />
           {props.type === 'password' && (
             <Box
               focusIndicator={false}

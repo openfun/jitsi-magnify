@@ -14,7 +14,7 @@ export function RoomsJitsiView() {
   const { id } = useParams();
 
   const { data: room, isLoading } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
-    return RoomsRepository.get(id);
+    return RoomsRepository.get(id, false);
   });
 
   return (

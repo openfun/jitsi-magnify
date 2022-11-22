@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AccountPath } from '../../utils/routes/account';
 import { AuthPath } from '../../utils/routes/auth';
+import { JitsiPath } from '../../utils/routes/jitsi';
 import { RoomsPath } from '../../utils/routes/rooms';
 import { RootPath } from '../../utils/routes/root';
 
@@ -22,7 +23,7 @@ export const DefaultProvider = ({ ...props }: DefaultProviderProps) => {
         goToRegister: () => navigate(AuthPath.REGISTER),
         goToAccount: () => navigate(AccountPath.ACCOUNT),
         goToJitsiRoom: (roomId: string) => {
-          navigate(RoomsPath.ROOMS_JITSI.replace(':id', roomId));
+          navigate(JitsiPath.WEB_CONF.replace(':id', roomId));
         },
         goToRoomsList: () => navigate(RoomsPath.ROOMS),
         goToRoomSettings: (roomId?: string) => {

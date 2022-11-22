@@ -1,5 +1,4 @@
 import { Box, Header } from 'grommet';
-import { StackOverflow } from 'grommet-icons';
 import * as React from 'react';
 import { FunctionComponent } from 'react';
 import styled from 'styled-components';
@@ -28,7 +27,11 @@ const HeaderContainer = styled(Header)`
   }
 `;
 
-interface ResponsiveLayoutHeaderProps {}
+interface ResponsiveLayoutHeaderProps {
+  logoSrc?: string;
+  logoWidth?: string;
+  logoHeight?: string;
+}
 
 export const ResponsiveLayoutHeader: FunctionComponent<ResponsiveLayoutHeaderProps> = ({
   ...props
@@ -36,7 +39,9 @@ export const ResponsiveLayoutHeader: FunctionComponent<ResponsiveLayoutHeaderPro
   return (
     <HeaderContainer justify={'between'}>
       <Box aria-label={'logo-container'} direction={'row'}>
-        <StackOverflow size={'medium'} />
+        {props.logoSrc && (
+          <img alt={'logo'} height={props.logoHeight ?? '60px'} src={props.logoSrc} />
+        )}
       </Box>
 
       <Box align={'center'} direction="row" gap="medium" justify={'center'}>

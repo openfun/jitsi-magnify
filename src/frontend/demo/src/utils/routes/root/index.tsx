@@ -24,7 +24,7 @@ export const getRootRoute = (intl: IntlShape, children: RouteObject[]): RouteObj
       },
     },
     element: (
-      <ResponsiveLayout>
+      <ResponsiveLayout logoSrc={'/logo-fun-mooc.png'}>
         <RequireUser>
           <Outlet />
         </RequireUser>

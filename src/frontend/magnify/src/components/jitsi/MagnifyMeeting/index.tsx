@@ -3,6 +3,7 @@ import IJitsiMeetExternalApi from '@jitsi/react-sdk/lib/types/IJitsiMeetExternal
 import { Spinner } from 'grommet';
 import React, { useRef } from 'react';
 
+import { useRouting } from '../../../context';
 import { RoomSettings } from '../../../types/entities/room';
 import { JitsiEvents } from '../../../utils/constants/jitsi/Events';
 import { DEFAULT_TOOLBAR_BUTTONS } from '../../../utils/constants/jitsi/ToolbarButtons';
@@ -20,6 +21,7 @@ export const MagnifyMeeting = ({ ...props }: MagnifyMeetingProps) => {
   // Jitsi refs
   const apiRef = useRef<IJitsiMeetExternalApi | null>(null);
   const iframeRef = useRef<HTMLDivElement | null>(null);
+  const routing = useRouting();
 
   // Users
   const [users, setUsers] = React.useState<any[]>([]);
@@ -34,7 +36,10 @@ export const MagnifyMeeting = ({ ...props }: MagnifyMeetingProps) => {
     apiRef.current?.addListener(JitsiEvents.PARTICIPANT_JOINED, handleParticipantsChanged);
     apiRef.current?.addListener(JitsiEvents.PARTICIPANT_LEFT, handleParticipantsChanged);
     apiRef.current?.addListener(JitsiEvents.VIDEO_CONFERENCE_JOINED, handleParticipantsChanged);
-    apiRef.current?.addListener(JitsiEvents.VIDEO_CONFERENCE_LEFT, handleParticipantsChanged);
+    apiRef.current?.addListener(JitsiEvents.VIDEO_CONFERENCE_LEFT, () => {
+      handleParticipantsChanged();
+      routing.goToRoomsList();
+    });
     apiRef.current?.addListener(JitsiEvents.PARTICIPANT_ROLE_CHANGED, (event: any) => {
       if (props.configuration?.askForPassword && event.role === 'moderator') {
         apiRef.current?.executeCommand('password', props.configuration.roomPassword);

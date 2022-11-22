@@ -53,12 +53,19 @@ export default function TranslationProvider({
   const [translations, setTranslations] =
     useState<Maybe<Record<string, string> | Record<string, MessageFormatElement[]>>>(undefined);
 
+  const updateLocale = (newLocale: string): void => {
+    getTranslation(newLocale).then((translations) => {
+      setTranslations(translations);
+      setCurrentLocale(newLocale);
+    });
+  };
+
   const localeContext: LocaleContextInterface = useMemo(
     () => ({
       currentLocale: currentLocale,
       setCurrentLocale: (locale: string) => {
         localStorage.setItem(MAGNIFY_LOCALE_KEY, locale);
-        setCurrentLocale(locale);
+        updateLocale(locale);
       },
     }),
     [currentLocale],
@@ -69,7 +76,7 @@ export default function TranslationProvider({
       return;
     }
     getTranslation(currentLocale).then(setTranslations);
-  }, [currentLocale]);
+  }, []);
 
   return (
     <LocaleContext.Provider value={localeContext}>

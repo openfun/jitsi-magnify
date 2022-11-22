@@ -1,4 +1,4 @@
-import { MagnifyApi } from '../http/http.service';
+import { HttpService, MagnifyApi } from '../http/http.service';
 import { UsersRepository } from './users.repository';
 
 describe('UserRepository', () => {
@@ -11,11 +11,11 @@ describe('UserRepository', () => {
     );
   });
   it('it logs out successfully, test if tokens are null', async () => {
-    expect(UsersRepository.getAccessToken()).not.toBe(null);
-    expect(UsersRepository.getRefreshToken()).not.toBe(null);
+    expect(HttpService.getAccessToken()).not.toBe(null);
+    expect(HttpService.getRefreshToken()).not.toBe(null);
     UsersRepository.logout();
     expect(MagnifyApi.defaults.headers.common['Authorization']).toEqual(`Bearer null`);
-    expect(UsersRepository.getAccessToken()).toBe(null);
-    expect(UsersRepository.getRefreshToken()).toBe(null);
+    expect(HttpService.getAccessToken()).toBe(null);
+    expect(HttpService.getRefreshToken()).toBe(null);
   });
 });

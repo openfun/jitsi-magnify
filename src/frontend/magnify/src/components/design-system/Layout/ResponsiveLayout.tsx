@@ -4,12 +4,15 @@ import { ResponsiveLayoutHeader } from './Header/ResponsiveLayoutHeader';
 
 export interface ResponsiveLayoutProps {
   children?: React.ReactNode;
+  logoSrc?: string;
+  logoWidth?: string;
+  logoHeight?: string;
 }
 
 function ResponsiveLayout({ ...props }: ResponsiveLayoutProps) {
   return (
-    <Box background={'white'} height={{ min: '100vh' }}>
-      <ResponsiveLayoutHeader />
+    <Box background={'rgb(249, 250, 251)'} height={{ min: '100vh' }}>
+      <ResponsiveLayoutHeader {...props} />
       <Page fill={true} kind="narrow" pad={'xxsmall'}>
         <PageContent>{props.children}</PageContent>
       </Page>

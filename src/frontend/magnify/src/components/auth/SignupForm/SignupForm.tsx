@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { Box, Heading } from 'grommet';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
@@ -13,8 +13,8 @@ import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 import { useLocale } from '../../../i18n/TranslationProvider/TranslationsProvider';
 import { UsersRepository } from '../../../services/users/users.repository';
 import { SignUpData, UserResponse } from '../../../types/api/auth';
-import { MagnifyLocales } from '../../../utils';
 import FormikInput from '../../design-system/Formik/Input';
+import { LocalizedForm } from '../../design-system/Formik/LanguageChange';
 import FormikSelectLanguage from '../../design-system/Formik/Select/Language';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
@@ -125,7 +125,7 @@ export default function SignupForm() {
         )
         .required(),
     });
-  }, []);
+  }, [locale.currentLocale]);
 
   const initialValues: SignupFormValues = {
     name: '',
@@ -133,7 +133,7 @@ export default function SignupForm() {
     username: '',
     password: '',
     confirmPassword: '',
-    language: MagnifyLocales.EN,
+    language: locale.currentLocale,
   };
 
   return (
@@ -142,9 +142,9 @@ export default function SignupForm() {
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >
-      <Form>
+      <LocalizedForm>
         <Box gap={'medium'}>
-          <Heading color="brand" level={4}>
+          <Heading color="brand" level={4} margin={'none'}>
             {intl.formatMessage(messages.formTitle)}
           </Heading>
           <FormikInput label={intl.formatMessage(formLabelMessages.name)} name={'name'} />
@@ -170,7 +170,7 @@ export default function SignupForm() {
             />
           </Box>
         </Box>
-      </Form>
+      </LocalizedForm>
     </Formik>
   );
 }
