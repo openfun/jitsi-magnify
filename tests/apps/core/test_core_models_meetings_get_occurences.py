@@ -200,6 +200,27 @@ class OccurencesMeetingsModelsTestCase(TestCase):
             ["Weekdays should contain the start date."],
         )
 
+    def test_models_meetings_get_occurrences_weekly_reset_weekdays(self):
+        """reset weekdays if recurrence not equal to weekly"""
+        meeting = MeetingFactory(
+            start=date(2022, 7, 6),
+            recurrence="weekly",
+            frequency=1,
+            recurring_until=date(2022, 8, 2),
+            nb_occurrences=None,
+            meeting.weekdays = "26"
+        )
+        self.assertEqual(meeting.weekdays, "26")
+        meeting.recurrence = "daily"
+        meeting.save()
+        meeting.refresh_from_db()
+        self.assertEqual(meeting.weekdays, None)
+        meeting.recurrence = "weekly"
+        meeting.weekdays = "126"
+        meeting.save()
+        meeting.refresh_from_db()
+        self.assertEqual(meeting.weekdays, "126")
+
     def test_models_meetings_get_occurrences_weekly_recurring_until_filled(self):
         """
         Weekly occurences with date of end of reccurrence filled in but not number of occurrences.
