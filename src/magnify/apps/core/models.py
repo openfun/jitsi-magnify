@@ -430,7 +430,22 @@ class Meeting(BaseModel):
             self.reset_recurrence()
 
         super().save(*args, **kwargs)
-
+ 
+    def next_occurrence_from_today(self):
+        """
+        Returns the next occurrence of the meeting from today.
+        """
+        if self.start == timezone.now().date():
+            start_datetime = dt.combine(self.start, self.start_time)
+            start_datetime = timezone.make_aware(start_datetime)
+            start_datetime = start_datetime + self.expected_duration
+            if start_datetime > timezone.now():
+                return self.start
+        next_one = self.next_occurrence(self.start)
+        while next_one < timezone.now().date():
+            next_one = self.next_occurrence(next_one)
+        return next_one
+ 
     def next_occurrence(self, current_date):
         """
         This method takes as assumption that the current date passed in argument
