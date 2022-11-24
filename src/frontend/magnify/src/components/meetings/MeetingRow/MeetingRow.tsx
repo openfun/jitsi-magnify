@@ -8,6 +8,10 @@ import { useIsSmallSize } from '../../../hooks/useIsMobile';
 import { Meeting } from '../../../types/entities/meeting';
 import { Room } from '../../../types/entities/room';
 
+export interface MeetingRowProps {
+  meeting: Meeting;
+}
+
 const messages = defineMessage({
   join: {
     id: 'components.meetings.MeetingRow.join',
@@ -16,7 +20,7 @@ const messages = defineMessage({
   },
 });
 
-export default function MeetingRow(meeting: Meeting) {
+export default function MeetingRow({ meeting }: MeetingRowProps) {
   const intl = useIntl();
   const isSmallSize = useIsSmallSize();
   const menuItems: ButtonExtendedProps[] = [];
@@ -51,8 +55,7 @@ export default function MeetingRow(meeting: Meeting) {
         <Box
           direction="row"
           fill={isSmallSize}
-          flex={{ grow: 0.3 }}
-          gap={'5px'}
+          gap={'30px'}
           justify={isSmallSize ? 'between' : 'evenly'}
         >
           <Box alignSelf="center">
@@ -60,11 +63,16 @@ export default function MeetingRow(meeting: Meeting) {
               {meetingDay}
             </Text>
           </Box>
-          <Box align="left" direction={isSmallSize ? 'row' : 'column'}>
+          <Box
+            align="left"
+            direction={isSmallSize ? 'row' : 'column'}
+            gap={isSmallSize ? '10px' : 'none'}
+            justify={isSmallSize ? 'between' : 'stretch'}
+          >
             <Text color="brand" size="small" weight={700}>
               {meetingHour}
             </Text>
-            <Text color="brand" margin={isSmallSize ? { left: 'small' } : 'none'} size="small">
+            <Text color="brand" size="small">
               {convertToHourMinutesFormat(meeting.expectedDuration)}
             </Text>
           </Box>

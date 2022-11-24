@@ -1,1 +1,1 @@
-export { default } from './MeetingRow';
+export { default, MeetingRowProps } from './MeetingRow';

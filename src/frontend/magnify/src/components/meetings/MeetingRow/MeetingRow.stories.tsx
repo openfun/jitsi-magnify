@@ -4,7 +4,7 @@ import { withRouter } from 'storybook-addon-react-router-v6';
 import createRandomMeeting from '../../../factories/meetings';
 import createRandomRoom from '../../../factories/rooms';
 import { Meeting } from '../../../types/entities/meeting';
-import MeetingRow from './MeetingRow';
+import MeetingRow, { MeetingRowProps } from './MeetingRow';
 
 export default {
   title: 'Meetings/MeetingRow',
@@ -13,8 +13,10 @@ export default {
 } as ComponentMeta<typeof MeetingRow>;
 
 // Template
-const Template: ComponentStory<typeof MeetingRow> = (args: Meeting) => <MeetingRow {...args} />;
+const Template: ComponentStory<typeof MeetingRow> = (args: MeetingRowProps) => (
+  <MeetingRow {...args} />
+);
 
 // Stories
 export const Simple = Template.bind({});
-Simple.args = createRandomMeeting(false, createRandomRoom());
+Simple.args = { meeting: createRandomMeeting(false, createRandomRoom()) };
