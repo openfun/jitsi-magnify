@@ -90,6 +90,8 @@ class RoomSerializer(serializers.ModelSerializer):
                     "groups": groups_serializer.data,
                 }
             )
+        else:
+            del output["configuration"]
         output["is_administrable"] = is_admin
 
         if instance.is_public or (user.is_authenticated and instance.has_access(user)):

@@ -36,7 +36,6 @@ class RoomsApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(room_public.id),
-                "configuration": {},
                 "is_administrable": False,
                 "is_public": True,
                 "jitsi": {
@@ -112,7 +111,6 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
-                "configuration": {},
                 "is_administrable": False,
                 "is_public": False,
                 "name": room.name,
@@ -130,7 +128,6 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
-                "configuration": {},
                 "is_administrable": False,
                 "is_public": False,
                 "name": room.name,
@@ -148,7 +145,6 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
-                "configuration": {},
                 "is_administrable": False,
                 "is_public": False,
                 "name": room.name,
@@ -229,7 +225,6 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
-                "configuration": {},
                 "is_administrable": False,
                 "is_public": True,
                 "jitsi": {
@@ -265,7 +260,6 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
-                "configuration": {},
                 "is_administrable": False,
                 "is_public": True,
                 "jitsi": {
@@ -299,7 +293,6 @@ class RoomsApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(room.id),
-                "configuration": {},
                 "is_administrable": False,
                 "is_public": False,
                 "name": room.name,
