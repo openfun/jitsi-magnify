@@ -15,16 +15,25 @@ class MeetingGroupAccessModelsTestCase(TestCase):
     def test_models_meeting_group_access_str_normal(self):
         """The str representation should consist in the meeting and group names."""
         access = MeetingGroupAccessFactory(
-            meeting__name="my meeting", group__name="teachers", is_administrator=False
+            meeting__name="my meeting", group__name="teachers", role="member"
         )
-        self.assertEqual(str(access), "My meeting / Teachers")
+        self.assertEqual(str(access), "My meeting / Teachers (Member)")
 
     def test_models_meeting_group_access_str_admin(self):
         """The str representation for an admin group should include the mention."""
         access = MeetingGroupAccessFactory(
-            meeting__name="my meeting", group__name="teachers", is_administrator=True
+            meeting__name="my meeting", group__name="teachers", role="administrator"
         )
-        self.assertEqual(str(access), "My meeting / Teachers (admin)")
+        self.assertEqual(str(access), "My meeting / Teachers (Admin)")
+
+    def test_models_meeting_group_access_role_owner(self):
+        """There is no "owner" role on the meeting group access model."""
+        with self.assertRaises(ValidationError) as context:
+            MeetingGroupAccessFactory(role="owner")
+
+        self.assertEqual(
+            context.exception.messages, ["Value 'owner' is not a valid choice."]
+        )
 
     def test_models_meeting_group_access_unique(self):
         """Meeting group accesses should be unique."""

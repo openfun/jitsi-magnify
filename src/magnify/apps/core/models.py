@@ -7,7 +7,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin, UserManager
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import F, Q
@@ -19,6 +19,21 @@ from django.utils.translation import gettext_lazy as _
 from dateutil.relativedelta import relativedelta
 
 from .utils import get_nth_week_number, get_weekday_in_nth_week
+
+
+class UserRoleChoices(models.TextChoices):
+    """Choices for user roles."""
+
+    OWNER = "owner"
+    ADMIN = "administrator"
+    MEMBER = "member"
+
+
+class GroupRoleChoices(models.TextChoices):
+    """Choices for group roles."""
+
+    ADMIN = "administrator"
+    MEMBER = "member"
 
 
 class BaseModel(models.Model):
@@ -221,17 +236,30 @@ class Room(BaseModel):
         return f"{self.slug:s}-{self.id!s}"
 
     def is_administrator(self, user):
-        """Check if a user is administrator of the room."""
-        if not user.is_authenticated:
+        """
+        Check if a user is administrator of the room.
+
+        Users carrying the "owner" role are considered as administrators a fortiori.
+        """
+        if not user or not user.is_authenticated:
             return False
 
         return (
-            self.user_accesses.filter(is_administrator=True, user=user).exists()
+            self.user_accesses.filter(
+                role__in=[UserRoleChoices.ADMIN, UserRoleChoices.OWNER], user=user
+            ).exists()
             or self.group_accesses.filter(
                 Q(group__members=user) | Q(group__administrators=user),
-                is_administrator=True,
+                role=GroupRoleChoices.ADMIN,
             ).exists()
         )
+
+    def is_owner(self, user):
+        """Check if a user is owner of the room."""
+        if not user or not user.is_authenticated:
+            return False
+
+        return self.user_accesses.filter(role=UserRoleChoices.OWNER, user=user).exists()
 
     def has_access(self, user):
         """Check if a user has access to the room."""
@@ -253,7 +281,9 @@ class RoomUserAccess(BaseModel):
     room = models.ForeignKey(
         Room, on_delete=models.CASCADE, related_name="user_accesses"
     )
-    is_administrator = models.BooleanField(default=False)
+    role = models.CharField(
+        max_length=20, choices=UserRoleChoices.choices, default=UserRoleChoices.MEMBER
+    )
 
     class Meta:
         db_table = "magnify_room_user_access"
@@ -262,8 +292,32 @@ class RoomUserAccess(BaseModel):
         verbose_name_plural = _("Room user accesses")
 
     def __str__(self):
-        admin_status = " (admin)" if self.is_administrator else ""
-        return f"{capfirst(self.room.name):s} / {capfirst(self.user.name):s}{admin_status:s}"
+        return (
+            f"{capfirst(self.room.name):s} / {capfirst(self.user.name):s} "
+            f"({self.get_role_display():s})"
+        )
+
+    def save(self, *args, **kwargs):
+        """Make sure we keep at least one owner in a room."""
+        if self.pk and self.role != UserRoleChoices.OWNER:
+            accesses = self._meta.model.objects.filter(
+                room=self.room, role=UserRoleChoices.OWNER
+            ).only("pk")
+            if len(accesses) == 1 and accesses[0].pk == self.pk:
+                raise PermissionDenied("A room should keep at least one owner.")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Disallow deleting the last of the Mohicans."""
+        if (
+            self.role == UserRoleChoices.OWNER
+            and self._meta.model.objects.filter(
+                room=self.room, role=UserRoleChoices.OWNER
+            ).count()
+            == 1
+        ):
+            raise PermissionDenied("A room should keep at least one owner.")
+        return super().delete(*args, **kwargs)
 
 
 class RoomGroupAccess(BaseModel):
@@ -275,7 +329,9 @@ class RoomGroupAccess(BaseModel):
     room = models.ForeignKey(
         Room, on_delete=models.CASCADE, related_name="group_accesses"
     )
-    is_administrator = models.BooleanField(default=False)
+    role = models.CharField(
+        max_length=20, choices=GroupRoleChoices.choices, default=GroupRoleChoices.MEMBER
+    )
 
     class Meta:
         db_table = "magnify_room_group_access"
@@ -284,8 +340,10 @@ class RoomGroupAccess(BaseModel):
         verbose_name_plural = _("Room group accesses")
 
     def __str__(self):
-        admin_status = " (admin)" if self.is_administrator else ""
-        return f"{capfirst(self.room.name):s} / {capfirst(self.group.name):s}{admin_status:s}"
+        return (
+            f"{capfirst(self.room.name):s} / {capfirst(self.group.name):s} "
+            f"({self.get_role_display():s})"
+        )
 
 
 class Meeting(BaseModel):
@@ -525,7 +583,9 @@ class MeetingUserAccess(BaseModel):
     meeting = models.ForeignKey(
         Meeting, on_delete=models.CASCADE, related_name="user_accesses"
     )
-    is_administrator = models.BooleanField(default=False)
+    role = models.CharField(
+        max_length=20, choices=UserRoleChoices.choices, default=UserRoleChoices.MEMBER
+    )
 
     class Meta:
         db_table = "magnify_meeting_user_access"
@@ -534,8 +594,10 @@ class MeetingUserAccess(BaseModel):
         verbose_name_plural = _("Meeting user accesses")
 
     def __str__(self):
-        admin_status = " (admin)" if self.is_administrator else ""
-        return f"{capfirst(self.meeting.name):s} / {capfirst(self.user.name):s}{admin_status:s}"
+        return (
+            f"{capfirst(self.meeting.name):s} / {capfirst(self.user.name):s} "
+            f"({self.get_role_display():s})"
+        )
 
 
 class MeetingGroupAccess(BaseModel):
@@ -547,7 +609,9 @@ class MeetingGroupAccess(BaseModel):
     meeting = models.ForeignKey(
         Meeting, on_delete=models.CASCADE, related_name="group_accesses"
     )
-    is_administrator = models.BooleanField(default=False)
+    role = models.CharField(
+        max_length=20, choices=GroupRoleChoices.choices, default=GroupRoleChoices.MEMBER
+    )
 
     class Meta:
         db_table = "magnify_meeting_group_access"
@@ -556,5 +620,7 @@ class MeetingGroupAccess(BaseModel):
         verbose_name_plural = _("Meeting group accesses")
 
     def __str__(self):
-        admin_status = " (admin)" if self.is_administrator else ""
-        return f"{capfirst(self.meeting.name):s} / {capfirst(self.group.name):s}{admin_status:s}"
+        return (
+            f"{capfirst(self.meeting.name):s} / {capfirst(self.group.name):s} "
+            f"({self.get_role_display():s})"
+        )
