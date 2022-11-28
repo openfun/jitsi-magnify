@@ -99,15 +99,9 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         if create and extracted:
             for item in extracted:
                 if isinstance(item, core_models.User):
-                    core_models.MeetingUserAccess.objects.create(
-                        user=item,
-                        meeting=self,
-                        is_administrator=random.choice([True, False]),  # nosec
-                    )
+                    MeetingUserFactory(meeting=self, user=item)
                 else:
-                    core_models.MeetingUserAccess.objects.create(
-                        user=item[0], meeting=self, is_administrator=item[1]
-                    )
+                    MeetingUserFactory(meeting=self, user=item[0], role=item[1])
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
@@ -115,15 +109,9 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         if create and extracted:
             for item in extracted:
                 if isinstance(item, core_models.Group):
-                    core_models.MeetingGroupAccess.objects.create(
-                        group=item,
-                        meeting=self,
-                        is_administrator=random.choice([True, False]),  # nosec
-                    )
+                    MeetingGroupAccessFactory(meeting=self, group=item)
                 else:
-                    core_models.MeetingGroupAccess.objects.create(
-                        group=item[0], meeting=self, is_administrator=item[1]
-                    )
+                    MeetingGroupAccessFactory(meeting=self, group=item[0], role=item[1])
 
     @factory.post_generation
     def labels(self, create, extracted, **kwargs):
@@ -140,7 +128,7 @@ class MeetingUserFactory(factory.django.DjangoModelFactory):
 
     meeting = factory.SubFactory(MeetingFactory)
     user = factory.SubFactory(UserFactory)
-    is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
+    role = fuzzy.FuzzyChoice(core_models.UserRoleChoices.values)
 
 
 class MeetingGroupAccessFactory(factory.django.DjangoModelFactory):
@@ -151,7 +139,7 @@ class MeetingGroupAccessFactory(factory.django.DjangoModelFactory):
 
     meeting = factory.SubFactory(MeetingFactory)
     group = factory.SubFactory(GroupFactory)
-    is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
+    role = fuzzy.FuzzyChoice(core_models.GroupRoleChoices.values)
 
 
 class RoomFactory(factory.django.DjangoModelFactory):
@@ -170,15 +158,9 @@ class RoomFactory(factory.django.DjangoModelFactory):
         if create and extracted:
             for item in extracted:
                 if isinstance(item, core_models.User):
-                    core_models.RoomUserAccess.objects.create(
-                        user=item,
-                        room=self,
-                        is_administrator=random.choice([True, False]),  # nosec
-                    )
+                    RoomUserAccessFactory(room=self, user=item)
                 else:
-                    core_models.RoomUserAccess.objects.create(
-                        user=item[0], room=self, is_administrator=item[1]
-                    )
+                    RoomUserAccessFactory(room=self, user=item[0], role=item[1])
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
@@ -186,15 +168,9 @@ class RoomFactory(factory.django.DjangoModelFactory):
         if create and extracted:
             for item in extracted:
                 if isinstance(item, core_models.Group):
-                    core_models.RoomGroupAccess.objects.create(
-                        group=item,
-                        room=self,
-                        is_administrator=random.choice([True, False]),  # nosec
-                    )
+                    RoomGroupAccessFactory(room=self, group=item)
                 else:
-                    core_models.RoomGroupAccess.objects.create(
-                        group=item[0], room=self, is_administrator=item[1]
-                    )
+                    RoomGroupAccessFactory(room=self, group=item[0], role=item[1])
 
     @factory.post_generation
     def labels(self, create, extracted, **kwargs):
@@ -211,7 +187,7 @@ class RoomUserAccessFactory(factory.django.DjangoModelFactory):
 
     room = factory.SubFactory(RoomFactory)
     user = factory.SubFactory(UserFactory)
-    is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
+    role = fuzzy.FuzzyChoice(core_models.UserRoleChoices.values)
 
 
 class RoomGroupAccessFactory(factory.django.DjangoModelFactory):
@@ -222,4 +198,4 @@ class RoomGroupAccessFactory(factory.django.DjangoModelFactory):
 
     room = factory.SubFactory(RoomFactory)
     group = factory.SubFactory(GroupFactory)
-    is_administrator = factory.Faker("boolean", chance_of_getting_true=25)
+    role = fuzzy.FuzzyChoice(core_models.GroupRoleChoices.values)

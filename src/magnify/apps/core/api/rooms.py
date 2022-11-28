@@ -10,6 +10,7 @@ from django.utils.text import slugify
 
 from rest_framework import decorators as drf_decorators
 from rest_framework import mixins, permissions, response, viewsets
+from rest_framework.exceptions import PermissionDenied
 
 from .. import forms, models
 from .. import permissions as magnify_permissions
@@ -26,7 +27,7 @@ class RoomViewSet(
     API endpoints to access and perform actions on rooms.
     """
 
-    permission_classes = [magnify_permissions.IsObjectAdministrator]
+    permission_classes = [magnify_permissions.RoomPermissions]
     queryset = models.Room.objects.all()
     serializer_class = serializers.RoomSerializer
 
@@ -91,133 +92,11 @@ class RoomViewSet(
         return response.Response(serializer.data)
 
     def perform_create(self, serializer):
-        """Set the current user as administrators of the newly created room."""
+        """Set the current user as owner of the newly created room."""
         room = serializer.save()
         models.RoomUserAccess.objects.create(
-            room=room, user=self.request.user, is_administrator=True
+            room=room, user=self.request.user, role=models.UserRoleChoices.OWNER
         )
-
-    @drf_decorators.action(
-        methods=["post"],
-        detail=True,
-        url_path="users",
-        permission_classes=[permissions.IsAuthenticated],
-    )
-    # pylint: disable=unused-argument,invalid-name
-    def users(self, request, pk=None):
-        """Adds a user in a room."""
-        room = self.get_object()
-        serializer = serializers.RoomUserAccessSerializer(
-            data={
-                "room": room.id,
-                "user": request.data.get("user"),
-                "is_administrator": request.data.get("is_administrator"),
-            },
-            context={"request": request},
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        headers = self.get_success_headers(serializer.data)
-        return response.Response(serializer.data, status=201, headers=headers)
-
-    @drf_decorators.action(
-        methods=["get", "put", "delete"],
-        detail=True,
-        url_path="users/(?P<user_pk>[^/.]+)",
-        permission_classes=[magnify_permissions.IsRoomAdministrator],
-    )
-    # pylint: disable=unused-argument,invalid-name
-    def user(self, request, user_pk, pk=None):
-        """Get, update, or delete a user of a room."""
-        room = self.get_object()
-        room_user_access = models.RoomUserAccess.objects.get(
-            room=room, user__pk=user_pk
-        )
-
-        if request.method == "DELETE":
-            room_user_access.delete()
-            return response.Response(status=204)
-
-        if request.method == "GET":
-            serializer = serializers.RoomUserAccessSerializer(room_user_access)
-            return response.Response(serializer.data)
-
-        if request.method == "PUT":
-            serializer = serializers.RoomUserAccessSerializer(
-                room_user_access,
-                data={
-                    "room": room.id,
-                    "user": user_pk,
-                    "is_administrator": request.data.get("is_administrator"),
-                },
-                context={"request": request},
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return response.Response(serializer.data)
-
-        return response.Response(status=405)
-
-    @drf_decorators.action(
-        methods=["post"],
-        detail=True,
-        url_path="groups",
-        permission_classes=[permissions.IsAuthenticated],
-    )
-    # pylint: disable=unused-argument,invalid-name
-    def groups(self, request, pk=None):
-        """Adds a group in a room."""
-        room = self.get_object()
-        serializer = serializers.RoomGroupAccessSerializer(
-            data={
-                "room": room.id,
-                "group": request.data.get("group"),
-                "is_administrator": request.data.get("is_administrator"),
-            },
-            context={"request": request},
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        headers = self.get_success_headers(serializer.data)
-        return response.Response(serializer.data, status=201, headers=headers)
-
-    @drf_decorators.action(
-        methods=["get", "put", "delete"],
-        detail=True,
-        url_path="groups/(?P<group_pk>[^/.]+)",
-        permission_classes=[magnify_permissions.IsRoomAdministrator],
-    )
-    # pylint: disable=unused-argument,invalid-name
-    def group(self, request, group_pk, pk=None):
-        """Get, update, or delete a group of a room."""
-        room = self.get_object()
-        room_group_access = models.RoomGroupAccess.objects.get(
-            room=room, group__pk=group_pk
-        )
-
-        if request.method == "DELETE":
-            room_group_access.delete()
-            return response.Response(status=204)
-
-        if request.method == "GET":
-            serializer = serializers.RoomGroupAccessSerializer(room_group_access)
-            return response.Response(serializer.data)
-
-        if request.method == "PUT":
-            serializer = serializers.RoomGroupAccessSerializer(
-                room_group_access,
-                data={
-                    "room": room.id,
-                    "group": group_pk,
-                    "is_administrator": request.data.get("is_administrator"),
-                },
-                context={"request": request},
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return response.Response(serializer.data)
-
-        return response.Response(status=405)
 
     @drf_decorators.action(
         methods=["get"],
@@ -282,3 +161,85 @@ class RoomViewSet(
             meetings, context={"request": request}, many=True
         )
         return response.Response(serializer.data, status=200)
+
+
+class RoomAccessListModelMixin:
+    """List mixin for room access API."""
+
+    def get_permissions(self):
+        """User only needs to be authenticated to list rooms access"""
+        if self.action == "list":
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            return super().get_permissions()
+
+        return [permission() for permission in permission_classes]
+
+    def get_queryset(self):
+        """Return the queryset according to the action."""
+        queryset = super().get_queryset()
+        if self.action == "list":
+            user = self.request.user
+            queryset = queryset.filter(
+                Q(
+                    room__user_accesses__user=user,
+                    room__user_accesses__role__in=[
+                        models.UserRoleChoices.ADMIN,
+                        models.UserRoleChoices.OWNER,
+                    ],
+                )
+                | Q(
+                    room__group_accesses__group__members=user,
+                    room__group_accesses__role=models.GroupRoleChoices.ADMIN,
+                )
+            ).distinct()
+        return queryset
+
+
+class RoomUserAccessViewSet(
+    RoomAccessListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoints to access and perform actions on room user accesses.
+    """
+
+    permission_classes = [magnify_permissions.RoomAccessPermission]
+    queryset = models.RoomUserAccess.objects.all()
+    serializer_class = serializers.RoomUserAccessSerializer
+
+
+class RoomGroupAccessViewSet(
+    RoomAccessListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoints to access and perform actions on room group accesses.
+    """
+
+    permission_classes = [magnify_permissions.RoomAccessPermission]
+    queryset = models.RoomGroupAccess.objects.all()
+    serializer_class = serializers.RoomGroupAccessSerializer
+
+    def perform_create(self, serializer):
+        """
+        When creating a room group access, ensure that the logged-in user is administrator
+        of the related group.
+        """
+        user = self.request.user
+        group = serializer.validated_data["group"]
+        if not (user and group.administrators.filter(id=user.id).exists()):
+            raise PermissionDenied(
+                "You must be administrator of a group to give it access to a room."
+            )
+        return super().perform_create(serializer)

@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         # remove "email" field if instance is not the logged-in user
         if self.context["request"].user != instance:
-            return {"id": result["id"], "username": result["username"]}
+            del result["email"]
 
         return result
 

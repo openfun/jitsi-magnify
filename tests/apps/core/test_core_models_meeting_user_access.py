@@ -15,16 +15,23 @@ class MeetingUserAccessModelsTestCase(TestCase):
     def test_models_meeting_user_access_str_normal(self):
         """The str representation should consist in the meeting and user names."""
         access = MeetingUserFactory(
-            meeting__name="my meeting", user__name="François", is_administrator=False
+            meeting__name="my meeting", user__name="François", role="member"
         )
-        self.assertEqual(str(access), "My meeting / François")
+        self.assertEqual(str(access), "My meeting / François (Member)")
 
     def test_models_meeting_user_access_str_admin(self):
         """The str representation for an admin user should include the mention."""
         access = MeetingUserFactory(
-            meeting__name="my meeting", user__name="François", is_administrator=True
+            meeting__name="my meeting", user__name="François", role="administrator"
         )
-        self.assertEqual(str(access), "My meeting / François (admin)")
+        self.assertEqual(str(access), "My meeting / François (Admin)")
+
+    def test_models_meeting_user_access_str_owner(self):
+        """The str representation for an admin user should include the mention."""
+        access = MeetingUserFactory(
+            meeting__name="my meeting", user__name="François", role="owner"
+        )
+        self.assertEqual(str(access), "My meeting / François (Owner)")
 
     def test_models_meeting_user_access_unique(self):
         """Meeting user accesses should be unique."""

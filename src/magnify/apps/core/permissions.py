@@ -3,6 +3,8 @@ from django.db.models import Q
 
 from rest_framework import permissions
 
+from .models import GroupRoleChoices, UserRoleChoices
+
 
 class IsSelf(permissions.BasePermission):
     """
@@ -44,9 +46,9 @@ class IsGroupAdministrator(permissions.BasePermission):
         return user in obj.administrators.all()
 
 
-class IsObjectAdministrator(permissions.BasePermission):
+class RoomPermissions(permissions.BasePermission):
     """
-    Allow a request to proceed only if the user is listed as administrator to the targeted object.
+    Permissions applying to the room API endpoint.
     """
 
     def has_permission(self, request, view):
@@ -63,16 +65,24 @@ class IsObjectAdministrator(permissions.BasePermission):
             return True
 
         user = request.user
+
+        if request.method == "DELETE":
+            return obj.user_accesses.filter(
+                role=UserRoleChoices.OWNER, user=user
+            ).exists()
+
         return (
-            obj.user_accesses.filter(is_administrator=True, user=user).exists()
+            obj.user_accesses.filter(
+                role__in=[UserRoleChoices.ADMIN, UserRoleChoices.OWNER], user=user
+            ).exists()
             or obj.group_accesses.filter(
                 Q(group__administrators=user) | Q(group__members=user),
-                is_administrator=True,
+                role=GroupRoleChoices.ADMIN,
             ).exists()
         )
 
 
-class IsRoomAdministrator(permissions.BasePermission):
+class RoomAccessPermission(permissions.BasePermission):
     """
     Permissions for a room that can only be updated by room administrators.
     """
@@ -82,13 +92,20 @@ class IsRoomAdministrator(permissions.BasePermission):
         return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        """Check that the logged-in user is adminisrator of the linked room."""
+        """
+        Check that the logged-in user is administrator of the linked room.
+        """
         user = request.user
+        if request.method == "DELETE" and obj.role == UserRoleChoices.OWNER:
+            return obj.user == user
+
         return user.is_authenticated and (
-            obj.user_accesses.filter(is_administrator=True, user=user)
-            or obj.group_accesses.filter(
+            obj.room.user_accesses.filter(
+                role__in=[UserRoleChoices.ADMIN, UserRoleChoices.OWNER], user=user
+            )
+            or obj.room.group_accesses.filter(
                 Q(group__members=user) | Q(group__administrators=user),
-                is_administrator=True,
+                role=GroupRoleChoices.ADMIN,
             )
         )
 

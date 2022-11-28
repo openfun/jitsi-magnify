@@ -27,6 +27,12 @@ router = DefaultRouter()
 router.register("rooms", api.RoomViewSet, basename="rooms")
 router.register("users", api.UserViewSet, basename="users")
 router.register("groups", api.GroupViewSet, basename="groups")
+router.register(
+    "room-user-accesses", api.RoomUserAccessViewSet, basename="room_user_accesses"
+)
+router.register(
+    "room-group-accesses", api.RoomGroupAccessViewSet, basename="room_group_accesses"
+)
 
 # To appear on the swagger URL,
 # the views need to extend APIView from the rest_framework.views package.

@@ -108,6 +108,8 @@ class UsersApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(user1.id),
+                "language": user1.language,
+                "name": user1.name,
                 "username": "jeff-burns",
             },
         )
@@ -126,6 +128,8 @@ class UsersApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(user1.id),
+                "language": user1.language,
+                "name": user1.name,
                 "username": "jeff-burns",
             },
         )
@@ -164,6 +168,8 @@ class UsersApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(user1.id),
+                "language": user1.language,
+                "name": user1.name,
                 "username": user1.username,
             },
         )
@@ -182,6 +188,8 @@ class UsersApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(user1.id),
+                "language": user1.language,
+                "name": user1.name,
                 "username": user1.username,
             },
         )
@@ -268,6 +276,8 @@ class UsersApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(other_user.id),
+                "language": other_user.language,
+                "name": other_user.name,
                 "username": other_user.username,
             },
         )

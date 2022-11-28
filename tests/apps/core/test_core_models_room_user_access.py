@@ -12,19 +12,26 @@ class RoomUserAccessesModelsTestCase(TestCase):
     Unit test suite to validate the behavior of the RoomUserAccess model
     """
 
-    def test_models_room_user_accesses_str_normal(self):
+    def test_models_room_user_accesses_str_member(self):
         """The str representation should consist in the room and user names."""
         access = RoomUserAccessFactory(
-            room__name="my room", user__name="François", is_administrator=False
+            room__name="my room", user__name="François", role="member"
         )
-        self.assertEqual(str(access), "My room / François")
+        self.assertEqual(str(access), "My room / François (Member)")
 
     def test_models_room_user_accesses_str_admin(self):
         """The str representation for an admin user should include the mention."""
         access = RoomUserAccessFactory(
-            room__name="my room", user__name="François", is_administrator=True
+            room__name="my room", user__name="François", role="administrator"
         )
-        self.assertEqual(str(access), "My room / François (admin)")
+        self.assertEqual(str(access), "My room / François (Admin)")
+
+    def test_models_room_user_accesses_str_owner(self):
+        """The str representation for an admin user should include the mention."""
+        access = RoomUserAccessFactory(
+            room__name="my room", user__name="François", role="owner"
+        )
+        self.assertEqual(str(access), "My room / François (Owner)")
 
     def test_models_room_user_accesses_unique(self):
         """Room user accesses should be unique."""
