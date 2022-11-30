@@ -26,6 +26,9 @@ const customDateInputTheme = (theme: ThemeType) => {
       day: { extend: () => `border-radius: 2em; color: brand` },
       extend: `border-radius: 1em; padding: 1em`,
     },
+    maskedInput: {
+      extend: `font-family: roboto`,
+    },
   };
 };
 
@@ -34,16 +37,17 @@ export interface formikDatePickerProps {
   onChange: (date: string) => void;
 }
 
+const nextYear = new Date();
+nextYear.setFullYear(new Date().getFullYear() + 1);
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 const FormikDatePicker: FunctionComponent<formikDatePickerProps> = ({ ...props }) => {
   const [field] = useField(props.name);
   const [startingAtError, setStartingAtError] = useState(false);
 
   const formikContext = useFormikContext();
-  const nextYear = new Date();
-  nextYear.setFullYear(new Date().getFullYear() + 1);
   const intl = useIntl();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
   const theme = useTheme();
   const onDateChange = (event: { value: string | string[] }) => {
