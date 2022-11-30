@@ -13,4 +13,12 @@ describe('RoomRow', () => {
     });
     screen.getByText(room.name ?? '');
   });
+  it('should effectively write to clipboard when asked to'),
+    async () => {
+      const room: Room = createRandomRoom();
+      render(<RoomRow baseJitsiUrl={'meeting.education'} room={room} />, {
+        wrapper: MagnifyTestingProvider,
+      });
+      expect(navigator.clipboard.writeText).toBeCalled();
+    };
 });
