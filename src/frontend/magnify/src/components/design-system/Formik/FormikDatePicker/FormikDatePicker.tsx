@@ -10,7 +10,7 @@ const messages = defineMessages({
   invalidStartingAt: {
     defaultMessage: 'Input date is not valid: Starting date should be set in the future.',
     description: 'Error message when event scheduling date time update is in the past.',
-    id: 'components.design-system.Formik.invalidStartingAt',
+    id: 'components.design-system.Formik.FormikDatePicker.invalidStartingAt',
   },
 });
 
@@ -26,6 +26,9 @@ const customDateInputTheme = (theme: ThemeType) => {
       day: { extend: () => `border-radius: 2em; color: brand` },
       extend: `border-radius: 1em; padding: 1em`,
     },
+    maskedInput: {
+      extend: `font-family: roboto`,
+    },
   };
 };
 
@@ -34,16 +37,17 @@ export interface formikDatePickerProps {
   onChange: (date: string) => void;
 }
 
+const nextYear = new Date();
+nextYear.setFullYear(new Date().getFullYear() + 1);
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 const FormikDatePicker: FunctionComponent<formikDatePickerProps> = ({ ...props }) => {
   const [field] = useField(props.name);
   const [startingAtError, setStartingAtError] = useState(false);
 
   const formikContext = useFormikContext();
-  const nextYear = new Date();
-  nextYear.setFullYear(new Date().getFullYear() + 1);
   const intl = useIntl();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
   const theme = useTheme();
   const onDateChange = (event: { value: string | string[] }) => {
