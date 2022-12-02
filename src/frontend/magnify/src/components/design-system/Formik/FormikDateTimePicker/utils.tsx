@@ -12,11 +12,11 @@ export const splitDateTime = (dateTimeISO: string | null): { date: string; time:
 };
 
 export const mergeDateTime = (
-  dateString: string | null,
-  timeString: string | null,
-): string | null => {
+  dateString: string | undefined,
+  timeString: string | undefined,
+): string | undefined => {
   if (!dateString || !timeString) {
-    return null;
+    return undefined;
   }
   try {
     const time = Duration.fromISOTime(timeString);
@@ -26,6 +26,6 @@ export const mergeDateTime = (
     });
     return dateTime.toISO();
   } catch (e) {
-    return null;
+    return undefined;
   }
 };

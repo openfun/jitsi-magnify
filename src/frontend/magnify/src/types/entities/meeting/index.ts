@@ -16,8 +16,9 @@ export interface Meeting {
   id: string;
   name: string;
   room?: Room;
-  startDateTime: Date;
-  expectedDuration: number;
+  // start and end DateTime will be in the ISO 8601 format with UTC time zone
+  startDateTime: string;
+  endDateTime: string;
   jitsi: {
     room: string;
     token: string;

@@ -1,16 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { faker } from '@faker-js/faker';
+import { Form, Formik } from 'formik';
 import { Box } from 'grommet';
 import { DateTime, Settings } from 'luxon';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import * as Yup from 'yup';
+import { AnyObject, Assign, ObjectShape, TypeOfShape } from 'yup/lib/object';
+import { RequiredStringSchema } from 'yup/lib/string';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
-import { MeetingsRepository } from '../../../services';
 import { Meeting } from '../../../types';
-import { Maybe } from '../../../types/misc';
-import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
 import FormikDateTimePicker from '../../design-system/Formik/FormikDateTimePicker';
 import { mergeDateTime } from '../../design-system/Formik/FormikDateTimePicker/utils';
 import FormikInput from '../../design-system/Formik/Input';
@@ -34,9 +32,8 @@ const messages = defineMessages({
     description: 'Label for the submit button to register a new meeting',
   },
   invalidTime: {
-    defaultMessage:
-      'Starting time should be in the future and ending time should be after starting time.',
-    description: 'Error message when event scheduling date time update is in the past.',
+    defaultMessage: 'Invalid time inputs',
+    description: 'Error message when time inputs are invalid.',
     id: 'components.design-system.Formik.FormikDateTimePicker.invalidTime',
   },
 });
@@ -57,74 +54,55 @@ export interface RegisterMeetingFormValues {
   endTime: string | undefined;
 }
 
-interface FormErrors {
-  slug?: string[];
+interface meetingFormValidationSchema {
+  name: RequiredStringSchema<string | undefined>;
+  startDate: RequiredStringSchema<string | undefined>;
+  endDate: RequiredStringSchema<string | undefined>;
+  startTime: RequiredStringSchema<string | undefined>;
+  endTime: RequiredStringSchema<string | undefined>;
 }
+
+// interface FormErrors {
+//   slug?: string[];
+// }
 
 const RegisterMeetingForm = ({ onSuccess }: RegisterMeetingFormProps) => {
   const intl = useIntl();
   Settings.defaultLocale = intl.locale;
 
-  const startTimeTestOptions: Yup.TestConfig<string | undefined> = {
-    name: 'startDateTimeIsAfterOrNow',
-    test: function (startTimeValue: string | undefined) {
-      const nullableStartTimeValue = startTimeValue == undefined ? null : startTimeValue;
-      const chosenStartDateTime = this.parent
-        ? mergeDateTime(this.parent.startDate, nullableStartTimeValue)
-        : null;
-      const chosenEndDateTime = this.parent
-        ? mergeDateTime(this.parent.endDate, this.parent.endTime)
-        : null;
-      return (
-        chosenStartDateTime == null ||
+  const globalDateInputValidation: Yup.TestConfig<
+    TypeOfShape<Assign<ObjectShape, meetingFormValidationSchema>>,
+    AnyObject
+  > = {
+    name: 'dateInputsShouldBeValid',
+    test: function (values, context) {
+      const chosenStartDateTime = mergeDateTime(values['startDate'], values['startTime']);
+      const chosenEndDateTime = mergeDateTime(values['endDate'], values['endTime']);
+      if (
+        chosenStartDateTime == undefined ||
         (chosenStartDateTime >= DateTime.local().toISO() &&
-          (chosenEndDateTime == null || chosenStartDateTime <= chosenEndDateTime))
-      );
-    },
-    message: intl.formatMessage(messages.invalidTime),
-    exclusive: true,
-  };
-
-  const endTimeTestOptions: Yup.TestConfig<string | undefined> = {
-    name: 'endDateTimeIsAfterOrStartDate',
-    test: function (endTimeValue: string | undefined) {
-      const nullableEndTimeValue = endTimeValue == undefined ? null : endTimeValue;
-      const chosenStartDateTime = this.parent
-        ? mergeDateTime(this.parent.startDate, this.parent.startTime)
-        : null;
-      const chosenEndDateTime = this.parent
-        ? mergeDateTime(this.parent.endDate, nullableEndTimeValue)
-        : null;
-      return (
-        chosenEndDateTime == null ||
-        (chosenEndDateTime >= DateTime.local().toISO() &&
-          (chosenStartDateTime == null || chosenStartDateTime <= chosenEndDateTime))
-      );
-    },
-    message: intl.formatMessage(messages.invalidTime),
-    exclusive: true,
-  };
-
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().required(),
-    startDate: Yup.string().required(),
-    endDate: Yup.string().required(),
-    startTime: Yup.string().required().test(startTimeTestOptions),
-    endTime: Yup.string().required().test(endTimeTestOptions),
-  });
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation<Meeting, AxiosError, RegisterMeetingFormValues>(
-    MeetingsRepository.create,
-    {
-      onSuccess: (newMeeting) => {
-        queryClient.setQueryData([MagnifyQueryKeys.MEETINGS], (meetings: Meeting[] = []) => {
-          return [...meetings, newMeeting];
+          (chosenEndDateTime == undefined || chosenStartDateTime <= chosenEndDateTime))
+      )
+        return true;
+      else {
+        return context.createError({
+          path: 'startDate',
+          message: intl.formatMessage(messages.invalidTime),
         });
-        onSuccess(newMeeting);
-      },
+      }
     },
-  );
+    exclusive: true,
+  };
+
+  const validationSchema = Yup.object()
+    .shape({
+      name: Yup.string().required(),
+      startDate: Yup.string().required(),
+      endDate: Yup.string().required(),
+      startTime: Yup.string().required(),
+      endTime: Yup.string().required(),
+    })
+    .test(globalDateInputValidation);
 
   const allSuggestions = getSuggestions(intl.locale);
   const allFrenchSuggestions = getSuggestions('fr');
@@ -140,18 +118,36 @@ const RegisterMeetingForm = ({ onSuccess }: RegisterMeetingFormProps) => {
     [],
   );
 
-  const handleSubmit = (
-    values: RegisterMeetingFormValues,
-    actions: FormikHelpers<RegisterMeetingFormValues>,
-  ) => {
-    mutation.mutate(values, {
-      onError: (error) => {
-        const formErrors = error?.response?.data as Maybe<FormErrors>;
-        if (formErrors?.slug) {
-          actions.setFieldError('name', formErrors.slug.join(','));
-        }
-      },
-    });
+  const handleSubmit = (values: RegisterMeetingFormValues) => {
+    try {
+      const oldMeetings: string | null = localStorage.getItem('meetings');
+      const id = faker.datatype.uuid();
+      const startDateTime = mergeDateTime(values.startDate, values.startTime);
+      const endDateTime = mergeDateTime(values.endDate, values.endTime);
+
+      const newMeeting: Meeting = {
+        id: id,
+        name: values.name,
+        startDateTime: startDateTime
+          ? DateTime.fromISO(startDateTime).toUTC().toISO()
+          : DateTime.now().toUTC().toISO(),
+        endDateTime: endDateTime
+          ? DateTime.fromISO(endDateTime).toUTC().toISO()
+          : DateTime.now().toUTC().toISO(),
+        jitsi: {
+          room: `${id}`,
+          token: `${faker.datatype.number({ min: 0, max: 1000 })}`,
+        },
+      };
+      if (oldMeetings) {
+        localStorage.setItem('meetings', JSON.stringify([...JSON.parse(oldMeetings), newMeeting]));
+      } else {
+        localStorage.setItem('meetings', JSON.stringify([newMeeting]));
+      }
+      onSuccess(newMeeting);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -160,43 +156,36 @@ const RegisterMeetingForm = ({ onSuccess }: RegisterMeetingFormProps) => {
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >
-      {({ errors, touched }) => (
-        <Form>
-          <Box gap="5px">
-            <FormikInput
-              label={intl.formatMessage(formLabelMessages.name)}
-              name={'name'}
-              placeholder={intl.formatMessage(messages.namePlaceholder)}
-            />
-            <Box direction="row" gap="small">
-              <FormikDateTimePicker
-                dateName="startDate"
-                frenchSuggestions={allFrenchSuggestions}
-                label={intl.formatMessage(formLabelMessages.meetingStartDateTime)}
-                localTimeSuggestions={allSuggestions}
-                timeName="startTime"
-              ></FormikDateTimePicker>
-              <FormikDateTimePicker
-                dateName="endDate"
-                frenchSuggestions={allFrenchSuggestions}
-                label={intl.formatMessage(formLabelMessages.meetingEndDateTime)}
-                localTimeSuggestions={allSuggestions}
-                timeName="endTime"
-              ></FormikDateTimePicker>
-            </Box>
-          </Box>
-
-          {errors.startDate && touched.startDate ? <div>{errors.startDate}</div> : null}
-          {touched.endDate && errors.endDate ? <div>{errors.endDate}</div> : null}
-          {touched.startTime && errors.startTime ? <div>{errors.startTime}</div> : null}
-          {touched.endTime && errors.endTime ? <div>{errors.endTime}</div> : null}
-
-          <FormikSubmitButton
-            isLoading={mutation.isLoading}
-            label={intl.formatMessage(messages.registerMeetingSubmitLabel)}
+      <Form>
+        <Box gap="5px">
+          <FormikInput
+            label={intl.formatMessage(formLabelMessages.name)}
+            name={'name'}
+            placeholder={intl.formatMessage(messages.namePlaceholder)}
           />
-        </Form>
-      )}
+          <Box direction="row" gap="small">
+            <FormikDateTimePicker
+              dateName="startDate"
+              frenchSuggestions={allFrenchSuggestions}
+              label={intl.formatMessage(formLabelMessages.meetingStartDateTime)}
+              localTimeSuggestions={allSuggestions}
+              timeName="startTime"
+            ></FormikDateTimePicker>
+            <FormikDateTimePicker
+              dateName="endDate"
+              frenchSuggestions={allFrenchSuggestions}
+              label={intl.formatMessage(formLabelMessages.meetingEndDateTime)}
+              localTimeSuggestions={allSuggestions}
+              timeName="endTime"
+            ></FormikDateTimePicker>
+          </Box>
+        </Box>
+
+        <FormikSubmitButton
+          // isLoading={mutation.isLoading}
+          label={intl.formatMessage(messages.registerMeetingSubmitLabel)}
+        />
+      </Form>
     </Formik>
   );
 };

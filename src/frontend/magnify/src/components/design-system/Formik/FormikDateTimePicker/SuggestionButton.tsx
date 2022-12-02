@@ -31,7 +31,6 @@ const SuggestionButton: FunctionComponent<suggestionButtonProps> = ({ ...props }
       primary={isChosenButton}
       onClick={() => {
         props.onClick(props.frenchButtonValue);
-        console.log(`chosenDateTime : ${chosenDateTime}`);
       }}
     >
       <Box alignContent="center" alignSelf="center">

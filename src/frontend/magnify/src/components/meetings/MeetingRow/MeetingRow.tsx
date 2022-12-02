@@ -1,12 +1,13 @@
 import { defineMessage } from '@formatjs/intl';
 import { Box, Button, ButtonExtendedProps, Card, Menu, Notification, Spinner, Text } from 'grommet';
 import { MoreVertical } from 'grommet-icons';
+import { Interval } from 'luxon';
 import React from 'react';
 import { useIntl } from 'react-intl';
+import { useRouting } from '../../../context';
 
 import { useIsSmallSize } from '../../../hooks/useIsMobile';
 import { Meeting } from '../../../types/entities/meeting';
-import { Room } from '../../../types/entities/room';
 
 export interface MeetingRowProps {
   meeting: Meeting;
@@ -24,24 +25,24 @@ export default function MeetingRow({ meeting }: MeetingRowProps) {
   const intl = useIntl();
   const isSmallSize = useIsSmallSize();
   const menuItems: ButtonExtendedProps[] = [];
+  const startDateTime: Date = new Date(meeting.startDateTime);
+  const endDateTime: Date = new Date(meeting.endDateTime);
+  const routing = useRouting();
 
-  const convertToHourMinutesFormat = (numberMinutes: number): string => {
-    const nbHours = Math.floor(numberMinutes / 60);
-    const nbMinutes = numberMinutes - 60 * nbHours;
-    return nbHours > 0 ? `${nbHours} h ${nbMinutes} min` : `${nbMinutes} min`;
-  };
+  const meetingDay = startDateTime.toLocaleDateString(intl.locale, {
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+  });
 
-  const zeroFormatNumber = (number: number): string => {
-    return number < 10 ? '0' + number.toString() : number.toString();
-  };
+  const meetingHour = startDateTime.toLocaleTimeString(intl.locale, {
+    timeStyle: 'short',
+  });
 
-  const meetingDay = `${zeroFormatNumber(meeting.startDateTime.getDay())}/${zeroFormatNumber(
-    meeting.startDateTime.getMonth() + 1,
-  )}/${meeting.startDateTime.getFullYear()}`;
-
-  const meetingHour = `${zeroFormatNumber(meeting.startDateTime.getHours())}:${zeroFormatNumber(
-    meeting.startDateTime.getMinutes(),
-  )}`;
+  const expectedDuration = Interval.fromDateTimes(startDateTime, endDateTime).toDuration([
+    'hours',
+    'minutes',
+  ]);
 
   return (
     <Card background="light-2" elevation="0" pad="small" style={{ position: 'relative' }}>
@@ -73,7 +74,7 @@ export default function MeetingRow({ meeting }: MeetingRowProps) {
               {meetingHour}
             </Text>
             <Text color="brand" size="small">
-              {convertToHourMinutesFormat(meeting.expectedDuration)}
+              {`${expectedDuration.hours}h ${Math.floor(expectedDuration.minutes)}min`}
             </Text>
           </Box>
         </Box>
@@ -86,7 +87,16 @@ export default function MeetingRow({ meeting }: MeetingRowProps) {
         </Box>
         <Box align={'center'} direction="row" fill={isSmallSize} margin="auto 0px">
           <Box flex={{ grow: 1 }}>
-            <Button primary fill={isSmallSize} label={intl.formatMessage(messages.join)} />
+            <Button
+              primary
+              fill={isSmallSize}
+              label={intl.formatMessage(messages.join)}
+              onClick={() =>
+                meeting.room
+                  ? routing.goToJitsiRoom(meeting.room.slug)
+                  : routing.goToJitsiRoom(meeting.name)
+              }
+            />
           </Box>
           <Menu
             dropProps={{ align: { top: 'bottom', left: 'left' } }}

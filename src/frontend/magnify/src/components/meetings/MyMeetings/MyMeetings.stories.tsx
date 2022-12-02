@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import { createRandomMeeting } from '../../../factories/meetings';
+import { Meeting } from '../../../types';
 import { MyMeetings } from './MyMeetings';
 
 export default {
@@ -8,8 +8,14 @@ export default {
   component: MyMeetings,
 } as ComponentMeta<typeof MyMeetings>;
 
+const myMeetings: string | null = localStorage.getItem('meetings');
+const myMeetingsList: Meeting[] = myMeetings ? JSON.parse(myMeetings) : [];
+const mySortedMeetingsList = myMeetingsList.sort(
+  (a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime(),
+);
+
 const Template: ComponentStory<typeof MyMeetings> = (args) => (
-  <MyMeetings meetings={[createRandomMeeting(), createRandomMeeting()]} />
+  <MyMeetings meetings={mySortedMeetingsList} />
 );
 
 // create the template and stories

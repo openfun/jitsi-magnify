@@ -6,6 +6,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { useIntl } from 'react-intl';
 import TimePicker, { TimePickerValue } from 'react-time-picker';
 import SuggestionButton from './SuggestionButton';
+import { mergeDateTime } from './utils';
 
 export interface formikDateTimePickerProps {
   dateName: string;
@@ -59,7 +60,7 @@ const FormikDateTimePicker: FunctionComponent<formikDateTimePickerProps> = ({ ..
       return;
     }
     formikContext.setFieldTouched(props.timeName, true);
-  }, [timeField.value]);
+  }, [timeField.value, dateField.value]);
 
   const suggestionButtons = props.localTimeSuggestions.map((value: string, index: number) => (
     <SuggestionButton
@@ -83,7 +84,7 @@ const FormikDateTimePicker: FunctionComponent<formikDateTimePickerProps> = ({ ..
         </label>
       )}
       <div>
-        <Box align="center" basis="1" direction="column" gap="small">
+        <Box align="start" basis="1" direction="column" gap="small">
           <DateInput
             {...dateField}
             format={intl.locale === 'fr' ? 'jj/mm/aaaa' : 'yyyy/mm/dd'}
@@ -94,7 +95,6 @@ const FormikDateTimePicker: FunctionComponent<formikDateTimePickerProps> = ({ ..
               size: 'small',
             }}
           ></DateInput>
-
           <Box align="center" direction="row" gap="small">
             <TimePicker
               {...timeField}
@@ -121,6 +121,16 @@ const FormikDateTimePicker: FunctionComponent<formikDateTimePickerProps> = ({ ..
               <CaretDown size="15px" />
             </DropButton>
           </Box>
+          <ErrorMessage
+            name={props.dateName}
+            render={(msg: string) => {
+              return (
+                <Text color={'accent-1'} size={'xsmall'}>
+                  {msg}
+                </Text>
+              );
+            }}
+          />
         </Box>
       </div>
     </Box>
