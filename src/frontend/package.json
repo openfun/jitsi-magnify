@@ -30,12 +30,13 @@
     "scripts:new-icon": "cd scripts && yarn new-icon",
     "scripts:new-component": "cd scripts && yarn new-component"
   },
-  "devDependencies": {
-    "turbo": "1.6.3"
-  },
-  "packageManager": "yarn@1.22.19",
   "workspaces": [
-    "demo",
-    "magnify"
-  ]
+      "magnify/packages/*"
+  ],
+  "devDependencies": {
+    "turbo": "1.6.3",
+    "eslint-config-custom": "*",
+    "prettier": "2.8.0"
+  },
+  "packageManager": "yarn@1.22.19"
 }
