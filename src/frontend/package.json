@@ -31,6 +31,7 @@
     "scripts:new-component": "cd scripts && yarn new-component"
   },
   "workspaces": [
+      "magnify/apps/*",
       "magnify/packages/*"
   ],
   "devDependencies": {
