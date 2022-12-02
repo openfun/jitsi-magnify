@@ -5,6 +5,7 @@ import { defineMessages } from 'react-intl';
 import { useTranslations } from '../../../i18n';
 import { Meeting } from '../../../types/entities/meeting';
 import MeetingRow from '../MeetingRow';
+import RegisterMeeting from '../RegisterMeeting/RegisterMeeting';
 
 const messages = defineMessages({
   myMeetingsCardTitle: {
@@ -32,6 +33,9 @@ const MyMeetings = ({ meetings = [] }: MyMeetingsProps) => {
           {intl.formatMessage(messages.myMeetingsCardTitle)}
           {meetings?.length > 0 ? ` (${meetings?.length})` : ''}
         </Heading>
+        <div>
+          <RegisterMeeting />
+        </div>
       </Box>
       {meetings?.length > 0 ? (
         meetings.map((meeting) => {

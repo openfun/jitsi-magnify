@@ -1,3 +1,4 @@
+export * from './meetings';
 export * from './rooms';
 export * from './users';
 export * from './routes';

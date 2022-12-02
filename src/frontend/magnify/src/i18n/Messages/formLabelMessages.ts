@@ -6,4 +6,14 @@ export const formLabelMessages = defineMessages({
     description: 'Name label for input',
     defaultMessage: 'Name',
   },
+  meetingStartDateTime: {
+    id: 'i18n.Messages.formLabelMessages.meetingStartDateTime',
+    description: 'Meeting Start Date Time for input',
+    defaultMessage: 'Meeting start date and hour',
+  },
+  meetingEndDateTime: {
+    id: 'i18n.Messages.formLabelMessages.meetingEndDateTime',
+    description: 'Meeting End Date Time for input',
+    defaultMessage: 'Meeting end date and hour',
+  },
 });
