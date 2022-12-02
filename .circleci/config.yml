@@ -23,8 +23,8 @@ aliases:
     restore_cache:
       name: Restore node_modules cache
       keys:
-        - v11-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
-        - v11-front-dependencies-
+        - v10-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
+        - v10-front-dependencies-
 
 jobs:
   # Git jobs
@@ -118,9 +118,9 @@ jobs:
             # In the frontend workspace
             cat src/frontend/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
             # In the "magnify" frontend library
-            cat src/frontend/magnify/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+            cat src/frontend/magnify/apps/magnify-site/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
             # In the "demo" frontend application
-            cat src/frontend/demo/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+            cat src/frontend/magnify/packages/components/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
 
   # ---- Docker jobs ----
   # Build the Docker image ready for production
@@ -487,14 +487,14 @@ jobs:
       - persist_to_workspace:
           root: ~/fun
           paths:
-            - src/frontend/demo/i18n/frontend.json
-            - src/frontend/magnify/i18n/frontend.json
+            - src/frontend/magnify/apps/magnify-site/i18n/frontend.json
+            - src/frontend/magnify/packages/components/i18n/frontend.json
       - save_cache:
           paths:
             - ./node_modules
-            - ./magnify/node_modules
-            - ./demo/node_modules
-          key: v11-front-dependencies-{{ checksum "yarn.lock" }}
+            - ./magnify/apps/magnify-site/node_modules
+            - ./magnify/packages/components/node_modules
+          key: v10-front-dependencies-{{ checksum "yarn.lock" }}
 
   lint-front:
     docker:
@@ -516,6 +516,7 @@ jobs:
   test-front:
     docker:
       - image: cimg/node:16.15
+        platform: linux/amd64
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -528,34 +529,34 @@ jobs:
           # We're not sure why this happens but it is related to the fact that we restore node_moduels
           # from the cache.
           name: Reconnect build
-          command: cd magnify && yarn build
+          command: yarn build
       - run:
           name: Test frontend library
           # Circle CI needs the tests to be ran sequentially, otherwise it hangs. See Jest docs below:
           # (https://jestjs.io/docs/en/troubleshooting#tests-are-extremely-slow-on-docker-and-or-continuous-integration-ci-server)
           # But in order to pass this option to both projects, we can't use the "yarn test" command of the workspace directly
-          command: yarn test-magnify --runInBand
+          command: yarn test-components
       - run:
           name: Test frontend demo
-          command: yarn test-demo --runInBand
+          command: yarn test-demo
 
   # Publishing to npm requires that you have define the NPM_TOKEN secret
   # environment variables in CircleCI UI (with your PyPI credentials)
-  npm:
-    docker:
-      - image: cimg/node:16.15
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - *checkout_fun
-      - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/fun/.npmrc
-      - run:
-          name: Publish package
-          command: npm publish src/frontend/magnify/
+#  npm:
+#    docker:
+#      - image: cimg/node:16.15
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - *checkout_fun
+#      - run:
+#          name: Authenticate with registry
+#          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/fun/.npmrc
+#      - run:
+#          name: Publish package
+#          command: npm publish src/frontend/magnify/
 
 workflows:
   version: 2
@@ -589,7 +590,7 @@ workflows:
           filters:
             tags:
               only: /.*/
-      # Check CHANGELOG update
+#       Check CHANGELOG update
       - check-changelog:
           filters:
             branches:
@@ -602,21 +603,21 @@ workflows:
               ignore: main
             tags:
               only: /.*/
-      # Check Renovate configuration
+#       Check Renovate configuration
       - check-renovate-configuration:
           filters:
             tags:
               only: /.*/
-      # Check on each PR if the last magnify version is present everywhere it should be.
-      # If not the build will fail before publishing a new release.
+#       Check on each PR if the last magnify version is present everywhere it should be.
+#       If not the build will fail before publishing a new release.
       - check-versions:
           filters:
             tags:
               only: /.*/
 
-      # Docker jobs
-      #
-      # Build images
+#       Docker jobs
+#
+#       Build images
       - build-docker:
           filters:
             tags:
@@ -697,13 +698,13 @@ workflows:
       #
       # Publish frontend package to NPM only if all build, lint and test jobs
       # succeed and it has been tagged with a tag starting with the letter v
-      - npm:
-          requires:
-            - check-versions
-            - lint-front
-            - test-front
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
+#      - npm:
+#          requires:
+#            - check-versions
+#            - lint-front
+#            - test-front
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /^v.*/
