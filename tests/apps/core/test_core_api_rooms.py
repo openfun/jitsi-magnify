@@ -7,6 +7,7 @@ from unittest import mock
 from django.contrib.auth.models import AnonymousUser
 from django.test.utils import override_settings
 
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
 
@@ -36,7 +37,7 @@ class RoomsApiTestCase(APITestCase):
         response = self.client.get("/api/rooms/")
         self.assertEqual(response.status_code, 200)
 
-        results = response.json()
+        results = response.json()["results"]
         self.assertEqual(len(results), 1)
 
         self.assertEqual(
@@ -79,7 +80,7 @@ class RoomsApiTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        results = response.json()
+        results = response.json()["results"]
         self.assertEqual(len(results), 3)
         expected_ids = {
             str(room_public.id),
@@ -89,21 +90,61 @@ class RoomsApiTestCase(APITestCase):
         results_id = {r["id"] for r in results}
         self.assertEqual(expected_ids, results_id)
 
-    def test_api_rooms_list_authenticated_distinct(self):
-        """A public room with several related users should only be listed once."""
+    @mock.patch.object(PageNumberPagination, "get_page_size", return_value=2)
+    def test_api_rooms_list_pagination(self, _mock_page_size):
+        """Pagination should work as expected."""
         user = UserFactory()
-        other_user = UserFactory()
         jwt_token = AccessToken.for_user(user)
 
-        RoomFactory(is_public=True, users=[user, other_user])
+        rooms = RoomFactory.create_batch(3, is_public=True)
+        room_ids = [str(room.id) for room in rooms]
 
         response = self.client.get(
             "/api/rooms/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
         )
 
         self.assertEqual(response.status_code, 200)
-        results = response.json()
-        self.assertEqual(len(results), 1)
+        content = response.json()
+        self.assertEqual(content["count"], 3)
+        self.assertEqual(content["next"], "http://testserver/api/rooms/?page=2")
+        self.assertIsNone(content["previous"])
+
+        self.assertEqual(len(content["results"]), 2)
+        for item in content["results"]:
+            room_ids.remove(item["id"])
+
+        # Get page 2
+        response = self.client.get(
+            "/api/rooms/?page=2", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        content = response.json()
+
+        self.assertEqual(content["count"], 3)
+        self.assertIsNone(content["next"])
+        self.assertEqual(content["previous"], "http://testserver/api/rooms/")
+
+        self.assertEqual(len(content["results"]), 1)
+        room_ids.remove(content["results"][0]["id"])
+        self.assertEqual(room_ids, [])
+
+    def test_api_rooms_list_authenticated_distinct(self):
+        """A public room with several related users should only be listed once."""
+        user = UserFactory()
+        other_user = UserFactory()
+        jwt_token = AccessToken.for_user(user)
+
+        room = RoomFactory(is_public=True, users=[user, other_user])
+
+        response = self.client.get(
+            "/api/rooms/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        content = response.json()
+        self.assertEqual(len(content["results"]), 1)
+        self.assertEqual(content["results"][0]["id"], str(room.id))
 
     def test_api_rooms_retrieve_anonymous_private_pk(self):
         """

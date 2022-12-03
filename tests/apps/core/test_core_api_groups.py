@@ -1,6 +1,9 @@
 """
 Tests for Groups API endpoints in Magnify's core app.
 """
+from unittest import mock
+
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
 
@@ -21,7 +24,7 @@ class GroupsApiTestCase(APITestCase):
         )
 
     def test_api_groups_list_authenticated(self):
-        """Authenticated users should be able to list groups they are a administrators of."""
+        """Authenticated users should be able to list groups they are administrator of."""
         user = UserFactory()
         groups = GroupFactory.create_batch(2, administrators=[user])
         GroupFactory()
@@ -33,11 +36,52 @@ class GroupsApiTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        results = response.json()
+        results = response.json()["results"]
         self.assertEqual(len(results), 2)
         expected_ids = {str(g.id) for g in groups}
         results_id = {r["id"] for r in results}
         self.assertEqual(expected_ids, results_id)
+
+    @mock.patch.object(PageNumberPagination, "get_page_size", return_value=2)
+    def test_api_groups_list_pagination(self, _mock_page_size):
+        """Pagination should work as expected."""
+        user = UserFactory()
+        jwt_token = AccessToken.for_user(user)
+
+        groups = GroupFactory.create_batch(3, administrators=[user])
+        group_ids = [str(g.id) for g in groups]
+
+        # Get page 1
+        response = self.client.get(
+            "/api/groups/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        content = response.json()
+
+        self.assertEqual(content["count"], 3)
+        self.assertEqual(content["next"], "http://testserver/api/groups/?page=2")
+        self.assertIsNone(content["previous"])
+
+        self.assertEqual(len(content["results"]), 2)
+        for item in content["results"]:
+            group_ids.remove(item["id"])
+
+        # Get page 2
+        response = self.client.get(
+            "/api/groups/?page=2", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        content = response.json()
+
+        self.assertEqual(content["count"], 3)
+        self.assertIsNone(content["next"])
+        self.assertEqual(content["previous"], "http://testserver/api/groups/")
+
+        self.assertEqual(len(content["results"]), 1)
+        group_ids.remove(content["results"][0]["id"])
+        self.assertEqual(group_ids, [])
 
     def test_api_groups_retrieve_anonymous(self):
         """Anonymous users should not be allowed to retrieve a group."""
