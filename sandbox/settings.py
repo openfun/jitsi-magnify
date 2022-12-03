@@ -48,6 +48,8 @@ class DRFMixin:
             "rest_framework_simplejwt.authentication.JWTAuthentication",
             "rest_framework.authentication.SessionAuthentication",
         ),
+        "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+        "PAGE_SIZE": 100,
         "DEFAULT_VERSION": "1.0",
         "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
         "EXCEPTION_HANDLER": "magnify.apps.core.api.exception_handler",

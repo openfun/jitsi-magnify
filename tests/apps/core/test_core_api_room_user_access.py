@@ -2,8 +2,10 @@
 Tests for RoomUserAccesses API endpoints in Magnify's core app.
 """
 import random
+from unittest import mock
 from uuid import uuid4
 
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
 
@@ -59,7 +61,7 @@ class RoomUserAccessesApiTestCase(APITestCase):
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), [])
+        self.assertEqual(response.json()["results"], [])
 
     def test_api_room_user_accesses_list_authenticated_member(self):
         """
@@ -89,7 +91,7 @@ class RoomUserAccessesApiTestCase(APITestCase):
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), [])
+        self.assertEqual(response.json()["results"], [])
 
     def test_api_room_user_accesses_list_authenticated_administrator_direct(self):
         """
@@ -99,24 +101,38 @@ class RoomUserAccessesApiTestCase(APITestCase):
         user = UserFactory()
         jwt_token = AccessToken.for_user(user)
 
-        public_room = RoomFactory(is_public=True, users=[(user, "administrator")])
-        RoomUserAccessFactory(room=public_room)
-        RoomUserAccessFactory(room=public_room, role="member")
-        RoomUserAccessFactory(room=public_room, role="administrator")
-        RoomUserAccessFactory(room=public_room, role="owner")
+        public_room = RoomFactory(is_public=True)
+        public_room_accesses = (
+            # Access for the logged in user
+            RoomUserAccessFactory(room=public_room, user=user, role="administrator"),
+            # Accesses for other users
+            RoomUserAccessFactory(room=public_room),
+            RoomUserAccessFactory(room=public_room, role="member"),
+            RoomUserAccessFactory(room=public_room, role="administrator"),
+            RoomUserAccessFactory(room=public_room, role="owner"),
+        )
 
-        private_room = RoomFactory(is_public=False, users=[(user, "administrator")])
-        RoomUserAccessFactory(room=private_room)
-        RoomUserAccessFactory(room=private_room, role="member")
-        RoomUserAccessFactory(room=private_room, role="administrator")
-        RoomUserAccessFactory(room=private_room, role="owner")
-
+        private_room = RoomFactory(is_public=False)
+        private_room_accesses = (
+            # Access for the logged in user
+            RoomUserAccessFactory(room=private_room, user=user, role="administrator"),
+            # Accesses for other users
+            RoomUserAccessFactory(room=private_room),
+            RoomUserAccessFactory(room=private_room, role="member"),
+            RoomUserAccessFactory(room=private_room, role="administrator"),
+            RoomUserAccessFactory(room=private_room, role="owner"),
+        )
         response = self.client.get(
             "/api/room-user-accesses/",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), 10)
+        results = response.json()["results"]
+        self.assertEqual(len(results), 10)
+        self.assertCountEqual(
+            [item["id"] for item in results],
+            [str(access.id) for access in public_room_accesses + private_room_accesses],
+        )
 
     def test_api_room_user_accesses_list_authenticated_administrator_via_group(self):
         """
@@ -128,23 +144,31 @@ class RoomUserAccessesApiTestCase(APITestCase):
         jwt_token = AccessToken.for_user(user)
 
         public_room = RoomFactory(is_public=True, groups=[(group, "administrator")])
-        RoomUserAccessFactory(room=public_room)
-        RoomUserAccessFactory(room=public_room, role="member")
-        RoomUserAccessFactory(room=public_room, role="administrator")
-        RoomUserAccessFactory(room=public_room, role="owner")
+        public_room_accesses = (
+            RoomUserAccessFactory(room=public_room),
+            RoomUserAccessFactory(room=public_room, role="member"),
+            RoomUserAccessFactory(room=public_room, role="administrator"),
+            RoomUserAccessFactory(room=public_room, role="owner"),
+        )
 
         private_room = RoomFactory(is_public=False, groups=[(group, "administrator")])
-        RoomUserAccessFactory(room=private_room)
-        RoomUserAccessFactory(room=private_room, role="member")
-        RoomUserAccessFactory(room=private_room, role="administrator")
-        RoomUserAccessFactory(room=private_room, role="owner")
-
+        private_room_accesses = (
+            RoomUserAccessFactory(room=private_room),
+            RoomUserAccessFactory(room=private_room, role="member"),
+            RoomUserAccessFactory(room=private_room, role="administrator"),
+            RoomUserAccessFactory(room=private_room, role="owner"),
+        )
         response = self.client.get(
             "/api/room-user-accesses/",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), 8)
+        results = response.json()["results"]
+        self.assertEqual(len(results), 8)
+        self.assertCountEqual(
+            [item["id"] for item in results],
+            [str(access.id) for access in public_room_accesses + private_room_accesses],
+        )
 
     def test_api_room_user_accesses_list_authenticated_owner(self):
         """
@@ -154,24 +178,88 @@ class RoomUserAccessesApiTestCase(APITestCase):
         user = UserFactory()
         jwt_token = AccessToken.for_user(user)
 
-        public_room = RoomFactory(is_public=True, users=[(user, "owner")])
-        RoomUserAccessFactory(room=public_room)
-        RoomUserAccessFactory(room=public_room, role="member")
-        RoomUserAccessFactory(room=public_room, role="administrator")
-        RoomUserAccessFactory(room=public_room, role="owner")
+        public_room = RoomFactory(is_public=True)
+        public_room_accesses = (
+            # Access for the logged in user
+            RoomUserAccessFactory(room=public_room, user=user, role="owner"),
+            # Accesses for other users
+            RoomUserAccessFactory(room=public_room),
+            RoomUserAccessFactory(room=public_room, role="member"),
+            RoomUserAccessFactory(room=public_room, role="administrator"),
+            RoomUserAccessFactory(room=public_room, role="owner"),
+        )
+        private_room = RoomFactory(is_public=False)
+        private_room_accesses = (
+            # Access for the logged in user
+            RoomUserAccessFactory(room=private_room, user=user, role="owner"),
+            # Accesses for other users
+            RoomUserAccessFactory(room=private_room),
+            RoomUserAccessFactory(room=private_room, role="member"),
+            RoomUserAccessFactory(room=private_room, role="administrator"),
+            RoomUserAccessFactory(room=private_room, role="owner"),
+        )
+        response = self.client.get(
+            "/api/room-user-accesses/",
+            HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
+        )
+        self.assertEqual(response.status_code, 200)
+        results = response.json()["results"]
+        self.assertEqual(len(results), 10)
+        self.assertCountEqual(
+            [item["id"] for item in results],
+            [str(access.id) for access in public_room_accesses + private_room_accesses],
+        )
 
-        private_room = RoomFactory(is_public=False, users=[(user, "owner")])
-        RoomUserAccessFactory(room=private_room)
-        RoomUserAccessFactory(room=private_room, role="member")
-        RoomUserAccessFactory(room=private_room, role="administrator")
-        RoomUserAccessFactory(room=private_room, role="owner")
+    @mock.patch.object(PageNumberPagination, "get_page_size", return_value=2)
+    def test_api_room_user_accesses_list_pagination(self, _mock_page_size):
+        """Pagination should work as expected."""
+
+        user = UserFactory()
+        jwt_token = AccessToken.for_user(user)
+
+        room = RoomFactory()
+        accesses = [
+            RoomUserAccessFactory(
+                room=room, user=user, role=random.choice(["administrator", "owner"])
+            ),
+            *RoomUserAccessFactory.create_batch(2, room=room),
+        ]
+        access_ids = [str(access.id) for access in accesses]
 
         response = self.client.get(
             "/api/room-user-accesses/",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), 10)
+        content = response.json()
+
+        self.assertEqual(content["count"], 3)
+        self.assertEqual(
+            content["next"], "http://testserver/api/room-user-accesses/?page=2"
+        )
+        self.assertIsNone(content["previous"])
+
+        self.assertEqual(len(content["results"]), 2)
+        for item in content["results"]:
+            access_ids.remove(item["id"])
+
+        # Get page 2
+        response = self.client.get(
+            "/api/room-user-accesses/?page=2", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        content = response.json()
+
+        self.assertEqual(content["count"], 3)
+        self.assertIsNone(content["next"])
+        self.assertEqual(
+            content["previous"], "http://testserver/api/room-user-accesses/"
+        )
+
+        self.assertEqual(len(content["results"]), 1)
+        access_ids.remove(content["results"][0]["id"])
+        self.assertEqual(access_ids, [])
 
     # Retrieve
 
