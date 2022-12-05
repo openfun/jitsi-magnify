@@ -2,10 +2,11 @@ import { defineMessages } from '@formatjs/intl';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Box, Button, ButtonExtendedProps, Card, Menu, Notification, Spinner, Text } from 'grommet';
-import { Configure, FormTrash, MoreVertical } from 'grommet-icons';
+import { Configure, FormTrash, MoreVertical, Clone } from 'grommet-icons';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
+import { useNotification } from '../../../context';
 import { useModal } from '../../../context/modals';
 import { useRouting } from '../../../context/routing';
 import { useIsSmallSize } from '../../../hooks/useIsMobile';
@@ -50,6 +51,16 @@ const messages = defineMessages({
     defaultMessage: 'Deleting a room',
     description: 'Title modal for delete action',
   },
+  copyRoomLink: {
+    id: 'components.rooms.RoomRow.copyRoomLink',
+    defaultMessage: 'Copy link',
+    description: 'Copy room link to the clipboard',
+  },
+  roomLinkWasCopied: {
+    id: 'components.rooms.RoomRow.roomLinkWasCopied',
+    defaultMessage: 'Room link copied to clipboard!',
+    description: 'The link of the room was successfully copied',
+  },
 });
 
 export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
@@ -59,6 +70,8 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
   const isSmallSize = useIsSmallSize();
   const modals = useModal();
   const queryClient = useQueryClient();
+
+  const notification = useNotification();
 
   const { mutate, isLoading } = useMutation(
     async (roomId: string) => {
@@ -95,11 +108,44 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
     });
   };
 
+  const copyLinkToClipboard = (): void => {
+    navigator.clipboard.writeText(window.location.origin + '/' + room.slug).then(
+      () => {
+        notification.showNotification({
+          status: 'info',
+          title: intl.formatMessage(messages.roomLinkWasCopied),
+        });
+      },
+      () => {},
+    );
+  };
+
   const getMoreActionsItems = (): ButtonExtendedProps[] => {
-    const result: ButtonExtendedProps[] = [];
+    const defaultButtonsProps: ButtonExtendedProps[] = [
+      {
+        icon: <Clone size={'small'} />,
+        label: (
+          <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+            {intl.formatMessage(messages.copyRoomLink)}
+          </Box>
+        ),
+        onClick: copyLinkToClipboard,
+      },
+      {
+        icon: <FormTrash />,
+        label: (
+          <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+            {intl.formatMessage(commonMessages.delete)}
+          </Box>
+        ),
+        onClick: openDeleteModal,
+      },
+    ];
+
+    let result: ButtonExtendedProps[] = [];
 
     if (room.is_administrable) {
-      result.push({
+      const settingsButtonProps: ButtonExtendedProps = {
         icon: (
           <Box alignSelf={'center'}>
             <Configure size={'14px'} />
@@ -111,18 +157,11 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
           </Box>
         ),
         onClick: () => routing.goToRoomSettings(room.id),
-      });
+      };
+
+      result = [settingsButtonProps].concat(defaultButtonsProps);
     }
 
-    result.push({
-      icon: <FormTrash />,
-      label: (
-        <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
-          {intl.formatMessage(commonMessages.delete)}
-        </Box>
-      ),
-      onClick: openDeleteModal,
-    });
     return result;
   };
 
