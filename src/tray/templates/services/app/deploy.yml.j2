@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  labels:
+    app: magnify
+    service: magnify
+    version: "{{ magnify_image_tag }}"
+    deployment_stamp: "{{ deployment_stamp }}"
+  name: "magnify-app-{{ deployment_stamp }}"
+  namespace: "{{ namespace_name }}"
+spec:
+  replicas: {{ magnify_app_replicas }}
+  selector:
+    matchLabels:
+      app: magnify
+      service: magnify
+      version: "{{ magnify_image_tag }}"
+      deployment: "magnify-app-{{ deployment_stamp }}"
+      deployment_stamp: "{{ deployment_stamp }}"
+  template:
+    metadata:
+      labels:
+        app: magnify
+        service: magnify
+        version: "{{ magnify_image_tag }}"
+        deployment: "magnify-app-{{ deployment_stamp }}"
+        deployment_stamp: "{{ deployment_stamp }}"
+    spec:
+      # Prefer running pods on different nodes for redundancy
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: deployment
+                      operator: In
+                      values:
+                        - "magnify-app-{{ deployment_stamp }}"
+                topologyKey: kubernetes.io/hostname
+{% set image_pull_secret_name = magnify_image_pull_secret_name | default(none) or default_image_pull_secret_name %}
+{% if image_pull_secret_name is not none %}
+      imagePullSecrets:
+        - name: "{{ image_pull_secret_name }}"
+{% endif %}
+      containers:
+        - name: magnify
+          image: "{{ magnify_image_name }}:{{ magnify_image_tag }}"
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /__heartbeat__
+              port: {{ magnify_django_port }}
+              httpHeaders:
+                - name: Host
+                  value: "{{ magnify_host }}"
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /__lbheartbeat__
+              port: {{ magnify_django_port }}
+              httpHeaders:
+                - name: Host
+                  value: "{{ magnify_host }}"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          env:
+            - name: DB_HOST
+              value: "magnify-{{ magnify_database_host }}-{{ deployment_stamp }}"
+            - name: DB_NAME
+              value: "{{ magnify_database_name }}"
+            - name: DB_PORT
+              value: "{{ magnify_database_port }}"
+            - name: DJANGO_ALLOWED_HOSTS
+              value: "{{ magnify_host }}"
+            - name: DJANGO_CONFIGURATION
+              value: "{{ magnify_django_configuration }}"
+            - name: DJANGO_SETTINGS_MODULE
+              value: magnify.settings
+          envFrom:
+            - secretRef:
+                name: "{{ magnify_secret_name }}"
+            - configMapRef:
+                name: "magnify-app-dotenv-{{ deployment_stamp }}"
+          resources: {{ magnify_app_resources }}
+      securityContext:
+        runAsUser: {{ container_uid }}
+        runAsGroup: {{ container_gid }}

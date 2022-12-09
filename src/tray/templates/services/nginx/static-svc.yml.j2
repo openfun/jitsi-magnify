@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: magnify
+    service: nginx
+    deployment_stamp: "{{ deployment_stamp }}"
+    service_prefix: "{{ prefix }}"
+    type: static-service
+    removable: "no"
+  name: "magnify-nginx-{{ prefix }}"
+  namespace: "{{ namespace_name }}"
+spec:
+  ports:
+    - name: {{ magnify_nginx_port }}-tcp
+      port: {{ magnify_nginx_port }}
+      protocol: TCP
+      targetPort: {{ magnify_nginx_port }}
+    - name: "{{ magnify_nginx_healthcheck_port }}-tcp"
+      port: {{ magnify_nginx_healthcheck_port }}
+      protocol: TCP
+      targetPort: {{ magnify_nginx_healthcheck_port }}
+  selector:
+    app: magnify
+    deployment: "magnify-nginx-{{ deployment_stamp | default('undefined', true) }}"
+  type: ClusterIP

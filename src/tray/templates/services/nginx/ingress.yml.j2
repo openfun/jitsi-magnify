@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: "{{ namespace_name }}"
+  name: "magnify-nginx-{{ prefix }}"
+  labels:
+    env_type: "{{ env_type }}"
+    customer: "{{ customer }}"
+    app: "magnify"
+    service: "nginx"
+    route_prefix: "{{ prefix }}"
+    route_target_service: "app"
+  annotations:
+{% if prefix in acme_enabled_route_prefix %}
+    cert-manager.io/issuer: "{{ acme_issuer_name }}"
+{% endif %}
+spec:
+  rules:
+  - host: "{{ magnify_host | blue_green_host(prefix) }}"
+    http:
+      paths:
+      - backend:
+          service:
+            name: "magnify-nginx-{{ prefix }}"
+            port:
+              number: {{ magnify_nginx_port }}
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "{{ magnify_host | blue_green_host(prefix) }}"
+    secretName: "magnify-app-tls-{{ prefix }}-{{ acme_env }}"

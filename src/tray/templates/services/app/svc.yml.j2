@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: magnify
+    service: app
+    version: "{{ magnify_image_tag }}"
+    deployment_stamp: "{{ deployment_stamp }}"
+  name: magnify-app-{{ deployment_stamp }}  # name of the service should be host name in nginx
+  namespace: "{{ namespace_name }}"
+spec:
+  ports:
+  - name: {{ magnify_django_port }}-tcp
+    port: {{ magnify_django_port }}
+    protocol: TCP
+    targetPort: {{ magnify_django_port }}
+  selector:
+    app: magnify
+    deployment: "magnify-app-{{ deployment_stamp }}"
+  type: ClusterIP
