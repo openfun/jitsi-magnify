@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import { withRouter } from 'storybook-addon-react-router-v6';
-import createRandomMeeting from '../../../factories/meetings';
+import {createRandomMeeting} from '../../../factories/meetings';
 import createRandomRoom from '../../../factories/rooms';
 import { Meeting } from '../../../types/entities/meeting';
 import MeetingRow, { MeetingRowProps } from './MeetingRow';

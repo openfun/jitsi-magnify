@@ -41,15 +41,16 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
       goToAccount: () => console.log('goToAccount'),
       goToJitsiRoom: () => console.log('goToJitsiRoom'),
       goToRoomsList: () => console.log('goToRoomsList'),
+      goToMeetingList: () => console.log('goToRoomsList'),
       goToRoomSettings: () => console.log('goToRoomSettings'),
     };
   };
 
   return (
-    <TranslationProvider defaultLocale="en-US" initTranslation={false} locale={locale}>
+    <TranslationProvider defaultLocale="en" initTranslation={false} locale={'en'}>
       <FormErrors />
       <RoutingContextProvider routes={getRouter()}>
-        <Grommet full theme={defaultTheme}>
+        <Grommet theme={defaultTheme}>
           <QueryClientProvider client={queryClient}>
             <ReactQueryDevtools initialIsOpen={false} />
             <AuthContextProvider

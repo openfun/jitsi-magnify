@@ -9,6 +9,7 @@ export interface RoutingContextInterface {
   goToAccount: () => void;
   goToJitsiRoom: (roomId: string) => void;
   goToRoomsList: () => void;
+  goToMeetingList: () => void;
   goToRoomSettings: (roomId?: string) => void;
 }
 

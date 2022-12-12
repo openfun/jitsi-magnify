@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AccountPath } from '../../utils/routes/account';
 import { AuthPath } from '../../utils/routes/auth';
 import { JitsiPath } from '../../utils/routes/jitsi';
+import { MeetingsPath } from '../../utils/routes/meetings';
 import { RoomsPath } from '../../utils/routes/rooms';
 import { RootPath } from '../../utils/routes/root';
 
@@ -26,6 +27,7 @@ export const DefaultProvider = ({ ...props }: DefaultProviderProps) => {
           navigate(JitsiPath.WEB_CONF.replace(':id', roomId));
         },
         goToRoomsList: () => navigate(RoomsPath.ROOMS),
+        goToMeetingList: () => navigate(MeetingsPath.MEETINGS),
         goToRoomSettings: (roomId?: string) => {
           if (roomId) {
             navigate(RoomsPath.ROOMS_SETTINGS.replace(':id', roomId));

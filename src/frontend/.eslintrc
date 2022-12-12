@@ -3,9 +3,9 @@
                 "eslint:recommended",
                 "plugin:jsx-a11y/recommended",
                 "plugin:prettier/recommended",
-                "plugin:react/recommended"
+        
         ],
-        "plugins": ["@typescript-eslint","import","jsx-a11y","react"],
+        "plugins": ["@typescript-eslint","import","jsx-a11y"],
         "rules": {
                 "prettier/prettier": "error",
                 "arrow-body-style": "off",

@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import createRandomMeeting from '../../../factories/meetings';
-import MyMeetings from './MyMeetings';
+import { createRandomMeeting } from '../../../factories/meetings';
+import { MyMeetings } from './MyMeetings';
 
 export default {
   title: 'Meetings/MyMeetings',

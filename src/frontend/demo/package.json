@@ -8,7 +8,7 @@
     "@jitsi-magnify/core": "0.1.0",
     "@jitsi/react-sdk": "1.1.0",
     "@tanstack/react-query": "4.7.2",
-    "@tanstack/react-query-devtools": "^4.8.0",
+    "@tanstack/react-query-devtools": "4.8.0",
     "axios": "0.27.2",
     "grommet": "2.25.3",
     "polished": "4.2.2",
@@ -21,7 +21,9 @@
     "stream-browserify": "3.0.0",
     "styled-components": "5.3.5",
     "validator": "13.7.0",
-    "web-vitals": "2.1.0"
+    "web-vitals": "2.1.0",
+    "@types/react-time-picker": "4.0.2",
+    "react-time-picker": "5.1.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "5.16.4",

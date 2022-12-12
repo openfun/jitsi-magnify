@@ -10,6 +10,7 @@ import {
 import { getAccountRoutes } from '../../utils/routes/account';
 import { getAuthRoute } from '../../utils/routes/auth';
 import { getJitsiRoutes } from '../../utils/routes/jitsi';
+import { getMeetingsRoutes } from '../../utils/routes/meetings';
 import { getRoomsRoutes, RoomsPath } from '../../utils/routes/rooms';
 import { getRootRoute } from '../../utils/routes/root';
 import { DefaultProvider } from '../DefaultProvider';
@@ -31,6 +32,7 @@ export const AppRouter = () => {
             { path: '/app/meetings', element: <Navigate to={RoomsPath.ROOMS} /> },
             { ...getAccountRoutes(intl) },
             { ...getRoomsRoutes(intl) },
+            { ...getMeetingsRoutes(intl) },
           ]),
         },
         { ...getAuthRoute() },

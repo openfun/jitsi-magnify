@@ -24,7 +24,7 @@ export interface MyMeetingsProps {
   meetings: Meeting[] | undefined;
 }
 
-const MyMeetings = ({ meetings = [] }: MyMeetingsProps) => {
+export const MyMeetings = ({ meetings = [] }: MyMeetingsProps) => {
   const intl = useTranslations();
   return (
     <Card background={'white'} gap={'small'} pad={'medium'}>
@@ -49,5 +49,3 @@ const MyMeetings = ({ meetings = [] }: MyMeetingsProps) => {
     </Card>
   );
 };
-
-export default MyMeetings;

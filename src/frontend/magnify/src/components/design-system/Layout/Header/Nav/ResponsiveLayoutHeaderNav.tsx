@@ -1,5 +1,5 @@
 import { Box } from 'grommet';
-import { AppsRounded } from 'grommet-icons';
+import { AppsRounded, Calendar } from 'grommet-icons';
 import * as React from 'react';
 import { FunctionComponent } from 'react';
 import { useRouting } from '../../../../../context/routing';
@@ -22,6 +22,11 @@ export const ResponsiveLayoutHeaderNav: FunctionComponent<ResponsiveLayoutHeader
       icon: <AppsRounded aria-label={''} color={'plain'} size={'18px'} />,
       label: 'Rooms',
       goToRoute: routing.goToRoomsList,
+    },
+    {
+      icon: <Calendar aria-label={''} color={'plain'} size={'18px'} />,
+      label: 'Meetings',
+      goToRoute: routing.goToMeetingList,
     },
   ];
 

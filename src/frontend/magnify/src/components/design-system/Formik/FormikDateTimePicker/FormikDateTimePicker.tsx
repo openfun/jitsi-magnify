@@ -24,6 +24,7 @@ const FormikDateTimePicker: FunctionComponent<formikDateTimePickerProps> = ({ ..
   const [timeField] = useField(props.timeName);
 
   const formikContext = useFormikContext();
+
   const intl = useIntl();
   Settings.defaultLocale = intl.locale;
 
@@ -36,6 +37,7 @@ const FormikDateTimePicker: FunctionComponent<formikDateTimePickerProps> = ({ ..
 
   const onTimeChange = (value: string | undefined) => {
     formikContext.setFieldValue(props.timeName, value ? value.toString() : undefined);
+
     setOpen(false);
   };
 
@@ -53,8 +55,11 @@ const FormikDateTimePicker: FunctionComponent<formikDateTimePickerProps> = ({ ..
   };
 
   React.useEffect(() => {
-    console.log(formikContext.errors, formikContext.values);
-  }, [formikContext.values, formikContext.errors]);
+    if (timeField.value === undefined || timeField.value.length === 0) {
+      return;
+    }
+    formikContext.setFieldTouched(props.timeName, true);
+  }, [timeField.value]);
 
   const suggestionButtons = props.localTimeSuggestions.map((value: string, index: number) => (
     <SuggestionButton
