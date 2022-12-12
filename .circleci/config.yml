@@ -23,8 +23,8 @@ aliases:
     restore_cache:
       name: Restore node_modules cache
       keys:
-        - v10-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
-        - v10-front-dependencies-
+        - v11-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
+        - v11-front-dependencies-
 
 jobs:
   # Git jobs
@@ -494,7 +494,7 @@ jobs:
             - ./node_modules
             - ./magnify/node_modules
             - ./demo/node_modules
-          key: v10-front-dependencies-{{ checksum "yarn.lock" }}
+          key: v11-front-dependencies-{{ checksum "yarn.lock" }}
 
   lint-front:
     docker:
