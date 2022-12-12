@@ -128,7 +128,7 @@ class MeetingUserFactory(factory.django.DjangoModelFactory):
 
     meeting = factory.SubFactory(MeetingFactory)
     user = factory.SubFactory(UserFactory)
-    role = fuzzy.FuzzyChoice(core_models.UserRoleChoices.values)
+    role = fuzzy.FuzzyChoice(core_models.RoleChoices.values)
 
 
 class MeetingGroupAccessFactory(factory.django.DjangoModelFactory):
@@ -187,7 +187,7 @@ class RoomUserAccessFactory(factory.django.DjangoModelFactory):
 
     room = factory.SubFactory(RoomFactory)
     user = factory.SubFactory(UserFactory)
-    role = fuzzy.FuzzyChoice(core_models.UserRoleChoices.values)
+    role = fuzzy.FuzzyChoice(core_models.RoleChoices.values)
 
 
 class RoomGroupAccessFactory(factory.django.DjangoModelFactory):

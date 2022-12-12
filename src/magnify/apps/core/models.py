@@ -21,19 +21,29 @@ from dateutil.relativedelta import relativedelta
 from .utils import get_nth_week_number, get_weekday_in_nth_week
 
 
-class UserRoleChoices(models.TextChoices):
-    """Choices for user roles."""
+class RoleChoices(models.TextChoices):
+    """Role choices ."""
 
-    OWNER = "owner"
-    ADMIN = "administrator"
-    MEMBER = "member"
+    MEMBER = "member", _("Member")
+    ADMIN = "administrator", _("Administrator")
+    OWNER = "owner", _("Owner")
+
+    @classmethod
+    def check_administrator_role(cls, role):
+        """Check if a role is administrator."""
+        return role in [cls.ADMIN, cls.OWNER]
+
+    @classmethod
+    def check_owner_role(cls, role):
+        """Check if a role is owner."""
+        return role == cls.OWNER
 
 
-class GroupRoleChoices(models.TextChoices):
-    """Choices for group roles."""
-
-    ADMIN = "administrator"
-    MEMBER = "member"
+# Group roles do not have the "owner" role
+GroupRoleChoices = models.TextChoices(
+    "GroupRoleChoices",
+    [(rc.name, rc.value) for rc in RoleChoices if rc.value != RoleChoices.OWNER],
+)
 
 
 class BaseModel(models.Model):
@@ -235,39 +245,48 @@ class Room(BaseModel):
         """The name used for the room in Jitsi."""
         return f"{self.slug:s}-{self.id!s}"
 
+    def get_role(self, user, direct_only=False):
+        """
+        Determine the role of a given user in this room.
+
+        direct_only: boolean
+            Whether or not to take into account the roles a user inherits from
+            its membership in a group.
+        """
+        if not user or not user.is_authenticated:
+            return None
+
+        try:
+            # pylint: disable=no-member
+            role = self.user_accesses.get(user=user).role
+        except self.user_accesses.model.DoesNotExist:
+            role = None
+
+        if direct_only or role not in (None, RoleChoices.MEMBER):
+            return role
+
+        for access in self.group_accesses.filter(
+            Q(group__members=user) | Q(group__administrators=user),
+        ):
+            if access.role == GroupRoleChoices.MEMBER:
+                role = GroupRoleChoices.MEMBER
+            if access.role == GroupRoleChoices.ADMIN:
+                role = GroupRoleChoices.ADMIN
+                break
+
+        return role
+
     def is_administrator(self, user):
         """
         Check if a user is administrator of the room.
 
         Users carrying the "owner" role are considered as administrators a fortiori.
         """
-        if not user or not user.is_authenticated:
-            return False
-
-        return (
-            self.user_accesses.filter(
-                role__in=[UserRoleChoices.ADMIN, UserRoleChoices.OWNER], user=user
-            ).exists()
-            or self.group_accesses.filter(
-                Q(group__members=user) | Q(group__administrators=user),
-                role=GroupRoleChoices.ADMIN,
-            ).exists()
-        )
+        return RoleChoices.check_administrator_role(self.get_role(user))
 
     def is_owner(self, user):
         """Check if a user is owner of the room."""
-        if not user or not user.is_authenticated:
-            return False
-
-        return self.user_accesses.filter(role=UserRoleChoices.OWNER, user=user).exists()
-
-    def has_access(self, user):
-        """Check if a user has access to the room."""
-        return self.user_accesses.filter(
-            user=user
-        ).exists() or self.group_accesses.filter(
-            Q(group__members=user) | Q(group__administrators=user)
-        )
+        return RoleChoices.check_owner_role(self.get_role(user, direct_only=True))
 
 
 class RoomUserAccess(BaseModel):
@@ -282,7 +301,7 @@ class RoomUserAccess(BaseModel):
         Room, on_delete=models.CASCADE, related_name="user_accesses"
     )
     role = models.CharField(
-        max_length=20, choices=UserRoleChoices.choices, default=UserRoleChoices.MEMBER
+        max_length=20, choices=RoleChoices.choices, default=RoleChoices.MEMBER
     )
 
     class Meta:
@@ -299,9 +318,9 @@ class RoomUserAccess(BaseModel):
 
     def save(self, *args, **kwargs):
         """Make sure we keep at least one owner in a room."""
-        if self.pk and self.role != UserRoleChoices.OWNER:
+        if self.pk and self.role != RoleChoices.OWNER:
             accesses = self._meta.model.objects.filter(
-                room=self.room, role=UserRoleChoices.OWNER
+                room=self.room, role=RoleChoices.OWNER
             ).only("pk")
             if len(accesses) == 1 and accesses[0].pk == self.pk:
                 raise PermissionDenied("A room should keep at least one owner.")
@@ -310,9 +329,9 @@ class RoomUserAccess(BaseModel):
     def delete(self, *args, **kwargs):
         """Disallow deleting the last of the Mohicans."""
         if (
-            self.role == UserRoleChoices.OWNER
+            self.role == RoleChoices.OWNER
             and self._meta.model.objects.filter(
-                room=self.room, role=UserRoleChoices.OWNER
+                room=self.room, role=RoleChoices.OWNER
             ).count()
             == 1
         ):
@@ -584,7 +603,7 @@ class MeetingUserAccess(BaseModel):
         Meeting, on_delete=models.CASCADE, related_name="user_accesses"
     )
     role = models.CharField(
-        max_length=20, choices=UserRoleChoices.choices, default=UserRoleChoices.MEMBER
+        max_length=20, choices=RoleChoices.choices, default=RoleChoices.MEMBER
     )
 
     class Meta:

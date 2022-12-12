@@ -24,7 +24,7 @@ class MeetingUserAccessModelsTestCase(TestCase):
         access = MeetingUserFactory(
             meeting__name="my meeting", user__name="François", role="administrator"
         )
-        self.assertEqual(str(access), "My meeting / François (Admin)")
+        self.assertEqual(str(access), "My meeting / François (Administrator)")
 
     def test_models_meeting_user_access_str_owner(self):
         """The str representation for an admin user should include the mention."""

@@ -27,15 +27,15 @@ class RoomAccessSerializerMixin:
             # Update
             self.instance
             and (
-                data["role"] == models.UserRoleChoices.OWNER
+                data["role"] == models.RoleChoices.OWNER
                 and not self.instance.room.is_owner(user)
-                or self.instance.role == models.UserRoleChoices.OWNER
+                or self.instance.role == models.RoleChoices.OWNER
                 and not self.instance.user == user
             )
         ) or (
             # Create
             not self.instance
-            and data.get("role") == models.UserRoleChoices.OWNER
+            and data.get("role") == models.RoleChoices.OWNER
             and not data["room"].is_owner(user)
         ):
             raise exceptions.PermissionDenied(
@@ -116,14 +116,21 @@ class RoomSerializer(serializers.ModelSerializer):
 
         if not request:
             return output
-        user = request.user
 
-        if is_admin := instance.is_administrator(user):
+        user = request.user
+        role = instance.get_role(user)
+        is_admin = models.RoleChoices.check_administrator_role(role)
+
+        if role is not None:
             groups_serializer = RoomGroupAccessSerializer(
-                instance.group_accesses.all(), context=self.context, many=True
+                instance.group_accesses.select_related("room", "group").all(),
+                context=self.context,
+                many=True,
             )
             users_serializer = NestedRoomUserAccessSerializer(
-                instance.user_accesses.all(), context=self.context, many=True
+                instance.user_accesses.select_related("room", "user").all(),
+                context=self.context,
+                many=True,
             )
             output.update(
                 {
@@ -131,14 +138,15 @@ class RoomSerializer(serializers.ModelSerializer):
                     "group_accesses": groups_serializer.data,
                 }
             )
-        else:
-            del output["configuration"]
-        output["is_administrable"] = is_admin
 
-        if instance.is_public or (user.is_authenticated and instance.has_access(user)):
+        if not is_admin:
+            del output["configuration"]
+
+        if role is not None or instance.is_public:
             output["jitsi"] = {
                 "room": instance.jitsi_name,
                 "token": generate_token(user, instance.jitsi_name, is_admin=is_admin),
             }
+        output["is_administrable"] = is_admin
 
         return output
