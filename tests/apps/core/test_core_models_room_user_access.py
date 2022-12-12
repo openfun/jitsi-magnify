@@ -24,7 +24,7 @@ class RoomUserAccessesModelsTestCase(TestCase):
         access = RoomUserAccessFactory(
             room__name="my room", user__name="François", role="administrator"
         )
-        self.assertEqual(str(access), "My room / François (Admin)")
+        self.assertEqual(str(access), "My room / François (Administrator)")
 
     def test_models_room_user_accesses_str_owner(self):
         """The str representation for an admin user should include the mention."""

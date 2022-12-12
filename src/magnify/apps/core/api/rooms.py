@@ -95,7 +95,7 @@ class RoomViewSet(
         """Set the current user as owner of the newly created room."""
         room = serializer.save()
         models.RoomUserAccess.objects.create(
-            room=room, user=self.request.user, role=models.UserRoleChoices.OWNER
+            room=room, user=self.request.user, role=models.RoleChoices.OWNER
         )
 
     @drf_decorators.action(
@@ -184,8 +184,8 @@ class RoomAccessListModelMixin:
                 Q(
                     room__user_accesses__user=user,
                     room__user_accesses__role__in=[
-                        models.UserRoleChoices.ADMIN,
-                        models.UserRoleChoices.OWNER,
+                        models.RoleChoices.ADMIN,
+                        models.RoleChoices.OWNER,
                     ],
                 )
                 | Q(

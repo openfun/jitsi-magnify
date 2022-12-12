@@ -351,7 +351,165 @@ class RoomsApiTestCase(APITestCase):
     @mock.patch(
         "magnify.apps.core.serializers.rooms.generate_token", return_value="the token"
     )
-    def test_api_rooms_retrieve_administrator_direct(self, mock_token):
+    def test_api_rooms_retrieve_members_direct(self, mock_token):
+        """
+        Users who are direct members of a room should be allowed to see related users and groups.
+        """
+        user = UserFactory()
+        other_user = UserFactory()
+        group = GroupFactory()
+        room = RoomFactory()
+        user_access = RoomUserAccessFactory(room=room, user=user, role="member")
+        other_user_access = RoomUserAccessFactory(
+            room=room, user=other_user, role="member"
+        )
+        group_access = RoomGroupAccessFactory(room=room, group=group)
+        jwt_token = AccessToken.for_user(user)
+
+        with self.assertNumQueries(6):
+            response = self.client.get(
+                f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+            )
+        self.assertEqual(response.status_code, 200)
+        content_dict = response.json()
+        # Access objects order is uncertain and we don't care
+        self.assertCountEqual(
+            content_dict.pop("user_accesses"),
+            [
+                {
+                    "id": str(user_access.id),
+                    "user": {
+                        "id": str(user_access.user.id),
+                        # Email is visible only by self
+                        "email": user_access.user.email,
+                        "language": user_access.user.language,
+                        "name": user_access.user.name,
+                        "username": user_access.user.username,
+                    },
+                    "room": str(room.id),
+                    "role": user_access.role,
+                },
+                {
+                    "id": str(other_user_access.id),
+                    "user": {
+                        "id": str(other_user_access.user.id),
+                        "language": other_user_access.user.language,
+                        "name": other_user_access.user.name,
+                        "username": other_user_access.user.username,
+                    },
+                    "room": str(room.id),
+                    "role": other_user_access.role,
+                },
+            ],
+        )
+        self.assertEqual(
+            content_dict,
+            {
+                "id": str(room.id),
+                "group_accesses": [
+                    {
+                        "id": str(group_access.id),
+                        "group": str(group.id),
+                        "room": str(room.id),
+                        "role": group_access.role,
+                    }
+                ],
+                "is_administrable": False,
+                "is_public": room.is_public,
+                "jitsi": {
+                    "room": f"{room.slug:s}-{room.id!s}",
+                    "token": "the token",
+                },
+                "name": room.name,
+                "slug": room.slug,
+            },
+        )
+        mock_token.assert_called_once_with(
+            user, f"{room.slug:s}-{room.id!s}", is_admin=False
+        )
+
+    @mock.patch(
+        "magnify.apps.core.serializers.rooms.generate_token", return_value="the token"
+    )
+    def test_api_rooms_retrieve_members_via_group(self, mock_token):
+        """
+        Users who are members of a room via a group should be allowed to see related
+        users and groups.
+        """
+        user = UserFactory()
+        group = GroupFactory(members=[user])
+        other_user = UserFactory()
+        other_group = GroupFactory()
+        room = RoomFactory()
+        group_access = RoomGroupAccessFactory(room=room, group=group, role="member")
+        other_user_access = RoomUserAccessFactory(
+            room=room, user=other_user, role="member"
+        )
+        other_group_access = RoomGroupAccessFactory(room=room, group=other_group)
+        jwt_token = AccessToken.for_user(user)
+
+        with self.assertNumQueries(6):
+            response = self.client.get(
+                f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
+            )
+        self.assertEqual(response.status_code, 200)
+        content_dict = response.json()
+        # Access objects order is uncertain and we don't care
+        self.assertCountEqual(
+            content_dict.pop("user_accesses"),
+            [
+                {
+                    "id": str(other_user_access.id),
+                    "user": {
+                        "id": str(other_user_access.user.id),
+                        "language": other_user_access.user.language,
+                        "name": other_user_access.user.name,
+                        "username": other_user_access.user.username,
+                    },
+                    "room": str(room.id),
+                    "role": other_user_access.role,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            content_dict.pop("group_accesses"),
+            [
+                {
+                    "id": str(group_access.id),
+                    "group": str(group.id),
+                    "room": str(room.id),
+                    "role": group_access.role,
+                },
+                {
+                    "id": str(other_group_access.id),
+                    "group": str(other_group.id),
+                    "room": str(room.id),
+                    "role": other_group_access.role,
+                },
+            ],
+        )
+        self.assertEqual(
+            content_dict,
+            {
+                "id": str(room.id),
+                "is_administrable": False,
+                "is_public": room.is_public,
+                "jitsi": {
+                    "room": f"{room.slug:s}-{room.id!s}",
+                    "token": "the token",
+                },
+                "name": room.name,
+                "slug": room.slug,
+            },
+        )
+        mock_token.assert_called_once_with(
+            user, f"{room.slug:s}-{room.id!s}", is_admin=False
+        )
+
+    @mock.patch(
+        "magnify.apps.core.serializers.rooms.generate_token", return_value="the token"
+    )
+    def test_api_rooms_retrieve_administrators_direct(self, mock_token):
         """
         A user who is a direct administrator or owner of a room should be allowed to see related
         users and groups.
@@ -369,8 +527,7 @@ class RoomsApiTestCase(APITestCase):
         group_access = RoomGroupAccessFactory(room=room, group=group)
         jwt_token = AccessToken.for_user(user)
 
-        expected_number_of_queries = 7 if room.is_public else 8
-        with self.assertNumQueries(expected_number_of_queries):
+        with self.assertNumQueries(5):
             response = self.client.get(
                 f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
             )
@@ -436,7 +593,7 @@ class RoomsApiTestCase(APITestCase):
     @mock.patch(
         "magnify.apps.core.serializers.rooms.generate_token", return_value="the token"
     )
-    def test_api_rooms_retrieve_administrator_via_group(self, mock_token):
+    def test_api_rooms_retrieve_administrators_via_group(self, mock_token):
         """
         A user who is administrator of a room via a group should be allowed to see
         related users and groups.
@@ -572,8 +729,11 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(room.name, "Old name")
         self.assertEqual(room.slug, "old-name")
 
-    def test_api_rooms_update_related_users(self):
-        """Users related to a room but not administrators should not be allowed to update it."""
+    def test_api_rooms_update_members_direct(self):
+        """
+        Users who are direct members of a room but not administrators should
+        not be allowed to update it.
+        """
         user = UserFactory()
         room = RoomFactory(name="Old name", users=[(user, "member")])
         jwt_token = AccessToken.for_user(user)
@@ -597,10 +757,10 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(room.is_public, not new_is_public)
         self.assertEqual(room.configuration, {})
 
-    def test_api_rooms_update_related_groups(self):
+    def test_api_rooms_update_members_via_group(self):
         """
-        Users related to a room via a group but not administrators should not be allowed
-        to update it.
+        User who are members of a room via a group but not administrators should
+        not be allowed to update it.
         """
         user = UserFactory()
         group = GroupFactory(members=[user])
@@ -626,7 +786,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(room.is_public, not new_is_public)
         self.assertEqual(room.configuration, {})
 
-    def test_api_rooms_update_administrator_users(self):
+    def test_api_rooms_update_administratorss_direct(self):
         """Direct administrators or owners of a room should be allowed to update it."""
         user = UserFactory()
         room = RoomFactory(users=[(user, random.choice(["administrator", "owner"]))])
@@ -651,7 +811,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(room.is_public, new_is_public)
         self.assertEqual(room.configuration, {"the_key": "the_value"})
 
-    def test_api_rooms_update_administrator_groups(self):
+    def test_api_rooms_update_administrators_via_group(self):
         """
         Users who are administrators of a room via a group should be allowed
         to update it.
@@ -680,7 +840,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(room.is_public, new_is_public)
         self.assertEqual(room.configuration, {"the_key": "the_value"})
 
-    def test_api_rooms_update_administrator_of_another(self):
+    def test_api_rooms_update_administrators_of_another(self):
         """
         Being administrator or owner of a room should not grant authorization to update
         another room.
@@ -745,7 +905,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Room.objects.count(), 1)
 
-    def test_api_rooms_delete_administrators(self):
+    def test_api_rooms_delete_administrators_direct(self):
         """
         Authenticated users should not be allowed to delete a room for which they are
         administrator.
@@ -761,7 +921,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Room.objects.count(), 1)
 
-    def test_api_rooms_delete_administrator_groups(self):
+    def test_api_rooms_delete_administrators_via_group(self):
         """
         Authenticated users should not be able to delete a room for which they are administrator
         via a group.
@@ -778,7 +938,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Room.objects.count(), 1)
 
-    def test_api_rooms_delete_owner_users(self):
+    def test_api_rooms_delete_owners(self):
         """
         Authenticated users should be able to delete a room for which they are directly
         owner.

@@ -15,7 +15,7 @@ from magnify.apps.core.factories import (
     RoomUserAccessFactory,
     UserFactory,
 )
-from magnify.apps.core.models import RoomUserAccess, UserRoleChoices
+from magnify.apps.core.models import RoleChoices, RoomUserAccess
 from magnify.apps.core.serializers import RoomUserAccessSerializer
 
 # pylint: disable=too-many-public-methods, too-many-lines
@@ -287,9 +287,9 @@ class RoomUserAccessesApiTestCase(APITestCase):
 
         for is_public in [True, False]:
             room = RoomFactory(is_public=is_public)
-            self.assertEqual(len(UserRoleChoices.choices), 3)
+            self.assertEqual(len(RoleChoices.choices), 3)
 
-            for role, _name in UserRoleChoices.choices:
+            for role, _name in RoleChoices.choices:
                 access = RoomUserAccessFactory(room=room, role=role)
                 response = self.client.get(
                     f"/api/room-user-accesses/{access.id!s}/",
@@ -316,9 +316,9 @@ class RoomUserAccessesApiTestCase(APITestCase):
                 users=[(user, "member")],
                 groups=[(group, "member")],
             )
-            self.assertEqual(len(UserRoleChoices.choices), 3)
+            self.assertEqual(len(RoleChoices.choices), 3)
 
-            for role, _name in UserRoleChoices.choices:
+            for role, _name in RoleChoices.choices:
                 access = RoomUserAccessFactory(room=room, role=role)
                 response = self.client.get(
                     f"/api/room-user-accesses/{access.id!s}/",
@@ -340,9 +340,9 @@ class RoomUserAccessesApiTestCase(APITestCase):
 
         for is_public in [True, False]:
             room = RoomFactory(is_public=is_public, users=[(user, "administrator")])
-            self.assertEqual(len(UserRoleChoices.choices), 3)
+            self.assertEqual(len(RoleChoices.choices), 3)
 
-            for role, _name in UserRoleChoices.choices:
+            for role, _name in RoleChoices.choices:
                 access = RoomUserAccessFactory(room=room, role=role)
                 response = self.client.get(
                     f"/api/room-user-accesses/{access.id!s}/",
@@ -373,9 +373,9 @@ class RoomUserAccessesApiTestCase(APITestCase):
 
         for is_public in [True, False]:
             room = RoomFactory(is_public=is_public, groups=[(group, "administrator")])
-            self.assertEqual(len(UserRoleChoices.choices), 3)
+            self.assertEqual(len(RoleChoices.choices), 3)
 
-            for role, _name in UserRoleChoices.choices:
+            for role, _name in RoleChoices.choices:
                 access = RoomUserAccessFactory(room=room, role=role)
                 response = self.client.get(
                     f"/api/room-user-accesses/{access.id!s}/",
@@ -403,9 +403,9 @@ class RoomUserAccessesApiTestCase(APITestCase):
 
         for is_public in [True, False]:
             room = RoomFactory(is_public=is_public, users=[(user, "owner")])
-            self.assertEqual(len(UserRoleChoices.choices), 3)
+            self.assertEqual(len(RoleChoices.choices), 3)
 
-            for role, _name in UserRoleChoices.choices:
+            for role, _name in RoleChoices.choices:
                 access = RoomUserAccessFactory(room=room, role=role)
                 response = self.client.get(
                     f"/api/room-user-accesses/{access.id!s}/",
@@ -611,7 +611,7 @@ class RoomUserAccessesApiTestCase(APITestCase):
             "id": uuid4(),
             "room": RoomFactory().id,
             "user": UserFactory().id,
-            "role": random.choice(UserRoleChoices.choices)[0],
+            "role": random.choice(RoleChoices.choices)[0],
         }
 
         for field, value in new_values.items():
@@ -636,7 +636,7 @@ class RoomUserAccessesApiTestCase(APITestCase):
             "id": uuid4(),
             "room": RoomFactory(users=[(user, "member")]).id,
             "user": UserFactory().id,
-            "role": random.choice(UserRoleChoices.choices)[0],
+            "role": random.choice(RoleChoices.choices)[0],
         }
 
         for field, value in new_values.items():
@@ -667,7 +667,7 @@ class RoomUserAccessesApiTestCase(APITestCase):
             "id": uuid4(),
             "room": RoomFactory(users=[(user, "member")]).id,
             "user": UserFactory().id,
-            "role": random.choice(UserRoleChoices.choices)[0],
+            "role": random.choice(RoleChoices.choices)[0],
         }
 
         for field, value in new_values.items():
@@ -775,7 +775,7 @@ class RoomUserAccessesApiTestCase(APITestCase):
             "id": uuid4(),
             "room": RoomFactory(users=[(user, "administrator")]).id,
             "user": UserFactory().id,
-            "role": random.choice(UserRoleChoices.choices)[0],
+            "role": random.choice(RoleChoices.choices)[0],
         }
 
         for field, value in new_values.items():
@@ -845,7 +845,7 @@ class RoomUserAccessesApiTestCase(APITestCase):
             "id": uuid4(),
             "room": RoomFactory(users=[(user, "administrator")]).id,
             "user": UserFactory().id,
-            "role": random.choice(UserRoleChoices.choices)[0],
+            "role": random.choice(RoleChoices.choices)[0],
         }
 
         for field, value in new_values.items():
@@ -882,7 +882,7 @@ class RoomUserAccessesApiTestCase(APITestCase):
             "id": uuid4(),
             "room": RoomFactory(users=[(user, "administrator")]).id,
             "user": UserFactory().id,
-            "role": random.choice(UserRoleChoices.choices)[0],
+            "role": random.choice(RoleChoices.choices)[0],
         }
 
         for field, value in new_values.items():

@@ -3,7 +3,7 @@ from django.db.models import Q
 
 from rest_framework import permissions
 
-from .models import GroupRoleChoices, UserRoleChoices
+from .models import RoleChoices
 
 
 class IsSelf(permissions.BasePermission):
@@ -67,19 +67,9 @@ class RoomPermissions(permissions.BasePermission):
         user = request.user
 
         if request.method == "DELETE":
-            return obj.user_accesses.filter(
-                role=UserRoleChoices.OWNER, user=user
-            ).exists()
+            return obj.is_owner(user)
 
-        return (
-            obj.user_accesses.filter(
-                role__in=[UserRoleChoices.ADMIN, UserRoleChoices.OWNER], user=user
-            ).exists()
-            or obj.group_accesses.filter(
-                Q(group__administrators=user) | Q(group__members=user),
-                role=GroupRoleChoices.ADMIN,
-            ).exists()
-        )
+        return obj.is_administrator(user)
 
 
 class RoomAccessPermission(permissions.BasePermission):
@@ -96,18 +86,10 @@ class RoomAccessPermission(permissions.BasePermission):
         Check that the logged-in user is administrator of the linked room.
         """
         user = request.user
-        if request.method == "DELETE" and obj.role == UserRoleChoices.OWNER:
+        if request.method == "DELETE" and obj.role == RoleChoices.OWNER:
             return obj.user == user
 
-        return user.is_authenticated and (
-            obj.room.user_accesses.filter(
-                role__in=[UserRoleChoices.ADMIN, UserRoleChoices.OWNER], user=user
-            )
-            or obj.room.group_accesses.filter(
-                Q(group__members=user) | Q(group__administrators=user),
-                role=GroupRoleChoices.ADMIN,
-            )
-        )
+        return obj.room.is_administrator(user)
 
 
 class HasRoomAccess(permissions.BasePermission):

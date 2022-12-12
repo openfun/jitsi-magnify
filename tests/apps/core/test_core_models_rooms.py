@@ -1,6 +1,7 @@
 """
 Unit tests for the Room model
 """
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -102,3 +103,102 @@ class RoomsModelsTestCase(TestCase):
         """A room should not be public by default."""
         room = Room.objects.create(name="room")
         self.assertFalse(room.is_public)
+
+    # Access rights methods
+
+    def test_models_rooms_access_rights_none(self):
+        """Calling access rights methods with None should return None."""
+        room = RoomFactory()
+
+        with self.assertNumQueries(0):
+            self.assertIsNone(room.get_role(None))
+        with self.assertNumQueries(0):
+            self.assertFalse(room.is_administrator(None))
+        with self.assertNumQueries(0):
+            self.assertFalse(room.is_owner(None))
+
+    def test_models_rooms_access_rights_anonymous(self):
+        """Check access rights methods on the room object for an anonymous user."""
+        user = AnonymousUser()
+        room = RoomFactory()
+
+        with self.assertNumQueries(0):
+            self.assertIsNone(room.get_role(user))
+        with self.assertNumQueries(0):
+            self.assertFalse(room.is_administrator(user))
+        with self.assertNumQueries(0):
+            self.assertFalse(room.is_owner(user))
+
+    def test_models_rooms_access_rights_authenticated(self):
+        """Check access rights methods on the room object for an unrelated user."""
+        user = UserFactory()
+        room = RoomFactory()
+
+        with self.assertNumQueries(2):
+            self.assertIsNone(room.get_role(user))
+        with self.assertNumQueries(2):
+            self.assertFalse(room.is_administrator(user))
+        with self.assertNumQueries(1):
+            self.assertFalse(room.is_owner(user))
+
+    def test_models_rooms_access_rights_member_direct(self):
+        """Check access rights methods on the room object for a direct member."""
+        user = UserFactory()
+        room = RoomFactory(users=[(user, "member")])
+
+        with self.assertNumQueries(2):
+            self.assertEqual(room.get_role(user), "member")
+        with self.assertNumQueries(2):
+            self.assertFalse(room.is_administrator(user))
+        with self.assertNumQueries(1):
+            self.assertFalse(room.is_owner(user))
+
+    def test_models_rooms_access_rights_administrator_direct(self):
+        """The is_administrator method should return True for a direct administrator."""
+        user = UserFactory()
+        room = RoomFactory(users=[(user, "administrator")])
+
+        with self.assertNumQueries(1):
+            self.assertEqual(room.get_role(user), "administrator")
+        with self.assertNumQueries(1):
+            self.assertTrue(room.is_administrator(user))
+        with self.assertNumQueries(1):
+            self.assertFalse(room.is_owner(user))
+
+    def test_models_rooms_access_rights_owner_direct(self):
+        """Check access rights methods on the room object for an owner."""
+        user = UserFactory()
+        room = RoomFactory(users=[(user, "owner")])
+
+        with self.assertNumQueries(1):
+            self.assertEqual(room.get_role(user), "owner")
+        with self.assertNumQueries(1):
+            self.assertTrue(room.is_administrator(user))
+        with self.assertNumQueries(1):
+            self.assertTrue(room.is_owner(user))
+
+    def test_models_rooms_access_rights_member_via_group(self):
+        """Check access rights methods on the room object for a member via a group."""
+        user = UserFactory()
+        group = GroupFactory(members=[user])
+        room = RoomFactory(groups=[(group, "member")])
+
+        with self.assertNumQueries(2):
+            self.assertEqual(room.get_role(user), "member")
+        with self.assertNumQueries(2):
+            self.assertFalse(room.is_administrator(user))
+        with self.assertNumQueries(1):
+            self.assertFalse(room.is_owner(user))
+
+    def test_models_rooms_access_rights_administrator_via_group(self):
+        """The is_administrator method should return True for an administrator via a group."""
+        user = UserFactory()
+        group = GroupFactory(members=[user])
+        room = RoomFactory(groups=[(group, "administrator")])
+
+        with self.assertNumQueries(2):
+            self.assertEqual(room.get_role(user), "administrator")
+        with self.assertNumQueries(2):
+            self.assertTrue(room.is_administrator(user))
+        with self.assertNumQueries(1):
+            self.assertFalse(room.is_owner(user))
