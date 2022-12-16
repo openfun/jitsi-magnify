@@ -1,8 +1,8 @@
 import { IntroductionLayout } from '@openfun/magnify-components';
+import React from 'react';
 import { Navigate, Outlet, RouteObject } from 'react-router-dom';
 import { AuthLoginView } from '../../../views/auth/login';
 import { AuthRegisterView } from '../../../views/auth/register';
-
 export enum AuthPath {
   AUTH = '/auth',
   LOGIN = '/auth/login',
