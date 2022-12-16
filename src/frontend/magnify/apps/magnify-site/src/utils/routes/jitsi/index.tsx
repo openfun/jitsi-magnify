@@ -1,7 +1,7 @@
+import React from 'react';
 import { RouteObject } from 'react-router-dom';
 
 import { RoomsJitsiView } from '../../../views/rooms/jitsi';
-
 export enum JitsiPath {
   WEB_CONF = '/:id',
 }

@@ -1,5 +1,5 @@
 import { RequireUser, ResponsiveLayout } from '@openfun/magnify-components';
-
+import React from 'react';
 import { defineMessages, IntlShape } from 'react-intl';
 import { Link, Outlet, RouteObject } from 'react-router-dom';
 
