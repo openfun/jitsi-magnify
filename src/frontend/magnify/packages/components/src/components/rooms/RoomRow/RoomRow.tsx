@@ -121,31 +121,8 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
   };
 
   const getMoreActionsItems = (): ButtonExtendedProps[] => {
-    const defaultButtonsProps: ButtonExtendedProps[] = [
+    let result: ButtonExtendedProps[] = [
       {
-        icon: <Clone size={'small'} />,
-        label: (
-          <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
-            {intl.formatMessage(messages.copyRoomLink)}
-          </Box>
-        ),
-        onClick: copyLinkToClipboard,
-      },
-      {
-        icon: <FormTrash />,
-        label: (
-          <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
-            {intl.formatMessage(commonMessages.delete)}
-          </Box>
-        ),
-        onClick: openDeleteModal,
-      },
-    ];
-
-    let result: ButtonExtendedProps[] = [];
-
-    if (room.is_administrable) {
-      const settingsButtonProps: ButtonExtendedProps = {
         icon: (
           <Box alignSelf={'center'}>
             <Configure size={'14px'} />
@@ -157,9 +134,29 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
           </Box>
         ),
         onClick: () => routing.goToRoomSettings(room.id),
-      };
+      },
+      {
+        icon: <Clone size={'small'} />,
+        label: (
+          <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+            {intl.formatMessage(messages.copyRoomLink)}
+          </Box>
+        ),
+        onClick: copyLinkToClipboard,
+      },
+    ];
 
-      result = [settingsButtonProps].concat(defaultButtonsProps);
+    if (room.is_administrable) {
+      const settingsButtonProps: ButtonExtendedProps = {
+        icon: <FormTrash />,
+        label: (
+          <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+            {intl.formatMessage(commonMessages.delete)}
+          </Box>
+        ),
+        onClick: openDeleteModal,
+      };
+      result = result.concat([settingsButtonProps]);
     }
 
     return result;

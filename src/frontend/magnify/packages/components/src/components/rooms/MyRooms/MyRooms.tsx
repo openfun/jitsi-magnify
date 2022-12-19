@@ -1,5 +1,5 @@
 import { Box, Card, Text } from 'grommet';
-import { Heading } from 'grommet/components';
+import { Heading, Spinner } from 'grommet/components';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 import { useTranslations } from '../../../i18n';
@@ -39,6 +39,11 @@ export const MyRooms = ({ baseJitsiUrl, rooms = [], ...props }: MyRoomsProps) =>
           <RegisterRoom />
         </div>
       </Box>
+      {props.isLoading && (
+        <Box align={'center'} height={'100px'} justify={'center'}>
+          <Spinner />
+        </Box>
+      )}
       {rooms?.length > 0 ? (
         rooms.map((room) => {
           return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
