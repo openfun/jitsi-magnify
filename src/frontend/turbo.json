@@ -20,6 +20,9 @@
         },
         "format:check": {
             "outputs": []
+        },
+        "format:write": {
+            "outputs": []
         }
     }
 }
