@@ -77,7 +77,7 @@ export const MagnifyMeeting = ({ ...props }: MagnifyMeetingProps) => {
   return (
     <JitsiMeeting
       configOverwrite={getConfig()}
-      domain={import.meta.env.REACT_APP_JITSI_MAIN_DOMAIN}
+      domain={import.meta.env.VITE_REACT_APP_JITSI_MAIN_DOMAIN ?? 'meeting.education'}
       getIFrameRef={handleIFrameLoaded}
       jwt={props.jwt}
       onApiReady={handleApiReady}
