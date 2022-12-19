@@ -17,4 +17,11 @@ export class ArrayHelper {
     }
     return newArray;
   }
+
+  public static async resolveAll<T>(
+    array: Array<T>,
+    callback: (item: T, index: number) => Promise<void>,
+  ) {
+    await Promise.all(array.map(callback));
+  }
 }

@@ -28,7 +28,7 @@ export function createRoomUserAccesses(): RoomUserAccesses {
     user: {
       id: faker.datatype.uuid(),
       name: faker.name.firstName() + ' ' + faker.name.lastName(),
-      username: 'johnDoe',
+      username: faker.name.findName(),
       language: 'en',
     },
   };
