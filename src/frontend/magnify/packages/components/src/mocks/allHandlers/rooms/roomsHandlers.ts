@@ -1,6 +1,8 @@
+import { faker } from '@faker-js/faker';
 import { rest } from 'msw';
 import { buildApiUrl } from '../../../services/http/http.service';
-import { Room } from '../../../types/entities/room';
+import { Room, RoomAccessRole } from '../../../types/entities/room';
+import { MagnifyLocales } from '../../../utils';
 import { RoomsApiRoutes } from '../../../utils/routes/api';
 
 export const defaultRoom: Room = {
@@ -12,6 +14,19 @@ export const defaultRoom: Room = {
     token: '123',
   },
   is_administrable: true,
+  user_accesses: [
+    {
+      id: faker.datatype.uuid(),
+      role: RoomAccessRole.OWNER,
+      room: '123',
+      user: {
+        id: faker.datatype.uuid(),
+        name: 'John Doe',
+        username: 'johnDoe',
+        language: MagnifyLocales.EN,
+      },
+    },
+  ],
 };
 
 export const roomsHandlers = [
@@ -19,6 +34,9 @@ export const roomsHandlers = [
     return res(ctx.json([defaultRoom]));
   }),
   rest.post(buildApiUrl(RoomsApiRoutes.CREATE), (req, res, ctx) => {
+    return res(ctx.json(defaultRoom));
+  }),
+  rest.post(buildApiUrl(RoomsApiRoutes.GET), (req, res, ctx) => {
     return res(ctx.json(defaultRoom));
   }),
 ];

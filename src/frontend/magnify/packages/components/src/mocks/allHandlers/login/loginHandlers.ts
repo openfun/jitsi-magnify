@@ -1,9 +1,7 @@
 import { rest } from 'msw';
-import { buildApiUrl } from '../../../services/http/http.service';
-import { LoginResponse, RefreshTokenResponse, UserResponse } from '../../../types/api/auth';
-import { User } from '../../../types/entities/user';
-import { MagnifyLocales } from '../../../utils';
-import { UsersApiRoutes } from '../../../utils/routes/api/users/usersApiRoutes';
+import { buildApiUrl } from '../../../services';
+import { LoginResponse, RefreshTokenResponse, User, UserResponse } from '../../../types';
+import { MagnifyLocales, UsersApiRoutes } from '../../../utils';
 
 export const defaultUser: User = {
   id: '123',
