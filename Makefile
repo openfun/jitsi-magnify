@@ -58,6 +58,7 @@ PYTHON_FILES         = src/magnify/apps sandbox
 MANAGE               = $(COMPOSE_RUN_APP) python sandbox/manage.py
 WAIT_DB              = $(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
 WAIT_APP             = $(COMPOSE_RUN) dockerize -wait tcp://app:8000 -timeout 60s
+WAIT_KC_DB           = $(COMPOSE_RUN) dockerize -wait tcp://kc_postgresql:5432 -timeout 60s
 
 # ==============================================================================
 # RULES
@@ -93,7 +94,9 @@ logs: ## display app logs (follow mode)
 
 run: ## start the development server
 	@$(COMPOSE) up -d nginx
+	@$(COMPOSE) up -d keycloak
 	@echo "Wait for services to be up..."
+	@$(WAIT_KC_DB)
 	@$(WAIT_DB)
 	@$(WAIT_APP)
 .PHONY: run
