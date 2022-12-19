@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { RefreshTokenResponse } from '../../types';
 import { UsersApiRoutes } from '../../utils';
 import { DEFAULT_BASE_API_URL } from '../../utils/constants/config';
@@ -20,11 +20,14 @@ export class HttpService {
   public static setTokens(access?: string, refresh?: string): void {
     if (access != null) {
       localStorage.setItem(SESSION_ACCESS_TOKEN_KEY, access);
-      MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+    } else {
+      localStorage.removeItem(SESSION_ACCESS_TOKEN_KEY);
     }
 
     if (refresh != null) {
       localStorage.setItem(SESSION_REFRESH_ACCESS_TOKEN_KEY, refresh);
+    } else {
+      localStorage.removeItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
     }
   }
 
@@ -56,9 +59,19 @@ export const MagnifyApi = axios.create({
   },
 });
 
-MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(
-  SESSION_ACCESS_TOKEN_KEY,
-)}`;
+MagnifyApi.interceptors.request.use(
+  (config: AxiosRequestConfig) => {
+    const token = HttpService.getAccessToken();
+    if (config.headers && token !== null) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
 
 MagnifyApi.interceptors.response.use(
   (response) => {
@@ -70,12 +83,7 @@ MagnifyApi.interceptors.response.use(
     const isRetry = HttpService.retry.get(originalRequest.url + '');
     if (error.response?.status === 401 && originalRequest.url && !isRetry) {
       HttpService.retry.set(originalRequest.url, true);
-      const access_token = await HttpService.refreshToken();
-      MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      originalRequest.headers = {
-        ...originalRequest.headers,
-        ['Authorization']: `Bearer ${access_token}`,
-      };
+      await HttpService.refreshToken();
       return MagnifyApi(originalRequest);
     }
     return Promise.reject(error);
