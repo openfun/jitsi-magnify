@@ -11,6 +11,11 @@ export const commonMessages = defineMessages({
     description: 'Cancel message',
     defaultMessage: 'Cancel',
   },
+  error: {
+    id: 'i18n.Messages.commonTranslation.error',
+    description: 'Error message',
+    defaultMessage: 'Error',
+  },
   validate: {
     id: 'i18n.Messages.commonTranslation.validate',
     description: 'Validate message',

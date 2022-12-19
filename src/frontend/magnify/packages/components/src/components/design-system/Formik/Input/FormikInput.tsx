@@ -31,7 +31,7 @@ export const FormikInput: FunctionComponent<FormikInputProps> = (props) => {
   };
 
   return (
-    <Box gap={'5px'}>
+    <Box gap={'5px'} width="100%">
       {props.label != '' && (
         <label htmlFor={props.name}>
           <Text size={'xsmall'} weight={'bold'}>

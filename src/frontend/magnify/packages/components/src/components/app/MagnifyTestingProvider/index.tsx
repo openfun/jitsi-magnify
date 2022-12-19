@@ -29,7 +29,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const locale = 'en-US';
+const locale = 'en';
 
 export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   const getRouter = (): RoutingContextInterface => {
@@ -46,13 +46,14 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   };
 
   return (
-    <TranslationProvider defaultLocale="en-US" initTranslation={false} locale={locale}>
+    <TranslationProvider defaultLocale="en" initTranslation={false} locale={locale}>
       <FormErrors />
       <RoutingContextProvider routes={getRouter()}>
-        <Grommet full theme={customTheme}>
+        <Grommet theme={customTheme}>
           <QueryClientProvider client={queryClient}>
             <AuthContextProvider
               initialUser={{
+                id: '123',
                 email: 'john.doe@gmail.com',
                 username: 'JohnDoe',
                 name: 'John Doe',

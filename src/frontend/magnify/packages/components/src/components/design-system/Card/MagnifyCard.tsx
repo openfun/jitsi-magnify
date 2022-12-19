@@ -5,6 +5,7 @@ import { FunctionComponent } from 'react';
 
 export interface MagnifyCardProps extends BoxTypes {
   title?: string;
+  gapContent?: string;
 }
 export const MagnifyCard: FunctionComponent<MagnifyCardProps> = ({ ...props }) => {
   return (
@@ -16,7 +17,7 @@ export const MagnifyCard: FunctionComponent<MagnifyCardProps> = ({ ...props }) =
           </Heading>
         </CardHeader>
       )}
-      <CardBody>{props.children}</CardBody>
+      <CardBody gap={props.gapContent}>{props.children}</CardBody>
     </Card>
   );
 };
