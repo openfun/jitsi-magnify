@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "@magnify/typescript-configs": "*",
-    "eslint-config-custom": "*"
+    "eslint-config-custom": "*",
+    "keycloak-js": "20.0.1"
   },
   "peerDependencies": {
     "@jitsi/react-sdk": "1.1.0",

@@ -61,9 +61,4 @@ export class UsersRepository {
     });
     return response.data;
   }
-
-  public static async delete(updatedData: UpdateUserData, userId: string): Promise<void> {
-    const url = RoutesBuilderService.build(UsersApiRoutes.DELETE, { id: userId });
-    await MagnifyApi.delete<UserResponse>(url);
-  }
 }

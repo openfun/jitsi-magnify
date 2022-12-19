@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { RefreshTokenResponse } from '../../types';
 import { UsersApiRoutes } from '../../utils';
 import { DEFAULT_BASE_API_URL } from '../../utils/constants/config';
+import { KeycloakService } from '../keycloak';
 
 export const SESSION_ACCESS_TOKEN_KEY = 'access_token';
 export const SESSION_REFRESH_ACCESS_TOKEN_KEY = 'refresh_token';
@@ -61,8 +62,8 @@ export const MagnifyApi = axios.create({
 
 MagnifyApi.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    const token = HttpService.getAccessToken();
-    if (config.headers && token !== null) {
+    const token = KeycloakService.getToken();
+    if (config.headers && token != null) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
 
@@ -83,7 +84,7 @@ MagnifyApi.interceptors.response.use(
     const isRetry = HttpService.retry.get(originalRequest.url + '');
     if (error.response?.status === 401 && originalRequest.url && !isRetry) {
       HttpService.retry.set(originalRequest.url, true);
-      await HttpService.refreshToken();
+      await KeycloakService.updateToken();
       return MagnifyApi(originalRequest);
     }
     return Promise.reject(error);
