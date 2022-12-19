@@ -6,4 +6,5 @@ export enum UsersApiRoutes {
   UPDATE = '/users/:id/',
   DELETE = '/users/:id/',
   CREATE = '/users/',
+  SEARCH = '/users/',
 }

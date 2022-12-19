@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
-import { CreateRoomData, RoomResponse, UpdateRoomData } from '../../types/api/room';
-import { Room } from '../../types/entities/room';
+import { CreateRoomData, RoomResponse, RoomsResponse, UpdateRoomData } from '../../types/api/room';
+import { Room, RoomAccessRole } from '../../types/entities/room';
 import { RoomsApiRoutes } from '../../utils/routes/api';
 import { MagnifyApi, MagnifyAuthApi } from '../http/http.service';
 import { RoutesBuilderService } from '../routes/RoutesBuilder.service';
@@ -29,9 +29,9 @@ export class RoomsRepository {
     return response.data;
   }
 
-  public static async getAll(): Promise<RoomResponse[]> {
-    const response = await MagnifyApi.get<RoomResponse[]>(RoomsApiRoutes.GET_ALL);
-    return response.data;
+  public static async getAll(): Promise<Room[]> {
+    const response = await MagnifyApi.get<RoomsResponse>(RoomsApiRoutes.GET_ALL);
+    return response.data.results;
   }
 
   public static async update(roomId: string, data: Partial<UpdateRoomData>): Promise<RoomResponse> {
@@ -48,6 +48,33 @@ export class RoomsRepository {
     const url = RoutesBuilderService.build(RoomsApiRoutes.DELETE, { id: roomId });
     const response = await MagnifyApi.delete<RoomResponse>(url);
     return response.data;
+  }
+
+  public static async addUser(roomId: string, role: RoomAccessRole, userId: string): Promise<void> {
+    await MagnifyApi.post(RoomsApiRoutes.ADD_USER, {
+      user: userId,
+      room: roomId,
+      role,
+    });
+  }
+
+  public static async updateUser(
+    roomId: string,
+    role: RoomAccessRole,
+    userId: string,
+    accessId: string,
+  ): Promise<void> {
+    const url = RoutesBuilderService.build(RoomsApiRoutes.UPDATE_USER, { id: accessId });
+    await MagnifyApi.patch(url, {
+      user: userId,
+      room: roomId,
+      role,
+    });
+  }
+
+  public static async deleteUser(accessId: string): Promise<void> {
+    const url = RoutesBuilderService.build(RoomsApiRoutes.DELETE_USER, { id: accessId });
+    await MagnifyApi.delete(url);
   }
 }
 
