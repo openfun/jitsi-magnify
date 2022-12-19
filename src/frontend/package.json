@@ -13,7 +13,7 @@
     "extract-translations": "turbo run extract-translations --parallel",
     "lint": "turbo run lint",
     "format:check": "turbo run format:check",
-    "format:write": "yarn format-magnify:write && yarn format-demo:write",
+    "format:write": "turbo run format:write",
 
     "build-demo": "cd demo && yarn build",
     "build-magnify": "cd magnify && yarn build",
