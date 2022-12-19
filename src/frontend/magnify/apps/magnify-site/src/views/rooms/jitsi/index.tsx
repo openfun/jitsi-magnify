@@ -14,35 +14,37 @@ export function RoomsJitsiView() {
   const { id } = useParams();
 
   const { data: room, isLoading } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
-    return RoomsRepository.get(id, false);
+    return RoomsRepository.get(id, true);
   });
 
+  if (room && room.jitsi?.token == null) {
+    return <>Room Privé, connectez vous</>;
+  }
+
   return (
-    <DefaultPage>
-      <Box
-        align={'center'}
-        background={'white'}
-        justify={'center'}
-        style={{
-          zIndex: 10,
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        {room && (
-          <Box width={'100%'}>
-            <MagnifyMeeting
-              configuration={room.configuration ?? defaultConfiguration}
-              jwt={room.jitsi.token}
-              roomName={room.jitsi.room}
-            />
-          </Box>
-        )}
-        {!room && isLoading && <Spinner />}
-      </Box>
-    </DefaultPage>
+    <Box
+      align={'center'}
+      background={'white'}
+      justify={'center'}
+      style={{
+        zIndex: 10,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      {room && (
+        <Box width={'100%'}>
+          <MagnifyMeeting
+            configuration={room.configuration ?? defaultConfiguration}
+            jwt={room.jitsi.token}
+            roomName={room.name}
+          />
+        </Box>
+      )}
+      {!room && isLoading && <Spinner />}
+    </Box>
   );
 }
