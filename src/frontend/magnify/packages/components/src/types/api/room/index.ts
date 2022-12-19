@@ -1,6 +1,10 @@
-import { Room } from '../../entities/room';
+import { Room } from '../../entities';
 
 export interface RoomResponse extends Room {}
+export interface RoomsResponse {
+  count: number;
+  results: Room[];
+}
 export interface CreateRoomData {
   name: string;
 }

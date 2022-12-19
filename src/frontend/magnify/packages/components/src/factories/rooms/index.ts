@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
-import { Room } from '../../types/entities/room';
+import { Room, RoomAccessRole, RoomUserAccesses } from '../../types';
 
 export default function createRandomRoom(isAdmin: boolean = true): Room {
   const id = faker.datatype.uuid();
   const name = faker.lorem.slug();
-  return {
+  const result: Room = {
     id: id,
     name: name,
     slug: faker.lorem.slug(),
@@ -12,6 +12,24 @@ export default function createRandomRoom(isAdmin: boolean = true): Room {
     jitsi: {
       token: '123',
       room: `${name}-${id}`,
+    },
+  };
+
+  result.user_accesses = [...Array(5)].map(() => createRoomUserAccesses());
+
+  return result;
+}
+
+export function createRoomUserAccesses(): RoomUserAccesses {
+  return {
+    id: faker.datatype.uuid(),
+    role: RoomAccessRole.ADMINISTRATOR,
+    room: '123',
+    user: {
+      id: faker.datatype.uuid(),
+      name: faker.name.firstName() + ' ' + faker.name.lastName(),
+      username: 'johnDoe',
+      language: 'en',
     },
   };
 }
