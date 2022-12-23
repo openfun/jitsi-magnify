@@ -86,6 +86,15 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
+                    "jwt_sub",
+                    models.CharField(
+                        blank=True,
+                        max_length=255,
+                        null=True,
+                        verbose_name="OIDC subject",
+                    ),
+                ),
+                (
                     "is_staff",
                     models.BooleanField(
                         default=False,

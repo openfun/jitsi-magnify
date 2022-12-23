@@ -35,28 +35,7 @@ def get_release():
         return "NA"  # Default: not available
 
 
-class DRFMixin:
-    """
-    Django Rest Framework configuration mixin.
-    NB: DRF picks its settings from the REST_FRAMEWORK namespace on the settings, hence
-    the nesting of all our values inside that prop
-    """
-
-    REST_FRAMEWORK = {
-        "ALLOWED_VERSIONS": ("1.0",),
-        "DEFAULT_AUTHENTICATION_CLASSES": (
-            "rest_framework_simplejwt.authentication.JWTAuthentication",
-            "rest_framework.authentication.SessionAuthentication",
-        ),
-        "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-        "PAGE_SIZE": 100,
-        "DEFAULT_VERSION": "1.0",
-        "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
-        "EXCEPTION_HANDLER": "magnify.apps.core.api.exception_handler",
-    }
-
-
-class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
+class Base(MagnifyCoreConfigurationMixin, Configuration):
     """
     This is the base configuration every configuration (aka environnement) should inherit from. It
     is recommended to configure third-party applications by creating a configuration mixins in
@@ -97,6 +76,20 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
             "security.W019"
         ]
     )
+
+    REST_FRAMEWORK = {
+        "ALLOWED_VERSIONS": ("1.0",),
+        "DEFAULT_AUTHENTICATION_CLASSES": values.ListValue(
+            ["rest_framework_simplejwt.authentication.JWTAuthentication"],
+            environ_name="DRF_DEFAULT_AUTHENTICATION_CLASSES",
+            environ_prefix=None,
+        ),
+        "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+        "PAGE_SIZE": 100,
+        "DEFAULT_VERSION": "1.0",
+        "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+        "EXCEPTION_HANDLER": "magnify.apps.core.api.exception_handler",
+    }
 
     # Application definition
     ROOT_URLCONF = "urls"
@@ -159,6 +152,38 @@ class Base(DRFMixin, MagnifyCoreConfigurationMixin, Configuration):
     MEDIA_URL = "/media/"
     MEDIA_ROOT = os.path.join(DATA_DIR, "media")
     STATIC_ROOT = os.path.join(DATA_DIR, "static")
+
+    # Simple JWT
+    SIMPLE_JWT = {
+        "ALGORITHM": values.Value(
+            "HS256", environ_name="SIMPLE_JWT_ALGORITHM", environ_prefix=None
+        ),
+        "JWK_URL": values.Value(
+            None, environ_name="SIMPLE_JWT_JWK_URL", environ_prefix=None
+        ),
+        "SIGNING_KEY": values.Value(
+            None, environ_name="SIMPLE_JWT_SIGNING_KEY", environ_prefix=None
+        ),
+        "VERIFYING_KEY": values.Value(
+            None, environ_name="SIMPLE_JWT_VERIFYING_KEY", environ_prefix=None
+        ),
+        "AUTH_HEADER_TYPES": ("Bearer",),
+        "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+        "TOKEN_TYPE_CLAIM": "typ",
+        "USER_ID_FIELD": "jwt_sub",
+        "USER_ID_CLAIM": "sub",
+        "AUTH_TOKEN_CLASSES": ("magnify.apps.core.tokens.BearerToken",),
+    }
+
+    JWT_USER_FIELDS_SYNC = values.DictValue(
+        {
+            "email": "email",
+            "name": "name",
+            "username": "preferred_username",
+        },
+        environ_name="JWT_USER_FIELDS_SYNC",
+        environ_prefix=None,
+    )
 
     # Login/registration related settings
     LOGIN_REDIRECT_URL = "/"
@@ -355,9 +380,22 @@ class Development(Base):
     CSRF_TRUSTED_ORIGINS = ["http://localhost:8071"]
     API_URL = values.Value("http://localhost:8071")
 
+    @classmethod
+    def post_setup(cls):
+        """Post setup configuration.
+        Activate local Keycloak as authentication backend for development.
+        """
+        super().post_setup()
+        cls.REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
+            "magnify.apps.core.authentication.DelegatedJWTAuthentication",
+            "rest_framework.authentication.SessionAuthentication",
+        )
+
 
 class Test(Base):
     """Test environment settings"""
+
+    SIMPLE_JWT = {}
 
 
 class ContinuousIntegration(Test):
