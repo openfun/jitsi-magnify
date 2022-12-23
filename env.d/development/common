@@ -7,7 +7,11 @@ DJANGO_SETTINGS_MODULE=settings
 PYTHONPATH=/app/sandbox
 PYTHONUNBUFFERED=1
 
-# Magnify jwt settings
+# Simple JWT settings for OIDC authentication with Keycloak
+SIMPLE_JWT_JWK_URL="http://keycloak:8080/realms/magnify/protocol/openid-connect/certs"
+SIMPLE_JWT_ALGORITHM="RS256"
+
+# Jitsi jwt settings
 JWT_GUEST_AVATAR="https://ronaldmottram.co.nz/wp-content/uploads/2019/01/default-user-icon-8.jpg"
 JWT_GUEST_DEFAULT_PASSWORD="default"
 JWT_GUEST_USERNAME="guest"

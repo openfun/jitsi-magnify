@@ -100,6 +100,7 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
         verbose_name=_("language"),
         help_text=_("The language in which the user wants to see the interface."),
     )
+    jwt_sub = models.CharField(_("OIDC subject"), max_length=255, blank=True, null=True)
     timezone = TimeZoneField(
         choices_display="WITH_GMT_OFFSET", use_pytz=False, default=settings.TIME_ZONE
     )
