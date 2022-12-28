@@ -24,7 +24,7 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
   const { mutate: logoutUser } = useMutation(async () => UsersRepository.logout(), {
     onSuccess: () => {
       queryClient.setQueryData([MagnifyQueryKeys.AUTH_USER], undefined);
-      routing.goToLogin();
+      routing.goToLogout();
     },
   });
 
