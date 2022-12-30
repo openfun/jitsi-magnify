@@ -1,7 +1,8 @@
 """
 Unit tests for the Meeting model
 """
-from datetime import date
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -32,20 +33,13 @@ class MeetingsModelsTestCase(TestCase):
         self.assertGreaterEqual(meetings[0].start, meetings[1].start)
         self.assertGreaterEqual(meetings[1].start, meetings[2].start)
 
-    def test_models_meetings_ordering_second(self):
-        """Meetings sharing the same start date should be ordered by their start time."""
-        MeetingFactory.create_batch(3, start=date.today())
-        meetings = Meeting.objects.all()
-        self.assertGreaterEqual(meetings[0].start_time, meetings[1].start_time)
-        self.assertGreaterEqual(meetings[1].start_time, meetings[2].start_time)
-
     def test_models_meetings_end_greater_than_start(self):
         """
         The start date can not be greater than the date of end of recurrence.
         """
         meeting = MeetingFactory(
-            start=date(2022, 6, 27),
-            recurring_until=date(2022, 6, 26),
+            start=datetime(2022, 6, 26, 9, 0, tzinfo=ZoneInfo("UTC")),
+            recurring_until=datetime(2022, 6, 26, 9, 1, tzinfo=ZoneInfo("UTC")),
             recurrence="daily",
         )
         self.assertEqual(meeting.recurring_until, meeting.start)

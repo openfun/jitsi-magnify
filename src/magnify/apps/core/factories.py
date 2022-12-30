@@ -2,7 +2,8 @@
 Core factories
 """
 import random
-from datetime import timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
@@ -10,6 +11,7 @@ from django.utils.text import slugify
 
 import factory
 from factory import fuzzy
+from timezone_field import TimeZoneField
 
 from . import models as core_models
 
@@ -25,6 +27,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Faker("user_name")
     email = factory.Faker("email")
     language = fuzzy.FuzzyChoice([lang[0] for lang in settings.LANGUAGES])
+    timezone = fuzzy.FuzzyChoice(TimeZoneField.default_zoneinfo_tzs)
     name = factory.Faker("name")
     password = make_password("password")
 
@@ -87,11 +90,22 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         model = core_models.Meeting
 
     name = factory.Faker("catch_phrase")
-    start = factory.Faker("future_date")
-    start_time = factory.Faker("time_object")
-    expected_duration = factory.LazyFunction(
-        lambda: timedelta(minutes=random.randint(5, 600))  # nosec
-    )
+    start = factory.Faker("future_datetime", tzinfo=ZoneInfo("UTC"))
+    timezone = fuzzy.FuzzyChoice(TimeZoneField.default_zoneinfo_tzs)
+
+    @factory.lazy_attribute
+    def end(self):
+        """
+        The end datetime is at a random duration after the start datetme (we pick within 3 hours).
+        """
+        if not self.start:
+            return None
+        period = timedelta(hours=3)
+        return datetime.utcfromtimestamp(
+            random.randrange(  # nosec
+                int(self.start.timestamp()), int((self.start + period).timestamp())
+            )
+        ).replace(tzinfo=ZoneInfo("UTC"))
 
     @factory.post_generation
     def users(self, create, extracted, **kwargs):
