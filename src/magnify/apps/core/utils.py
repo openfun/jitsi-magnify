@@ -10,12 +10,12 @@ import jwt
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-def get_weekday_in_nth_week(year, month, nth_week, week_day):
+def get_date_of_weekday_in_nth_week(year, month, nth_week, week_day):
     """
     Returns the date corresponding to the nth weekday of a month.
     e.g. 3rd Friday of July 2022 is July 15, 2002 so:
 
-    > get_weekday_in_nth_week(2022, 7, 3, 4)
+    > get_date_of_weekday_in_nth_week(2022, 7, 3, 4)
     date(2022, 7, 15)
     """
     new_date = date(year, month, 1)

@@ -1,11 +1,14 @@
 """Unit tests for the `get_occurrences` method on the Meeting model."""
 import random
-from datetime import date
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from magnify.apps.core.factories import MeetingFactory
+
+# pylint: disable=too-many-public-methods
 
 
 class OccurencesMeetingsModelsTestCase(TestCase):
@@ -16,15 +19,21 @@ class OccurencesMeetingsModelsTestCase(TestCase):
     def test_models_meetings_get_occurrences_no_recurrence(self):
         """A meeting without recurrence should return 1 occurence."""
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence=None,
         )
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
-            [date(2022, 7, 7)],
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
+            [datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC"))],
         )
         self.assertEqual(
-            meeting.get_occurrences(date(2022, 7, 8), date(2050, 1, 1)),
+            meeting.get_occurrences(
+                datetime(2022, 7, 8, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [],
         )
 
@@ -35,54 +44,74 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         Daily occurences with date of end of reccurrence filled in but not number of occurrences.
         """
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="daily",
             frequency=1,
-            recurring_until=date(2022, 8, 2),
+            timezone=ZoneInfo("Europe/Paris"),
+            recurring_until=datetime(2022, 11, 8, 9, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
         )
-        self.assertEqual(meeting.nb_occurrences, 27)
+        self.assertEqual(meeting.nb_occurrences, 12)
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
-            [date(2022, 7, i) for i in range(7, 32)]
-            + [date(2022, 8, 1), date(2022, 8, 2)],
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
+            [
+                datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 28, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 29, 9, 0, tzinfo=ZoneInfo("UTC")),
+                # After DST
+                datetime(2022, 10, 30, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 31, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 1, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 2, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 3, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 4, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 5, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 6, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+            ],
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="daily",
             frequency=3,
-            recurring_until=date(2022, 8, 2),
+            timezone=ZoneInfo("Europe/Paris"),
+            recurring_until=datetime(2022, 11, 8, 9, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
         )
-        self.assertEqual(meeting.nb_occurrences, 9)
+        self.assertEqual(meeting.nb_occurrences, 4)
         # The date of end of recurrence should be corrected
-        self.assertEqual(meeting.recurring_until, date(2022, 7, 31))
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.recurring_until,
+            datetime(2022, 11, 5, 10, 0, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 7, 7),
-                date(2022, 7, 10),
-                date(2022, 7, 13),
-                date(2022, 7, 16),
-                date(2022, 7, 19),
-                date(2022, 7, 22),
-                date(2022, 7, 25),
-                date(2022, 7, 28),
-                date(2022, 7, 31),
+                datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 30, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 2, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 5, 10, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
     def test_models_meetings_get_occurrences_daily_reset_recurring_until(self):
         """
-        Daily occurences with date of end of reccurrence not leaving any possibliity of
+        Daily occurences with date of end of reccurrence not leaving any possibility of
         repeated occurence.
         """
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="daily",
+            timezone=ZoneInfo("Europe/Paris"),
             frequency=3,
-            recurring_until=date(2022, 7, 9),
+            recurring_until=datetime(2022, 7, 9, 9, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
         )
         self.assertIsNone(meeting.recurrence)
@@ -90,8 +119,11 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         self.assertEqual(meeting.recurring_until, meeting.start)
         self.assertEqual(meeting.weekdays, "3")
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
-            [date(2022, 7, 7)],
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
+            [datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC"))],
         )
 
     def test_models_meetings_get_occurrences_daily_recurring_until_filled(self):
@@ -101,42 +133,57 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         repeated.
         """
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="daily",
             frequency=1,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
             nb_occurrences=6,
         )
-        self.assertEqual(meeting.recurring_until, date(2022, 7, 12))
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.recurring_until,
+            datetime(2022, 11, 1, 10, 0, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 7, 7),
-                date(2022, 7, 8),
-                date(2022, 7, 9),
-                date(2022, 7, 10),
-                date(2022, 7, 11),
-                date(2022, 7, 12),
+                datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 28, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 29, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 30, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 31, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 1, 10, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="daily",
             frequency=3,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
             nb_occurrences=6,
         )
-        self.assertEqual(meeting.recurring_until, date(2022, 7, 22))
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.recurring_until,
+            datetime(2022, 11, 11, 10, 0, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 7, 7),
-                date(2022, 7, 10),
-                date(2022, 7, 13),
-                date(2022, 7, 16),
-                date(2022, 7, 19),
-                date(2022, 7, 22),
+                datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
+                # After DST
+                datetime(2022, 10, 30, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 2, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 5, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 8, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 11, 10, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
@@ -146,7 +193,7 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         resettings reccurrence.
         """
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="daily",
             frequency=3,
             recurring_until=None,
@@ -157,25 +204,43 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         self.assertEqual(meeting.recurring_until, meeting.start)
         self.assertEqual(meeting.weekdays, "3")
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
-            [date(2022, 7, 7)],
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
+            [datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC"))],
         )
 
     def test_models_meetings_get_occurrences_daily_infinite(self):
         """Daily occurences can be infinite."""
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="daily",
             frequency=1,
+            timezone=ZoneInfo("America/Toronto"),
             recurring_until=None,
             nb_occurrences=None,
         )
         self.assertIsNone(meeting.nb_occurrences)
         self.assertIsNone(meeting.recurring_until)
 
-        occurrences = meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1))
-        self.assertEqual(occurrences[-1], date(2050, 1, 1))
+        occurrences = meeting.get_occurrences(
+            datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+            datetime(2050, 1, 1, 10, 0, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(
+            occurrences[-1], datetime(2050, 1, 1, 10, 0, tzinfo=ZoneInfo("UTC"))
+        )
         self.assertEqual(len(occurrences), 10041)
+
+        occurrences = meeting.get_occurrences(
+            datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+            datetime(2050, 1, 1, 9, 59, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(
+            occurrences[-1], datetime(2049, 12, 31, 10, 0, tzinfo=ZoneInfo("UTC"))
+        )
+        self.assertEqual(len(occurrences), 10040)
 
     # Weekly
 
@@ -193,7 +258,11 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         """
         with self.assertRaises(ValidationError) as context:
             # 2022-7-7 is a Thursday, and weekday 2 is Tuesday
-            MeetingFactory(start=date(2022, 7, 7), recurrence="weekly", weekdays="2")
+            MeetingFactory(
+                start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                recurrence="weekly",
+                weekdays="2",
+            )
 
         self.assertEqual(
             context.exception.messages,
@@ -201,12 +270,13 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         )
 
     def test_models_meetings_get_occurrences_weekly_reset_weekdays(self):
-        """Reset weekdays if recurrence is not weekly"""
+        """Reset weekdays when recurrence is set to something else than weekly"""
         meeting = MeetingFactory(
-            start=date(2022, 7, 6),
+            start=datetime(2022, 7, 6, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="weekly",
             frequency=1,
-            recurring_until=date(2022, 8, 2),
+            timezone=ZoneInfo("Europe/Paris"),
+            recurring_until=datetime(2022, 8, 2, 9, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
             weekdays="26",
         )
@@ -225,57 +295,65 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         """
         Weekly occurences with date of end of reccurrence filled in but not number of occurrences.
         """
+        # 2022-10-27 is a Thursday
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="weekly",
             frequency=1,
-            recurring_until=date(2022, 8, 2),
+            timezone=ZoneInfo("Europe/Paris"),
+            recurring_until=datetime(2022, 11, 8, 10, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
-            weekdays="135",
+            weekdays="135",  # Tuesday, Thursday and Saturday
         )
-        self.assertEqual(meeting.nb_occurrences, 12)
+        self.assertEqual(meeting.nb_occurrences, 6)
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 7, 7),
-                date(2022, 7, 9),
-                date(2022, 7, 12),
-                date(2022, 7, 14),
-                date(2022, 7, 16),
-                date(2022, 7, 19),
-                date(2022, 7, 21),
-                date(2022, 7, 23),
-                date(2022, 7, 26),
-                date(2022, 7, 28),
-                date(2022, 7, 30),
-                date(2022, 8, 2),
+                datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 29, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 1, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 3, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 5, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 8, 10, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
+
         self.assertEqual(
-            meeting.get_occurrences(date(2022, 7, 24), date(2022, 7, 29)),
+            meeting.get_occurrences(
+                datetime(2022, 10, 27, 9, 1, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 1, 10, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 7, 26),
-                date(2022, 7, 28),
+                datetime(2022, 10, 29, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 1, 10, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="weekly",
             frequency=3,
-            recurring_until=date(2022, 8, 2),
+            timezone=ZoneInfo("Europe/Paris"),
+            recurring_until=datetime(2022, 12, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
             weekdays="135",
         )
-        self.assertEqual(meeting.nb_occurrences, 5)
+        self.assertEqual(meeting.nb_occurrences, 6)
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 7, 7),
-                date(2022, 7, 9),
-                date(2022, 7, 26),
-                date(2022, 7, 28),
-                date(2022, 7, 30),
+                datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 29, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 15, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 17, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 19, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 12, 6, 10, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
@@ -284,151 +362,251 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         Weekly occurences with number of occurrences filled in but not date of end of reccurrence.
         """
         meeting = MeetingFactory(
-            start=date(2022, 7, 6),
+            start=datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="weekly",
             frequency=1,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
-            nb_occurrences=12,
-            weekdays="26",
+            nb_occurrences=5,
+            weekdays="36",  # Thursday and Sunday
         )
-        self.assertEqual(meeting.recurring_until, date(2022, 8, 14))
+
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 7, 6),
-                date(2022, 7, 10),
-                date(2022, 7, 13),
-                date(2022, 7, 17),
-                date(2022, 7, 20),
-                date(2022, 7, 24),
-                date(2022, 7, 27),
-                date(2022, 7, 31),
-                date(2022, 8, 3),
-                date(2022, 8, 7),
-                date(2022, 8, 10),
-                date(2022, 8, 14),
+                datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 30, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 3, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 6, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 10, 10, 0, tzinfo=ZoneInfo("UTC")),
             ],
+        )
+        self.assertEqual(
+            meeting.recurring_until,
+            datetime(2022, 11, 10, 10, 0, tzinfo=ZoneInfo("UTC")),
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 7, 6),
+            start=datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="weekly",
             frequency=3,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
             nb_occurrences=3,
-            weekdays="26",
-        )
-        self.assertEqual(meeting.recurring_until, date(2022, 7, 27))
-        self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
-            [date(2022, 7, 6), date(2022, 7, 10), date(2022, 7, 27)],
+            weekdays="36",
         )
         self.assertEqual(
-            meeting.get_occurrences(date(2022, 7, 7), date(2022, 7, 26)),
-            [date(2022, 7, 10)],
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
+            [
+                datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 10, 30, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 17, 10, 0, tzinfo=ZoneInfo("UTC")),
+            ],
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2022, 11, 17, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 11, 20, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
+            [datetime(2022, 11, 17, 10, 0, tzinfo=ZoneInfo("UTC"))],
+        )
+        self.assertEqual(
+            meeting.recurring_until,
+            datetime(2022, 11, 17, 10, 0, tzinfo=ZoneInfo("UTC")),
         )
 
     def test_models_meetings_get_occurrences_weekly_infinite(self):
         """Weekly occurences can be infinite."""
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 10, 27, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="weekly",
             frequency=1,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
             nb_occurrences=None,
-            weekdays="3",
+            weekdays="3",  # Thursday
         )
         self.assertIsNone(meeting.nb_occurrences)
         self.assertIsNone(meeting.recurring_until)
 
-        occurrences = meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1))
-        self.assertEqual(occurrences[-1], date(2049, 12, 30))
-        self.assertEqual(len(occurrences), 1435)
+        occurrences = meeting.get_occurrences(
+            datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+            datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(
+            occurrences[-1], datetime(2049, 12, 30, 10, 0, tzinfo=ZoneInfo("UTC"))
+        )
+        self.assertEqual(len(occurrences), 1419)
+
+    def test_models_meetings_get_occurrences_weekly_weekdays_0(self):
+        """
+        Edge case of weekly recurrence is when the day of the week is monday (0).
+        """
+        meeting = MeetingFactory(
+            start=datetime(2022, 8, 8, 9, 0, tzinfo=ZoneInfo("UTC")),
+            recurrence="weekly",
+            frequency=1,
+            timezone=ZoneInfo("Europe/Paris"),
+            nb_occurrences=2,
+            weekdays="0",  # Monday
+        )
+        self.assertEqual(meeting.nb_occurrences, 2)
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
+            [
+                datetime(2022, 8, 8, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 8, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ],
+        )
+
+        meeting = MeetingFactory(
+            start=datetime(2022, 8, 8, 9, 0, tzinfo=ZoneInfo("UTC")),
+            recurrence="weekly",
+            frequency=3,
+            timezone=ZoneInfo("Europe/Paris"),
+            nb_occurrences=2,
+            weekdays="0",  # Monday
+        )
+        self.assertEqual(meeting.nb_occurrences, 2)
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
+            [
+                datetime(2022, 8, 8, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 8, 29, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ],
+        )
 
     # Monthly
 
-    def test_models_meetings_get_occurrences_monthly_nb_occurrences_filled_date(self):
+    def test_models_meetings_get_occurrences_monthly_nb_occurrences_filled_datetime(
+        self,
+    ):
         """
         Monthly occurences with date of end of recurrence filled in but not number of occurences.
         The monthly reccurence is on the precise date each month
         """
         meeting = MeetingFactory(
-            start=date(2022, 10, 7),
+            start=datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="monthly",
             frequency=1,
-            recurring_until=date(2023, 4, 2),
+            timezone=ZoneInfo("Europe/Paris"),
+            recurring_until=datetime(2023, 4, 8, 9, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
         )
-        self.assertEqual(meeting.nb_occurrences, 6)
+
+        self.assertEqual(meeting.nb_occurrences, 7)
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 7),
-                date(2022, 11, 7),
-                date(2022, 12, 7),
-                date(2023, 1, 7),
-                date(2023, 2, 7),
-                date(2023, 3, 7),
+                datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                # beginning of DST
+                datetime(2022, 11, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 12, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 1, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 2, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 3, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                # end of DST
+                datetime(2023, 4, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 10, 7),
+            start=datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="monthly",
             frequency=3,
-            recurring_until=date(2023, 4, 2),
+            timezone=ZoneInfo("Europe/Paris"),
+            recurring_until=datetime(2023, 4, 8, 9, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
         )
-        self.assertEqual(meeting.nb_occurrences, 2)
+        self.assertEqual(meeting.nb_occurrences, 3)
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
-            [date(2022, 10, 7), date(2023, 1, 7)],
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
+            [
+                datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 1, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 4, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ],
         )
 
-    def test_models_meetings_get_occurrences_monthly_recurring_until_filled_date(self):
+    def test_models_meetings_get_occurrences_monthly_recurring_until_filled_datetime(
+        self,
+    ):
         """
         Monthly occurences with number of occurrences filled in but not date of end of reccurrence.
-        The monthly reccurence is on the nth weekday of the month.
+        The monthly reccurence is on the precise date each month
         """
         meeting = MeetingFactory(
-            start=date(2022, 10, 7),
+            start=datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="monthly",
             frequency=1,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
-            nb_occurrences=6,
+            nb_occurrences=7,
         )
-        self.assertEqual(meeting.recurring_until, date(2023, 3, 7))
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.recurring_until, datetime(2023, 4, 7, 9, 0, tzinfo=ZoneInfo("UTC"))
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 7),
-                date(2022, 11, 7),
-                date(2022, 12, 7),
-                date(2023, 1, 7),
-                date(2023, 2, 7),
-                date(2023, 3, 7),
+                datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                # Beginning of DST
+                datetime(2022, 11, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 12, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 1, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 2, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 3, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                # End of DST
+                datetime(2023, 4, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 10, 7),
+            start=datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="monthly",
             frequency=3,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
             nb_occurrences=8,
         )
-        self.assertEqual(meeting.recurring_until, date(2024, 7, 7))
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.recurring_until, datetime(2024, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC"))
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 7),
-                date(2023, 1, 7),
-                date(2023, 4, 7),
-                date(2023, 7, 7),
-                date(2023, 10, 7),
-                date(2024, 1, 7),
-                date(2024, 4, 7),
-                date(2024, 7, 7),
+                datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 1, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 4, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2024, 1, 7, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2024, 4, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2024, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
@@ -438,41 +616,57 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         The monthly reccurence is on the nth weekday of the month.
         """
         meeting = MeetingFactory(
-            start=date(2022, 10, 21),
+            start=datetime(2022, 10, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="monthly",
+            timezone=ZoneInfo("Europe/Paris"),
             frequency=1,
-            recurring_until=date(2023, 4, 2),
+            recurring_until=datetime(2023, 4, 21, 11, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
             monthly_type="nth_day",
         )
-        self.assertEqual(meeting.nb_occurrences, 6)
+        self.assertEqual(meeting.nb_occurrences, 7)
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 21),
-                date(2022, 11, 18),
-                date(2022, 12, 16),
-                date(2023, 1, 20),
-                date(2023, 2, 17),
-                date(2023, 3, 17),
+                datetime(2022, 10, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
+                # Beginning of DST
+                datetime(2022, 11, 18, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 12, 16, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 1, 20, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 2, 17, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 3, 17, 10, 0, tzinfo=ZoneInfo("UTC")),
+                # End of DST
+                datetime(2023, 4, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
+        )
+        self.assertEqual(
+            meeting.recurring_until, datetime(2023, 4, 21, 9, 0, tzinfo=ZoneInfo("UTC"))
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 10, 21),
+            start=datetime(2022, 10, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="monthly",
             frequency=3,
-            recurring_until=date(2023, 5, 2),
+            timezone=ZoneInfo("Europe/Paris"),
+            recurring_until=datetime(2023, 5, 2, 9, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
             monthly_type="nth_day",
         )
         self.assertEqual(meeting.nb_occurrences, 3)
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 21),
-                date(2023, 1, 20),
-                date(2023, 4, 21),
+                datetime(2022, 10, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
+                # Beginning of DST
+                datetime(2023, 1, 20, 10, 0, tzinfo=ZoneInfo("UTC")),
+                # End of DST
+                datetime(2023, 4, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
@@ -482,60 +676,75 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         The monthly reccurence is on the nth weekday of the month.
         """
         meeting = MeetingFactory(
-            start=date(2022, 10, 21),
+            start=datetime(2022, 10, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="monthly",
             frequency=1,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
             nb_occurrences=12,
             monthly_type="nth_day",
         )
-        self.assertEqual(meeting.recurring_until, date(2023, 9, 15))
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.recurring_until, datetime(2023, 9, 15, 9, 0, tzinfo=ZoneInfo("UTC"))
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 21),
-                date(2022, 11, 18),
-                date(2022, 12, 16),
-                date(2023, 1, 20),
-                date(2023, 2, 17),
-                date(2023, 3, 17),
-                date(2023, 4, 21),
-                date(2023, 5, 19),
-                date(2023, 6, 16),
-                date(2023, 7, 21),
-                date(2023, 8, 18),
-                date(2023, 9, 15),
+                datetime(2022, 10, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
+                # Beginning of DST
+                datetime(2022, 11, 18, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2022, 12, 16, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 1, 20, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 2, 17, 10, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 3, 17, 10, 0, tzinfo=ZoneInfo("UTC")),
+                # End of DST
+                datetime(2023, 4, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 5, 19, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 6, 16, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 7, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 8, 18, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 9, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 10, 21),
+            start=datetime(2022, 10, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="monthly",
             frequency=3,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
             nb_occurrences=8,
             monthly_type="nth_day",
         )
-        self.assertEqual(meeting.recurring_until, date(2024, 7, 19))
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.recurring_until, datetime(2024, 7, 19, 9, 0, tzinfo=ZoneInfo("UTC"))
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 21),
-                date(2023, 1, 20),
-                date(2023, 4, 21),
-                date(2023, 7, 21),
-                date(2023, 10, 20),
-                date(2024, 1, 19),
-                date(2024, 4, 19),
-                date(2024, 7, 19),
+                datetime(2022, 10, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 1, 20, 10, 0, tzinfo=ZoneInfo("UTC")),  # DST
+                datetime(2023, 4, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 7, 21, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 10, 20, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2024, 1, 19, 10, 0, tzinfo=ZoneInfo("UTC")),  # DST
+                datetime(2024, 4, 19, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2024, 7, 19, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
     def test_models_meetings_get_occurrences_monthly_infinite(self):
         """Monthly occurences can be infinite."""
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="monthly",
+            timezone=ZoneInfo("Europe/Paris"),
             frequency=1,
             recurring_until=None,
             nb_occurrences=None,
@@ -543,8 +752,13 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         self.assertIsNone(meeting.nb_occurrences)
         self.assertIsNone(meeting.recurring_until)
 
-        occurrences = meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1))
-        self.assertEqual(occurrences[-1], date(2049, 12, 7))
+        occurrences = meeting.get_occurrences(
+            datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+            datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(
+            occurrences[-1], datetime(2049, 12, 7, 10, 0, tzinfo=ZoneInfo("UTC"))  # DST
+        )
         self.assertEqual(len(occurrences), 330)
 
     # Yearly
@@ -554,38 +768,46 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         Yearly occurences with date of end of recurrence filled in but not number of occurrences.
         """
         meeting = MeetingFactory(
-            start=date(2022, 10, 7),
+            start=datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="yearly",
+            timezone=ZoneInfo("Europe/Paris"),
             frequency=1,
-            recurring_until=date(2028, 4, 2),
+            recurring_until=datetime(2028, 4, 2, 9, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
         )
         self.assertEqual(meeting.nb_occurrences, 6)
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 7),
-                date(2023, 10, 7),
-                date(2024, 10, 7),
-                date(2025, 10, 7),
-                date(2026, 10, 7),
-                date(2027, 10, 7),
+                datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2024, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2025, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2026, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2027, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 10, 7),
+            start=datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="yearly",
+            timezone=ZoneInfo("Europe/Paris"),
             frequency=3,
-            recurring_until=date(2028, 4, 2),
+            recurring_until=datetime(2028, 4, 2, 9, 0, tzinfo=ZoneInfo("UTC")),
             nb_occurrences=None,
         )
         self.assertEqual(meeting.nb_occurrences, 2)
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 7),
-                date(2025, 10, 7),
+                datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2025, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
@@ -594,52 +816,65 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         Yearly occurences with number of occurrences filled in but not date of end of reccurrence.
         """
         meeting = MeetingFactory(
-            start=date(2022, 10, 7),
+            start=datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="yearly",
+            timezone=ZoneInfo("Europe/Paris"),
             frequency=1,
             recurring_until=None,
             nb_occurrences=6,
         )
-        self.assertEqual(meeting.recurring_until, date(2027, 10, 7))
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.recurring_until, datetime(2027, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC"))
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 7),
-                date(2023, 10, 7),
-                date(2024, 10, 7),
-                date(2025, 10, 7),
-                date(2026, 10, 7),
-                date(2027, 10, 7),
+                datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2023, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2024, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2025, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2026, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2027, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
         meeting = MeetingFactory(
-            start=date(2022, 10, 7),
+            start=datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="yearly",
+            timezone=ZoneInfo("Europe/Paris"),
             frequency=3,
             recurring_until=None,
             nb_occurrences=8,
         )
-        self.assertEqual(meeting.recurring_until, date(2043, 10, 7))
         self.assertEqual(
-            meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1)),
+            meeting.recurring_until, datetime(2043, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC"))
+        )
+        self.assertEqual(
+            meeting.get_occurrences(
+                datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+            ),
             [
-                date(2022, 10, 7),
-                date(2025, 10, 7),
-                date(2028, 10, 7),
-                date(2031, 10, 7),
-                date(2034, 10, 7),
-                date(2037, 10, 7),
-                date(2040, 10, 7),
-                date(2043, 10, 7),
+                datetime(2022, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2025, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2028, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2031, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2034, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2037, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2040, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+                datetime(2043, 10, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             ],
         )
 
     def test_models_meetings_get_occurrences_yearly_infinite(self):
         """Yearly occurences can be infinite."""
         meeting = MeetingFactory(
-            start=date(2022, 7, 7),
+            start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="yearly",
+            timezone=ZoneInfo("Europe/Paris"),
             frequency=1,
             recurring_until=None,
             nb_occurrences=None,
@@ -647,6 +882,11 @@ class OccurencesMeetingsModelsTestCase(TestCase):
         self.assertIsNone(meeting.nb_occurrences)
         self.assertIsNone(meeting.recurring_until)
 
-        occurrences = meeting.get_occurrences(date(2020, 3, 15), date(2050, 1, 1))
-        self.assertEqual(occurrences[-1], date(2049, 7, 7))
+        occurrences = meeting.get_occurrences(
+            datetime(2020, 3, 15, 9, 0, tzinfo=ZoneInfo("UTC")),
+            datetime(2050, 1, 1, 9, 0, tzinfo=ZoneInfo("UTC")),
+        )
+        self.assertEqual(
+            occurrences[-1], datetime(2049, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC"))
+        )
         self.assertEqual(len(occurrences), 28)

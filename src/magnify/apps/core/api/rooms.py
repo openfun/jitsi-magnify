@@ -1,9 +1,8 @@
 """Magnify rooms API endpoints"""
 import uuid
-from datetime import date
 
 from django.conf import settings
-from django.db.models import F, Q
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
@@ -104,13 +103,10 @@ class RoomViewSet(
         url_path="meetings",
         permission_classes=[magnify_permissions.HasRoomAccess],
     )
-    # pylint: disable=invalid-name, unused-argument
+    # pylint: disable=invalid-name, unused-argument, too-many-locals
     def meetings(self, request, pk=None):
         """Endpoint to retrieve meetings related to the room."""
         room = self.get_object()
-
-        # Filter meetings in the date range of interest
-        today = date.today()
 
         # Instantiate the form to allow validation/cleaning
         filter_form = forms.MeetingFilterForm(data=request.query_params)
@@ -119,19 +115,19 @@ class RoomViewSet(
         if not filter_form.is_valid():
             return response.Response(status=400, data={"errors": filter_form.errors})
 
-        # Filter meetings by date range
-        start = filter_form.cleaned_data.get("start") or today
-        end = filter_form.cleaned_data.get("end") or today
+        # Filter meetings by time range
+        filter_from = filter_form.cleaned_data["from"]
+        filter_to = filter_form.cleaned_data["to"]
         candidate_meetings = room.meetings.filter(
             Q(
                 recurrence__isnull=True,
-                start__gte=start - F("expected_duration"),
-                start__lte=end,
+                end__gte=filter_from,
+                start__lte=filter_to,
             )
             | (
-                Q(recurrence__isnull=False, start__lte=end)
+                Q(recurrence__isnull=False, start__lte=filter_to)
                 & (
-                    Q(recurring_until__gte=start - F("expected_duration"))
+                    Q(recurring_until__gte=filter_from)
                     | Q(recurring_until__isnull=True)
                 )
             )
@@ -144,15 +140,15 @@ class RoomViewSet(
             access_clause |= Q(users=user) | Q(groups__members=user)
         candidate_meetings = candidate_meetings.filter(access_clause)
 
-        # Keep only the meetings that actually have an occurrence within the date range and
+        # Keep only the meetings that actually have an occurrence within the time range and
         # populate the cache field `_occurrences`` with such occurrences.
         meetings = []
         for meeting in candidate_meetings:
-            if dates := meeting.get_occurrences(start, end):
+            if dates := meeting.get_occurrences(filter_from, filter_to):
                 # pylint: disable=protected-access
                 meeting._occurrences = {
-                    "start": start,
-                    "end": end,
+                    "from": filter_from,
+                    "to": filter_to,
                     "dates": dates,
                 }
                 meetings.append(meeting)

@@ -1,6 +1,4 @@
 """Meeting serializers for the core Magnify app."""
-from datetime import date
-
 from rest_framework import serializers
 
 from magnify.apps.core import models
@@ -11,13 +9,11 @@ class MeetingSerializer(serializers.ModelSerializer):
     """Serialize Meeting model for the API."""
 
     jitsi = serializers.SerializerMethodField()
-    occurrences = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Meeting
         fields = [
             "id",
-            "expected_duration",
             "frequency",
             "groups",
             "is_public",
@@ -26,11 +22,10 @@ class MeetingSerializer(serializers.ModelSerializer):
             "monthly_type",
             "name",
             "nb_occurrences",
-            "occurrences",
             "recurrence",
             "room",
             "start",
-            "start_time",
+            "end",
             "users",
             "recurring_until",
             "weekdays",
@@ -47,16 +42,10 @@ class MeetingSerializer(serializers.ModelSerializer):
             }
         return None
 
-    @staticmethod
-    def get_occurrences(obj):
-        """Generate the list of occurrences from recurrence settings."""
-        try:
-            # pylint: disable=protected-access
-            return obj._occurrences
-        except AttributeError:
-            today = date.today()
-            return {
-                "start": today,
-                "end": today,
-                "dates": obj.get_occurrences(today),
-            }
+    def to_representation(self, instance):
+        """Add occurrences when precalculated."""
+        result = super().to_representation(instance)
+        # pylint: disable=protected-access
+        if occurrences := instance._occurrences:
+            result["occurrences"] = occurrences
+        return result

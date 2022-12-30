@@ -3,6 +3,7 @@ Declare and configure the models for the customers part
 """
 import uuid
 from datetime import timedelta
+from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -11,14 +12,15 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import F, Q
-from django.utils import timezone
+from django.utils import timezone as util_timezone
 from django.utils.functional import lazy
 from django.utils.text import capfirst, slugify
 from django.utils.translation import gettext_lazy as _
 
 from dateutil.relativedelta import relativedelta
+from timezone_field import TimeZoneField
 
-from .utils import get_nth_week_number, get_weekday_in_nth_week
+from .utils import get_date_of_weekday_in_nth_week, get_nth_week_number
 
 
 class RoleChoices(models.TextChoices):
@@ -105,6 +107,9 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
         verbose_name=_("language"),
         help_text=_("The language in which the user wants to see the interface."),
     )
+    timezone = TimeZoneField(
+        choices_display="WITH_GMT_OFFSET", use_pytz=False, default=settings.TIME_ZONE
+    )
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
@@ -118,7 +123,7 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
             "Unselect this instead of deleting accounts."
         ),
     )
-    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    date_joined = models.DateTimeField(_("date joined"), default=util_timezone.now)
 
     objects = UserManager()
 
@@ -393,17 +398,16 @@ class Meeting(BaseModel):
         Room, null=True, blank=True, related_name="meetings", on_delete=models.RESTRICT
     )
 
-    # Start and end are the same for a single meeting
-    start = models.DateField()
-    start_time = models.TimeField()
-    expected_duration = models.DurationField()
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+    timezone = TimeZoneField(choices_display="WITH_GMT_OFFSET", use_pytz=False)
 
     # recurrence
     recurrence = models.CharField(
         max_length=10, choices=INTERVAL_CHOICES, null=True, blank=True
     )
     frequency = models.PositiveIntegerField(default=1)
-    recurring_until = models.DateField(null=True, blank=True)
+    recurring_until = models.DateTimeField(null=True, blank=True)
     nb_occurrences = models.PositiveIntegerField(null=True, blank=True)
     weekdays = models.CharField(
         max_length=7, blank=True, null=True, validators=[weekdays_validator]
@@ -426,10 +430,14 @@ class Meeting(BaseModel):
 
     class Meta:
         db_table = "magnify_meeting"
-        ordering = ("-start", "-start_time")
+        ordering = ("-start",)
         verbose_name = _("Meeting")
         verbose_name_plural = _("Meetings")
         constraints = [
+            models.CheckConstraint(
+                check=Q(end__gte=F("start")),
+                name="end_greater_than_start",
+            ),
             models.CheckConstraint(
                 check=Q(recurring_until__gte=F("start"))
                 | Q(recurring_until__isnull=True),
@@ -460,7 +468,7 @@ class Meeting(BaseModel):
         Saving is left up to the caller.
         """
         self.recurrence = None
-        self.weekdays = str(self.start.weekday())
+        self.weekdays = str(self.start.astimezone(self.timezone).weekday())
         self.nb_occurrences = 1
         self.recurring_until = self.start
 
@@ -472,7 +480,8 @@ class Meeting(BaseModel):
                 if self.weekdays is None:
                     self.reset_recurrence()
 
-                if str(self.start.weekday()) not in self.weekdays:
+                weekday = self.start.astimezone(self.timezone).weekday()
+                if str(weekday) not in self.weekdays:
                     raise ValidationError(
                         {"weekdays": _("Weekdays should contain the start date.")}
                     )
@@ -508,37 +517,44 @@ class Meeting(BaseModel):
 
         super().save(*args, **kwargs)
 
-    def next_occurrence(self, current_date):
+    def next_occurrence(self, current_datetime):
         """
         This method takes as assumption that the current date passed in argument
         IS a valid occurrence. If it is not the case, it will return an irrelevant date.
 
         Returns the next occurrence without consideration for the end of the recurrence.
         """
+        current_datetime_tz = current_datetime.astimezone(self.timezone)
         if self.recurrence == Meeting.DAILY:
-            return current_date + timedelta(days=self.frequency)
+            return (current_datetime_tz + timedelta(days=self.frequency)).astimezone(
+                ZoneInfo("UTC")
+            )
 
         if self.recurrence == Meeting.WEEKLY:
             increment = 1
             # Look in the current week
-            weekday = current_date.weekday()
+            weekday = current_datetime.astimezone(self.timezone).weekday()
             while weekday + increment <= 6:
                 if str(weekday + increment) in self.weekdays:
-                    return current_date + timedelta(days=increment)
+                    return (current_datetime_tz + timedelta(days=increment)).astimezone(
+                        ZoneInfo("UTC")
+                    )
                 increment += 1
             # Skip the weeks not covered by frequency
-            next_date = (
-                current_date
+            next_datetime_tz = (
+                current_datetime_tz
                 + timedelta(days=increment)
                 + timedelta(weeks=self.frequency - 1)
             )
 
             # Look in this week and be sure to find
-            weekday = 0
+            weekday = -1
             increment = 1
             while weekday + increment <= 6:
                 if str(weekday + increment) in self.weekdays:
-                    return next_date + timedelta(days=increment)
+                    return (
+                        next_datetime_tz + timedelta(days=increment - 1)
+                    ).astimezone(ZoneInfo("UTC"))
                 increment += 1
 
             raise RuntimeError(
@@ -546,46 +562,52 @@ class Meeting(BaseModel):
             )
 
         if self.recurrence == Meeting.MONTHLY:
-            next_date = current_date + relativedelta(months=self.frequency)
+            next_datetime_tz = current_datetime_tz + relativedelta(
+                months=self.frequency
+            )
             if self.monthly_type == Meeting.DATE_DAY:
-                return next_date
+                return next_datetime_tz.astimezone(ZoneInfo("UTC"))
 
             if self.monthly_type == Meeting.NTH_DAY:
-                weekday = current_date.weekday()
-                week_number = get_nth_week_number(current_date)
-                return get_weekday_in_nth_week(
-                    next_date.year, next_date.month, week_number, weekday
+                weekday = current_datetime_tz.weekday()
+                week_number = get_nth_week_number(current_datetime_tz.date())
+                next_date = get_date_of_weekday_in_nth_week(
+                    next_datetime_tz.year, next_datetime_tz.month, week_number, weekday
                 )
+                return current_datetime_tz.replace(
+                    year=next_date.year, month=next_date.month, day=next_date.day
+                ).astimezone(ZoneInfo("UTC"))
 
             raise RuntimeError(
                 "You should have found the next monthly occurrence by now."
             )
 
         if self.recurrence == Meeting.YEARLY:
-            return current_date + relativedelta(years=self.frequency)
+            return (
+                current_datetime_tz + relativedelta(years=self.frequency)
+            ).astimezone(ZoneInfo("UTC"))
 
         raise RuntimeError("Non recurrent meetings don't have next occurences.")
 
-    def get_occurrences(self, start, end=None):
+    def get_occurrences(self, start, end):
         """
         Returns a list of occurrences for this meeting between start and end dates passed
         as arguments.
         """
-        real_end = end or start
         if self.recurrence:
-            if self.recurring_until and self.recurring_until < real_end:
-                real_end = self.recurring_until
+            if self.recurring_until and self.recurring_until < end:
+                end = self.recurring_until
 
             occurrences = []
             new_start = self.start
-            while new_start <= real_end:
+            while new_start <= end:
                 if new_start >= start:
                     occurrences.append(new_start)
                 new_start = self.next_occurrence(new_start)
             return occurrences
 
         # check if event is in the period
-        if self.start <= real_end and self.start + self.expected_duration >= start:
+        if self.start <= end and self.end >= start:
             return [self.start]
 
         return []

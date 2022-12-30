@@ -1,9 +1,8 @@
 """
 Unit tests for the Meeting factory
 """
-from datetime import date
-
 from django.test import TestCase
+from django.utils import timezone
 
 from magnify.apps.core.factories import (
     GroupFactory,
@@ -21,7 +20,7 @@ class MeetingsFactoriesTestCase(TestCase):
     def test_factories_meetings_start_future(self):
         """The start date should be in the future."""
         meeting = MeetingFactory()
-        self.assertGreaterEqual(meeting.start, date.today())
+        self.assertGreaterEqual(meeting.start, timezone.now())
 
     def test_factories_meetings_recurring_until_greater_than_start(self):
         """The date of end of recurrence should be greater than the start date."""

@@ -1,8 +1,9 @@
 """
 Tests for room meetings API endpoint in Magnify's core app.
 """
-from datetime import date
+from datetime import datetime
 from unittest import mock
+from zoneinfo import ZoneInfo
 
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
@@ -37,23 +38,23 @@ class RoomMeetingsApiTestCase(APITestCase):
 
     def test_api_room_meetings_anonymous_public(self, mock_token):
         """Anonymous users should only be allowed to list public meetings in a public room."""
-        today = date.today()
+        start = datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC"))
         room = RoomFactory(is_public=True)
-        MeetingFactory(room=room, is_public=False, start=today)
-        meeting = MeetingFactory(room=room, is_public=True, start=today)
+        MeetingFactory(room=room, is_public=False, start=start)
+        meeting = MeetingFactory(room=room, is_public=True, start=start)
 
-        response = self.client.get(f"/api/rooms/{room.id!s}/meetings/")
+        response = self.client.get(
+            f"/api/rooms/{room.id!s}/meetings/?"
+            "from=2022-07-07T09:00:00Z&to=2022-07-13T18:00:00Z"
+        )
         self.assertEqual(response.status_code, 200)
 
         results = response.json()
         self.assertEqual(len(results), 1)
-
-        secs = meeting.expected_duration.seconds
         self.assertEqual(
             results[0],
             {
                 "id": str(meeting.id),
-                "expected_duration": f"{secs//3600:02d}:{(secs//60) % 60:02d}:{secs % 60:02d}",
                 "frequency": 1,
                 "groups": [],
                 "is_public": True,
@@ -66,15 +67,15 @@ class RoomMeetingsApiTestCase(APITestCase):
                 "name": meeting.name,
                 "nb_occurrences": 1,
                 "occurrences": {
-                    "start": meeting.start.strftime("%Y-%m-%d"),
-                    "end": meeting.start.strftime("%Y-%m-%d"),
-                    "dates": [meeting.start.strftime("%Y-%m-%d")],
+                    "from": "2022-07-07T09:00:00Z",
+                    "to": "2022-07-13T18:00:00Z",
+                    "dates": ["2022-07-07T09:00:00Z"],
                 },
                 "recurrence": None,
                 "room": str(room.id),
-                "start": meeting.start.strftime("%Y-%m-%d"),
-                "start_time": meeting.start_time.strftime("%H:%M:%S"),
-                "recurring_until": meeting.start.strftime("%Y-%m-%d"),
+                "start": "2022-07-07T09:00:00Z",
+                "end": meeting.end.isoformat().replace("+00:00", "Z"),
+                "recurring_until": meeting.start.isoformat().replace("+00:00", "Z"),
                 "users": [],
                 "weekdays": str(meeting.start.weekday()),
             },
@@ -85,11 +86,15 @@ class RoomMeetingsApiTestCase(APITestCase):
         """Anonymous users should be able to request a date range for recurring meetings."""
         room = RoomFactory(is_public=True)
         MeetingFactory(
-            room=room, is_public=True, start=date(2022, 7, 7), recurrence="daily"
+            room=room,
+            is_public=True,
+            start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+            recurrence="daily",
         )
 
         response = self.client.get(
-            f"/api/rooms/{room.id!s}/meetings/?start=2022-07-10&end=2022-07-13"
+            f"/api/rooms/{room.id!s}/meetings/?"
+            "from=2022-07-10T09:00:00Z&to=2022-07-13T18:00:00Z"
         )
         self.assertEqual(response.status_code, 200)
 
@@ -99,20 +104,25 @@ class RoomMeetingsApiTestCase(APITestCase):
         self.assertEqual(
             results[0]["occurrences"],
             {
-                "start": "2022-07-10",
-                "end": "2022-07-13",
-                "dates": ["2022-07-10", "2022-07-11", "2022-07-12", "2022-07-13"],
+                "from": "2022-07-10T09:00:00Z",
+                "to": "2022-07-13T18:00:00Z",
+                "dates": [
+                    "2022-07-10T09:00:00Z",
+                    "2022-07-11T09:00:00Z",
+                    "2022-07-12T09:00:00Z",
+                    "2022-07-13T09:00:00Z",
+                ],
             },
         )
         mock_token.assert_called_once()
 
     def test_api_room_meetings_anonymous_public_filter_invalid(self, _mock_token):
-        """Passing invalid dates as filtering parameters should recevie a 400 error."""
+        """Passing invalid dates as filtering parameters should receive a 400 error."""
         room = RoomFactory(is_public=True)
         MeetingFactory(room=room, is_public=True)
 
         response = self.client.get(
-            f"/api/rooms/{room.id!s}/meetings/?start=invalid&end=22-07-13"
+            f"/api/rooms/{room.id!s}/meetings/?from=invalid&to=22-07-13"
         )
         self.assertEqual(response.status_code, 400)
 
@@ -120,8 +130,8 @@ class RoomMeetingsApiTestCase(APITestCase):
             response.json(),
             {
                 "errors": {
-                    "start": ["Enter a valid date."],
-                    "end": ["Enter a valid date."],
+                    "from": ["Enter a valid date/time."],
+                    "to": ["Enter a valid date/time."],
                 }
             },
         )
@@ -158,15 +168,16 @@ class RoomMeetingsApiTestCase(APITestCase):
         group = GroupFactory(members=[user])
         jwt_token = AccessToken.for_user(user)
 
-        today = date.today()
+        start = datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC"))
         room = RoomFactory(is_public=True)
-        MeetingFactory(room=room, is_public=False, start=today)
-        meeting_public = MeetingFactory(room=room, is_public=True, start=today)
-        meeting_users = MeetingFactory(room=room, start=today, users=[user])
-        meeting_groups = MeetingFactory(room=room, start=today, groups=[group])
+        MeetingFactory(room=room, is_public=False, start=start)
+        meeting_public = MeetingFactory(room=room, is_public=True, start=start)
+        meeting_users = MeetingFactory(room=room, start=start, users=[user])
+        meeting_groups = MeetingFactory(room=room, start=start, groups=[group])
 
         response = self.client.get(
-            f"/api/rooms/{room.id!s}/meetings/",
+            f"/api/rooms/{room.id!s}/meetings/?"
+            "from=2022-07-7T09:00:00Z&to=2022-07-13T18:00:00Z",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
@@ -186,11 +197,15 @@ class RoomMeetingsApiTestCase(APITestCase):
 
         room = RoomFactory(is_public=True)
         MeetingFactory(
-            room=room, users=[user], start=date(2022, 7, 7), recurrence="daily"
+            room=room,
+            users=[user],
+            start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
+            recurrence="daily",
         )
 
         response = self.client.get(
-            f"/api/rooms/{room.id!s}/meetings/?start=2022-07-10&end=2022-07-13",
+            f"/api/rooms/{room.id!s}/meetings/?"
+            "from=2022-07-10T09:00:00Z&to=2022-07-13T18:00:00Z",
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
         )
         self.assertEqual(response.status_code, 200)
@@ -201,9 +216,14 @@ class RoomMeetingsApiTestCase(APITestCase):
         self.assertEqual(
             results[0]["occurrences"],
             {
-                "start": "2022-07-10",
-                "end": "2022-07-13",
-                "dates": ["2022-07-10", "2022-07-11", "2022-07-12", "2022-07-13"],
+                "from": "2022-07-10T09:00:00Z",
+                "to": "2022-07-13T18:00:00Z",
+                "dates": [
+                    "2022-07-10T09:00:00Z",
+                    "2022-07-11T09:00:00Z",
+                    "2022-07-12T09:00:00Z",
+                    "2022-07-13T09:00:00Z",
+                ],
             },
         )
         mock_token.assert_called_once()
