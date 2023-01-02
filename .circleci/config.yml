@@ -559,6 +559,75 @@ jobs:
 #          name: Publish package
 #          command: npm publish src/frontend/magnify/
 
+  # ---- DockerHub publication job ----
+  hub:
+    docker:
+      - image: cimg/base:2022.05
+    working_directory: ~/fun
+    steps:
+      - *checkout_fun
+      # Generate a version.json file describing app release
+      - <<: *generate-version-file
+      # Activate docker-in-docker
+      - setup_remote_docker:
+          version: 19.03.13
+      - run:
+          name: Build production image
+          command: docker build -t magnify:${CIRCLE_SHA1} --target production .
+      - run:
+          name: Check built images availability
+          command: docker images "magnify:${CIRCLE_SHA1}*"
+      # Login to DockerHub to Publish new images
+      #
+      # Nota bene: you'll need to define the following secrets environment vars
+      # in CircleCI interface:
+      #
+      #   - DOCKER_HUB_USER
+      #   - DOCKER_HUB_PASSWORD
+      - run:
+          name: Login to DockerHub
+          command: echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+      # Tag docker images with the same pattern used in Git (Semantic Versioning)
+      #
+      # Git tag: v1.0.1
+      # Docker tag: 1.0.1(-ci)
+      - run:
+          name: Tag images
+          command: |
+            docker images fundocker/jitsi-magnify
+            DOCKER_TAG=$([[ -z "$CIRCLE_TAG" ]] && echo $CIRCLE_BRANCH || echo ${CIRCLE_TAG} | sed 's/^v//')
+            RELEASE_TYPE=$([[ -z "$CIRCLE_TAG" ]] && echo "branch" || echo "tag ")
+            # Display either:
+            # - DOCKER_TAG: master (Git branch)
+            # or
+            # - DOCKER_TAG: 1.1.2 (Git tag v1.1.2)
+            echo "DOCKER_TAG: ${DOCKER_TAG} (Git ${RELEASE_TYPE}${CIRCLE_TAG})"
+            docker tag magnify:${CIRCLE_SHA1} fundocker/jitsi-magnify:${DOCKER_TAG}
+            if [[ -n "$CIRCLE_TAG" ]]; then
+              docker tag magnify:${CIRCLE_SHA1} fundocker/jitsi-magnify:latest
+            fi
+            docker images | grep -E "^fundocker/jitsi-magnify\s*(${DOCKER_TAG}.*|latest|master)"
+
+      # Publish images to DockerHub
+      #
+      # Nota bene: logged user (see "Login to DockerHub" step) must have write
+      # permission for the project's repository; this also implies that the
+      # DockerHub repository already exists.
+      - run:
+          name: Publish images
+          command: |
+            DOCKER_TAG=$([[ -z "$CIRCLE_TAG" ]] && echo $CIRCLE_BRANCH || echo ${CIRCLE_TAG} | sed 's/^v//')
+            RELEASE_TYPE=$([[ -z "$CIRCLE_TAG" ]] && echo "branch" || echo "tag ")
+            # Display either:
+            # - DOCKER_TAG: master (Git branch)
+            # or
+            # - DOCKER_TAG: 1.1.2 (Git tag v1.1.2)
+            echo "DOCKER_TAG: ${DOCKER_TAG} (Git ${RELEASE_TYPE}${CIRCLE_TAG})"
+            docker push fundocker/jitsi-magnify:${DOCKER_TAG}
+            if [[ -n "$CIRCLE_TAG" ]]; then
+              docker push fundocker/jitsi-magnify:latest
+            fi
+
 workflows:
   version: 2
 
@@ -709,3 +778,19 @@ workflows:
 #              ignore: /.*/
 #            tags:
 #              only: /^v.*/
+
+      # DockerHub publication.
+      #
+      # Publish docker images only if all build, lint and test jobs succeed
+      # and it has been tagged with a tag starting with the letter v or is on
+      # the main branch
+      - hub:
+          requires:
+            - build-docker
+            - test-back-mysql-8
+            - test-back-postgresql
+          filters:
+            branches:
+              only: main
+            tags:
+              only: /^v.*/
