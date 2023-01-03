@@ -1,7 +1,6 @@
 import { Box, CheckBox, Spinner, Stack, ThemeContext, ThemeType } from 'grommet';
 import { normalizeColor, WidthType } from 'grommet/utils';
-import React from 'react';
-import { useTheme } from 'styled-components';
+import React, { useContext } from 'react';
 
 const customToggleTheme = (theme: ThemeType, invisible: boolean) => {
   const invisibleIfInvisible = (color: string) => (invisible ? 'transparent' : color);
@@ -71,7 +70,7 @@ export const Toggle = ({
   onChange,
   ...props
 }: ToggleProps) => {
-  const theme = useTheme();
+  const theme = useContext<ThemeType>(ThemeContext);
 
   return (
     <ThemeContext.Extend value={customToggleTheme(theme, loading)}>

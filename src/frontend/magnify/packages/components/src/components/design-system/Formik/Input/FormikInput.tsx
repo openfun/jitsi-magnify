@@ -1,15 +1,12 @@
 import { ErrorMessage, useField } from 'formik';
 import { Box, Text, TextInput, TextInputProps } from 'grommet';
 import { Hide, View } from 'grommet-icons';
-import { normalizeColor } from 'grommet/utils';
 import * as React from 'react';
 import { FunctionComponent, useState } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 const CustomInput = styled(TextInput)`
-  ${({ theme }) => css`
-    background-color: ${normalizeColor('light-2', theme)};
-  `}
+  background-color: #f2f7fd;
   border: none;
 `;
 

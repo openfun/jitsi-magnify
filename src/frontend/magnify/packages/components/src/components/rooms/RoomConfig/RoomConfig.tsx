@@ -115,6 +115,8 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
 
           if (index >= 0) {
             newRooms[index] = data;
+          } else {
+            newRooms.push(data);
           }
           return newRooms;
         });

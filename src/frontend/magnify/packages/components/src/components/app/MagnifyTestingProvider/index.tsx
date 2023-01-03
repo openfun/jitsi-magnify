@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Grommet } from 'grommet';
 import * as React from 'react';
 import {
@@ -39,6 +38,7 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
       goToLogin: () => console.log('goToLogin'),
       goToRegister: () => console.log('goToRegister'),
       goToAccount: () => console.log('goToAccount'),
+      goToPreferences: () => console.log('goToPreferences'),
       goToJitsiRoom: () => console.log('goToJitsiRoom'),
       goToRoomsList: () => console.log('goToRoomsList'),
       goToRoomSettings: () => console.log('goToRoomSettings'),
