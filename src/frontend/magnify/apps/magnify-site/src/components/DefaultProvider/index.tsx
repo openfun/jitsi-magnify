@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { JitsiPath } from '../../utils/routes/jitsi';
 import { RoomsPath } from '../../utils/routes/rooms';
 import { RootPath } from '../../utils/routes/root';
+import { UserPath } from '../../utils/routes/users';
 
 export interface DefaultProviderProps {
   children: React.ReactNode;
@@ -25,6 +26,9 @@ export const DefaultProvider = ({ ...props }: DefaultProviderProps) => {
           KeycloakService.doLogin({
             redirectUri: window.location.href,
           }),
+        goToPreferences: () => {
+          navigate(UserPath.PREFERENCES);
+        },
         goToRegister: () =>
           KeycloakService._kc.register({
             redirectUri: window.location.href,

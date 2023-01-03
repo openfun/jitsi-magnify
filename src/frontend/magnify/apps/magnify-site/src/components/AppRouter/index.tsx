@@ -10,10 +10,13 @@ import {
 import { getJitsiRoutes } from '../../utils/routes/jitsi';
 import { getRoomsRoutes, RoomsPath } from '../../utils/routes/rooms';
 import { getRootRoute, RootPath } from '../../utils/routes/root';
+
+import { getUsersRoutes } from '../../utils/routes/users';
 import { DefaultProvider } from '../DefaultProvider';
 
 export const AppRouter = () => {
   const intl = useTranslations();
+
   let routes: RouteObject[] = [
     {
       path: '/',
@@ -27,8 +30,10 @@ export const AppRouter = () => {
           ...getRootRoute(intl, [
             { index: true, element: <Navigate to={RoomsPath.ROOMS} /> },
             { ...getRoomsRoutes(intl) },
+            { ...getUsersRoutes(intl) },
           ]),
         },
+
         { ...getJitsiRoutes() },
         { index: true, element: <Navigate to={RootPath.ROOT} /> },
         { path: '*', element: <Navigate to={RootPath.ROOT} /> },

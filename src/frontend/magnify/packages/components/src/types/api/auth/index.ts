@@ -22,7 +22,7 @@ export interface SignUpData {
 }
 
 export interface UpdateUserData {
-  name: string;
+  language?: string;
 }
 
 export interface UserResponse extends User {}
