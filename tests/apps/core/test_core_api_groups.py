@@ -39,7 +39,7 @@ class GroupsApiTestCase(APITestCase):
         results = response.json()["results"]
         self.assertEqual(len(results), 2)
         expected_ids = {str(g.id) for g in groups}
-        results_id = {r["id"] for r in results}
+        results_id = {result["id"] for result in results}
         self.assertEqual(expected_ids, results_id)
 
     @mock.patch.object(PageNumberPagination, "get_page_size", return_value=2)

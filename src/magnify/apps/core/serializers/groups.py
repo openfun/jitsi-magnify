@@ -22,3 +22,12 @@ class GroupSerializer(serializers.ModelSerializer):
                 _("The group must have at least one administrator.")
             )
         return administrators
+
+
+class LiteGroupSerializer(serializers.ModelSerializer):
+    """Serialize Group model for nesting."""
+
+    class Meta:
+        model = models.Group
+        fields = ["id", "name"]
+        read_only_fields = ["id", "name"]

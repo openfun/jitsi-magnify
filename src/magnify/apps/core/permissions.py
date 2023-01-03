@@ -1,6 +1,4 @@
 """Permission handlers for Magnify's core app."""
-from django.db.models import Q
-
 from rest_framework import permissions
 
 from .models import RoleChoices
@@ -72,7 +70,7 @@ class RoomPermissions(permissions.BasePermission):
         return obj.is_administrator(user)
 
 
-class RoomAccessPermission(permissions.BasePermission):
+class ResourceAccessPermission(permissions.BasePermission):
     """
     Permissions for a room that can only be updated by room administrators.
     """
@@ -89,22 +87,4 @@ class RoomAccessPermission(permissions.BasePermission):
         if request.method == "DELETE" and obj.role == RoleChoices.OWNER:
             return obj.user == user
 
-        return obj.room.is_administrator(user)
-
-
-class HasRoomAccess(permissions.BasePermission):
-    """Permissions for access to an object related to a room."""
-
-    def has_object_permission(self, request, view, obj):
-        """Check that the logged-in user is related to the linked room."""
-        user = request.user
-        return (
-            obj.is_public
-            or user.is_authenticated
-            and (
-                obj.user_accesses.filter(user=user)
-                or obj.group_accesses.filter(
-                    Q(group__members=user) | Q(group__administrators=user)
-                )
-            )
-        )
+        return obj.resource.is_administrator(user)

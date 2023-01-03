@@ -93,15 +93,16 @@ class RoomViewSet(
     def perform_create(self, serializer):
         """Set the current user as owner of the newly created room."""
         room = serializer.save()
-        models.RoomUserAccess.objects.create(
-            room=room, user=self.request.user, role=models.RoleChoices.OWNER
+        models.ResourceAccess.objects.create(
+            resource=room,
+            user=self.request.user,
+            role=models.RoleChoices.OWNER,
         )
 
     @drf_decorators.action(
         methods=["get"],
         detail=True,
         url_path="meetings",
-        permission_classes=[magnify_permissions.HasRoomAccess],
     )
     # pylint: disable=invalid-name, unused-argument, too-many-locals
     def meetings(self, request, pk=None):
@@ -137,7 +138,12 @@ class RoomViewSet(
         user = request.user
         access_clause = Q(is_public=True)
         if user.is_authenticated:
-            access_clause |= Q(users=user) | Q(groups__members=user)
+            access_clause |= (
+                Q(owner=user)
+                | Q(users=user)
+                | Q(groups__members=user)
+                | Q(groups__administrators=user)
+            )
         candidate_meetings = candidate_meetings.filter(access_clause)
 
         # Keep only the meetings that actually have an occurrence within the time range and
@@ -159,8 +165,8 @@ class RoomViewSet(
         return response.Response(serializer.data, status=200)
 
 
-class RoomAccessListModelMixin:
-    """List mixin for room access API."""
+class ResourceAccessListModelMixin:
+    """List mixin for resource access API."""
 
     def get_permissions(self):
         """User only needs to be authenticated to list rooms access"""
@@ -177,23 +183,19 @@ class RoomAccessListModelMixin:
         if self.action == "list":
             user = self.request.user
             queryset = queryset.filter(
-                Q(
-                    room__user_accesses__user=user,
-                    room__user_accesses__role__in=[
-                        models.RoleChoices.ADMIN,
-                        models.RoleChoices.OWNER,
-                    ],
-                )
-                | Q(
-                    room__group_accesses__group__members=user,
-                    room__group_accesses__role=models.GroupRoleChoices.ADMIN,
-                )
+                Q(resource__accesses__user=user)
+                | Q(resource__accesses__group__members=user)
+                | Q(resource__accesses__group__administrators=user),
+                resource__accesses__role__in=[
+                    models.RoleChoices.ADMIN,
+                    models.RoleChoices.OWNER,
+                ],
             ).distinct()
         return queryset
 
 
-class RoomUserAccessViewSet(
-    RoomAccessListModelMixin,
+class ResourceAccessViewSet(
+    ResourceAccessListModelMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
@@ -202,40 +204,22 @@ class RoomUserAccessViewSet(
     viewsets.GenericViewSet,
 ):
     """
-    API endpoints to access and perform actions on room user accesses.
+    API endpoints to access and perform actions on resource accesses.
     """
 
-    permission_classes = [magnify_permissions.RoomAccessPermission]
-    queryset = models.RoomUserAccess.objects.all()
-    serializer_class = serializers.RoomUserAccessSerializer
-
-
-class RoomGroupAccessViewSet(
-    RoomAccessListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    viewsets.GenericViewSet,
-):
-    """
-    API endpoints to access and perform actions on room group accesses.
-    """
-
-    permission_classes = [magnify_permissions.RoomAccessPermission]
-    queryset = models.RoomGroupAccess.objects.all()
-    serializer_class = serializers.RoomGroupAccessSerializer
+    permission_classes = [magnify_permissions.ResourceAccessPermission]
+    queryset = models.ResourceAccess.objects.all()
+    serializer_class = serializers.ResourceAccessSerializer
 
     def perform_create(self, serializer):
         """
-        When creating a room group access, ensure that the logged-in user is administrator
-        of the related group.
+        When creating a resource access for a group, ensure that the logged-in user is
+        administrator of the related group.
         """
         user = self.request.user
-        group = serializer.validated_data["group"]
-        if not (user and group.administrators.filter(id=user.id).exists()):
+        group = serializer.validated_data.get("group")
+        if group and not (user and group.administrators.filter(id=user.id).exists()):
             raise PermissionDenied(
-                "You must be administrator of a group to give it access to a room."
+                "You must be administrator of a group to give it access to a resource."
             )
         return super().perform_create(serializer)

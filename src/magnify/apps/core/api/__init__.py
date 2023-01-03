@@ -5,15 +5,14 @@ from rest_framework import exceptions as drf_exceptions
 from rest_framework import views as drf_views
 
 from .groups import GroupViewSet
-from .rooms import RoomGroupAccessViewSet, RoomUserAccessViewSet, RoomViewSet
+from .rooms import ResourceAccessViewSet, RoomViewSet
 from .users import UserViewSet
 
 # Necessary precision to comply with PEP8
 __all__ = [
     "GroupViewSet",
     "RoomViewSet",
-    "RoomUserAccessViewSet",
-    "RoomGroupAccessViewSet",
+    "ResourceAccessViewSet",
     "UserViewSet",
 ]
 

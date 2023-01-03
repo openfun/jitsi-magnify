@@ -196,6 +196,7 @@ class OccurencesMeetingsModelsTestCase(TestCase):
             start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
             recurrence="daily",
             frequency=3,
+            timezone=ZoneInfo("Europe/Paris"),
             recurring_until=None,
             nb_occurrences=random.choice([0, 1]),
         )
@@ -261,6 +262,7 @@ class OccurencesMeetingsModelsTestCase(TestCase):
             MeetingFactory(
                 start=datetime(2022, 7, 7, 9, 0, tzinfo=ZoneInfo("UTC")),
                 recurrence="weekly",
+                timezone=ZoneInfo("Europe/Paris"),
                 weekdays="2",
             )
 

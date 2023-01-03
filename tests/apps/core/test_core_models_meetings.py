@@ -7,12 +7,7 @@ from zoneinfo import ZoneInfo
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from magnify.apps.core.factories import (
-    GroupFactory,
-    LabelFactory,
-    MeetingFactory,
-    UserFactory,
-)
+from magnify.apps.core.factories import MeetingFactory
 from magnify.apps.core.models import Meeting
 
 
@@ -23,8 +18,8 @@ class MeetingsModelsTestCase(TestCase):
 
     def test_models_meetings_str(self):
         """The str representation should be the name."""
-        room = MeetingFactory()
-        self.assertEqual(str(room), room.name)
+        meeting = MeetingFactory()
+        self.assertEqual(str(meeting), meeting.name)
 
     def test_models_meetings_ordering_first(self):
         """Meetings should be returned ordered by name."""
@@ -45,7 +40,7 @@ class MeetingsModelsTestCase(TestCase):
         self.assertEqual(meeting.recurring_until, meeting.start)
 
     def test_models_meetings_name_maxlength(self):
-        """The name field should be less than 100 characters."""
+        """The name field should be less than 500 characters."""
         MeetingFactory(name="a" * 500)
         with self.assertRaises(ValidationError) as context:
             MeetingFactory(name="a" * 501)
@@ -54,27 +49,3 @@ class MeetingsModelsTestCase(TestCase):
             context.exception.messages,
             ["Ensure this value has at most 500 characters (it has 501)."],
         )
-
-    def test_models_meetings_users(self):
-        """It should be possible to attach users to a meeting."""
-        meeting = MeetingFactory()
-        user = UserFactory()
-        meeting.users.add(user)
-        meeting.refresh_from_db()
-        self.assertEqual(list(meeting.users.all()), [user])
-
-    def test_models_meetings_groups(self):
-        """It should be possible to attach groups to a meeting."""
-        meeting = MeetingFactory()
-        group = GroupFactory()
-        meeting.groups.add(group)
-        meeting.refresh_from_db()
-        self.assertEqual(list(meeting.groups.all()), [group])
-
-    def test_models_meetings_labels(self):
-        """It should be possible to attach labels to a meeting."""
-        meeting = MeetingFactory()
-        label = LabelFactory()
-        meeting.labels.add(label)
-        meeting.refresh_from_db()
-        self.assertEqual(list(meeting.labels.all()), [label])
