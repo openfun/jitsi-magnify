@@ -42,16 +42,10 @@ class GroupFactory(factory.django.DjangoModelFactory):
     token = factory.Faker("uuid4")
 
     @factory.post_generation
-    def meetings(self, create, extracted, **kwargs):
-        """Add meetings to group from a given list of meetings."""
+    def resources(self, create, extracted, **kwargs):
+        """Add resources to group from a given list of resources."""
         if create and extracted:
-            self.meetings.set(extracted)
-
-    @factory.post_generation
-    def rooms(self, create, extracted, **kwargs):
-        """Add rooms to group from a given list of rooms."""
-        if create and extracted:
-            self.rooms.set(extracted)
+            self.resources.set(extracted)
 
     @factory.post_generation
     def members(self, create, extracted, **kwargs):
@@ -83,6 +77,77 @@ class LabelFactory(factory.django.DjangoModelFactory):
     created_by = factory.SubFactory(UserFactory)
 
 
+class ResourceFactory(factory.django.DjangoModelFactory):
+    """Create fake resources for testing."""
+
+    class Meta:
+        model = core_models.Resource
+
+    is_public = factory.Faker("boolean", chance_of_getting_true=50)
+
+    @factory.post_generation
+    def users(self, create, extracted, **kwargs):
+        """Add users to resource from a given list of users."""
+        if create and extracted:
+            for item in extracted:
+                if isinstance(item, core_models.User):
+                    UserResourceAccessFactory(resource=self, user=item)
+                else:
+                    UserResourceAccessFactory(resource=self, user=item[0], role=item[1])
+
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        """Add groups to resource from a given list of groups."""
+        if create and extracted:
+            for item in extracted:
+                if isinstance(item, core_models.Group):
+                    GroupResourceAccessFactory(resource=self, group=item)
+                else:
+                    GroupResourceAccessFactory(
+                        resource=self, group=item[0], role=item[1]
+                    )
+
+    @factory.post_generation
+    def labels(self, create, extracted, **kwargs):
+        """Add labels to resource from a given list of labels."""
+        if create and extracted:
+            self.labels.set(extracted)
+
+
+class UserResourceAccessFactory(factory.django.DjangoModelFactory):
+    """Create fake resource user accesses for testing."""
+
+    class Meta:
+        model = core_models.ResourceAccess
+
+    resource = factory.SubFactory(ResourceFactory)
+    user = factory.SubFactory(UserFactory)
+    role = fuzzy.FuzzyChoice(core_models.RoleChoices.values)
+
+
+class GroupResourceAccessFactory(factory.django.DjangoModelFactory):
+    """Create fake resource group accesses for testing."""
+
+    class Meta:
+        model = core_models.ResourceAccess
+
+    resource = factory.SubFactory(ResourceFactory)
+    group = factory.SubFactory(GroupFactory)
+    role = fuzzy.FuzzyChoice(
+        [v for v in core_models.RoleChoices.values if v != "owner"]
+    )
+
+
+class RoomFactory(ResourceFactory):
+    """Create fake rooms for testing."""
+
+    class Meta:
+        model = core_models.Room
+
+    name = factory.Faker("catch_phrase")
+    slug = factory.LazyAttribute(lambda o: slugify(o.name))
+
+
 class MeetingFactory(factory.django.DjangoModelFactory):
     """Create fake meetings for testing."""
 
@@ -90,6 +155,7 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         model = core_models.Meeting
 
     name = factory.Faker("catch_phrase")
+    owner = factory.SubFactory(UserFactory)
     start = factory.Faker("future_datetime", tzinfo=ZoneInfo("UTC"))
     timezone = fuzzy.FuzzyChoice(TimeZoneField.default_zoneinfo_tzs)
 
@@ -112,104 +178,31 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         """Add users to meeting from a given list of users."""
         if create and extracted:
             for item in extracted:
-                if isinstance(item, core_models.User):
-                    MeetingUserFactory(meeting=self, user=item)
-                else:
-                    MeetingUserFactory(meeting=self, user=item[0], role=item[1])
+                core_models.MeetingAccess.objects.create(meeting=self, user=item)
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
         """Add groups to meeting from a given list of groups."""
         if create and extracted:
             for item in extracted:
-                if isinstance(item, core_models.Group):
-                    MeetingGroupAccessFactory(meeting=self, group=item)
-                else:
-                    MeetingGroupAccessFactory(meeting=self, group=item[0], role=item[1])
-
-    @factory.post_generation
-    def labels(self, create, extracted, **kwargs):
-        """Add labels to meeting from a given list of labels."""
-        if create and extracted:
-            self.labels.set(extracted)
+                core_models.MeetingAccess.objects.create(meeting=self, group=item)
 
 
-class MeetingUserFactory(factory.django.DjangoModelFactory):
+class UserMeetingAccessFactory(factory.django.DjangoModelFactory):
     """Create fake meeting user accesses for testing."""
 
     class Meta:
-        model = core_models.MeetingUserAccess
+        model = core_models.MeetingAccess
 
     meeting = factory.SubFactory(MeetingFactory)
     user = factory.SubFactory(UserFactory)
-    role = fuzzy.FuzzyChoice(core_models.RoleChoices.values)
 
 
-class MeetingGroupAccessFactory(factory.django.DjangoModelFactory):
+class GroupMeetingAccessFactory(factory.django.DjangoModelFactory):
     """Create fake meeting group accesses for testing."""
 
     class Meta:
-        model = core_models.MeetingGroupAccess
+        model = core_models.MeetingAccess
 
     meeting = factory.SubFactory(MeetingFactory)
     group = factory.SubFactory(GroupFactory)
-    role = fuzzy.FuzzyChoice(core_models.GroupRoleChoices.values)
-
-
-class RoomFactory(factory.django.DjangoModelFactory):
-    """Create fake rooms for testing."""
-
-    class Meta:
-        model = core_models.Room
-
-    name = factory.Faker("catch_phrase")
-    slug = factory.LazyAttribute(lambda o: slugify(o.name))
-    is_public = factory.Faker("boolean", chance_of_getting_true=50)
-
-    @factory.post_generation
-    def users(self, create, extracted, **kwargs):
-        """Add users to room from a given list of users."""
-        if create and extracted:
-            for item in extracted:
-                if isinstance(item, core_models.User):
-                    RoomUserAccessFactory(room=self, user=item)
-                else:
-                    RoomUserAccessFactory(room=self, user=item[0], role=item[1])
-
-    @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
-        """Add groups to room from a given list of groups."""
-        if create and extracted:
-            for item in extracted:
-                if isinstance(item, core_models.Group):
-                    RoomGroupAccessFactory(room=self, group=item)
-                else:
-                    RoomGroupAccessFactory(room=self, group=item[0], role=item[1])
-
-    @factory.post_generation
-    def labels(self, create, extracted, **kwargs):
-        """Add labels to room from a given list of labels."""
-        if create and extracted:
-            self.labels.set(extracted)
-
-
-class RoomUserAccessFactory(factory.django.DjangoModelFactory):
-    """Create fake room user accesses for testing."""
-
-    class Meta:
-        model = core_models.RoomUserAccess
-
-    room = factory.SubFactory(RoomFactory)
-    user = factory.SubFactory(UserFactory)
-    role = fuzzy.FuzzyChoice(core_models.RoleChoices.values)
-
-
-class RoomGroupAccessFactory(factory.django.DjangoModelFactory):
-    """Create fake room group accesses for testing."""
-
-    class Meta:
-        model = core_models.RoomGroupAccess
-
-    room = factory.SubFactory(RoomFactory)
-    group = factory.SubFactory(GroupFactory)
-    role = fuzzy.FuzzyChoice(core_models.GroupRoleChoices.values)

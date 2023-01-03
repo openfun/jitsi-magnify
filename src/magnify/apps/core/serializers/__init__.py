@@ -3,10 +3,9 @@
 from .groups import GroupSerializer
 from .meetings import MeetingSerializer
 from .rooms import (
-    NestedRoomUserAccessSerializer,
-    RoomGroupAccessSerializer,
+    NestedResourceAccessSerializer,
+    ResourceAccessSerializer,
     RoomSerializer,
-    RoomUserAccessSerializer,
 )
 from .users import PasswordChangeSerializer, RegistrationSerializer, UserSerializer
 
@@ -14,11 +13,10 @@ from .users import PasswordChangeSerializer, RegistrationSerializer, UserSeriali
 __all__ = [
     "GroupSerializer",
     "MeetingSerializer",
-    "NestedRoomUserAccessSerializer",
+    "NestedResourceAccessSerializer",
     "PasswordChangeSerializer",
     "RegistrationSerializer",
-    "RoomGroupAccessSerializer",
     "RoomSerializer",
-    "RoomUserAccessSerializer",
+    "ResourceAccessSerializer",
     "UserSerializer",
 ]

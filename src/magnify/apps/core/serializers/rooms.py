@@ -6,11 +6,11 @@ from rest_framework import exceptions, serializers
 from magnify.apps.core import models
 from magnify.apps.core.utils import generate_token
 
-from .groups import GroupSerializer
+from .groups import LiteGroupSerializer
 from .users import UserSerializer
 
 
-class RoomAccessSerializerMixin:
+class ResourceAccessSerializerMixin:
     """
     A serializer mixin to share controling that the logged-in user submitting a room access object
     is administrator on the targeted room.
@@ -28,7 +28,7 @@ class RoomAccessSerializerMixin:
             self.instance
             and (
                 data["role"] == models.RoleChoices.OWNER
-                and not self.instance.room.is_owner(user)
+                and not self.instance.resource.is_owner(user)
                 or self.instance.role == models.RoleChoices.OWNER
                 and not self.instance.user == user
             )
@@ -36,66 +36,49 @@ class RoomAccessSerializerMixin:
             # Create
             not self.instance
             and data.get("role") == models.RoleChoices.OWNER
-            and not data["room"].is_owner(user)
+            and not data["resource"].is_owner(user)
         ):
             raise exceptions.PermissionDenied(
                 "Only owners of a room can assign other users as owners."
             )
         return data
 
-    def validate_room(self, room):
-        """The logged-in user must be administrator in the room (directly or via a group)."""
+    def validate_resource(self, resource):
+        """The logged-in user must be administrator of the resource (directly or via a group)."""
         request = self.context.get("request", None)
         user = getattr(request, "user", None)
 
-        if not (user and user.is_authenticated and room.is_administrator(user)):
+        if not (user and user.is_authenticated and resource.is_administrator(user)):
             raise exceptions.PermissionDenied(
                 _("You must be administrator or owner of a room to add accesses to it.")
             )
 
-        return room
+        return resource
 
 
-class RoomUserAccessSerializer(RoomAccessSerializerMixin, serializers.ModelSerializer):
+class ResourceAccessSerializer(
+    ResourceAccessSerializerMixin, serializers.ModelSerializer
+):
     """Serialize Room to User accesses for the API."""
 
     class Meta:
-        model = models.RoomUserAccess
-        fields = ["id", "user", "room", "role"]
+        model = models.ResourceAccess
+        fields = ["id", "user", "group", "resource", "role"]
         read_only_fields = ["id"]
 
     def update(self, instance, validated_data):
-        """Make user and room field readonly but only on update."""
-        validated_data.pop("room", None)
+        """Make "user", "group" and "resource" fields readonly but only on update."""
+        validated_data.pop("resource", None)
         validated_data.pop("user", None)
-        return super().update(instance, validated_data)
-
-
-class NestedRoomUserAccessSerializer(RoomUserAccessSerializer):
-    """Serialize Room to User accesses for the API with full nested user."""
-
-    user = UserSerializer(read_only=True)
-
-
-class RoomGroupAccessSerializer(RoomAccessSerializerMixin, serializers.ModelSerializer):
-    """Serialize Room to Group accesses for the API."""
-
-    class Meta:
-        model = models.RoomGroupAccess
-        fields = ["id", "group", "room", "role"]
-        read_only_fields = ["id"]
-
-    def update(self, instance, validated_data):
-        """Make group and room field readonly but only on update."""
-        validated_data.pop("room", None)
         validated_data.pop("group", None)
         return super().update(instance, validated_data)
 
 
-class NestedRoomGroupAccessSerializer(RoomGroupAccessSerializer):
-    """Serialize Room to Group accesses for the API with full nested info."""
+class NestedResourceAccessSerializer(ResourceAccessSerializer):
+    """Serialize Room accesses for the API with full nested user."""
 
-    group = GroupSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+    group = LiteGroupSerializer(read_only=True)
 
 
 class RoomSerializer(serializers.ModelSerializer):
@@ -122,22 +105,12 @@ class RoomSerializer(serializers.ModelSerializer):
         is_admin = models.RoleChoices.check_administrator_role(role)
 
         if role is not None:
-            groups_serializer = RoomGroupAccessSerializer(
-                instance.group_accesses.select_related("room", "group").all(),
+            access_serializer = NestedResourceAccessSerializer(
+                instance.accesses.select_related("resource", "group", "user").all(),
                 context=self.context,
                 many=True,
             )
-            users_serializer = NestedRoomUserAccessSerializer(
-                instance.user_accesses.select_related("room", "user").all(),
-                context=self.context,
-                many=True,
-            )
-            output.update(
-                {
-                    "user_accesses": users_serializer.data,
-                    "group_accesses": groups_serializer.data,
-                }
-            )
+            output["accesses"] = access_serializer.data
 
         if not is_admin:
             del output["configuration"]

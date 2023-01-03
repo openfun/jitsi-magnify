@@ -4,12 +4,8 @@ Unit tests for the Meeting factory
 from django.test import TestCase
 from django.utils import timezone
 
-from magnify.apps.core.factories import (
-    GroupFactory,
-    LabelFactory,
-    MeetingFactory,
-    UserFactory,
-)
+from magnify.apps.core.factories import GroupFactory, MeetingFactory, UserFactory
+from magnify.apps.core.models import MeetingAccess
 
 
 class MeetingsFactoriesTestCase(TestCase):
@@ -30,17 +26,19 @@ class MeetingsFactoriesTestCase(TestCase):
     def test_factories_meetings_users(self):
         """We should be able to attach users to a meeting."""
         users = UserFactory.create_batch(2)
-        meeting = MeetingFactory(users=users)
-        self.assertQuerysetEqual(meeting.users.all(), users, ordered=False)
-
-    def test_factories_meetings_labels(self):
-        """We should be able to attach labels to a meeting."""
-        labels = LabelFactory.create_batch(2)
-        meeting = MeetingFactory(labels=labels)
-        self.assertQuerysetEqual(meeting.labels.all(), labels, ordered=False)
+        MeetingFactory(users=users)
+        self.assertQuerysetEqual(
+            [access.user for access in MeetingAccess.objects.all()],
+            users,
+            ordered=False,
+        )
 
     def test_factories_meetings_groups(self):
         """We should be able to attach groups to a meeting."""
         groups = GroupFactory.create_batch(2)
-        meeting = MeetingFactory(groups=groups)
-        self.assertQuerysetEqual(meeting.groups.all(), groups, ordered=False)
+        MeetingFactory(groups=groups)
+        self.assertQuerysetEqual(
+            [access.group for access in MeetingAccess.objects.all()],
+            groups,
+            ordered=False,
+        )

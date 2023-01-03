@@ -7,7 +7,6 @@ from django.test import TestCase
 from magnify.apps.core.factories import (
     GroupFactory,
     LabelFactory,
-    MeetingFactory,
     RoomFactory,
     UserFactory,
 )
@@ -28,8 +27,13 @@ class GroupsModelsTestCase(TestCase):
         """Groups should be returned ordered by name."""
         GroupFactory.create_batch(3)
         groups = Group.objects.all()
-        self.assertGreaterEqual(groups[1].name, groups[0].name)
-        self.assertGreaterEqual(groups[2].name, groups[1].name)
+        # Remove hyphens because postgresql is ignoring them when they sort
+        self.assertGreaterEqual(
+            groups[1].name.replace("-", ""), groups[0].name.replace("-", "")
+        )
+        self.assertGreaterEqual(
+            groups[2].name.replace("-", ""), groups[1].name.replace("-", "")
+        )
 
     def test_models_groups_name_maxlength(self):
         """The name field should be less than 100 characters."""
@@ -50,21 +54,13 @@ class GroupsModelsTestCase(TestCase):
         group.refresh_from_db()
         self.assertEqual(list(group.members.all()), [user])
 
-    def test_models_groups_meetings(self):
-        """It should be possible to attach meetings to a group."""
-        group = GroupFactory()
-        meeting = MeetingFactory()
-        group.meetings.add(meeting)
-        group.refresh_from_db()
-        self.assertEqual(list(group.meetings.all()), [meeting])
-
     def test_models_groups_rooms(self):
         """It should be possible to attach rooms to a group."""
         group = GroupFactory()
         room = RoomFactory()
-        group.rooms.add(room)
+        group.resources.add(room.resource)
         group.refresh_from_db()
-        self.assertEqual(list(group.rooms.all()), [room])
+        self.assertEqual(list(room.groups.all()), [group])
 
     def test_models_groups_labels(self):
         """It should be possible to attach labels to a group."""

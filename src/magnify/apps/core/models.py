@@ -41,13 +41,6 @@ class RoleChoices(models.TextChoices):
         return role == cls.OWNER
 
 
-# Group roles do not have the "owner" role
-GroupRoleChoices = models.TextChoices(
-    "GroupRoleChoices",
-    [(rc.name, rc.value) for rc in RoleChoices if rc.value != RoleChoices.OWNER],
-)
-
-
 class BaseModel(models.Model):
     """Make `save` call `full_clean`.
 
@@ -199,19 +192,173 @@ class Group(BaseModel):
         super().clean_fields(exclude=exclude)
 
 
-class Room(BaseModel):
-    """Model for one room"""
-
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
+class Resource(BaseModel):
+    """Model to define access control"""
 
     is_public = models.BooleanField(default=False)
-
-    users = models.ManyToManyField(User, through="RoomUserAccess", related_name="rooms")
-    groups = models.ManyToManyField(
-        Group, through="RoomGroupAccess", blank=True, related_name="rooms"
+    users = models.ManyToManyField(
+        User,
+        through="ResourceAccess",
+        through_fields=("resource", "user"),
+        related_name="resources",
     )
-    labels = models.ManyToManyField(Label, blank=True, related_name="is_room_label_of")
+    groups = models.ManyToManyField(
+        Group,
+        through="ResourceAccess",
+        through_fields=("resource", "group"),
+        blank=True,
+        related_name="resources",
+    )
+    labels = models.ManyToManyField(
+        Label, blank=True, related_name="is_resource_label_of"
+    )
+
+    class Meta:
+        db_table = "magnify_resource"
+        verbose_name = _("Resource")
+        verbose_name_plural = _("Resources")
+
+    def __str__(self):
+        try:
+            return self.name
+        except AttributeError:
+            return f"Resource {self.id!s}"
+
+    def get_role(self, user):
+        """
+        Determine the role of a given user in this resource taking into account group ownership.
+        """
+        if not user or not user.is_authenticated:
+            return None
+
+        role = None
+        for access in self.accesses.filter(
+            Q(user=user) | Q(group__members=user) | Q(group__administrators=user)
+        ):
+            if access.role == RoleChoices.OWNER:
+                return RoleChoices.OWNER
+            if access.role == RoleChoices.ADMIN:
+                role = RoleChoices.ADMIN
+            if access.role == RoleChoices.MEMBER and role != RoleChoices.ADMIN:
+                role = RoleChoices.MEMBER
+        return role
+
+    def is_administrator(self, user):
+        """
+        Check if a user is administrator of the resource.
+
+        Users carrying the "owner" role are considered as administrators a fortiori.
+        """
+        return RoleChoices.check_administrator_role(self.get_role(user))
+
+    def is_owner(self, user):
+        """Check if a user is owner of the resource."""
+        return RoleChoices.check_owner_role(self.get_role(user))
+
+
+class ResourceAccess(BaseModel):
+    """Link table between resources and users/groups"""
+
+    resource = models.ForeignKey(
+        Resource,
+        on_delete=models.CASCADE,
+        related_name="accesses",
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="accesses", blank=True, null=True
+    )
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name="accesses", blank=True, null=True
+    )
+    role = models.CharField(
+        max_length=20, choices=RoleChoices.choices, default=RoleChoices.MEMBER
+    )
+
+    class Meta:
+        db_table = "magnify_resource_access"
+        verbose_name = _("Resource access")
+        verbose_name_plural = _("Resource accesses")
+        constraints = [
+            # Uniqueness
+            models.UniqueConstraint(
+                fields=["user", "resource"],
+                condition=Q(group__isnull=True),
+                name="resource_access_unique_user_resource",
+                violation_error_message=_(
+                    "Resource access with this user and resource already exists."
+                ),
+            ),
+            models.UniqueConstraint(
+                fields=["group", "resource"],
+                condition=Q(user__isnull=True),
+                name="resources_access_unique_group_resource",
+                violation_error_message=_(
+                    "Resource access with this group and resource already exists."
+                ),
+            ),
+            # Checks
+            models.CheckConstraint(
+                check=~Q(user__isnull=True, group__isnull=True),
+                name="resource_access_not_user_and_group_both_null",
+            ),
+            models.CheckConstraint(
+                check=~Q(user__isnull=False, group__isnull=False),
+                name="resource_access_not_user_and_group_both_set",
+            ),
+            models.CheckConstraint(
+                check=Q(group__isnull=True) | ~Q(role=RoleChoices.OWNER),
+                name="resource_access_group_is_not_owner",
+                violation_error_message=_(
+                    "The 'owner' role can not be assigned to a group."
+                ),
+            ),
+        ]
+
+    def __str__(self):
+        person = self.user or self.group
+        role = capfirst(self.get_role_display())
+        try:
+            resource = self.resource.name
+        except AttributeError:
+            resource = f"resource {self.resource_id!s}"
+
+        return f"{role:s} role for {person.name:s} on {resource:s}"
+
+    def save(self, *args, **kwargs):
+        """Make sure we keep at least one owner for the resource."""
+        if self.pk and self.role != RoleChoices.OWNER:
+            accesses = self._meta.model.objects.filter(
+                resource=self.resource, role=RoleChoices.OWNER
+            ).only("pk")
+            if len(accesses) == 1 and accesses[0].pk == self.pk:
+                raise PermissionDenied("A resource should keep at least one owner.")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Disallow deleting the last of the Mohicans."""
+        if (
+            self.role == RoleChoices.OWNER
+            and self._meta.model.objects.filter(
+                resource=self.resource, role=RoleChoices.OWNER
+            ).count()
+            == 1
+        ):
+            raise PermissionDenied("A resource should keep at least one owner.")
+        return super().delete(*args, **kwargs)
+
+
+class Room(Resource):
+    """Model for one room"""
+
+    name = models.CharField(max_length=500)
+    resource = models.OneToOneField(
+        Resource,
+        on_delete=models.CASCADE,
+        parent_link=True,
+        primary_key=True,
+    )
+    slug = models.SlugField(max_length=100, blank=True, null=True, unique=True)
+
     configuration = models.JSONField(
         blank=True,
         default=dict,
@@ -228,11 +375,12 @@ class Room(BaseModel):
         verbose_name_plural = _("Rooms")
 
     def __str__(self):
-        return self.name
+        return capfirst(self.name)
 
     def clean_fields(self, exclude=None):
         """
         Automatically generate the slug from the name and make sure it does not look like a UUID.
+
         We don't want any overlapping between the `slug` and the `id` fields because they can
         both be used to get a room detail view on the API.
         """
@@ -250,128 +398,9 @@ class Room(BaseModel):
         """The name used for the room in Jitsi."""
         return f"{self.slug:s}-{self.id!s}"
 
-    def get_role(self, user, direct_only=False):
-        """
-        Determine the role of a given user in this room.
-
-        direct_only: boolean
-            Whether or not to take into account the roles a user inherits from
-            its membership in a group.
-        """
-        if not user or not user.is_authenticated:
-            return None
-
-        try:
-            # pylint: disable=no-member
-            role = self.user_accesses.get(user=user).role
-        except self.user_accesses.model.DoesNotExist:
-            role = None
-
-        if direct_only or role not in (None, RoleChoices.MEMBER):
-            return role
-
-        for access in self.group_accesses.filter(
-            Q(group__members=user) | Q(group__administrators=user),
-        ):
-            if access.role == GroupRoleChoices.MEMBER:
-                role = GroupRoleChoices.MEMBER
-            if access.role == GroupRoleChoices.ADMIN:
-                role = GroupRoleChoices.ADMIN
-                break
-
-        return role
-
-    def is_administrator(self, user):
-        """
-        Check if a user is administrator of the room.
-
-        Users carrying the "owner" role are considered as administrators a fortiori.
-        """
-        return RoleChoices.check_administrator_role(self.get_role(user))
-
-    def is_owner(self, user):
-        """Check if a user is owner of the room."""
-        return RoleChoices.check_owner_role(self.get_role(user, direct_only=True))
-
-
-class RoomUserAccess(BaseModel):
-    """Link table between rooms and users"""
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="room_accesses",
-    )
-    room = models.ForeignKey(
-        Room, on_delete=models.CASCADE, related_name="user_accesses"
-    )
-    role = models.CharField(
-        max_length=20, choices=RoleChoices.choices, default=RoleChoices.MEMBER
-    )
-
-    class Meta:
-        db_table = "magnify_room_user_access"
-        unique_together = ("user", "room")
-        verbose_name = _("Room user access")
-        verbose_name_plural = _("Room user accesses")
-
-    def __str__(self):
-        return (
-            f"{capfirst(self.room.name):s} / {capfirst(self.user.name):s} "
-            f"({self.get_role_display():s})"
-        )
-
-    def save(self, *args, **kwargs):
-        """Make sure we keep at least one owner in a room."""
-        if self.pk and self.role != RoleChoices.OWNER:
-            accesses = self._meta.model.objects.filter(
-                room=self.room, role=RoleChoices.OWNER
-            ).only("pk")
-            if len(accesses) == 1 and accesses[0].pk == self.pk:
-                raise PermissionDenied("A room should keep at least one owner.")
-        return super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        """Disallow deleting the last of the Mohicans."""
-        if (
-            self.role == RoleChoices.OWNER
-            and self._meta.model.objects.filter(
-                room=self.room, role=RoleChoices.OWNER
-            ).count()
-            == 1
-        ):
-            raise PermissionDenied("A room should keep at least one owner.")
-        return super().delete(*args, **kwargs)
-
-
-class RoomGroupAccess(BaseModel):
-    """Link table between rooms and groups"""
-
-    group = models.ForeignKey(
-        Group, on_delete=models.CASCADE, related_name="room_accesses"
-    )
-    room = models.ForeignKey(
-        Room, on_delete=models.CASCADE, related_name="group_accesses"
-    )
-    role = models.CharField(
-        max_length=20, choices=GroupRoleChoices.choices, default=GroupRoleChoices.MEMBER
-    )
-
-    class Meta:
-        db_table = "magnify_room_group_access"
-        unique_together = ("group", "room")
-        verbose_name = _("Room group access")
-        verbose_name_plural = _("Room group accesses")
-
-    def __str__(self):
-        return (
-            f"{capfirst(self.room.name):s} / {capfirst(self.group.name):s} "
-            f"({self.get_role_display():s})"
-        )
-
 
 class Meeting(BaseModel):
-    """Model for one meeting or a collection of meetings defined recursively"""
+    """Model for one meeting or a collection of meetings defined recursively."""
 
     DAILY, WEEKLY, MONTHLY, YEARLY = "daily", "weekly", "monthly", "yearly"
 
@@ -395,7 +424,32 @@ class Meeting(BaseModel):
 
     name = models.CharField(max_length=500)
     room = models.ForeignKey(
-        Room, null=True, blank=True, related_name="meetings", on_delete=models.RESTRICT
+        Room,
+        help_text=_("Room that hosts this meeting."),
+        on_delete=models.SET_NULL,
+        related_name="meetings",
+        blank=True,
+        null=True,
+    )
+    owner = models.ForeignKey(
+        User,
+        help_text=_("User who created the meeting."),
+        on_delete=models.CASCADE,
+        related_name="owner_of_meetings",
+    )
+    is_public = models.BooleanField(default=True)
+    users = models.ManyToManyField(
+        User,
+        through="MeetingAccess",
+        through_fields=("meeting", "user"),
+        related_name="meetings",
+    )
+    groups = models.ManyToManyField(
+        Group,
+        through="MeetingAccess",
+        through_fields=("meeting", "group"),
+        blank=True,
+        related_name="meetings",
     )
 
     start = models.DateTimeField()
@@ -416,32 +470,26 @@ class Meeting(BaseModel):
         max_length=10, choices=MONTHLY_TYPE_CHOICES, default=DATE_DAY
     )
 
-    is_public = models.BooleanField(default=True)
-
-    users = models.ManyToManyField(
-        User, through="MeetingUserAccess", related_name="meetings"
-    )
-    groups = models.ManyToManyField(
-        Group, through="MeetingGroupAccess", blank=True, related_name="meetings"
-    )
-    labels = models.ManyToManyField(
-        Label, blank=True, related_name="is_meeting_label_of"
-    )
-
     class Meta:
         db_table = "magnify_meeting"
-        ordering = ("-start",)
+        ordering = ("-start", "name")
         verbose_name = _("Meeting")
         verbose_name_plural = _("Meetings")
         constraints = [
             models.CheckConstraint(
                 check=Q(end__gte=F("start")),
                 name="end_greater_than_start",
+                violation_error_message=_(
+                    "The start date must be earlier than the end date."
+                ),
             ),
             models.CheckConstraint(
                 check=Q(recurring_until__gte=F("start"))
                 | Q(recurring_until__isnull=True),
                 name="recurring_until_greater_than_start",
+                violation_error_message=_(
+                    "The start date must be earlier than the date of end of recurrence."
+                ),
             ),
             models.CheckConstraint(check=Q(frequency__gte=1), name="frequency_gte_1"),
             models.CheckConstraint(
@@ -452,15 +500,21 @@ class Meeting(BaseModel):
         ]
 
     def __str__(self):
-        return self.name
+        return capfirst(self.name)
 
     @property
     def jitsi_name(self):
-        """The name used for the room in Jitsi."""
-        # Get a unique identifier for the meeing
-        if self.room:
-            return f"{self.room.slug:s}-{self.id!s}"
+        """The name used as Jitsi room for this meeting."""
         return str(self.id)
+
+    def is_guest(self, user):
+        """Return True if the user is a guest, either directly or via a group."""
+        return (
+            user.is_authenticated
+            and self.accesses.filter(
+                Q(user=user) | Q(group__members=user) | Q(group__administrators=user)
+            ).exists()
+        )
 
     def reset_recurrence(self):
         """
@@ -591,8 +645,8 @@ class Meeting(BaseModel):
 
     def get_occurrences(self, start, end):
         """
-        Returns a list of occurrences for this meeting between start and end dates passed
-        as arguments.
+        Returns a list of occurrences for this meeting between start
+        and end dates passed as arguments.
         """
         if self.recurrence:
             if self.recurring_until and self.recurring_until < end:
@@ -613,55 +667,63 @@ class Meeting(BaseModel):
         return []
 
 
-class MeetingUserAccess(BaseModel):
-    """Link table between meetings and users"""
+class MeetingAccess(BaseModel):
+    """Link table between meetings and users/groups."""
 
+    meeting = models.ForeignKey(
+        Meeting,
+        on_delete=models.CASCADE,
+        related_name="accesses",
+    )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="meeting_accesses",
+        related_name="meeting_relations",
+        blank=True,
+        null=True,
     )
-    meeting = models.ForeignKey(
-        Meeting, on_delete=models.CASCADE, related_name="user_accesses"
-    )
-    role = models.CharField(
-        max_length=20, choices=RoleChoices.choices, default=RoleChoices.MEMBER
-    )
-
-    class Meta:
-        db_table = "magnify_meeting_user_access"
-        unique_together = ("user", "meeting")
-        verbose_name = _("Meeting user access")
-        verbose_name_plural = _("Meeting user accesses")
-
-    def __str__(self):
-        return (
-            f"{capfirst(self.meeting.name):s} / {capfirst(self.user.name):s} "
-            f"({self.get_role_display():s})"
-        )
-
-
-class MeetingGroupAccess(BaseModel):
-    """Link table between meetings and groups"""
-
     group = models.ForeignKey(
-        Group, on_delete=models.CASCADE, related_name="meeting_accesses"
-    )
-    meeting = models.ForeignKey(
-        Meeting, on_delete=models.CASCADE, related_name="group_accesses"
-    )
-    role = models.CharField(
-        max_length=20, choices=GroupRoleChoices.choices, default=GroupRoleChoices.MEMBER
+        Group,
+        on_delete=models.CASCADE,
+        related_name="meeting_relations",
+        blank=True,
+        null=True,
     )
 
     class Meta:
-        db_table = "magnify_meeting_group_access"
-        unique_together = ("group", "meeting")
-        verbose_name = _("Meeting group access")
-        verbose_name_plural = _("Meeting group accesses")
+        db_table = "magnify_meeting_access"
+        verbose_name = _("Meeting/guest relation")
+        verbose_name_plural = _("Meeting/guest relations")
+        constraints = [
+            # Uniqueness
+            models.UniqueConstraint(
+                fields=["user", "meeting"],
+                condition=Q(group__isnull=True),
+                name="unique_user_meeting",
+                violation_error_message=_(
+                    "This user is already declared as a guest for this meeting."
+                ),
+            ),
+            models.UniqueConstraint(
+                fields=["group", "meeting"],
+                condition=Q(user__isnull=True),
+                name="unique_group_meeting",
+                violation_error_message=_(
+                    "This group is already declared as a guest for this meeting."
+                ),
+            ),
+            # Checks
+            models.CheckConstraint(
+                check=~Q(user__isnull=True, group__isnull=True),
+                name="meeting_guest_not_user_and_group_both_null",
+            ),
+            models.CheckConstraint(
+                check=~Q(user__isnull=False, group__isnull=False),
+                name="meeting_guest_not_user_and_group_both_set",
+            ),
+        ]
 
     def __str__(self):
-        return (
-            f"{capfirst(self.meeting.name):s} / {capfirst(self.group.name):s} "
-            f"({self.get_role_display():s})"
-        )
+        if self.user:
+            return f"{self.user.name:s} is guest in meeting {self.meeting.id!s}"
+        return f"Users in group {self.group.name} are guests in meeting {self.meeting.id!s}"

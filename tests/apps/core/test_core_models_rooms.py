@@ -28,8 +28,13 @@ class RoomsModelsTestCase(TestCase):
         """Rooms should be returned ordered by name."""
         RoomFactory.create_batch(3)
         rooms = Room.objects.all()
-        self.assertGreaterEqual(rooms[1].name, rooms[0].name)
-        self.assertGreaterEqual(rooms[2].name, rooms[1].name)
+        # Remove hyphens because postgresql is ignoring them when they sort
+        self.assertGreaterEqual(
+            rooms[1].name.replace("-", ""), rooms[0].name.replace("-", "")
+        )
+        self.assertGreaterEqual(
+            rooms[2].name.replace("-", ""), rooms[1].name.replace("-", "")
+        )
 
     def test_models_rooms_name_maxlength(self):
         """The name field should be less than 100 characters."""
@@ -40,7 +45,6 @@ class RoomsModelsTestCase(TestCase):
         self.assertEqual(
             context.exception.messages,
             [
-                "Ensure this value has at most 100 characters (it has 101).",
                 "Ensure this value has at most 100 characters (it has 101).",
             ],
         )
@@ -134,9 +138,9 @@ class RoomsModelsTestCase(TestCase):
         user = UserFactory()
         room = RoomFactory()
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             self.assertIsNone(room.get_role(user))
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             self.assertFalse(room.is_administrator(user))
         with self.assertNumQueries(1):
             self.assertFalse(room.is_owner(user))
@@ -146,9 +150,9 @@ class RoomsModelsTestCase(TestCase):
         user = UserFactory()
         room = RoomFactory(users=[(user, "member")])
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             self.assertEqual(room.get_role(user), "member")
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             self.assertFalse(room.is_administrator(user))
         with self.assertNumQueries(1):
             self.assertFalse(room.is_owner(user))
@@ -183,9 +187,9 @@ class RoomsModelsTestCase(TestCase):
         group = GroupFactory(members=[user])
         room = RoomFactory(groups=[(group, "member")])
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             self.assertEqual(room.get_role(user), "member")
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             self.assertFalse(room.is_administrator(user))
         with self.assertNumQueries(1):
             self.assertFalse(room.is_owner(user))
@@ -196,9 +200,9 @@ class RoomsModelsTestCase(TestCase):
         group = GroupFactory(members=[user])
         room = RoomFactory(groups=[(group, "administrator")])
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             self.assertEqual(room.get_role(user), "administrator")
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             self.assertTrue(room.is_administrator(user))
         with self.assertNumQueries(1):
             self.assertFalse(room.is_owner(user))

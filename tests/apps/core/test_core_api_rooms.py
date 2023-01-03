@@ -13,10 +13,10 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from magnify.apps.core.factories import (
     GroupFactory,
+    GroupResourceAccessFactory,
     RoomFactory,
-    RoomGroupAccessFactory,
-    RoomUserAccessFactory,
     UserFactory,
+    UserResourceAccessFactory,
 )
 from magnify.apps.core.models import Room
 
@@ -87,7 +87,7 @@ class RoomsApiTestCase(APITestCase):
             str(room_group_access_accesses.id),
             str(room_user_accesses.id),
         }
-        results_id = {r["id"] for r in results}
+        results_id = {result["id"] for result in results}
         self.assertEqual(expected_ids, results_id)
 
     @mock.patch.object(PageNumberPagination, "get_page_size", return_value=2)
@@ -359,14 +359,14 @@ class RoomsApiTestCase(APITestCase):
         other_user = UserFactory()
         group = GroupFactory()
         room = RoomFactory()
-        user_access = RoomUserAccessFactory(room=room, user=user, role="member")
-        other_user_access = RoomUserAccessFactory(
-            room=room, user=other_user, role="member"
+        user_access = UserResourceAccessFactory(resource=room, user=user, role="member")
+        other_user_access = UserResourceAccessFactory(
+            resource=room, user=other_user, role="member"
         )
-        group_access = RoomGroupAccessFactory(room=room, group=group)
+        group_access = GroupResourceAccessFactory(resource=room, group=group)
         jwt_token = AccessToken.for_user(user)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(4):
             response = self.client.get(
                 f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
             )
@@ -374,10 +374,11 @@ class RoomsApiTestCase(APITestCase):
         content_dict = response.json()
         # Access objects order is uncertain and we don't care
         self.assertCountEqual(
-            content_dict.pop("user_accesses"),
+            content_dict.pop("accesses"),
             [
                 {
                     "id": str(user_access.id),
+                    "group": None,
                     "user": {
                         "id": str(user_access.user.id),
                         # Email is visible only by self
@@ -386,19 +387,30 @@ class RoomsApiTestCase(APITestCase):
                         "name": user_access.user.name,
                         "username": user_access.user.username,
                     },
-                    "room": str(room.id),
+                    "resource": str(room.id),
                     "role": user_access.role,
                 },
                 {
                     "id": str(other_user_access.id),
+                    "group": None,
                     "user": {
                         "id": str(other_user_access.user.id),
                         "language": other_user_access.user.language,
                         "name": other_user_access.user.name,
                         "username": other_user_access.user.username,
                     },
-                    "room": str(room.id),
+                    "resource": str(room.id),
                     "role": other_user_access.role,
+                },
+                {
+                    "id": str(group_access.id),
+                    "group": {
+                        "id": str(group.id),
+                        "name": group.name,
+                    },
+                    "user": None,
+                    "resource": str(room.id),
+                    "role": group_access.role,
                 },
             ],
         )
@@ -406,14 +418,6 @@ class RoomsApiTestCase(APITestCase):
             content_dict,
             {
                 "id": str(room.id),
-                "group_accesses": [
-                    {
-                        "id": str(group_access.id),
-                        "group": str(group.id),
-                        "room": str(room.id),
-                        "role": group_access.role,
-                    }
-                ],
                 "is_administrable": False,
                 "is_public": room.is_public,
                 "jitsi": {
@@ -441,14 +445,18 @@ class RoomsApiTestCase(APITestCase):
         other_user = UserFactory()
         other_group = GroupFactory()
         room = RoomFactory()
-        group_access = RoomGroupAccessFactory(room=room, group=group, role="member")
-        other_user_access = RoomUserAccessFactory(
-            room=room, user=other_user, role="member"
+        group_access = GroupResourceAccessFactory(
+            resource=room, group=group, role="member"
         )
-        other_group_access = RoomGroupAccessFactory(room=room, group=other_group)
+        other_user_access = UserResourceAccessFactory(
+            resource=room, user=other_user, role="member"
+        )
+        other_group_access = GroupResourceAccessFactory(
+            resource=room, group=other_group
+        )
         jwt_token = AccessToken.for_user(user)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(4):
             response = self.client.get(
                 f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
             )
@@ -456,35 +464,39 @@ class RoomsApiTestCase(APITestCase):
         content_dict = response.json()
         # Access objects order is uncertain and we don't care
         self.assertCountEqual(
-            content_dict.pop("user_accesses"),
+            content_dict.pop("accesses"),
             [
                 {
                     "id": str(other_user_access.id),
+                    "group": None,
+                    "role": other_user_access.role,
+                    "resource": str(room.id),
                     "user": {
                         "id": str(other_user_access.user.id),
                         "language": other_user_access.user.language,
                         "name": other_user_access.user.name,
                         "username": other_user_access.user.username,
                     },
-                    "room": str(room.id),
-                    "role": other_user_access.role,
                 },
-            ],
-        )
-        self.assertCountEqual(
-            content_dict.pop("group_accesses"),
-            [
                 {
                     "id": str(group_access.id),
-                    "group": str(group.id),
-                    "room": str(room.id),
+                    "group": {
+                        "id": str(group.id),
+                        "name": group.name,
+                    },
                     "role": group_access.role,
+                    "resource": str(room.id),
+                    "user": None,
                 },
                 {
                     "id": str(other_group_access.id),
-                    "group": str(other_group.id),
-                    "room": str(room.id),
+                    "group": {
+                        "id": str(other_group.id),
+                        "name": other_group.name,
+                    },
                     "role": other_group_access.role,
+                    "resource": str(room.id),
+                    "user": None,
                 },
             ],
         )
@@ -518,16 +530,16 @@ class RoomsApiTestCase(APITestCase):
         other_user = UserFactory()
         group = GroupFactory()
         room = RoomFactory()
-        user_access = RoomUserAccessFactory(
-            room=room, user=user, role=random.choice(["administrator", "owner"])
+        user_access = UserResourceAccessFactory(
+            resource=room, user=user, role=random.choice(["administrator", "owner"])
         )
-        other_user_access = RoomUserAccessFactory(
-            room=room, user=other_user, role="member"
+        other_user_access = UserResourceAccessFactory(
+            resource=room, user=other_user, role="member"
         )
-        group_access = RoomGroupAccessFactory(room=room, group=group)
+        group_access = GroupResourceAccessFactory(resource=room, group=group)
         jwt_token = AccessToken.for_user(user)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             response = self.client.get(
                 f"/api/rooms/{room.id!s}/", HTTP_AUTHORIZATION=f"Bearer {jwt_token}"
             )
@@ -535,10 +547,23 @@ class RoomsApiTestCase(APITestCase):
         content_dict = response.json()
         # Access objects order is uncertain and we don't care
         self.assertCountEqual(
-            content_dict.pop("user_accesses"),
+            content_dict.pop("accesses"),
             [
                 {
+                    "id": str(other_user_access.id),
+                    "group": None,
+                    "user": {
+                        "id": str(other_user_access.user.id),
+                        "language": other_user_access.user.language,
+                        "name": other_user_access.user.name,
+                        "username": other_user_access.user.username,
+                    },
+                    "resource": str(room.id),
+                    "role": other_user_access.role,
+                },
+                {
                     "id": str(user_access.id),
+                    "group": None,
                     "user": {
                         "id": str(user_access.user.id),
                         # Email is visible only by self
@@ -547,19 +572,18 @@ class RoomsApiTestCase(APITestCase):
                         "name": user_access.user.name,
                         "username": user_access.user.username,
                     },
-                    "room": str(room.id),
+                    "resource": str(room.id),
                     "role": user_access.role,
                 },
                 {
-                    "id": str(other_user_access.id),
-                    "user": {
-                        "id": str(other_user_access.user.id),
-                        "language": other_user_access.user.language,
-                        "name": other_user_access.user.name,
-                        "username": other_user_access.user.username,
+                    "id": str(group_access.id),
+                    "group": {
+                        "id": str(group.id),
+                        "name": group.name,
                     },
-                    "room": str(room.id),
-                    "role": other_user_access.role,
+                    "user": None,
+                    "resource": str(room.id),
+                    "role": group_access.role,
                 },
             ],
         )
@@ -567,14 +591,6 @@ class RoomsApiTestCase(APITestCase):
             content_dict,
             {
                 "id": str(room.id),
-                "group_accesses": [
-                    {
-                        "id": str(group_access.id),
-                        "group": str(group.id),
-                        "room": str(room.id),
-                        "role": group_access.role,
-                    }
-                ],
                 "is_administrable": True,
                 "is_public": room.is_public,
                 "configuration": {},
@@ -613,32 +629,34 @@ class RoomsApiTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        user_access = room.user_accesses.first()
-        group_access = room.group_accesses.first()
-        self.assertEqual(
+        access1, access2 = room.accesses.all()
+        self.assertCountEqual(
             response.json(),
             {
                 "id": str(room.id),
-                "group_accesses": [
+                "accesses": [
                     {
-                        "id": str(group_access.id),
-                        "group": str(group.id),
-                        "room": str(room.id),
-                        "role": group_access.role,
-                    }
-                ],
-                "user_accesses": [
-                    {
-                        "id": str(user_access.id),
+                        "id": str(access1.id),
+                        "group": None,
                         "user": {
                             "id": str(user.id),
                             "language": user.language,
                             "name": user.name,
                             "username": user.username,
                         },
-                        "room": str(room.id),
-                        "role": user_access.role,
-                    }
+                        "resource": str(room.id),
+                        "role": "member",
+                    },
+                    {
+                        "id": str(access2.id),
+                        "group": {
+                            "id": str(group.id),
+                            "name": group.name,
+                        },
+                        "user": None,
+                        "resource": str(room.id),
+                        "role": "administrator",
+                    },
                 ],
                 "is_administrable": True,
                 "is_public": room.is_public,
@@ -687,7 +705,7 @@ class RoomsApiTestCase(APITestCase):
         room = Room.objects.get()
         self.assertEqual(room.name, "my room")
         self.assertEqual(room.slug, "my-room")
-        self.assertTrue(room.user_accesses.filter(role="owner", user=user).exists())
+        self.assertTrue(room.accesses.filter(role="owner", user=user).exists())
 
     def test_api_rooms_create_authenticated_existing_slug(self):
         """
@@ -710,6 +728,21 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(
             response.json(), {"slug": ["Room with this Slug already exists."]}
         )
+
+    def test_api_rooms_update_anonymous(self):
+        """Anonymous users should not be allowed to update a room."""
+        room = RoomFactory(name="Old name")
+
+        response = self.client.put(
+            f"/api/rooms/{room.id!s}/",
+            {
+                "name": "New name",
+            },
+        )
+        self.assertEqual(response.status_code, 401)
+        room.refresh_from_db()
+        self.assertEqual(room.name, "Old name")
+        self.assertEqual(room.slug, "old-name")
 
     def test_api_rooms_update_authenticated(self):
         """Authenticated users should not be allowed to update a room."""
@@ -786,7 +819,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(room.is_public, not new_is_public)
         self.assertEqual(room.configuration, {})
 
-    def test_api_rooms_update_administratorss_direct(self):
+    def test_api_rooms_update_administrators_direct(self):
         """Direct administrators or owners of a room should be allowed to update it."""
         user = UserFactory()
         room = RoomFactory(users=[(user, random.choice(["administrator", "owner"]))])
