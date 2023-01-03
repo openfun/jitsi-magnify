@@ -1,7 +1,8 @@
-import { RequireUser, ResponsiveLayout } from '@openfun/magnify-components';
+import { SimpleLayout } from '@openfun/magnify-components';
 import React from 'react';
 import { defineMessages, IntlShape } from 'react-intl';
-import { Link, Outlet, RouteObject } from 'react-router-dom';
+import { Link, Navigate, Outlet, RouteObject } from 'react-router-dom';
+import { RoomsPath } from '../rooms';
 
 export enum RootPath {
   ROOT = '/app',
@@ -24,12 +25,16 @@ export const getRootRoute = (intl: IntlShape, children: RouteObject[]): RouteObj
       },
     },
     element: (
-      <ResponsiveLayout logoSrc={'/logo-fun-mooc.png'}>
-        <RequireUser>
-          <Outlet />
-        </RequireUser>
-      </ResponsiveLayout>
+      <SimpleLayout urlLogo={'/logo-fun-mooc.svg'}>
+        <Outlet />
+      </SimpleLayout>
     ),
-    children,
+    children: [
+      ...children,
+      {
+        index: true,
+        element: <Navigate to={RoomsPath.ROOMS} />,
+      },
+    ],
   };
 };
