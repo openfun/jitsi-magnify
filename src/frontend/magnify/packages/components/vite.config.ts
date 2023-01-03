@@ -15,7 +15,14 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@tanstack/react-query', 'react-intl'],
+      external: [
+        'react',
+        'grommet',
+        'keycloak-js',
+        'react-dom',
+        '@tanstack/react-query',
+        'react-intl',
+      ],
       output: {
         globals: {
           react: 'React',
