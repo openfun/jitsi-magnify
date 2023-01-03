@@ -41,6 +41,11 @@ export const commonMessages = defineMessages({
     description: 'Logout label',
     defaultMessage: 'Logout',
   },
+  preferences: {
+    id: 'i18n.Messages.commonTranslation.preferences',
+    description: 'Preferences label',
+    defaultMessage: 'Preferences',
+  },
   account: {
     id: 'i18n.Messages.commonTranslation.account',
     description: 'Account label',

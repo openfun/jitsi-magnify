@@ -22,13 +22,13 @@ files: [
   translation : "/magnify/locale/%locale_with_underscore%/LC_MESSAGES/django.po",
  },
  {
-  source : "/frontend/magnify/i18n/frontend.json",
-  dest: "/frontend-magnify.json",
-  translation : "/frontend/magnify/i18n/locales/%locale%.json",
+  source : "/frontend/magnify/apps/magnify-site/i18n/frontend.json",
+  dest: "/frontend-demo.json",
+  translation : "/frontend/magnify/apps/magnify-site/i18n/locales/%locale%.json",
  },
  {
-  source : "/frontend/demo/i18n/frontend.json",
-  dest: "/frontend-demo.json",
-  translation : "/frontend/demo/i18n/locales/%locale%.json",
+  source : "/frontend/magnify/packages/components/i18n/frontend.json",
+  dest: "/frontend-packages.json",
+  translation : "/frontend/magnify/packages/components/i18n/locales/%locale%.json",
  }
 ]
