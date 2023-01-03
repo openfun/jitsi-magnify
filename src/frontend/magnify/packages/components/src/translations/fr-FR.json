@@ -1,1 +1,14 @@
-{}
+{
+  "utils.routes.account.account.label": "Mon compte",
+  "view.rooms.list.roomsListLabel": "Mes salles",
+  "views.auth.register.loginInstead": "Aller plutôt se connecter",
+  "views.auth.login.signupInstead": "Je souhaite plutôt m'inscrire",
+  "view.rooms.settings.roomSettingsTitle": "Paramètres de la salle",
+  "app.profileViewTitle": "Mon compte",
+  "utils.routes.rooms.rooms.label": "Salles",
+  "utils.routes.root.root.label": "Accueil",
+  "utils.routes.rooms.roomsSettings.label": "Réglages",
+  "view.rooms.list.roomsListViewTitle": "Mes Salles",
+  "views.auth.register.youAlreadyHaveAnAccount": "Vous avez déjà un compte ?",
+  "views.auth.login.youDoNotHaveAnAccount": "Vous n'avez pas de compte ?"
+}

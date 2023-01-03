@@ -155,6 +155,10 @@
     "description": "Indicates that the user is an admin of the room",
     "message": "Admin"
   },
+  "components.rooms.RoomRow.copyRoomLink": {
+    "description": "Copy room link to the clipboard",
+    "message": "Copy link"
+  },
   "components.rooms.RoomRow.deleteModalTitle": {
     "description": "Title modal for delete action",
     "message": "Deleting a room"
@@ -162,6 +166,10 @@
   "components.rooms.RoomRow.join": {
     "description": "Join the room",
     "message": "Join"
+  },
+  "components.rooms.RoomRow.roomLinkWasCopied": {
+    "description": "The link of the room was successfully copied",
+    "message": "Room link copied to clipboard!"
   },
   "components.rooms.RoomRow.warningDelete": {
     "description": "Waning message for a delete action",
@@ -215,6 +223,26 @@
     "description": "Title for the room configuration section with general settings",
     "message": "Settings"
   },
+  "components.rooms.config.users.addMember": {
+    "description": "Text for the add member button",
+    "message": "Add a member"
+  },
+  "components.rooms.config.users.emptyResult": {
+    "description": "Empty search result string",
+    "message": "No results with this email or username"
+  },
+  "components.rooms.config.users.searchUserLabel": {
+    "description": "Label for the search user input in the search user modal",
+    "message": "Find a user"
+  },
+  "components.rooms.config.users.searchUserPlaceholder": {
+    "description": "Placeholder for the search user input in the search user modal",
+    "message": "Search by email or full username"
+  },
+  "components.rooms.config.users.sectionTitle": {
+    "description": "Ttitle for the members section ",
+    "message": "Members"
+  },
   "components.rooms.instantRoom.startButtonLabel": {
     "description": "Label for the button to start an instant room",
     "message": "Start"
@@ -222,6 +250,14 @@
   "components.rooms.instantRoom.startInputPlaceHolder": {
     "description": "Label for the input to start an instant room",
     "message": "Room name"
+  },
+  "components.rooms.myRooms.claim_room": {
+    "description": "Claiming a room label",
+    "message": "Claiming a room"
+  },
+  "components.rooms.myRooms.emptyRoomListMessage": {
+    "description": "The message to display when there are no rooms.",
+    "message": "No room was created yet. Click on the button \" + Room\" to create one."
   },
   "components.rooms.myRooms.myRoomCardTitle": {
     "description": "Label for the button to register a new room",
@@ -251,6 +287,10 @@
     "description": "Account label",
     "message": "Account"
   },
+  "i18n.Messages.commonTranslation.add": {
+    "description": "Add message",
+    "message": "Add"
+  },
   "i18n.Messages.commonTranslation.cancel": {
     "description": "Cancel message",
     "message": "Cancel"
@@ -262,6 +302,10 @@
   "i18n.Messages.commonTranslation.logout": {
     "description": "Logout label",
     "message": "Logout"
+  },
+  "i18n.Messages.commonTranslation.preferences": {
+    "description": "Preferences label",
+    "message": "Preferences"
   },
   "i18n.Messages.commonTranslation.settings": {
     "description": "Settings label",
@@ -287,6 +331,18 @@
     "description": "French locale translation",
     "message": "Français"
   },
+  "i18n.Messages.room.commonRoomMessages.role_administrator": {
+    "description": "Room role administrator",
+    "message": "Administrator"
+  },
+  "i18n.Messages.room.commonRoomMessages.role_member": {
+    "description": "Room role member",
+    "message": "Member"
+  },
+  "i18n.Messages.room.commonRoomMessages.role_owner": {
+    "description": "Room role owner",
+    "message": "Owner"
+  },
   "validationMessages.required": {
     "description": "Messages shown when a field is required but the user did not provide any value",
     "message": "This field is required"
@@ -302,5 +358,17 @@
   "validationMesssages.emailInvalid": {
     "description": "The error message for the email field",
     "message": "Email is invalid"
+  },
+  "view.rooms.login": {
+    "description": "label to login",
+    "message": "Log in"
+  },
+  "view.rooms.logout": {
+    "description": "label to logout",
+    "message": "Logout"
+  },
+  "view.rooms.register": {
+    "description": "label to register",
+    "message": "Create an account"
   }
 }
