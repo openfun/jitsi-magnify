@@ -1,5 +1,7 @@
 import {
+  CustomCard,
   InstantRoom,
+  KeycloakService,
   MagnifyQueryKeys,
   MyRooms,
   RoomsRepository,
@@ -7,46 +9,44 @@ import {
 } from '@openfun/magnify-components';
 
 import { useQuery } from '@tanstack/react-query';
-import { Box, Card, Heading } from 'grommet';
+import { Box, Heading } from 'grommet';
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
-import { DefaultPage } from '../../../components/DefaultPage';
 
-export const roomsListMessages = defineMessages({
-  roomsListViewTitle: {
-    defaultMessage: 'My Rooms',
-    description: 'Page title for the rooms list page',
-    id: 'view.rooms.list.roomsListViewTitle',
+const messages = defineMessages({
+  title_part_one: {
+    defaultMessage: 'Secure conference',
+    id: 'view.rooms.title_part_one',
+    description: 'Main title part one',
   },
-  roomsListLabel: {
-    id: 'view.rooms.list.roomsListLabel',
-    defaultMessage: 'My rooms',
-    description: 'Label for the list of rooms',
-  },
-  startInstantRoomTitle: {
-    id: 'view.rooms.list.startInstantRoomTitle',
-    defaultMessage: 'Start a conference',
-    description: 'Title for the start instant room block',
+  title_part_two: {
+    defaultMessage: 'and quality up to 500 people',
+    id: 'view.rooms.title_part_two',
+    description: 'Main title',
   },
 });
 
 export function RoomsListView() {
   const intl = useTranslations();
-  const { data: rooms, isLoading } = useQuery([MagnifyQueryKeys.ROOMS], () => {
-    return RoomsRepository.getAll();
+
+  const { data: rooms, isLoading } = useQuery([MagnifyQueryKeys.ROOMS], RoomsRepository.getAll, {
+    enabled: KeycloakService.isLoggedIn(),
   });
 
   return (
-    <DefaultPage title={intl.formatMessage(roomsListMessages.roomsListViewTitle)}>
-      <Box gap={'20px'}>
-        <Card background={'white'} gap={'medium'} pad={'medium'}>
-          <Heading level={4} margin={'none'}>
-            {intl.formatMessage(roomsListMessages.startInstantRoomTitle)}
-          </Heading>
-          <InstantRoom />
-        </Card>
-        <MyRooms baseJitsiUrl={'/j'} isLoading={isLoading} rooms={rooms ?? []} />
+    <>
+      <Box align={'center'} direction={'column'} height={{ min: 'auto' }} justify={'center'}>
+        <Heading color={'brand'} level={1} margin="none" textAlign={'center'}>
+          {intl.formatMessage(messages.title_part_one)}
+        </Heading>
+        <Heading color={'brand'} level={3} margin="none" textAlign={'center'}>
+          {intl.formatMessage(messages.title_part_two)}
+        </Heading>
       </Box>
-    </DefaultPage>
+      <CustomCard>
+        <InstantRoom />
+      </CustomCard>
+      <MyRooms baseJitsiUrl={'/j'} isLoading={isLoading} rooms={rooms ?? []} />
+    </>
   );
 }

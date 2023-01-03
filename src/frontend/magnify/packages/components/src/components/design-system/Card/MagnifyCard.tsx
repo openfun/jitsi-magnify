@@ -1,7 +1,8 @@
-import { Card, CardBody, CardHeader, Heading } from 'grommet';
+import { Box, CardBody, CardHeader, Heading } from 'grommet';
 import { BoxTypes } from 'grommet/components/Box';
 import * as React from 'react';
 import { FunctionComponent } from 'react';
+import { CustomCard } from './Custom';
 
 export interface MagnifyCardProps extends BoxTypes {
   title?: string;
@@ -9,15 +10,17 @@ export interface MagnifyCardProps extends BoxTypes {
 }
 export const MagnifyCard: FunctionComponent<MagnifyCardProps> = ({ ...props }) => {
   return (
-    <Card background={'white'} height={'100%'} pad={'medium'} {...props}>
-      {props.title && (
-        <CardHeader>
-          <Heading color={'brand'} level={3}>
-            {props.title}
-          </Heading>
-        </CardHeader>
-      )}
-      <CardBody gap={props.gapContent}>{props.children}</CardBody>
-    </Card>
+    <CustomCard>
+      <Box {...props}>
+        {props.title && (
+          <CardHeader>
+            <Heading color={'brand'} level={3}>
+              {props.title}
+            </Heading>
+          </CardHeader>
+        )}
+        <CardBody gap={props.gapContent}>{props.children}</CardBody>
+      </Box>
+    </CustomCard>
   );
 };

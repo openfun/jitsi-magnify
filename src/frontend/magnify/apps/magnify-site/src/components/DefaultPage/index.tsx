@@ -4,9 +4,13 @@ import * as React from 'react';
 import { PropsWithChildren } from 'react';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 
-export const DefaultPage = ({ children, ...props }: PropsWithChildren<MagnifyPageContentProps>) => {
+interface Props extends MagnifyPageContentProps {
+  enableBreadcrumb?: boolean;
+}
+
+export const DefaultPage = ({ children, ...props }: PropsWithChildren<Props>) => {
   return (
-    <MagnifyPageContent breadcrumb={<Breadcrumbs />} {...props}>
+    <MagnifyPageContent breadcrumb={props.enableBreadcrumb ?? <Breadcrumbs />} {...props}>
       {children}
     </MagnifyPageContent>
   );

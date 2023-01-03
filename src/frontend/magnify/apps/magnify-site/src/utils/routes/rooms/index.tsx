@@ -1,9 +1,11 @@
+import { RequireUser } from '@openfun/magnify-components';
 import React from 'react';
 import { defineMessages, IntlShape } from 'react-intl';
 import { Link, RouteObject } from 'react-router-dom';
 
 import { RoomsListView } from '../../../views/rooms/list';
 import { RoomSettingsView } from '../../../views/rooms/settings';
+
 export enum RoomsPath {
   ROOMS = '/app/rooms',
   ROOMS_SETTINGS = '/app/rooms/:id/settings',
@@ -33,7 +35,11 @@ export const getRoomsRoutes = (intl: IntlShape): RouteObject => {
     children: [
       { element: <RoomsListView />, index: true },
       {
-        element: <RoomSettingsView />,
+        element: (
+          <RequireUser>
+            <RoomSettingsView />
+          </RequireUser>
+        ),
         path: RoomsPath.ROOMS_SETTINGS,
         handle: {
           crumb: () => {

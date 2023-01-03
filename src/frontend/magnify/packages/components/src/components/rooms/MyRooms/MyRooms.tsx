@@ -1,9 +1,12 @@
-import { Box, Card, Text } from 'grommet';
+import { Box, Text } from 'grommet';
 import { Heading, Spinner } from 'grommet/components';
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { useRouting } from '../../../context';
 import { useTranslations } from '../../../i18n';
+import { KeycloakService } from '../../../services';
 import { Room } from '../../../types/entities/room';
+import { CustomCard } from '../../design-system';
 import { RegisterRoom } from '../RegisterRoom';
 import { RoomRow } from '../RoomRow';
 
@@ -18,6 +21,11 @@ const messages = defineMessages({
     defaultMessage: 'No room was created yet. Click on the button " + Room" to create one.',
     description: 'The message to display when there are no rooms.',
   },
+  claim_room: {
+    id: 'components.rooms.myRooms.claim_room',
+    defaultMessage: 'Claiming a room',
+    description: 'Claiming a room label',
+  },
 });
 
 export interface MyRoomsProps {
@@ -28,31 +36,65 @@ export interface MyRoomsProps {
 
 export const MyRooms = ({ baseJitsiUrl, rooms = [], ...props }: MyRoomsProps) => {
   const intl = useTranslations();
+  const routing = useRouting();
+  const isLog = KeycloakService.isLoggedIn();
   return (
-    <Card background={'white'} gap={'small'} pad={'medium'}>
+    <CustomCard>
       <Box align={'center'} direction={'row'} flex={true} justify={'between'}>
         <Heading level={4}>
           {intl.formatMessage(messages.myRoomCardTitle)}
           {rooms?.length > 0 ? ` (${rooms?.length})` : ''}
         </Heading>
-        <div>
-          <RegisterRoom />
-        </div>
+        <div>{isLog && <RegisterRoom />}</div>
       </Box>
-      {props.isLoading && (
-        <Box align={'center'} height={'100px'} justify={'center'}>
-          <Spinner />
+      {isLog && (
+        <>
+          {props.isLoading && (
+            <Box align={'center'} height={'100px'} justify={'center'}>
+              <Spinner />
+            </Box>
+          )}
+          {rooms?.length > 0 ? (
+            rooms.map((room) => {
+              return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
+            })
+          ) : (
+            <Text alignSelf="center" size="small">
+              {intl.formatMessage(messages.emptyRoomListMessage)}
+            </Text>
+          )}
+        </>
+      )}
+      {!isLog && (
+        <Box
+          align={'center'}
+          direction={'row'}
+          justify={'between'}
+          onClick={routing.goToLogin}
+          pad={'10px'}
+          round={'8px'}
+          border={{
+            style: 'dashed',
+            color: 'brand',
+          }}
+        >
+          <Text color={'brand'} size={'small'} weight={'bold'}>
+            {intl.formatMessage(messages.claim_room)}
+          </Text>
+          <Box
+            align={'center'}
+            background={'brand'}
+            color={'white'}
+            direction={'row'}
+            height={'20px'}
+            justify={'center'}
+            round={'3px'}
+            width={'20px'}
+          >
+            +
+          </Box>
         </Box>
       )}
-      {rooms?.length > 0 ? (
-        rooms.map((room) => {
-          return <RoomRow key={room.slug} baseJitsiUrl={baseJitsiUrl} room={room} />;
-        })
-      ) : (
-        <Text alignSelf="center" size="small">
-          {intl.formatMessage(messages.emptyRoomListMessage)}
-        </Text>
-      )}
-    </Card>
+    </CustomCard>
   );
 };

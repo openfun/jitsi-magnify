@@ -10,9 +10,11 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Box, Spinner } from 'grommet';
 import * as React from 'react';
+import { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DefaultPage } from '../../../components/DefaultPage';
+import { RoomsPath } from '../../../utils/routes/rooms';
 
 export const roomSettingsMessages = defineMessages({
   roomSettingsTitle: {
@@ -26,9 +28,16 @@ export function RoomSettingsView() {
   const intl = useTranslations();
   const { id } = useParams();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { data: room, isLoading } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
     return RoomsRepository.get(id);
   });
+
+  useEffect(() => {
+    if (room && room.accesses == null) {
+      navigate(RoomsPath.ROOMS);
+    }
+  }, [room]);
 
   const invalidateAllQueries = (): void => {
     queryClient.invalidateQueries([MagnifyQueryKeys.ROOM, id]);
