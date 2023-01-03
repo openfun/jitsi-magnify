@@ -1,8 +1,16 @@
 import * as React from 'react';
-import { useIntl } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import { localesTranslations } from '../../../../../i18n/Messages/localesTranslations';
 import { MagnifyLocales } from '../../../../../utils';
 import { FormikSelect } from '../index';
+
+const messages = defineMessages({
+  languageLabel: {
+    id: 'components.designSystem.formik.select.language.languageLabel',
+    defaultMessage: 'language',
+    description: 'Label for the language select label',
+  },
+});
 
 interface LanguageSelectOption {
   value: string;
@@ -26,7 +34,7 @@ export const FormikSelectLanguage = ({ ...props }: FormikSelectLanguageProps) =>
   return (
     <FormikSelect
       changeCallback={props.changeCallback}
-      label={'language'}
+      label={intl.formatMessage(messages.languageLabel)}
       labelKey="label"
       name={'language'}
       options={getAllOptions()}

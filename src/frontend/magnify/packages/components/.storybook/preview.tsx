@@ -11,7 +11,7 @@ initialize();
 export const decorators = [
   (Story) => (
       <MagnifyTestingProvider >
-        <Story />
+          <Story />
       </MagnifyTestingProvider>
   ),mswDecorator
 ];

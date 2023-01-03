@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Avatar, Box, Menu, Text } from 'grommet';
-import { Logout, User } from 'grommet-icons';
+import { Configure, Logout, User } from 'grommet-icons';
 import * as React from 'react';
 import { FunctionComponent, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -53,6 +53,15 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
             ),
           },
           {
+            icon: <Configure />,
+            onClick: () => routing.goToPreferences(),
+            label: (
+              <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+                {intl.formatMessage(commonMessages.preferences)}
+              </Box>
+            ),
+          },
+          {
             icon: <Logout />,
             onClick: () => logoutUser(),
             label: (
@@ -63,8 +72,10 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
           },
         ]}
       >
-        <Avatar background={'light-3'} size={'40px'}>
-          <Text style={{ textDecoration: 'none' }}>{initials}</Text>
+        <Avatar background={'brand'} size={'40px'}>
+          <Text color={'white'} style={{ textDecoration: 'none' }}>
+            {initials}
+          </Text>
         </Avatar>
       </Menu>
     </Box>

@@ -4,3 +4,4 @@ export * from './IdentityBlock';
 export * from './IdentityForm';
 export * from './PasswordUpdateBlock';
 export * from './PasswordUpdateForm';
+export * from './Preferences';
