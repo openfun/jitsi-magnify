@@ -1,9 +1,9 @@
 import { buildApiUrl, render } from '@openfun/magnify-components';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { rest } from 'msw';
 import React from 'react';
 import { createMemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, it } from 'vitest';
 import { TestingContainer } from '../../../components/TestingContainer';
 import { defaultRoom } from '../../../mocks/handlers/rooms/roomsHandlers';
 import { server } from '../../../mocks/server';
@@ -27,11 +27,6 @@ describe('RoomSettingsView', () => {
     );
 
     render(<TestingContainer router={router} />);
-    const searchText = 'Settings';
-    const test = screen.queryByText(searchText);
-    expect(test).toBe(null);
-    await waitFor(() => {
-      screen.getByText(searchText);
-    });
+    await screen.findByText('Room settings');
   });
 });

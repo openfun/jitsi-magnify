@@ -3,11 +3,10 @@ import {
   MagnifyQueryKeys,
   MyRooms,
   RoomsRepository,
-  useAuthContext,
   useTranslations,
 } from '@openfun/magnify-components';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Box, Card, Heading } from 'grommet';
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
@@ -33,7 +32,9 @@ export const roomsListMessages = defineMessages({
 
 export function RoomsListView() {
   const intl = useTranslations();
-  const { data: rooms, isLoading } = useQuery([MagnifyQueryKeys.ROOMS], RoomsRepository.getAll);
+  const { data: rooms, isLoading } = useQuery([MagnifyQueryKeys.ROOMS], () => {
+    return RoomsRepository.getAll();
+  });
 
   return (
     <DefaultPage title={intl.formatMessage(roomsListMessages.roomsListViewTitle)}>
