@@ -4,6 +4,28 @@ from rest_framework import permissions
 from .models import RoleChoices
 
 
+class IsOwner(permissions.IsAuthenticated):
+    """
+    Permissions applying to an object with a field "owner".
+    """
+
+    def has_object_permission(self, request, view, obj):
+        """Object permissions are only given to owners."""
+
+        return obj.owner == request.user
+
+
+class IsMeetingOwnerPermission(permissions.IsAuthenticated):
+    """
+    Permissions applying to an object with a field "meeting".
+    """
+
+    def has_object_permission(self, request, view, obj):
+        """Object permissions are only given to meeting owners."""
+
+        return obj.meeting.owner == request.user
+
+
 class IsSelf(permissions.BasePermission):
     """
     Allow a request to proceed only if the authenticated user is the targeted object itself.

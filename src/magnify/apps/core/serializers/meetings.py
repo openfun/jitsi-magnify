@@ -7,6 +7,7 @@ from timezone_field.rest_framework import TimeZoneSerializerField
 from magnify.apps.core import models
 from magnify.apps.core.utils import generate_token
 
+from .. import forms
 from .groups import LiteGroupSerializer
 from .users import UserSerializer
 
@@ -26,7 +27,7 @@ class MeetingAccessSerializer(serializers.ModelSerializer):
 
         if not (user and user.is_authenticated and meeting.owner == user):
             raise exceptions.PermissionDenied(
-                _("You must be owner of a meeting to add access to it.")
+                _("You must be owner of a meeting to add accesses to it.")
             )
 
         return meeting
@@ -89,8 +90,16 @@ class MeetingSerializer(serializers.ModelSerializer):
             "token": generate_token(user, instance.jitsi_name, is_admin=is_owner),
         }
 
-        # pylint: disable=protected-access
-        if occurrences := getattr(instance, "_occurrences", None):
-            output["occurrences"] = occurrences
+        # Retrieve meeting occurrences if requested in query string
+        filter_form = forms.MeetingFilterForm(data=request.query_params)
+        if filter_form.is_valid():
+            # Compute occurrences for time range
+            filter_from = filter_form.cleaned_data["from"]
+            filter_to = filter_form.cleaned_data["to"]
+            output["occurrences"] = {
+                "from": filter_from,
+                "to": filter_to,
+                "dates": instance.get_occurrences(filter_from, filter_to),
+            }
 
         return output
