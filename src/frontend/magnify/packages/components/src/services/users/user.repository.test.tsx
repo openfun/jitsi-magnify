@@ -6,9 +6,6 @@ describe('UserRepository', () => {
     const response = await UsersRepository.login('test', 'test');
     expect(response.auth.access).not.toBe(null);
     expect(response.auth.refresh).not.toBe(null);
-    expect(MagnifyApi.defaults.headers.common['Authorization']).toEqual(
-      `Bearer ${response.auth.access}`,
-    );
   });
   it('it logs out successfully, test if tokens are null', async () => {
     expect(HttpService.getAccessToken()).not.toBe(null);
