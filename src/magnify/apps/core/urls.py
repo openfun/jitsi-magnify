@@ -24,11 +24,15 @@ SchemaView = get_schema_view(
 )
 
 router = DefaultRouter()
+router.register("meetings", api.MeetingViewSet, basename="meetings")
 router.register("rooms", api.RoomViewSet, basename="rooms")
 router.register("users", api.UserViewSet, basename="users")
 router.register("groups", api.GroupViewSet, basename="groups")
 router.register(
     "resource-accesses", api.ResourceAccessViewSet, basename="resource_accesses"
+)
+router.register(
+    "meeting-accesses", api.MeetingAccessViewSet, basename="meeting_accesses"
 )
 
 # To appear on the swagger URL,

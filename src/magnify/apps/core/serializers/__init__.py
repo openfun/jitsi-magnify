@@ -1,7 +1,7 @@
 """Magnify core serializers"""
 
 from .groups import GroupSerializer
-from .meetings import MeetingSerializer
+from .meetings import MeetingAccessSerializer, MeetingSerializer
 from .rooms import (
     NestedResourceAccessSerializer,
     ResourceAccessSerializer,
@@ -13,6 +13,7 @@ from .users import PasswordChangeSerializer, RegistrationSerializer, UserSeriali
 __all__ = [
     "GroupSerializer",
     "MeetingSerializer",
+    "MeetingAccessSerializer",
     "NestedResourceAccessSerializer",
     "PasswordChangeSerializer",
     "RegistrationSerializer",

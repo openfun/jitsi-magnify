@@ -119,7 +119,7 @@ class RoomViewSet(
         # Filter meetings by time range
         filter_from = filter_form.cleaned_data["from"]
         filter_to = filter_form.cleaned_data["to"]
-        candidate_meetings = room.meetings.filter(
+        meetings_query = room.meetings.filter(
             Q(
                 recurrence__isnull=True,
                 end__gte=filter_from,
@@ -144,23 +144,10 @@ class RoomViewSet(
                 | Q(groups__members=user)
                 | Q(groups__administrators=user)
             )
-        candidate_meetings = candidate_meetings.filter(access_clause)
-
-        # Keep only the meetings that actually have an occurrence within the time range and
-        # populate the cache field `_occurrences`` with such occurrences.
-        meetings = []
-        for meeting in candidate_meetings:
-            if dates := meeting.get_occurrences(filter_from, filter_to):
-                # pylint: disable=protected-access
-                meeting._occurrences = {
-                    "from": filter_from,
-                    "to": filter_to,
-                    "dates": dates,
-                }
-                meetings.append(meeting)
+        meetings_query = meetings_query.filter(access_clause)
 
         serializer = serializers.MeetingSerializer(
-            meetings, context={"request": request}, many=True
+            meetings_query.distinct(), context={"request": request}, many=True
         )
         return response.Response(serializer.data, status=200)
 
