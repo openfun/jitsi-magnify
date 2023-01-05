@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { validationMessages } from '../../../i18n/Messages';
@@ -19,12 +20,14 @@ describe('SignupForm', () => {
       language: MagnifyLocales.EN,
     };
 
-    await user.type(screen.getByRole('textbox', { name: 'Name' }), input.confirmPassword);
-    await user.type(screen.getByRole('textbox', { name: 'Email' }), input.email);
-    await user.type(screen.getByRole('textbox', { name: 'Username' }), input.username);
-    await user.type(screen.getByLabelText('Password'), input.password);
-    await user.type(screen.getByLabelText('Confirm Password'), input.confirmPassword);
-    await user.click(screen.getByRole('button', { name: 'Signup' }));
+    await act(async () => {
+      await user.type(screen.getByRole('textbox', { name: 'Name' }), input.confirmPassword);
+      await user.type(screen.getByRole('textbox', { name: 'Email' }), input.email);
+      await user.type(screen.getByRole('textbox', { name: 'Username' }), input.username);
+      await user.type(screen.getByLabelText('Password'), input.password);
+      await user.type(screen.getByLabelText('Confirm Password'), input.confirmPassword);
+      await user.click(screen.getByRole('button', { name: 'Signup' }));
+    });
 
     await screen.findByText('email must be a valid email');
     expect(screen.queryByText(validationMessages.usernameInvalid.defaultMessage)).toBeNull();

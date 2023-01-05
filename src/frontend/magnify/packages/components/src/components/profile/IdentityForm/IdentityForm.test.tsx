@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { fireEvent, render, screen } from '../../../utils/test-utils';
@@ -18,11 +19,15 @@ describe('IdentityForm', () => {
     expect(saveButton).toBeDisabled();
 
     // Name field and validators
-    await user.clear(nameInput);
+    await act(async () => {
+      await user.clear(nameInput);
+    });
     fireEvent.blur(nameInput);
 
     await screen.findByText('This field is required');
-    await user.type(nameInput, 'John Watson');
+    await act(async () => {
+      await user.type(nameInput, 'John Watson');
+    });
 
     /**
      * At the moment, the fields are disabled, so we can't

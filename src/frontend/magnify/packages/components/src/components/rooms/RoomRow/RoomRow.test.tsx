@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -21,8 +21,15 @@ describe('RoomRow', () => {
     render(<RoomRow baseJitsiUrl={'meeting.education'} room={room} />, {
       wrapper: MagnifyTestingProvider,
     });
-    await user.click(screen.getByRole('button', { name: 'Open Menu' }));
-    await user.click(screen.getByRole('menuitem', { name: 'Clone Copy link' }));
+    await act(() => {
+      user.click(screen.getByRole('button', { name: 'Open Menu' }));
+    });
+    const menuItem = await screen.findByRole('menuitem', { name: 'Clone Copy link' });
+
+    await act(async () => {
+      await user.click(menuItem);
+    });
+
     await screen.findByText('Room link copied to clipboard!');
   });
 });
