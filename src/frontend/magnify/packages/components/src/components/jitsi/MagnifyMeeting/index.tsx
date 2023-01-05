@@ -4,7 +4,7 @@ import { Spinner } from 'grommet';
 import React, { useRef } from 'react';
 
 import { useRouting } from '../../../context';
-import { RoomSettings } from '../../../types/entities/room';
+import { defaultConfiguration, RoomSettings } from '../../../types/entities/room';
 import { JitsiEvents } from '../../../utils/constants/jitsi/Events';
 import { DEFAULT_TOOLBAR_BUTTONS } from '../../../utils/constants/jitsi/ToolbarButtons';
 import { ArrayHelper } from '../../../utils/helpers/array';
@@ -17,7 +17,10 @@ export interface MagnifyMeetingProps {
   jwt?: string;
 }
 
-export const MagnifyMeeting = ({ ...props }: MagnifyMeetingProps) => {
+export const MagnifyMeeting = ({
+  configuration = defaultConfiguration,
+  ...props
+}: MagnifyMeetingProps) => {
   // Jitsi refs
   const apiRef = useRef<IJitsiMeetExternalApi | null>(null);
   const iframeRef = useRef<HTMLDivElement | null>(null);
@@ -41,8 +44,8 @@ export const MagnifyMeeting = ({ ...props }: MagnifyMeetingProps) => {
       routing.goToRoomsList();
     });
     apiRef.current?.addListener(JitsiEvents.PARTICIPANT_ROLE_CHANGED, (event: any) => {
-      if (props.configuration?.askForPassword && event.role === 'moderator') {
-        apiRef.current?.executeCommand('password', props.configuration.roomPassword);
+      if (configuration?.askForPassword && event.role === 'moderator') {
+        apiRef.current?.executeCommand('password', configuration.roomPassword);
       }
     });
     handleParticipantsChanged();
@@ -54,11 +57,11 @@ export const MagnifyMeeting = ({ ...props }: MagnifyMeetingProps) => {
 
   const getToolbarButtons = (): string[] => {
     let toolbarButtons = [...DEFAULT_TOOLBAR_BUTTONS];
-    if (!props.configuration?.enableLobbyChat) {
+    if (!configuration?.enableLobbyChat) {
       toolbarButtons = ArrayHelper.removeItem(toolbarButtons, 'chat');
     }
 
-    if (!props.configuration?.screenSharingEnabled) {
+    if (!configuration?.screenSharingEnabled) {
       toolbarButtons = ArrayHelper.removeItem(toolbarButtons, 'desktop');
     }
     return toolbarButtons;
@@ -66,10 +69,10 @@ export const MagnifyMeeting = ({ ...props }: MagnifyMeetingProps) => {
 
   const getConfig = (): object => {
     return {
-      ...props.configuration,
+      ...configuration,
       toolbarButtons: getToolbarButtons(),
       prejoinConfig: {
-        enabled: props.configuration?.waitingRoomEnabled ?? true,
+        enabled: configuration?.waitingRoomEnabled ?? true,
       },
     };
   };

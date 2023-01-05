@@ -7,24 +7,22 @@ interface FormikValuesChangeProps {
   debounceTime?: number;
   enableSubmit?: boolean;
   children?: React.ReactNode;
+  forceToSubmit?: boolean;
 }
 
 export const FormikValuesChange: FunctionComponent<FormikValuesChangeProps> = ({
   debounceTime = 800,
+  enableSubmit = true,
   ...props
 }) => {
   const formik = useFormikContext();
   const onValuesChange = useDebouncedCallback(() => {
-    if (props.enableSubmit == null || props.enableSubmit) {
+    if (enableSubmit) {
       formik.handleSubmit();
     }
   }, debounceTime);
 
   React.useEffect(() => {
-    if (!formik.dirty) {
-      return;
-    }
-
     onValuesChange();
   }, [formik.values]);
 

@@ -104,6 +104,7 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
     {
       onSuccess: (data) => {
         queryClient.setQueryData([MagnifyQueryKeys.ROOM, room?.id], data);
+        queryClient.setQueryData([MagnifyQueryKeys.ROOM, room?.slug], data);
         queryClient.setQueryData([MagnifyQueryKeys.ROOMS], (rooms: Room[] = []) => {
           if (!data?.id) {
             return rooms;

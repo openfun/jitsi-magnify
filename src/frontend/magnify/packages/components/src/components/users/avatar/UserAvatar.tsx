@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 export interface UserAvatarProps {
   name?: string;
   username: string;
+  backgroundColor?: string;
 }
 
 const USER_DEFAULT_AVATAR_COLORS = [
@@ -29,11 +30,12 @@ const USER_DEFAULT_AVATAR_COLORS = [
   '#27ae60',
 ];
 
-export const UserAvatar = ({ username, name }: UserAvatarProps) => {
+export const UserAvatar = ({ username, name, backgroundColor }: UserAvatarProps) => {
   const initials = useMemo(() => {
     if (name && name.length >= 1) {
       const customName = name.replace(/\s+/g, ' ').trim();
       const splitName = customName.split(' ');
+
       let initials = splitName[0][0];
       if (splitName[1].length > 0) {
         initials += splitName[1][0];
@@ -45,7 +47,10 @@ export const UserAvatar = ({ username, name }: UserAvatarProps) => {
   }, [name, username]);
 
   const getBackgroundColor = (): string => {
-    return USER_DEFAULT_AVATAR_COLORS[username.charCodeAt(0) % USER_DEFAULT_AVATAR_COLORS.length];
+    return (
+      backgroundColor ??
+      USER_DEFAULT_AVATAR_COLORS[username.charCodeAt(0) % USER_DEFAULT_AVATAR_COLORS.length]
+    );
   };
 
   return (

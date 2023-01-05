@@ -1,4 +1,9 @@
-import { MagnifyMeeting, MagnifyQueryKeys, RoomsRepository } from '@openfun/magnify-components';
+import {
+  defaultConfiguration,
+  MagnifyMeeting,
+  MagnifyQueryKeys,
+  RoomsRepository,
+} from '@openfun/magnify-components';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Spinner } from 'grommet';
 import * as React from 'react';
@@ -31,7 +36,11 @@ export function RoomsJitsiView() {
     >
       {room && (
         <Box width={'100%'}>
-          <MagnifyMeeting jwt={room.jitsi.token} roomName={room.name ?? room.jitsi.room} />
+          <MagnifyMeeting
+            configuration={room?.configuration ?? defaultConfiguration}
+            jwt={room.jitsi.token}
+            roomName={room.name ?? room.jitsi.room}
+          />
         </Box>
       )}
       {!room && isLoading && <Spinner />}
