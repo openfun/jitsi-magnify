@@ -28,6 +28,9 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    logHeapUsage: true,
+    minThreads: 4,
+    maxThreads: 4,
     setupFiles: 'setupTests.ts',
     testTimeout: 10000,
   },
