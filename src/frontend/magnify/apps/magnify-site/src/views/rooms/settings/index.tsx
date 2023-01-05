@@ -40,6 +40,9 @@ export function RoomSettingsView() {
   }, [room]);
 
   const invalidateAllQueries = (): void => {
+    if (room) {
+      queryClient.invalidateQueries([MagnifyQueryKeys.ROOM, room.slug]);
+    }
     queryClient.invalidateQueries([MagnifyQueryKeys.ROOM, id]);
     queryClient.invalidateQueries([MagnifyQueryKeys.ROOM]);
   };

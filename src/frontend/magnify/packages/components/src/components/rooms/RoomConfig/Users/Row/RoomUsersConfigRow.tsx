@@ -65,6 +65,7 @@ export const RoomUsersConfigRow = ({ ...props }: RoomUsersConfigRowProps) => {
         plain
         defaultValue={RoomAccessRole.OWNER}
         disabledKey="disabled"
+        labelKey={'label'}
         onChange={({ option }) => props.onUpdateRole(option.value)}
         options={props.options ?? getDefaultOptions()}
         size="small"

@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Avatar, Box, Menu, Text } from 'grommet';
+import { Box, Menu } from 'grommet';
 import { Configure, Logout, User } from 'grommet-icons';
 import * as React from 'react';
-import { FunctionComponent, useMemo, useRef } from 'react';
+import { FunctionComponent, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 import { useAuthContext } from '../../../../../context';
@@ -10,6 +10,7 @@ import { useRouting } from '../../../../../context/routing';
 import { commonMessages } from '../../../../../i18n/Messages/commonMessages';
 import { UsersRepository } from '../../../../../services/users/users.repository';
 import { MagnifyQueryKeys } from '../../../../../utils/constants/react-query';
+import { UserAvatar } from '../../../../users';
 
 interface ResponsiveLayoutHeaderAvatarProps {}
 export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHeaderAvatarProps> = ({
@@ -27,16 +28,6 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
       routing.goToLogout();
     },
   });
-
-  const initials = useMemo(() => {
-    const { user } = authContext;
-    if (user) {
-      const splitName = user.name.split(' ');
-      const initials = splitName[0][0] + splitName[1][0];
-      return initials.toUpperCase();
-    }
-    return '';
-  }, [authContext.user]);
 
   return (
     <Box ref={avatarRef} align={'center'} direction={'row'} justify={'center'}>
@@ -72,11 +63,13 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
           },
         ]}
       >
-        <Avatar background={'brand'} size={'40px'}>
-          <Text color={'white'} style={{ textDecoration: 'none' }}>
-            {initials}
-          </Text>
-        </Avatar>
+        {authContext.user && (
+          <UserAvatar
+            backgroundColor={'brand'}
+            name={authContext.user.name}
+            username={authContext.user.username}
+          />
+        )}
       </Menu>
     </Box>
   );
