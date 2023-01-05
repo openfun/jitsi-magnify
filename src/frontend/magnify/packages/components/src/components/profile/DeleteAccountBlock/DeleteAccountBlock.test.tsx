@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
@@ -26,12 +26,16 @@ describe('DeleteAccountBlock', () => {
 
     // Verify we have a dialog to confirm the deletion
     const button = screen.getByRole('button', { name: 'Delete account' });
-    await user.click(button);
+    await act(async () => {
+      user.click(button);
+    });
     await screen.findByText('Confirm');
 
     // Verify we can confirm the deletion
     screen.getByRole('button', { name: 'Cancel' });
     const confirmButton = screen.getByRole('button', { name: 'Confirm delete account' });
-    await user.click(confirmButton);
+    await act(async () => {
+      user.click(confirmButton);
+    });
   });
 });

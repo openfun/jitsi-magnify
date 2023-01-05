@@ -1,5 +1,5 @@
-import { buildApiUrl, render } from '@openfun/magnify-components';
-import { screen } from '@testing-library/react';
+import { buildApiUrl } from '@openfun/magnify-components';
+import { render, screen } from '@testing-library/react';
 import { rest } from 'msw';
 import React from 'react';
 import { createMemoryRouter } from 'react-router-dom';

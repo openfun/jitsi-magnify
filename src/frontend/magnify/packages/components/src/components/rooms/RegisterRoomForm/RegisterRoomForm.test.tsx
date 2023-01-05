@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { vi } from 'vitest';
@@ -13,8 +14,10 @@ describe('RegisterRoomForm', () => {
 
     // 1) Fill in the form
     screen.getByRole('button', { name: 'Register room' });
-    await user.type(screen.getByRole('textbox', { name: 'Name' }), defaultRoom.name ?? '');
-    await user.click(screen.getByRole('button', { name: `Register room` }));
+    await act(async () => {
+      await user.type(screen.getByRole('textbox', { name: 'Name' }), defaultRoom.name ?? '');
+      await user.click(screen.getByRole('button', { name: `Register room` }));
+    });
 
     // 3) Verify that the onSuccess callback is called
     expect(onSuccess).toHaveBeenCalled();

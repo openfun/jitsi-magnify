@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { validationMessages } from '../../../i18n/Messages';
@@ -23,16 +24,24 @@ describe('PasswordUpdateForm', () => {
     expect(saveButton).toBeDisabled();
 
     // Type previous password
-    await user.type(previousPasswordInput, 'oldPassword');
+    await act(async () => {
+      await user.type(previousPasswordInput, 'oldPassword');
+    });
     expect(saveButton).toBeDisabled();
 
-    await user.type(newPasswordInput, 'newPassword');
+    await act(async () => {
+      await user.type(newPasswordInput, 'newPassword');
+    });
     expect(saveButton).toBeDisabled();
 
-    await user.type(confirmPasswordInput, 'new');
+    await act(async () => {
+      await user.type(confirmPasswordInput, 'new');
+    });
     fireEvent.blur(confirmPasswordInput);
     await screen.findByText(validationMessages.confirmDoesNotMatch.defaultMessage);
     expect(saveButton).toBeDisabled();
-    await user.type(confirmPasswordInput, 'newPassword');
+    await act(async () => {
+      await user.type(confirmPasswordInput, 'newPassword');
+    });
   });
 });

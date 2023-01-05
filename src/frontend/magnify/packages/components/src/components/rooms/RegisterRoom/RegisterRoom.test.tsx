@@ -1,4 +1,4 @@
-import { waitForElementToBeRemoved } from '@testing-library/react';
+import { act, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -15,13 +15,17 @@ describe('RegisterRoom', () => {
 
     // 1) Open the form
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Add Room' }));
+    await act(async () => {
+      await user.click(screen.getByRole('button', { name: 'Add Room' }));
+    });
     screen.getByRole('dialog');
 
     // 2) Fill in the form
     screen.getByRole('button', { name: 'Register room' });
-    await user.type(screen.getByRole('textbox', { name: 'Name' }), roomToCreate.name);
-    await user.click(screen.getByRole('button', { name: `Register room` }));
+    await act(async () => {
+      await user.type(screen.getByRole('textbox', { name: 'Name' }), roomToCreate.name);
+      await user.click(screen.getByRole('button', { name: `Register room` }));
+    });
 
     // 4) Verify the dialog is closed
     await waitForElementToBeRemoved(() => screen.getByRole('dialog'));

@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
@@ -27,7 +27,9 @@ describe('AvatarForm', () => {
 
       // Import a new file
       const file = new File(['hello'], 'hello.png', { type: 'image/png' });
-      await user.upload(uploadLabel.parentElement as HTMLElement, file);
+      await act(() => {
+        user.upload(uploadLabel.parentElement as HTMLElement, file);
+      });
 
       // Verify the new layout: it should be a new save button, a new image, and a new remove button
       await screen.findByText('Save');
@@ -35,7 +37,9 @@ describe('AvatarForm', () => {
       expect(avatarImage).toHaveStyle('background-image: url(data:image/png;base64,aGVsbG8=)');
 
       // Submit the avatar and verify the new avatar is saved
-      await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+      await act(() => {
+        userEvent.click(screen.getByRole('button', { name: 'Save' }));
+      });
     },
   );
 });
