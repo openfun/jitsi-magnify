@@ -6,6 +6,9 @@ module.exports = async () => {
   process.env.TZ = 'UTC';
 };
 
+const noop = () => {};
+Object.defineProperty(window, 'scrollTo', { value: noop, writable: true });
+
 // Establish API mocking before all tests.
 beforeAll(() => {
   server.listen();
