@@ -1,12 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import React from 'react';
 import { SquareAvatar } from './SquareAvatar';
 
 describe('SquareAvatar', () => {
-  it('should render a 40px avatar', () => {
+  it('should render a 40px avatar', async () => {
     render(<SquareAvatar src="hello.jpg" title="me" />);
-    const img = screen.getByTitle('me');
-    expect(img).toHaveStyle("background-image: url('hello.jpg');");
+    const img = await screen.getByTitle('me');
+    expect(within(img).getByRole('presentation')).toHaveAttribute('src', 'hello.jpg');
   });
 
   it('should render a 40px avatar with a more icon', () => {
