@@ -42,7 +42,7 @@ describe('MagnifyListRoomUsersConfigRow', () => {
     const { user } = renderRoomUserConfigRow(RoomAccessRole.OWNER);
     await screen.findByText(user.username);
     await screen.findByText(user.name);
-    expect(screen.getByDisplayValue('owner')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Owner')).toBeInTheDocument();
     // Because Owner role
     expect(screen.queryByRole('button', { name: 'Open Menu' })).not.toBeInTheDocument();
   });
@@ -55,10 +55,10 @@ describe('MagnifyListRoomUsersConfigRow', () => {
       eventUser.click(button);
     });
     await waitFor(() => {
-      screen.getByText('owner');
-      screen.getByText('administrator');
-      screen.getByText('member');
-      eventUser.click(screen.getByText('administrator'));
+      screen.getByText('Owner');
+      screen.getByText('Administrator');
+      screen.getByText('Member');
+      eventUser.click(screen.getByText('Administrator'));
     });
 
     await waitFor(async () => {
