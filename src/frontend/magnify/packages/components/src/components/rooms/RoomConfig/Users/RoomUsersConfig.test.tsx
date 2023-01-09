@@ -52,8 +52,8 @@ const renderRoomUserConfig = (): renderRoomUserResponse => {
 describe('RoomUsersConfig', () => {
   it('should render successfully', async () => {
     const { room } = renderRoomUserConfig();
-    if (room?.user_accesses) {
-      await ArrayHelper.resolveAll(room.user_accesses, async (userAccess) => {
+    if (room?.accesses) {
+      await ArrayHelper.resolveAll(room.accesses, async (userAccess) => {
         await screen.findByText(userAccess.user.username);
         await screen.findByText(userAccess.user.name);
       });

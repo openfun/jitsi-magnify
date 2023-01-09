@@ -23,7 +23,7 @@ export interface Room {
     token: string;
   };
   configuration?: RoomSettings;
-  user_accesses?: RoomUserAccesses[];
+  accesses?: RoomUserAccesses[];
 }
 
 export const defaultConfiguration: RoomSettings = {

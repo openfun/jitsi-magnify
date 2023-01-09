@@ -14,7 +14,7 @@ export const defaultRoom: Room = {
     token: '123',
   },
   is_administrable: true,
-  user_accesses: [
+  accesses: [
     {
       id: faker.datatype.uuid(),
       role: RoomAccessRole.OWNER,

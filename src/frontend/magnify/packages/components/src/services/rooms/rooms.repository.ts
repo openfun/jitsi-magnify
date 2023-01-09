@@ -53,7 +53,7 @@ export class RoomsRepository {
   public static async addUser(roomId: string, role: RoomAccessRole, userId: string): Promise<void> {
     await MagnifyApi.post(RoomsApiRoutes.ADD_USER, {
       user: userId,
-      room: roomId,
+      resource: roomId,
       role,
     });
   }
@@ -67,7 +67,7 @@ export class RoomsRepository {
     const url = RoutesBuilderService.build(RoomsApiRoutes.UPDATE_USER, { id: accessId });
     await MagnifyApi.patch(url, {
       user: userId,
-      room: roomId,
+      resource: roomId,
       role,
     });
   }
