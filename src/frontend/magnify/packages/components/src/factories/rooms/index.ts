@@ -15,7 +15,7 @@ export default function createRandomRoom(isAdmin: boolean = true): Room {
     },
   };
 
-  result.user_accesses = [...Array(5)].map(() => createRoomUserAccesses());
+  result.accesses = [...Array(5)].map(() => createRoomUserAccesses());
 
   return result;
 }

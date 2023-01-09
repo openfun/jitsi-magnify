@@ -4,7 +4,7 @@ export enum RoomsApiRoutes {
   UPDATE = '/rooms/:id/',
   GET = '/rooms/:id/',
   DELETE = '/rooms/:id/',
-  ADD_USER = '/room-user-accesses/',
-  UPDATE_USER = '/room-user-accesses/:id/',
-  DELETE_USER = '/room-user-accesses/:id/',
+  ADD_USER = '/resource-accesses/',
+  UPDATE_USER = '/resource-accesses/:id/',
+  DELETE_USER = '/resource-accesses/:id/',
 }

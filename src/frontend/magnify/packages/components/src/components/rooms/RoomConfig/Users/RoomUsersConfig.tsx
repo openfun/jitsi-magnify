@@ -40,7 +40,7 @@ export const RoomUsersConfig = ({ room, ...props }: RoomUsersConfigProps) => {
 
   useEffect(() => {
     let numberOfOwner = 0;
-    room.user_accesses?.forEach((access) => {
+    room.accesses?.forEach((access) => {
       if (access.role === RoomAccessRole.OWNER) {
         numberOfOwner++;
       }
@@ -68,7 +68,7 @@ export const RoomUsersConfig = ({ room, ...props }: RoomUsersConfigProps) => {
     const isCurrentUSer = user.id === authContext.user?.id;
     const currentUserIsOwner = currentUserRole === RoomAccessRole.OWNER;
     const isOwner = userRole === RoomAccessRole.OWNER;
-    const isLastUser = room.user_accesses?.length === 1;
+    const isLastUser = room.accesses?.length === 1;
     const isLastOwner = isOwner && numberOfOwner === 1;
 
     return [
@@ -114,7 +114,7 @@ export const RoomUsersConfig = ({ room, ...props }: RoomUsersConfigProps) => {
           )}
         </Box>
         <MagnifyList
-          rows={room.user_accesses ?? []}
+          rows={room.accesses ?? []}
           Row={(rowProps) => (
             <RoomUsersConfigRow
               {...rowProps}
