@@ -27,7 +27,7 @@ docs
 
 # Assets
 data
-src/frontend
+**/node_modules
 src/terraform
 
 # Front-end

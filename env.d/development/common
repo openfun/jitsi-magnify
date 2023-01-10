@@ -1,5 +1,4 @@
 # Django
-DJANGO_CONFIGURATION=Development
 DJANGO_SECRET_KEY=ThisIsAnExampleKeyForDevPurposeOnly
 DJANGO_SETTINGS_MODULE=settings
 

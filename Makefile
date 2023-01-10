@@ -91,7 +91,8 @@ logs: ## display app logs (follow mode)
 	@$(COMPOSE) logs -f app
 .PHONY: logs
 
-run: ## start the development server
+run: ## start the production and development servers
+	@$(COMPOSE) up -d app
 	@$(COMPOSE) up -d nginx
 	@$(COMPOSE) up -d keycloak
 	@echo "Wait for services to be up..."
