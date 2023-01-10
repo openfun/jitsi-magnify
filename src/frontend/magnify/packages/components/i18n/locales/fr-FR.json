@@ -73,7 +73,7 @@
   },
   "components.profile.AvatarForm.loadNewButtonLabel": {
     "description": "Call to action on the load new avatar button",
-    "message": "Importer un nouvel avatar"
+    "message": "Téléverser un nouvel avatar"
   },
   "components.profile.AvatarForm.removeButtonLabel": {
     "description": "Call to action on the remove avatar button",
@@ -155,13 +155,21 @@
     "description": "Indicates that the user is an admin of the room",
     "message": "Admin"
   },
+  "components.rooms.RoomRow.copyRoomLink": {
+    "description": "Copy room link to the clipboard",
+    "message": "Copier le lien"
+  },
   "components.rooms.RoomRow.deleteModalTitle": {
     "description": "Title modal for delete action",
     "message": "Suppression de la salle"
   },
   "components.rooms.RoomRow.join": {
     "description": "Join the room",
-    "message": "Joindre"
+    "message": "Rejoindre"
+  },
+  "components.rooms.RoomRow.roomLinkWasCopied": {
+    "description": "The link of the room was successfully copied",
+    "message": "Lien copié dans le presse-papiers !"
   },
   "components.rooms.RoomRow.warningDelete": {
     "description": "Waning message for a delete action",
@@ -215,13 +223,53 @@
     "description": "Title for the room configuration section with general settings",
     "message": "Réglages"
   },
+  "components.rooms.config.users.addMember": {
+    "description": "Text for the add member button",
+    "message": "Ajouter un membre"
+  },
+  "components.rooms.config.users.emptyResult": {
+    "description": "Empty search result string",
+    "message": "Aucun résultat avec cet email ou ce nom d'utilisateur"
+  },
+  "components.rooms.config.users.searchUserLabel": {
+    "description": "Label for the search user input in the search user modal",
+    "message": "Trouver un utilisateur"
+  },
+  "components.rooms.config.users.searchUserPlaceholder": {
+    "description": "Placeholder for the search user input in the search user modal",
+    "message": "Recherche par son email ou son nom d’utilisateur"
+  },
+  "components.rooms.config.users.sectionTitle": {
+    "description": "Ttitle for the members section ",
+    "message": "Membres"
+  },
+  "components.rooms.instantRoom.startButtonLabel": {
+    "description": "Label for the button to start an instant room",
+    "message": "Démarrer"
+  },
+  "components.rooms.instantRoom.startInputPlaceHolder": {
+    "description": "Label for the input to start an instant room",
+    "message": "Nom de la salle"
+  },
+  "components.rooms.myRooms.claim_room": {
+    "description": "Claiming a room label",
+    "message": "Réclamer une salle"
+  },
+  "components.rooms.myRooms.emptyRoomListMessage": {
+    "description": "The message to display when there are no rooms.",
+    "message": "Aucune pièce n'a encore été créée. Cliquez sur le bouton \" + Salle \" pour en créer une."
+  },
+  "components.rooms.myRooms.myRoomCardTitle": {
+    "description": "Label for the button to register a new room",
+    "message": "Liste des salles"
+  },
   "components.rooms.registerRoom.addNewRoomLabel": {
     "description": "Label for the button to register a new room",
     "message": "Salle"
   },
   "components.rooms.registerRoom.registerNewRoomLabel": {
     "description": "Label for the button to register a new room",
-    "message": "Ajouter une salle"
+    "message": "Réserver une nouvelle salle"
   },
   "components.rooms.registerRoomForm.namePlaceholder": {
     "description": "Placeholder for the name field",
@@ -233,11 +281,15 @@
   },
   "components.rooms.registerRoomForm.registerRoomSubmitLabel": {
     "description": "Label for the submit button to register a new room",
-    "message": "Réserver une salle"
+    "message": "Réserver la salle"
   },
   "i18n.Messages.commonTranslation.account": {
     "description": "Account label",
     "message": "Mon Compte"
+  },
+  "i18n.Messages.commonTranslation.add": {
+    "description": "Add message",
+    "message": "Ajouter"
   },
   "i18n.Messages.commonTranslation.cancel": {
     "description": "Cancel message",
@@ -250,6 +302,10 @@
   "i18n.Messages.commonTranslation.logout": {
     "description": "Logout label",
     "message": "Se déconnecter"
+  },
+  "i18n.Messages.commonTranslation.preferences": {
+    "description": "Preferences label",
+    "message": "Préférences"
   },
   "i18n.Messages.commonTranslation.settings": {
     "description": "Settings label",
@@ -275,6 +331,18 @@
     "description": "French locale translation",
     "message": "Français"
   },
+  "i18n.Messages.room.commonRoomMessages.role_administrator": {
+    "description": "Room role administrator",
+    "message": "Administrateur"
+  },
+  "i18n.Messages.room.commonRoomMessages.role_member": {
+    "description": "Room role member",
+    "message": "Membre"
+  },
+  "i18n.Messages.room.commonRoomMessages.role_owner": {
+    "description": "Room role owner",
+    "message": "Propriétaire"
+  },
   "validationMessages.required": {
     "description": "Messages shown when a field is required but the user did not provide any value",
     "message": "Ce champ est obligatoire"
@@ -289,6 +357,18 @@
   },
   "validationMesssages.emailInvalid": {
     "description": "The error message for the email field",
-    "message": "Email invalide"
+    "message": "Email non valide"
+  },
+  "view.rooms.login": {
+    "description": "label to login",
+    "message": "Se connecter"
+  },
+  "view.rooms.logout": {
+    "description": "label to logout",
+    "message": "Se déconnecter"
+  },
+  "view.rooms.register": {
+    "description": "label to register",
+    "message": "Créer un compte"
   }
 }
