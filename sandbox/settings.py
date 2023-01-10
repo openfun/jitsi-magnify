@@ -113,7 +113,7 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
         "jitsi_xmpp_domain": values.Value(
             environ_name="JWT_JITSI_XMPP_DOMAIN", environ_prefix=None
         ),
-        "jitsi_secret_key": values.SecretValue(
+        "jitsi_secret_key": values.Value(
             environ_name="JWT_JITSI_SECRET_KEY", environ_prefix=None
         ),
         "token_expiration_seconds": values.Value(
@@ -225,6 +225,7 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
 
     MIDDLEWARE = (
         "django.middleware.security.SecurityMiddleware",
+        "whitenoise.middleware.WhiteNoiseMiddleware",
         "django.contrib.sessions.middleware.SessionMiddleware",
         "django.middleware.csrf.CsrfViewMiddleware",
         "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -367,6 +368,17 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
                 scope.set_extra("application", "backend")
 
 
+class Build(Base):
+    """Build environment settings"""
+
+    SECRET_KEY = "ThisIsAnExampleKeyForBuildPurposeOnly"  # nosec
+    JWT_JITSI_SECRET_KEY = "ThisIsAnExampleKeyForBuildPurposeOnly"  # nosec
+
+    STATICFILES_STORAGE = values.Value(
+        "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    )
+
+
 class Development(Base):
     """
     Development environment settings
@@ -405,6 +417,10 @@ class ContinuousIntegration(Test):
     nota bene: it should inherit from the Test environment.
     """
 
+    ALLOWED_HOSTS = ["*"]
+    CSRF_TRUSTED_ORIGINS = ["http://localhost:8070"]
+    API_URL = values.Value("http://localhost:8070")
+
 
 class Production(Base):
     """Production environment settings
@@ -427,8 +443,8 @@ class Production(Base):
     # For static files in production, we want to use a backend that includes a hash in
     # the filename, that is calculated from the file content, so that browsers always
     # get the updated version of each file.
-    STATICFILES_STORAGE = (
-        "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+    STATICFILES_STORAGE = values.Value(
+        "whitenoise.storage.CompressedManifestStaticFilesStorage"
     )
 
 
