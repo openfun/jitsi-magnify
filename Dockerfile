@@ -45,7 +45,7 @@ RUN apt-get update && \
 COPY --from=back-builder /install /usr/local
 
 # Copy runtime-required files
-COPY ./sandbox /app
+COPY ./sandbox /app/sandbox
 COPY ./docker/files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
 
 # Gunicorn
@@ -100,7 +100,7 @@ CMD python sandbox/manage.py runserver 0.0.0.0:8000
 # ---- Production image ----
 FROM core as production
 
-WORKDIR /app
+WORKDIR /app/sandbox
 
 # The default command runs gunicorn WSGI server in the sandbox
 CMD gunicorn -c /usr/local/etc/gunicorn/magnify.py wsgi:application
