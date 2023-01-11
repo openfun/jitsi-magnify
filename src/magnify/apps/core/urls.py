@@ -1,6 +1,5 @@
 """Urls declarations for Magnify's core app."""
 
-from django.conf import settings
 from django.urls import include, path, re_path
 
 from drf_yasg import openapi
@@ -39,6 +38,11 @@ router.register(
 # the views need to extend APIView from the rest_framework.views package.
 urlpatterns = [
     path("", include(router.urls)),
+    path(
+        "config.json",
+        api.get_frontend_configuration,
+        name="api-configuration",
+    ),
     path(
         "accounts/token-refresh/",
         jwt_views.TokenRefreshView.as_view(),

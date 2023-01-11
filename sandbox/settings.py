@@ -91,6 +91,23 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
         "EXCEPTION_HANDLER": "magnify.apps.core.api.exception_handler",
     }
 
+    # Frontend
+    FRONTEND_CONFIGURATION = {
+        "API_URL": values.Value(environ_name="MAGNIFY_API_URL", environ_prefix=None),
+        "KEYCLOAK_URL": values.Value(environ_name="KEYCLOAK_URL", environ_prefix=None),
+        "KEYCLOAK_REALM": values.Value(
+            "magnify", environ_name="KEYCLOAK_REALM", environ_prefix=None
+        ),
+        "KEYCLOAK_CLIENT_ID": values.Value(
+            "magnify-front", environ_name="KEYCLOAK_CLIENT_ID", environ_prefix=None
+        ),
+        "KEYCLOAK_EXPIRATION_SECONDS": values.IntegerValue(
+            30 * 60,
+            environ_name="KEYCLOAK_EXPIRATION_SECONDS",
+            environ_prefix=None,
+        ),
+    }
+
     # Application definition
     ROOT_URLCONF = "urls"
     WSGI_APPLICATION = "wsgi.application"
@@ -213,7 +230,6 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
                     "django.template.context_processors.csrf",
                     "django.template.context_processors.tz",
                     "django.template.context_processors.static",
-                    "magnify.apps.core.context_processors.site_metas",
                 ],
                 "loaders": [
                     "django.template.loaders.filesystem.Loader",
