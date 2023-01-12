@@ -72,7 +72,6 @@ bootstrap: \
   data/media/.keep \
   data/smedia/.keep \
   data/static/.keep \
-  build-front \
   build \
   run \
   migrate \
