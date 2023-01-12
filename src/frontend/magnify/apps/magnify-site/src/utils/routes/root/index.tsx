@@ -25,7 +25,7 @@ export const getRootRoute = (intl: IntlShape, children: RouteObject[]): RouteObj
       },
     },
     element: (
-      <SimpleLayout urlLogo={'/logo-fun-mooc.svg'}>
+      <SimpleLayout urlLogo={'/assets/logo-fun-mooc.svg'}>
         <Outlet />
       </SimpleLayout>
     ),
