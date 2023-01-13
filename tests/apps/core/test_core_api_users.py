@@ -2,6 +2,7 @@
 Tests for Users API endpoints in Magnify's core app.
 """
 from unittest import mock
+from zoneinfo import ZoneInfo
 
 from django.contrib.auth.hashers import check_password
 
@@ -110,6 +111,7 @@ class UsersApiTestCase(APITestCase):
                 "id": str(user1.id),
                 "language": user1.language,
                 "name": user1.name,
+                "timezone": user1.timezone.key,
                 "username": "jeff-burns",
             },
         )
@@ -130,6 +132,7 @@ class UsersApiTestCase(APITestCase):
                 "id": str(user1.id),
                 "language": user1.language,
                 "name": user1.name,
+                "timezone": user1.timezone.key,
                 "username": "jeff-burns",
             },
         )
@@ -170,6 +173,7 @@ class UsersApiTestCase(APITestCase):
                 "id": str(user1.id),
                 "language": user1.language,
                 "name": user1.name,
+                "timezone": user1.timezone.key,
                 "username": user1.username,
             },
         )
@@ -190,6 +194,7 @@ class UsersApiTestCase(APITestCase):
                 "id": str(user1.id),
                 "language": user1.language,
                 "name": user1.name,
+                "timezone": user1.timezone.key,
                 "username": user1.username,
             },
         )
@@ -255,6 +260,7 @@ class UsersApiTestCase(APITestCase):
                 "language": user.language,
                 "name": user.name,
                 "email": user.email,
+                "timezone": user.timezone.key,
                 "username": user.username,
             },
         )
@@ -278,6 +284,7 @@ class UsersApiTestCase(APITestCase):
                 "id": str(other_user.id),
                 "language": other_user.language,
                 "name": other_user.name,
+                "timezone": other_user.timezone.key,
                 "username": other_user.username,
             },
         )
@@ -426,6 +433,7 @@ class UsersApiTestCase(APITestCase):
                 "name": "New name",
                 "email": "new@example.com",
                 "language": "fr",
+                "timezone": "America/Toronto",
                 "username": "new-username",
             },
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
@@ -435,6 +443,7 @@ class UsersApiTestCase(APITestCase):
         user.refresh_from_db()
         self.assertEqual(user.name, "New name")
         self.assertEqual(user.username, "new-username")
+        self.assertEqual(user.timezone.key, "America/Toronto")
 
         # The email field should be readonly
         self.assertEqual(user.email, "old@example.com")
@@ -443,7 +452,10 @@ class UsersApiTestCase(APITestCase):
         """Authenticated users should not be allowed to update other users."""
         user = UserFactory()
         other_user = UserFactory(
-            name="Old name", email="old@example.com", username="old-username"
+            name="Old name",
+            email="old@example.com",
+            username="old-username",
+            timezone=ZoneInfo("America/Juneau"),
         )
         jwt_token = AccessToken.for_user(user)
 
@@ -452,6 +464,7 @@ class UsersApiTestCase(APITestCase):
             {
                 "name": "New name",
                 "email": "new@example.com",
+                "timezone": "America/Toronto",
                 "username": "new-username",
             },
             HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
@@ -462,6 +475,7 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(other_user.email, "old@example.com")
         self.assertEqual(other_user.name, "Old name")
         self.assertEqual(other_user.username, "old-username")
+        self.assertEqual(other_user.timezone.key, "America/Juneau")
 
     def test_api_users_delete_list_anonymous(self):
         """Anonymous users should not be allowed to delete a list of users."""
@@ -574,6 +588,7 @@ class UsersApiTestCase(APITestCase):
                 "email": user.email,
                 "language": user.language,
                 "name": user.name,
+                "timezone": user.timezone.key,
                 "username": user.username,
             },
         )
