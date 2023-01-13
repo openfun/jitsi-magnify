@@ -19,7 +19,6 @@ SchemaView = get_schema_view(
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
-    url=settings.API_URL,
 )
 
 router = DefaultRouter()

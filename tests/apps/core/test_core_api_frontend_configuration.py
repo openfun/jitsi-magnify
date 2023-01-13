@@ -10,7 +10,7 @@ class FrontendConfigurationTestCase(APITestCase):
     """Test requests on magnify's core app frontend configuration endpoint."""
 
     @override_settings(
-        JITSI_CONFIGURATION = {
+        JITSI_CONFIGURATION={
             "jitsi_url": "https://meeting.education",
         },
         FRONTEND_CONFIGURATION={

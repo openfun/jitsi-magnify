@@ -1,16 +1,21 @@
 # Django
 DJANGO_SECRET_KEY=ThisIsAnExampleKeyForDevPurposeOnly
-DJANGO_SETTINGS_MODULE=settings
 
 # Python
 PYTHONPATH=/app/sandbox
 PYTHONUNBUFFERED=1
 
 # Simple JWT settings for OIDC authentication with Keycloak
-SIMPLE_JWT_JWK_URL="http://keycloak:8080/realms/magnify/protocol/openid-connect/certs"
-SIMPLE_JWT_ALGORITHM="RS256"
+MAGNIFY_JWT_JWK_URL="http://keycloak:8080/realms/magnify/protocol/openid-connect/certs"
+
+# API
+MAGNIFY_API_URL="http://localhost:8070/api"
+
+# Keycloak
+KEYCLOAK_URL="http://localhost:8080"
 
 # Jitsi jwt settings
+JITSI_URL="https://meet.jit.si"
 JITSI_GUEST_AVATAR="https://ronaldmottram.co.nz/wp-content/uploads/2019/01/default-user-icon-8.jpg"
 JITSI_GUEST_DEFAULT_PASSWORD="default"
 JITSI_GUEST_USERNAME="guest"
@@ -19,4 +24,3 @@ JITSI_XMPP_DOMAIN="meet.jitsi"
 JITSI_SECRET_KEY="ThisIsAnExampleKeyForDevPurposeOnly"
 JITSI_APP_ID="app_id"
 JITSI_TOKEN_EXPIRATION_SECONDS=300
-

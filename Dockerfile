@@ -111,6 +111,8 @@ ENTRYPOINT [ "/usr/local/bin/entrypoint" ]
 # ---- Development image ----
 FROM core as development
 
+ENV DJANGO_SETTINGS_MODULE="settings"
+
 # Switch back to the root user to install development dependencies
 USER root:root
 
@@ -141,6 +143,8 @@ CMD python sandbox/manage.py runserver 0.0.0.0:8000
 
 # ---- Production image ----
 FROM core as production
+
+ENV DJANGO_SETTINGS_MODULE="settings"
 
 ARG MAGNIFY_STATIC_ROOT=/data/static
 

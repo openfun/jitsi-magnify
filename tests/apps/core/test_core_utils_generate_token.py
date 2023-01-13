@@ -17,14 +17,13 @@ from magnify.apps.core.utils import generate_token
 
 
 @override_settings(
-    JWT_CONFIGURATION={
-        "jitsi_secret_key": "ThisIsAnExampleKeyForDevPurposeOnly",
-        "token_expiration_seconds": 600,
+    JITSI_CONFIGURATION={
         "jitsi_app_id": "app_id",
-        "jitsi_domain": "meet.jit.si",
+        "jitsi_guest_avatar": "avatar.jpg",
+        "jitsi_guest_username": "guest",
+        "jitsi_secret_key": "ThisIsAnExampleKeyForDevPurposeOnly",
+        "jitsi_token_expiration_seconds": 600,
         "jitsi_xmpp_domain": "meet.jitsi",
-        "guest_username": "guest",
-        "guest_avatar": "avatar.jpg",
     }
 )
 class TokenUtilsTestCase(TestCase):
@@ -54,7 +53,7 @@ class TokenUtilsTestCase(TestCase):
 
         payload = jwt.decode(
             token,
-            settings.JWT_CONFIGURATION["jitsi_secret_key"],
+            settings.JITSI_CONFIGURATION["jitsi_secret_key"],
             audience="jitsi",
             algorithms=["HS256"],
         )
@@ -99,7 +98,7 @@ class TokenUtilsTestCase(TestCase):
 
         payload = jwt.decode(
             token,
-            settings.JWT_CONFIGURATION["jitsi_secret_key"],
+            settings.JITSI_CONFIGURATION["jitsi_secret_key"],
             audience="jitsi",
             algorithms=["HS256"],
         )
@@ -146,7 +145,7 @@ class TokenUtilsTestCase(TestCase):
 
         payload = jwt.decode(
             token,
-            settings.JWT_CONFIGURATION["jitsi_secret_key"],
+            settings.JITSI_CONFIGURATION["jitsi_secret_key"],
             audience="jitsi",
             algorithms=["HS256"],
         )
