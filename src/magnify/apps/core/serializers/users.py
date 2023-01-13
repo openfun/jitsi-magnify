@@ -2,6 +2,7 @@
 from django.contrib.auth.hashers import make_password
 
 from rest_framework import serializers
+from timezone_field.rest_framework import TimeZoneSerializerField
 
 from magnify.apps.core import models, utils
 
@@ -9,9 +10,11 @@ from magnify.apps.core import models, utils
 class UserSerializer(serializers.ModelSerializer):
     """Serialize User model for the API."""
 
+    timezone = TimeZoneSerializerField(use_pytz=False, required=False)
+
     class Meta:
         model = models.User
-        fields = ["id", "email", "language", "name", "username"]
+        fields = ["id", "email", "language", "name", "timezone", "username"]
         read_only_fields = ["id", "email"]
 
     def to_representation(self, instance):
