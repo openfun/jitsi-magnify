@@ -66,7 +66,7 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
     SECRET_KEY = values.Value(None)
 
     # CORS headers
-    CORS_ALLOWED_ORIGINS = values.ListValue([], environ_name="CORS_ALLOWED_ORIGINS")
+    CORS_ALLOWED_ORIGINS = values.ListValue([])
 
     # System check reference:
     # https://docs.djangoproject.com/en/2.2/ref/checks/#security
@@ -114,31 +114,29 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
 
     AUTH_USER_MODEL = "core.User"
 
-    JWT_CONFIGURATION = {
-        "guest_avatar": values.Value(
-            "", environ_name="JWT_GUEST_AVATAR", environ_prefix=None
-        ),
-        "guest_username": values.Value(
-            "guest", environ_name="JWT_GUEST_USERNAME", environ_prefix=None
-        ),
-        "jitsi_domain": values.Value(
-            environ_name="JWT_JITSI_DOMAIN", environ_prefix=None
-        ),
-        "jitsi_app_id": values.Value(
-            environ_name="JWT_JITSI_APP_ID", environ_prefix=None
+    JITSI_CONFIGURATION = {
+        "jitsi_url": values.Value(environ_name="JITSI_URL", environ_prefix=None),
+        "jitsi_app_id": values.Value(environ_name="JITSI_APP_ID", environ_prefix=None),
+        "jitsi_secret_key": values.Value(
+            environ_name="JITSI_SECRET_KEY", environ_prefix=None
         ),
         "jitsi_xmpp_domain": values.Value(
-            environ_name="JWT_JITSI_XMPP_DOMAIN", environ_prefix=None
+            environ_name="JITSI_XMPP_DOMAIN", environ_prefix=None
         ),
-        "jitsi_secret_key": values.Value(
-            environ_name="JWT_JITSI_SECRET_KEY", environ_prefix=None
+        "jitsi_guest_avatar": values.Value(
+            "", environ_name="JITSI_GUEST_AVATAR", environ_prefix=None
         ),
-        "token_expiration_seconds": values.Value(
-            300, environ_name="JWT_EXPIRATION_SECONDS", environ_prefix=None
+        "jitsi_guest_username": values.Value(
+            "Guest", environ_name="JITSI_GUEST_USERNAME", environ_prefix=None
+        ),
+        "jitsi_token_expiration_seconds": values.Value(
+            300, environ_name="JITSI_TOKEN_EXPIRATION_SECONDS", environ_prefix=None
         ),
     }
 
-    ALLOW_UNREGISTERED_ROOMS = values.BooleanValue(True, environ_prefix=None)
+    ALLOW_UNREGISTERED_ROOMS = values.BooleanValue(
+        True, environ_name="MAGNIFY_ALLOW_UNREGISTERED_ROOMS", environ_prefix=None
+    )
 
     # Database
     DATABASES = {
@@ -151,12 +149,14 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
             "NAME": values.Value(
                 "magnify", environ_name="DB_NAME", environ_prefix=None
             ),
-            "USER": values.Value("fun", environ_name="DB_USER", environ_prefix=None),
+            "USER": values.Value(
+                "magnify", environ_name="DB_USER", environ_prefix=None
+            ),
             "PASSWORD": values.Value(
                 "pass", environ_name="DB_PASSWORD", environ_prefix=None
             ),
             "HOST": values.Value(
-                "localhost", environ_name="DB_HOST", environ_prefix=None
+                "postgresql", environ_name="DB_HOST", environ_prefix=None
             ),
             "PORT": values.Value(5432, environ_name="DB_PORT", environ_prefix=None),
         }
@@ -173,16 +173,16 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
     # Simple JWT
     SIMPLE_JWT = {
         "ALGORITHM": values.Value(
-            "HS256", environ_name="SIMPLE_JWT_ALGORITHM", environ_prefix=None
+            "RS256", environ_name="MAGNIFY_JWT_ALGORITHM", environ_prefix=None
         ),
         "JWK_URL": values.Value(
-            None, environ_name="SIMPLE_JWT_JWK_URL", environ_prefix=None
+            None, environ_name="MAGNIFY_JWT_JWK_URL", environ_prefix=None
         ),
         "SIGNING_KEY": values.Value(
-            None, environ_name="SIMPLE_JWT_SIGNING_KEY", environ_prefix=None
+            None, environ_name="MAGNIFY_JWT_SIGNING_KEY", environ_prefix=None
         ),
         "VERIFYING_KEY": values.Value(
-            None, environ_name="SIMPLE_JWT_VERIFYING_KEY", environ_prefix=None
+            None, environ_name="MAGNIFY_JWT_VERIFYING_KEY", environ_prefix=None
         ),
         "AUTH_HEADER_TYPES": ("Bearer",),
         "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
@@ -191,14 +191,13 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
         "USER_ID_CLAIM": "sub",
         "AUTH_TOKEN_CLASSES": ("magnify.apps.core.tokens.BearerToken",),
     }
-
     JWT_USER_FIELDS_SYNC = values.DictValue(
         {
             "email": "email",
             "name": "name",
             "username": "preferred_username",
         },
-        environ_name="JWT_USER_FIELDS_SYNC",
+        environ_name="MAGNIFY_JWT_USER_FIELDS_SYNC",
         environ_prefix=None,
     )
 
@@ -254,7 +253,6 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
     )
 
     # Swagger
-    API_URL = values.Value()
     SWAGGER_SETTINGS = {
         "SECURITY_DEFINITIONS": {
             "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"},
@@ -337,9 +335,6 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
         },
     }
 
-    # Sessions
-    SESSION_ENGINE = values.Value("django.contrib.sessions.backends.db")
-
     # Sentry
     SENTRY_DSN = values.Value(None, environ_name="SENTRY_DSN")
 
@@ -390,9 +385,7 @@ class Build(Base):
     SECRET_KEY = "ThisIsAnExampleKeyForBuildPurposeOnly"  # nosec
     JWT_JITSI_SECRET_KEY = "ThisIsAnExampleKeyForBuildPurposeOnly"  # nosec
 
-    STATICFILES_STORAGE = values.Value(
-        "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    )
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 class Development(Base):
@@ -406,7 +399,6 @@ class Development(Base):
     ALLOWED_HOSTS = ["*"]
     CORS_ALLOW_ALL_ORIGINS = True
     CSRF_TRUSTED_ORIGINS = ["http://localhost:8071"]
-    API_URL = values.Value("http://localhost:8071")
 
     @classmethod
     def post_setup(cls):
@@ -424,6 +416,17 @@ class Test(Base):
     """Test environment settings"""
 
     SIMPLE_JWT = {}
+    JITSI_CONFIGURATION = {
+        "jitsi_url": "https://meet.jit.si",
+        "jitsi_guest_avatar": "",
+        "jitsi_guest_default_password": "default",
+        "jitsi_guest_usenrame": "guest",
+        "jitsi_domain": "localhost:8443",
+        "jitsi_xmpp_domain": "meet.jitsi",
+        "jitsi_secret_key": "ThisIsAnExampleKeyForTestPurposeOnly",
+        "jitsi_app_id": "app_id",
+        "jitsi_token_expiration_seconds": 300,
+    }
 
 
 class ContinuousIntegration(Test):
@@ -435,7 +438,6 @@ class ContinuousIntegration(Test):
 
     ALLOWED_HOSTS = ["*"]
     CSRF_TRUSTED_ORIGINS = ["http://localhost:8070"]
-    API_URL = values.Value("http://localhost:8070")
 
 
 class Production(Base):
@@ -450,7 +452,7 @@ class Production(Base):
 
     # Security
     SECRET_KEY = values.SecretValue()
-    ALLOWED_HOSTS = values.ListValue(None)
+    ALLOWED_HOSTS = values.ListValue([])
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True

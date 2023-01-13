@@ -46,22 +46,24 @@ def get_nth_week_number(original_date):
 
 def create_token_payload(user, room, is_admin=False):
     """Create the payload so that it contains each information jitsi requires"""
-    expiration_seconds = int(settings.JWT_CONFIGURATION.get("token_expiration_seconds"))
+    expiration_seconds = int(
+        settings.JITSI_CONFIGURATION["jitsi_token_expiration_seconds"]
+    )
     token_payload = {
         "exp": timezone.now() + timedelta(seconds=expiration_seconds),
         "iat": timezone.now(),
         "moderator": is_admin or user.is_staff,
         "aud": "jitsi",
-        "iss": settings.JWT_CONFIGURATION["jitsi_app_id"],
-        "sub": settings.JWT_CONFIGURATION["jitsi_xmpp_domain"],
+        "iss": settings.JITSI_CONFIGURATION["jitsi_app_id"],
+        "sub": settings.JITSI_CONFIGURATION["jitsi_xmpp_domain"],
         "room": room,
     }
 
     jitsi_user = {
-        "avatar": settings.JWT_CONFIGURATION.get("guest_avatar"),
+        "avatar": settings.JITSI_CONFIGURATION.get("jitsi_guest_avatar"),
         "name": user.username
         if user.is_authenticated
-        else settings.JWT_CONFIGURATION.get("guest_username"),
+        else settings.JITSI_CONFIGURATION.get("jitsi_guest_username"),
         "email": user.email if user.is_authenticated else "",
     }
 
@@ -74,7 +76,7 @@ def generate_token(user, room, is_admin=False):
     token_payload = create_token_payload(user, room, is_admin=is_admin)
     token = jwt.encode(
         token_payload,
-        settings.JWT_CONFIGURATION["jitsi_secret_key"],
+        settings.JITSI_CONFIGURATION["jitsi_secret_key"],
         algorithm="HS256",
     )
 
