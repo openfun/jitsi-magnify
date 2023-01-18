@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Grommet } from 'grommet';
 import * as React from 'react';
+import { useEffect } from 'react';
 import {
   AuthContextProvider,
   ModalContextProvider,
@@ -9,7 +10,9 @@ import {
 import { RoutingContextInterface, RoutingContextProvider } from '../../../context/routing';
 import { TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
+import { HttpService } from '../../../services';
 import { customTheme } from '../../../themes';
+import { TESTING_CONF } from '../../../types/config';
 import { MagnifyLocales } from '../../../utils';
 
 export interface MagnifyTestingProviderProps {
@@ -44,6 +47,11 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
       goToRoomSettings: () => console.log('goToRoomSettings'),
     };
   };
+
+  useEffect(() => {
+    window.config = TESTING_CONF;
+    HttpService.init(TESTING_CONF.API_URL);
+  }, []);
 
   return (
     <TranslationProvider defaultLocale="en" initTranslation={false} locale={locale}>

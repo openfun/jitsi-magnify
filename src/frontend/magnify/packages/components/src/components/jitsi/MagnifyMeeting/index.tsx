@@ -8,6 +8,7 @@ import { defaultConfiguration, RoomSettings } from '../../../types/entities/room
 import { JitsiEvents } from '../../../utils/constants/jitsi/Events';
 import { DEFAULT_TOOLBAR_BUTTONS } from '../../../utils/constants/jitsi/ToolbarButtons';
 import { ArrayHelper } from '../../../utils/helpers/array';
+import { DEFAULT_JITSI_DOMAIN } from '../../../utils/settings';
 
 export interface MagnifyMeetingProps {
   roomSlug?: string;
@@ -80,7 +81,7 @@ export const MagnifyMeeting = ({
   return (
     <JitsiMeeting
       configOverwrite={getConfig()}
-      domain={import.meta.env.VITE_REACT_APP_JITSI_MAIN_DOMAIN ?? 'meeting.education'}
+      domain={window.config.JITSI_DOMAIN ?? DEFAULT_JITSI_DOMAIN}
       getIFrameRef={handleIFrameLoaded}
       jwt={props.jwt}
       onApiReady={handleApiReady}

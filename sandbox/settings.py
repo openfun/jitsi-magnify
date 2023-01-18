@@ -115,7 +115,7 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
     AUTH_USER_MODEL = "core.User"
 
     JITSI_CONFIGURATION = {
-        "jitsi_url": values.Value(environ_name="JITSI_URL", environ_prefix=None),
+        "jitsi_domain": values.Value(environ_name="JITSI_DOMAIN", environ_prefix=None),
         "jitsi_app_id": values.Value(environ_name="JITSI_APP_ID", environ_prefix=None),
         "jitsi_secret_key": values.Value(
             environ_name="JITSI_SECRET_KEY", environ_prefix=None
@@ -417,11 +417,10 @@ class Test(Base):
 
     SIMPLE_JWT = {}
     JITSI_CONFIGURATION = {
-        "jitsi_url": "https://meet.jit.si",
+        "jitsi_domain": "meeting.education",
         "jitsi_guest_avatar": "",
         "jitsi_guest_default_password": "default",
-        "jitsi_guest_usenrame": "guest",
-        "jitsi_domain": "localhost:8443",
+        "jitsi_guest_username": "guest",
         "jitsi_xmpp_domain": "meet.jitsi",
         "jitsi_secret_key": "ThisIsAnExampleKeyForTestPurposeOnly",
         "jitsi_app_id": "app_id",
@@ -431,12 +430,13 @@ class Test(Base):
 
 class ContinuousIntegration(Test):
     """
-    Continous Integration environment settings
+    Continuous Integration environment settings
 
     nota bene: it should inherit from the Test environment.
     """
 
     ALLOWED_HOSTS = ["*"]
+    CORS_ALLOW_ALL_ORIGINS = True
     CSRF_TRUSTED_ORIGINS = ["http://localhost:8070"]
 
 

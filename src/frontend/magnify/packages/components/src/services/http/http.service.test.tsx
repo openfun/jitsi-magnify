@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 import { server } from '../../mocks/server';
 import { UsersApiRoutes } from '../../utils/routes/api/users/usersApiRoutes';
-import { buildApiUrl, HttpService, MagnifyApi } from './http.service';
+import { buildApiUrl, HttpService } from './http.service';
 
 describe('HttpService', () => {
   const testingRoute = '/test/http-service/';
@@ -22,16 +22,20 @@ describe('HttpService', () => {
       }),
     );
     try {
-      await MagnifyApi.get(testingRoute);
+      await HttpService.MagnifyApi.get(testingRoute);
     } catch (error: any) {
       expect(error.response.status).toEqual(401);
-      expect(MagnifyApi.defaults.headers.common['Authorization']).toEqual('Bearer null');
+      expect(HttpService.MagnifyApi.defaults.headers.common['Authorization']).toEqual(
+        'Bearer null',
+      );
     }
   });
   it('it sends a request as a logged user', async () => {
     HttpService.retry.set(testingRoute, false);
-    const response = await MagnifyApi.get(testingRoute);
+    const response = await HttpService.MagnifyApi.get(testingRoute);
     expect(response.data).toEqual('Hello');
-    expect(MagnifyApi.defaults.headers.common['Authorization']).not.toEqual('Bearer null');
+    expect(HttpService.MagnifyApi.defaults.headers.common['Authorization']).not.toEqual(
+      'Bearer null',
+    );
   });
 });

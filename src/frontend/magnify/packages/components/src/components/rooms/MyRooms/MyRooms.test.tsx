@@ -1,25 +1,14 @@
-import Keycloak from 'keycloak-js';
 import React from 'react';
 import { beforeAll, expect, vi } from 'vitest';
 import createRandomRoom from '../../../factories/rooms';
-import * as services from '../../../services';
+import { KeycloakService } from '../../../services';
 import { render, screen } from '../../../utils/test-utils';
 
 import { MyRooms } from './MyRooms';
-const mockDefaultKeyC = {
-  initKeycloak: vi.fn(),
-  doLogin: vi.fn(),
-  doLogout: vi.fn(),
-  isLoggedIn: () => true,
-  getToken: vi.fn(),
-  updateToken: vi.fn(),
-  getUsername: vi.fn(),
-  _kc: new Keycloak(),
-};
 
 describe('MyRooms with connected user', () => {
   beforeAll(() => {
-    vi.spyOn(services, 'KeycloakService', 'get').mockReturnValue(mockDefaultKeyC);
+    KeycloakService.isLoggedIn = vi.fn().mockReturnValue(true);
   });
 
   it('should render successfully', async () => {
@@ -40,10 +29,7 @@ describe('MyRooms with connected user', () => {
 
 describe('MyRooms with not connected user', () => {
   beforeAll(() => {
-    vi.spyOn(services, 'KeycloakService', 'get').mockReturnValue({
-      ...mockDefaultKeyC,
-      isLoggedIn: () => false,
-    });
+    KeycloakService.isLoggedIn = vi.fn().mockReturnValue(false);
   });
 
   it('should render successfully', async () => {
