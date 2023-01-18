@@ -18,12 +18,12 @@ export const DefaultProvider = ({ ...props }: DefaultProviderProps) => {
       routes={{
         goToDefaultPage: () => navigate(RootPath.ROOT),
         goToLogout: () => {
-          KeycloakService.doLogout({
+          KeycloakService._kc.logout({
             redirectUri: window.location.href,
           });
         },
         goToLogin: () =>
-          KeycloakService.doLogin({
+          KeycloakService._kc.login({
             redirectUri: window.location.href,
           }),
         goToPreferences: () => {

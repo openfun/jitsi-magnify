@@ -1,18 +1,35 @@
-import { KeycloakService } from '@openfun/magnify-components';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
 import './index.css';
 import '@fontsource/roboto';
+import {
+  KeycloakService,
+  MagnifyConfiguration,
+  MagnifyProvider,
+} from '@openfun/magnify-components';
+import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 async function render() {
-  KeycloakService.initKeycloak(window.location.href, () => {
-    root.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>,
+  fetch('/config.json').then(async (response) => {
+    const config: MagnifyConfiguration = await response.json();
+    KeycloakService.initKeycloak(
+      window.location.href,
+      {
+        realm: config.KEYCLOAK_REALM,
+        clientId: config.KEYCLOAK_CLIENT_ID,
+        url: config.KEYCLOAK_URL,
+      },
+      () => {
+        root.render(
+          <React.StrictMode>
+            <MagnifyProvider config={config}>
+              <App />
+            </MagnifyProvider>
+          </React.StrictMode>,
+        );
+      },
     );
   });
 }

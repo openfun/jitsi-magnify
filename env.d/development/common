@@ -15,7 +15,7 @@ MAGNIFY_API_URL="http://localhost:8070/api"
 KEYCLOAK_URL="http://localhost:8080"
 
 # Jitsi jwt settings
-JITSI_URL="https://meet.jit.si"
+JITSI_DOMAIN="meeting.education"
 JITSI_GUEST_AVATAR="https://ronaldmottram.co.nz/wp-content/uploads/2019/01/default-user-icon-8.jpg"
 JITSI_GUEST_DEFAULT_PASSWORD="default"
 JITSI_GUEST_USERNAME="guest"

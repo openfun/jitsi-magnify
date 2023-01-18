@@ -1,76 +1,65 @@
 import Keycloak from 'keycloak-js';
 import { User } from '../../types';
 import { Maybe } from '../../types/misc';
-import {
-  KEYCLOAK_CLIENT_ID,
-  KEYCLOAK_REALM,
-  KEYCLOAK_TOKEN_VALIDITY,
-  KEYCLOAK_URL,
-} from '../../utils/settings';
+import { KEYCLOAK_TOKEN_VALIDITY } from '../../utils/settings';
 
-const _kc = new Keycloak({
-  url: KEYCLOAK_URL,
-  realm: KEYCLOAK_REALM,
-  clientId: KEYCLOAK_CLIENT_ID,
-});
-
-const initKeycloak = (
-  redirectUri: string,
-  onAuthenticatedCallback: (isAuth: boolean, user?: User) => void,
-): void => {
-  _kc
-    .init({
-      redirectUri: redirectUri,
-      onLoad: 'check-sso',
-      silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
-      silentCheckSsoFallback: false,
-    })
-    .then((authenticated) => {
-      if (authenticated) {
-        _kc.loadUserInfo().then((value) => {});
-      }
-      onAuthenticatedCallback(authenticated);
-    })
-    .catch((error) => {
-      onAuthenticatedCallback(false);
-    });
-};
-
-const updateToken = (successCallback?: () => void, failedCallback?: () => void): void => {
-  _kc
-    .updateToken(KEYCLOAK_TOKEN_VALIDITY)
-    .then(() => successCallback?.())
-    .catch(() => failedCallback?.());
-};
-
-const doLogin = _kc.login;
-
-const doLogout = _kc.logout;
-
-const getToken = () => _kc.token;
-
-const isLoggedIn = () => !!_kc.token;
-
-const getUsername = () => _kc.tokenParsed?.preferred_username;
-
-export interface KeycloakServiceInterface {
-  initKeycloak: any;
-  doLogin: any;
-  doLogout: any;
-  isLoggedIn: () => boolean;
-  getToken: () => Maybe<string>;
-  updateToken: (success?: any, failed?: () => void) => void;
-  getUsername: () => Maybe<string>;
-  _kc: Keycloak;
+export interface KeycloakServiceConfig {
+  url: string;
+  clientId: string;
+  realm: string;
 }
 
-export const KeycloakService: KeycloakServiceInterface = {
-  initKeycloak,
-  doLogin,
-  doLogout,
-  isLoggedIn,
-  getToken,
-  updateToken,
-  getUsername,
-  _kc,
-};
+export class KeycloakService {
+  static _kc: Keycloak;
+
+  public static initKeycloak(
+    redirectUri: string,
+    configuration: KeycloakServiceConfig,
+    onAuthenticatedCallback: (isAuth: boolean, user?: User) => void,
+  ): void {
+    const kcObject = new Keycloak(configuration);
+
+    kcObject
+      .init({
+        redirectUri: redirectUri,
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
+        silentCheckSsoFallback: false,
+      })
+      .then(async (authenticated) => {
+        if (authenticated) {
+          await KeycloakService._kc?.loadUserInfo();
+        }
+        onAuthenticatedCallback(authenticated);
+      })
+      .catch((error) => {
+        onAuthenticatedCallback(false);
+      });
+
+    KeycloakService._kc = kcObject;
+  }
+
+  public static getToken(): Maybe<string> {
+    return KeycloakService._kc?.token;
+  }
+
+  public static isLoggedIn(): boolean {
+    return !!KeycloakService._kc?.token;
+  }
+
+  public static getUsername(): Maybe<string> {
+    return KeycloakService._kc?.tokenParsed?.preferred_username;
+  }
+
+  public static async updateToken(
+    successCallback?: () => void,
+    failedCallback?: () => void,
+  ): Promise<void> {
+    const result = await KeycloakService._kc.updateToken(KEYCLOAK_TOKEN_VALIDITY);
+    if (result) {
+      successCallback?.();
+    } else {
+      failedCallback?.();
+    }
+  }
+}

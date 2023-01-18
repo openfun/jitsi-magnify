@@ -214,14 +214,14 @@ For reference, the Jitsi JWT token is a json string of the form:
 }
 ```
 
-#### JITSI_URL
+#### JITSI_DOMAIN
 
-URL of the Jitsi instance used by Magnify to host conferences.
+Domain on which the Jitsi instance that is used by Magnify to host conferences is hosted.
 
 - Type: String
 - Required: Yes
-- Default: `https://meeting.education`
-- Example: `https://meet.jit.si`
+- Default: `meeting.education`
+- Example: `meet.jit.si`
 
 
 #### JITSI_GUEST_AVATAR

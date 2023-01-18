@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Grommet } from 'grommet';
 import * as React from 'react';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import {
   AuthContextProvider,
   ModalContextProvider,
@@ -11,7 +11,9 @@ import {
 import { TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
 import { AuthMiddleware } from '../../../middleware';
+import { HttpService } from '../../../services';
 import { customTheme } from '../../../themes';
+import { MagnifyConfiguration } from '../../../types/config';
 import { User } from '../../../types/entities/user';
 
 const queryClient = new QueryClient({
@@ -30,9 +32,19 @@ export interface MagnifyProviderProps {
   initialUser?: User;
   translations?: any;
   locale?: string;
+  config: MagnifyConfiguration;
 }
 
-export function MagnifyProvider({ locale, ...props }: PropsWithChildren<MagnifyProviderProps>) {
+export function MagnifyProvider({
+  locale,
+  config,
+  ...props
+}: PropsWithChildren<MagnifyProviderProps>) {
+  useEffect(() => {
+    HttpService.init(config.API_URL);
+    window.config = config;
+  }, [config]);
+
   return (
     <TranslationProvider locale={locale}>
       <FormErrors />

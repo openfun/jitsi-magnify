@@ -13,7 +13,7 @@ export function RoomsJitsiView() {
   const { id } = useParams();
 
   const { data: room, isLoading } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
-    return RoomsRepository.get(id, true);
+    return RoomsRepository.get(id);
   });
 
   if (room && room.jitsi?.token == null) {
