@@ -1,10 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { Formik } from 'formik';
 import { AreasType, Box, Grid, GridColumnsType, GridSizeType, ResponsiveValue } from 'grommet';
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import { useErrors } from '../../../hooks/useErrors';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { RoomsRepository } from '../../../services/rooms/rooms.repository';
+import { RoomResponse } from '../../../types';
 import { Room, RoomSettings } from '../../../types/entities/room';
 import { Maybe } from '../../../types/misc';
 import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
@@ -93,8 +96,9 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
+  const errors = useErrors();
 
-  const { mutate } = useMutation(
+  const { mutate } = useMutation<Maybe<RoomResponse>, AxiosError, RoomSettings>(
     async (settings: RoomSettings) => {
       if (room == null) {
         return;
@@ -121,6 +125,9 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
           }
           return newRooms;
         });
+      },
+      onError: (error) => {
+        errors.onError(error);
       },
     },
   );
@@ -226,10 +233,6 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
                         />
                       )}
                     </Box>
-                    <FormikSwitch
-                      label={intl.formatMessage(roomConfigMessages.askForAuthentication)}
-                      name={'askForAuthentication'}
-                    />
                   </Box>
                 </MagnifyCard>
               </Box>

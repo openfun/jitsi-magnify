@@ -1,9 +1,16 @@
+import { AxiosError } from 'axios';
 import React, { useCallback, useState } from 'react';
-import { MagnifyModal, MagnifyModalProps } from '../../components/design-system/Modal';
+import {
+  MagnifyModal,
+  MagnifyModalProps,
+  useMagnifyModal,
+} from '../../components/design-system/Modal';
+import { MagnifyErrorRequestModal } from '../../components/design-system/Modal/ErrorRequest/MagnifyErrorRequestModal';
 import { Maybe } from '../../types/misc';
 
 export interface ModalContextInterface {
   showModal: (modalProps: MagnifyModalProps) => void;
+  handleErrors: (error: AxiosError) => void;
 }
 
 const ModalContext = React.createContext<Maybe<ModalContextInterface>>(undefined);
@@ -14,6 +21,8 @@ type ModalsContextProviderProps = {
 
 export const ModalContextProvider = ({ ...props }: ModalsContextProviderProps) => {
   const [allModals, setAllModals] = useState<MagnifyModalProps[]>([]);
+  const errorRequestModal = useMagnifyModal();
+  const [lastErrorRequest, setLastErrorRequest] = useState<Maybe<AxiosError>>(undefined);
 
   const getModalIndex = useCallback(
     (modalId: string): number => {
@@ -43,6 +52,10 @@ export const ModalContextProvider = ({ ...props }: ModalsContextProviderProps) =
           return [...prevState, modalProps];
         });
       },
+      handleErrors: (error: AxiosError) => {
+        setLastErrorRequest(error);
+        errorRequestModal.openModal();
+      },
     }),
     [allModals],
   );
@@ -59,6 +72,15 @@ export const ModalContextProvider = ({ ...props }: ModalsContextProviderProps) =
           />
         );
       })}
+      <MagnifyErrorRequestModal
+        error={lastErrorRequest}
+        modalUniqueId={'error-request-modal'}
+        {...errorRequestModal}
+        onClose={() => {
+          setLastErrorRequest(undefined);
+          errorRequestModal.onClose();
+        }}
+      />
       {props.children}
     </ModalContext.Provider>
   );
