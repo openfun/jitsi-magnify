@@ -32,7 +32,7 @@ export class KeycloakService {
         }
         onAuthenticatedCallback(authenticated);
       })
-      .catch((error) => {
+      .catch(() => {
         onAuthenticatedCallback(false);
       });
 
