@@ -8,12 +8,13 @@ import {
   useTranslations,
 } from '@openfun/magnify-components';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Box, Spinner } from 'grommet';
+import { Box, Notification, Spinner } from 'grommet';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DefaultPage } from '../../../components/DefaultPage';
+import { commonMessages } from '../../../i18n/commonMessages';
 import { RoomsPath } from '../../../utils/routes/rooms';
 
 export const roomSettingsMessages = defineMessages({
@@ -29,7 +30,11 @@ export function RoomSettingsView() {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { data: room, isLoading } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
+  const {
+    data: room,
+    isLoading,
+    error,
+  } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
     return RoomsRepository.get(id);
   });
 
@@ -76,20 +81,29 @@ export function RoomSettingsView() {
 
   return (
     <DefaultPage title={intl.formatMessage(roomSettingsMessages.roomSettingsTitle)}>
-      {isLoading && <Spinner />}
-      {!isLoading && room && (
-        <>
-          <RoomConfig room={room} />
-          <Box margin={'15px 0'}>
-            <RoomUsersConfig
-              addUser={addUser}
-              onDeleteUser={deleteUser}
-              onUpdateUser={updateUser}
-              room={room}
-            />
-          </Box>
-        </>
-      )}
+      <>
+        {isLoading && <Spinner />}
+        {!isLoading && error && (
+          <Notification
+            message={intl.formatMessage(commonMessages.requestError)}
+            status="critical"
+            title={intl.formatMessage(commonMessages.error)}
+          />
+        )}
+        {!isLoading && error == null && room && (
+          <>
+            <RoomConfig room={room} />
+            <Box margin={'15px 0'}>
+              <RoomUsersConfig
+                addUser={addUser}
+                onDeleteUser={deleteUser}
+                onUpdateUser={updateUser}
+                room={room}
+              />
+            </Box>
+          </>
+        )}
+      </>
     </DefaultPage>
   );
 }

@@ -93,7 +93,7 @@ export const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
     >
       <Form>
         <FormikInput
-          autoFocus={true}
+          {...{ autoFocus: true }}
           label={intl.formatMessage(formLabelMessages.name)}
           name={'name'}
           placeholder={intl.formatMessage(messages.namePlaceholder)}
