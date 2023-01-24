@@ -1,11 +1,12 @@
 import { SimpleLayout } from '@openfun/magnify-components';
 import React from 'react';
 import { defineMessages, IntlShape } from 'react-intl';
-import { Link, Navigate, Outlet, RouteObject } from 'react-router-dom';
+import { Navigate, Outlet, RouteObject } from 'react-router-dom';
 import { RoomsPath } from '../rooms';
 
 export enum RootPath {
   ROOT = '/app',
+  HOME = '/',
 }
 
 const rootRouteLabels = defineMessages({
@@ -19,11 +20,6 @@ const rootRouteLabels = defineMessages({
 export const getRootRoute = (intl: IntlShape, children: RouteObject[]): RouteObject => {
   return {
     path: RootPath.ROOT,
-    handle: {
-      crumb: () => {
-        return <Link to={RootPath.ROOT}>{intl.formatMessage(rootRouteLabels[RootPath.ROOT])}</Link>;
-      },
-    },
     element: (
       <SimpleLayout urlLogo={'/assets/logo-fun-mooc.svg'}>
         <Outlet />

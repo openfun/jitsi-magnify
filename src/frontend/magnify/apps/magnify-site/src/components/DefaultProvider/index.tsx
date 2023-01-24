@@ -16,7 +16,7 @@ export const DefaultProvider = ({ ...props }: DefaultProviderProps) => {
   return (
     <RoutingContextProvider
       routes={{
-        goToDefaultPage: () => navigate(RootPath.ROOT),
+        goToDefaultPage: () => navigate(RootPath.HOME),
         goToLogout: () => {
           KeycloakService._kc.logout({
             redirectUri: window.location.href,
@@ -39,7 +39,7 @@ export const DefaultProvider = ({ ...props }: DefaultProviderProps) => {
         goToJitsiRoom: (roomId: string) => {
           navigate(JitsiPath.WEB_CONF.replace(':id', roomId));
         },
-        goToRoomsList: () => navigate(RoomsPath.ROOMS),
+        goToRoomsList: () => navigate(RootPath.HOME),
         goToRoomSettings: (roomId?: string) => {
           if (roomId) {
             navigate(RoomsPath.ROOMS_SETTINGS.replace(':id', roomId));

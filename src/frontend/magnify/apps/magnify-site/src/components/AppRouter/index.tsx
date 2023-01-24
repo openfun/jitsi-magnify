@@ -1,4 +1,4 @@
-import { useTranslations } from '@openfun/magnify-components';
+import { SimpleLayout, useTranslations } from '@openfun/magnify-components';
 import * as React from 'react';
 import {
   createBrowserRouter,
@@ -8,10 +8,11 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { getJitsiRoutes } from '../../utils/routes/jitsi';
-import { getRoomsRoutes, RoomsPath } from '../../utils/routes/rooms';
+import { getRoomsRoutes } from '../../utils/routes/rooms';
 import { getRootRoute, RootPath } from '../../utils/routes/root';
 
 import { getUsersRoutes } from '../../utils/routes/users';
+import { RoomsListView } from '../../views/rooms/list';
 import { DefaultProvider } from '../DefaultProvider';
 
 export const AppRouter = () => {
@@ -19,7 +20,7 @@ export const AppRouter = () => {
 
   let routes: RouteObject[] = [
     {
-      path: '/',
+      path: RootPath.HOME,
       element: (
         <DefaultProvider>
           <Outlet />
@@ -28,15 +29,22 @@ export const AppRouter = () => {
       children: [
         {
           ...getRootRoute(intl, [
-            { index: true, element: <Navigate to={RoomsPath.ROOMS} /> },
+            { index: true, element: <Navigate to={RootPath.HOME} /> },
             { ...getRoomsRoutes(intl) },
             { ...getUsersRoutes(intl) },
           ]),
         },
 
         { ...getJitsiRoutes() },
-        { index: true, element: <Navigate to={RootPath.ROOT} /> },
-        { path: '*', element: <Navigate to={RootPath.ROOT} /> },
+        {
+          index: true,
+          element: (
+            <SimpleLayout urlLogo={'/assets/logo-fun-mooc.svg'}>
+              <RoomsListView />
+            </SimpleLayout>
+          ),
+        },
+        { path: '*', element: <Navigate to={RootPath.HOME} /> },
       ],
     },
   ];
