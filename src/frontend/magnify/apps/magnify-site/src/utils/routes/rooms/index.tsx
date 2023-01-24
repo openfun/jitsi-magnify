@@ -1,10 +1,9 @@
 import { RequireUser } from '@openfun/magnify-components';
 import React from 'react';
 import { defineMessages, IntlShape } from 'react-intl';
-import { Link, RouteObject } from 'react-router-dom';
-
-import { RoomsListView } from '../../../views/rooms/list';
+import { Link, Navigate, RouteObject } from 'react-router-dom';
 import { RoomSettingsView } from '../../../views/rooms/settings';
+import { RootPath } from '../root';
 
 export enum RoomsPath {
   ROOMS = '/app/rooms',
@@ -29,11 +28,11 @@ export const getRoomsRoutes = (intl: IntlShape): RouteObject => {
     path: RoomsPath.ROOMS,
     handle: {
       crumb: () => (
-        <Link to={RoomsPath.ROOMS}>{intl.formatMessage(roomRouteLabels[RoomsPath.ROOMS])}</Link>
+        <Link to={RootPath.HOME}>{intl.formatMessage(roomRouteLabels[RoomsPath.ROOMS])}</Link>
       ),
     },
     children: [
-      { element: <RoomsListView />, index: true },
+      { index: true, element: <Navigate to={RootPath.HOME} /> },
       {
         element: (
           <RequireUser>
