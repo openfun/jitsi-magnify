@@ -2,8 +2,7 @@ import { defineMessages } from '@formatjs/intl';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Box, Button, ButtonExtendedProps, Card, Menu, Notification, Spinner, Text } from 'grommet';
-import { Clone, Configure, FormTrash, MoreVertical } from 'grommet-icons';
-
+import { Configure, FormTrash, MoreVertical, Clone } from 'grommet-icons';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -137,11 +136,7 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
         onClick: () => routing.goToRoomSettings(room.id),
       },
       {
-        icon: (
-          <Box alignSelf={'center'}>
-            <Clone size={'small'} />
-          </Box>
-        ),
+        icon: <Clone size={'small'} />,
         label: (
           <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
             {intl.formatMessage(messages.copyRoomLink)}
@@ -201,7 +196,7 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
             onClick={() => routing.goToJitsiRoom(room.slug)}
           />
           <Menu
-            dropProps={{ stretch: false, align: { top: 'bottom', right: 'right' } }}
+            dropProps={{ align: { top: 'bottom', left: 'left' } }}
             icon={<MoreVertical size={'medium'} />}
             items={getMoreActionsItems()}
             justifyContent={'center'}

@@ -32,7 +32,7 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
   return (
     <Box ref={avatarRef} align={'center'} direction={'row'} justify={'center'}>
       <Menu
-        dropProps={{ stretch: false, align: { top: 'bottom', right: 'right' } }}
+        dropProps={{ align: { top: 'bottom', right: 'right' } }}
         items={[
           {
             icon: <User />,

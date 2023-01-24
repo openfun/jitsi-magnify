@@ -62,7 +62,7 @@ export const UserRowBase = <T extends RowUserType>({
         {props.rightContent}
         {showActions && props.moreActions && props.moreActions.length > 0 && (
           <Menu
-            dropProps={{ stretch: false, align: { top: 'bottom', right: 'right' } }}
+            dropProps={{ align: { top: 'bottom', right: 'right' } }}
             icon={<MoreVertical size={'15px'} style={{ cursor: 'pointer' }} />}
             items={props.moreActions}
           />
