@@ -6,14 +6,4 @@ export const commonMessages = defineMessages({
     description: 'Back message',
     defaultMessage: 'Back',
   },
-  error: {
-    id: 'i18n.commonMessages.error',
-    description: 'Error label',
-    defaultMessage: 'Error',
-  },
-  requestError: {
-    id: 'i18n.commonMessages.requestError',
-    description: 'Default error message when a request fail',
-    defaultMessage: 'An error has occurred, please try again or refresh the page',
-  },
 });

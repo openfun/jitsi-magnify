@@ -4,7 +4,6 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import React, { useMemo } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import * as Yup from 'yup';
-import { useErrors } from '../../../hooks/useErrors';
 import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 import { RoomsRepository } from '../../../services';
 import { Room } from '../../../types/entities/room';
@@ -49,7 +48,6 @@ interface FormErrors {
 
 export const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
   const intl = useIntl();
-  const errors = useErrors();
   const validationSchema = Yup.object().shape({ name: Yup.string().required() });
   const queryClient = useQueryClient();
   const mutation = useMutation<Room, AxiosError, RegisterRoomFormValues>(RoomsRepository.create, {
@@ -58,9 +56,6 @@ export const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
         return [...rooms, newRoom];
       });
       onSuccess(newRoom);
-    },
-    onError: (error) => {
-      errors.onError(error);
     },
   });
 
@@ -93,7 +88,6 @@ export const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
     >
       <Form>
         <FormikInput
-          autoFocus={true}
           label={intl.formatMessage(formLabelMessages.name)}
           name={'name'}
           placeholder={intl.formatMessage(messages.namePlaceholder)}
