@@ -59,9 +59,6 @@ export const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
       });
       onSuccess(newRoom);
     },
-    onError: (error) => {
-      errors.onError(error);
-    },
   });
 
   const initialValues: RegisterRoomFormValues = useMemo(
@@ -80,6 +77,8 @@ export const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
         const formErrors = error?.response?.data as Maybe<FormErrors>;
         if (formErrors?.slug) {
           actions.setFieldError('name', formErrors.slug.join(','));
+        } else {
+          errors.onError(error);
         }
       },
     });
