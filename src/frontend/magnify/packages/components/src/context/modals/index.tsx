@@ -5,7 +5,6 @@ import {
   MagnifyModalProps,
   useMagnifyModal,
 } from '../../components/design-system/Modal';
-// eslint-disable-next-line max-len
 import { MagnifyErrorRequestModal } from '../../components/design-system/Modal/ErrorRequest/MagnifyErrorRequestModal';
 import { Maybe } from '../../types/misc';
 
