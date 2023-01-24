@@ -74,6 +74,17 @@ RUN DJANGO_CONFIGURATION=Build python manage.py collectstatic --noinput
 # final image
 RUN rdfind -makesymlinks true -followsymlinks true -makeresultsfile false ${MAGNIFY_STATIC_ROOT}
 
+# ---- Email builder image ----
+FROM node:18 as email-builder
+RUN mkdir -p /app/magnify/apps/core/templates/email && \
+    mkdir -p /app/email
+COPY ./src/email /app/email
+
+WORKDIR /app/email
+
+RUN yarn install --frozen-lockfile && \
+    yarn build-email
+
 # ---- Core application image ----
 FROM base as core
 
@@ -152,6 +163,9 @@ WORKDIR /app/sandbox
 
 # Copy statics
 COPY --from=link-collector ${MAGNIFY_STATIC_ROOT} ${MAGNIFY_STATIC_ROOT}
+
+# Copy generated emails
+COPY --from=email-builder /app/magnify/apps/core/templates/email /app/src/magnify/apps/core/templates/email
 
 # The default command runs gunicorn WSGI server in the sandbox
 CMD gunicorn -c /usr/local/etc/gunicorn/magnify.py wsgi:application

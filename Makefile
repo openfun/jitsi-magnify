@@ -46,9 +46,10 @@ COMPOSE              = DOCKER_USER=$(DOCKER_USER) DB_HOST=$(DB_HOST) DB_PORT=$(D
 COMPOSE_RUN          = $(COMPOSE) run --rm
 COMPOSE_EXEC         = $(COMPOSE) exec
 COMPOSE_EXEC_APP     = $(COMPOSE_EXEC) app
-COMPOSE_EXEC_NODE    = $(COMPOSE_EXEC) node
+COMPOSE_EXEC_NODE    = $(COMPOSE_EXEC) --workdir="/app/src/frontend" node
 COMPOSE_RUN_APP      = $(COMPOSE_RUN) app
 COMPOSE_RUN_CROWDIN  = $(COMPOSE_RUN) crowdin crowdin
+COMPOSE_RUN_EMAIL    = $(COMPOSE_RUN) --workdir="/app/src/email" node
 COMPOSE_TEST_RUN     = $(COMPOSE) run --rm -e DJANGO_CONFIGURATION=Test
 COMPOSE_TEST_RUN_APP = $(COMPOSE_TEST_RUN) app
 
@@ -73,6 +74,8 @@ bootstrap: \
   data/smedia/.keep \
   data/static/.keep \
   build \
+  install-email \
+  build-email \
   run \
   migrate \
   superuser
@@ -250,6 +253,24 @@ i18n-generate-back:
 i18n-generate-front: ## Extract strings to be translated from the code of all frontend packages
 	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn extract-translations
 .PHONY: i18n-generate-front
+
+# -- Email
+
+build-email: ## Convert mjml files to html and text
+	@$(COMPOSE_RUN_EMAIL) yarn build-email
+.PHONY: build-email
+
+build-email-html-to-plain-text: ## Convert html files to text
+	@$(COMPOSE_RUN_EMAIL) yarn build-email-html-to-plain-text
+.PHONY: build-email-html-to-plain-text
+
+build-mjml-to-html:	## Convert mjml files to html and text
+	@$(COMPOSE_RUN_EMAIL) yarn build-mjml-to-html
+.PHONY: build-mjml-to-html
+
+install-email: ## mail-generator yarn install
+	@$(COMPOSE_RUN_EMAIL) yarn install
+.PHONY: install-email
 
 # -- Misc
 clean: ## restore repository state as it was freshly cloned

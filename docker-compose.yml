@@ -36,6 +36,7 @@ services:
       - .:/app
     depends_on:
       - "${DB_HOST:-postgresql}"
+      - mailcatcher
     stdin_open: true
     tty: true
 
@@ -68,8 +69,7 @@ services:
       - app-production
 
   node:
-    image: node:16.15
-    working_dir: /app/src/frontend
+    image: node:18
     user: "${DOCKER_USER:-1000}"
     volumes:
       - .:/app
@@ -116,6 +116,11 @@ services:
       - REDIS_MASTER_HOST=redis-primary
     depends_on:
       - redis-primary
+
+  mailcatcher:
+    image: sj26/mailcatcher:latest
+    ports:
+      - "1081:1080"
 
   dockerize:
     image: jwilder/dockerize

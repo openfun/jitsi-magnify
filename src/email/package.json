@@ -1,0 +1,21 @@
+{
+  "name": "mjml",
+  "version": "1.0.0",
+  "description": "An util to generate html and text templates from mjml templates",
+  "dependencies": {
+    "html-to-text": "8.2.1",
+    "mjml": "4.13.0"
+  },
+  "private": true,
+  "scripts": {
+    "build-mjml-to-html": "./bin/mjml-to-html",
+    "build-email-html-to-plain-text": "./bin/html-to-plain-text",
+    "build-email": "yarn build-mjml-to-html; yarn build-email-html-to-plain-text;"
+  },
+  "volta": {
+    "node": "18.11.0"
+  },
+  "repository": "https://github.com/openfun/jitsi-magnify",
+  "author": "France Université Numérique",
+  "license": "MIT"
+}

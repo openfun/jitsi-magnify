@@ -24,3 +24,7 @@ JITSI_XMPP_DOMAIN="meet.jitsi"
 JITSI_SECRET_KEY="ThisIsAnExampleKeyForDevPurposeOnly"
 JITSI_APP_ID="app_id"
 JITSI_TOKEN_EXPIRATION_SECONDS=300
+
+# Email
+EMAIL_HOST="mailcatcher"
+EMAIL_FROM="dev@example.com"
