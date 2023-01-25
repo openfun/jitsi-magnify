@@ -26,6 +26,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     username = factory.Faker("user_name")
     email = factory.Faker("email")
+    jwt_sub = factory.Faker("uuid4")
     language = fuzzy.FuzzyChoice([lang[0] for lang in settings.LANGUAGES])
     timezone = fuzzy.FuzzyChoice(TimeZoneField.default_zoneinfo_tzs)
     name = factory.Faker("name")

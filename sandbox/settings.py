@@ -415,7 +415,6 @@ class Development(Base):
 class Test(Base):
     """Test environment settings"""
 
-    SIMPLE_JWT = {}
     JITSI_CONFIGURATION = {
         "jitsi_domain": "meeting.education",
         "jitsi_guest_avatar": "",
@@ -425,6 +424,10 @@ class Test(Base):
         "jitsi_secret_key": "ThisIsAnExampleKeyForTestPurposeOnly",
         "jitsi_app_id": "app_id",
         "jitsi_token_expiration_seconds": 300,
+    }
+    SIMPLE_JWT = {
+        "USER_ID_FIELD": "jwt_sub",
+        "USER_ID_CLAIM": "sub",
     }
 
 

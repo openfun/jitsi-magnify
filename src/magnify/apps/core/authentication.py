@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import AuthenticationFailed, InvalidToken
+from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.settings import api_settings
 
 
@@ -24,14 +24,13 @@ class DelegatedJWTAuthentication(JWTAuthentication):
         defaults = {
             field: validated_token[oidc_field]
             for field, oidc_field in settings.JWT_USER_FIELDS_SYNC.items()
+            if oidc_field in validated_token
         }
+        # We trust the provider for user authentication
         defaults.update({"password": "!", "is_active": True})
 
         user, _created = self.user_model.objects.update_or_create(
             **{api_settings.USER_ID_FIELD: user_id}, defaults=defaults
         )
-
-        if not user.is_active:
-            raise AuthenticationFailed(_("User is inactive"), code="user_inactive")
 
         return user
