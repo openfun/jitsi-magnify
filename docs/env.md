@@ -4,7 +4,7 @@ The `Magnify` project tries to follow the [12 factors app](https://12factor.net/
 on environment variables for configuration.
 
 This documentation applies to the production environment. The development stack is predefined to
-work off the shelf based on environment variables in `env.d/development`.
+work off the shelf based on environment variables in `env.d`.
 
 In order to select the `production` environment, you must set the `DJANGO_CONFIGURATION`
 environment variable to `production` as it conditions will version of the settings will be loaded.
