@@ -1,0 +1,2 @@
+DJANGO_ALLOWED_HOSTS=*
+DRF_DEFAULT_AUTHENTICATION_CLASSES=magnify.apps.core.authentication.DelegatedJWTAuthentication

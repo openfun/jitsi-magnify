@@ -68,7 +68,7 @@ default: help
 # -- Project
 bootstrap: ## install development dependencies
 bootstrap: \
-  env.d/development/crowdin \
+  env.d/crowdin \
   data/media/.keep \
   data/smedia/.keep \
   data/static/.keep \
@@ -81,6 +81,7 @@ bootstrap: \
 # -- Docker/compose
 build: ## build the app container
 	@$(COMPOSE) build app
+	@$(COMPOSE) build app-demo
 .PHONY: build
 
 down: ## remove stack (warning: it removes the database container)
@@ -256,8 +257,8 @@ clean: ## restore repository state as it was freshly cloned
 	git clean -idx
 .PHONY: clean
 
-env.d/development/crowdin:
-	cp env.d/development/crowdin.dist env.d/development/crowdin
+env.d/crowdin:
+	cp env.d/crowdin.dist env.d/crowdin
 
 data/media/.keep:
 	@echo 'Preparing media volume...'

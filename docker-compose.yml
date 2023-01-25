@@ -7,13 +7,13 @@ services:
     ports:
       - "15432:5432"
     env_file:
-      - env.d/development/postgresql
+      - env.d/postgresql
 
   mysql:
     image: mysql:8.0
     platform: linux/amd64
     env_file:
-      - env.d/development/mysql
+      - env.d/mysql
     command: --default-authentication-plugin=mysql_native_password
 
   app:
@@ -28,8 +28,8 @@ services:
     environment:
       - DJANGO_CONFIGURATION=Development
     env_file:
-      - env.d/development/common
-      - env.d/development/${DB_HOST:-postgresql}
+      - env.d/common
+      - env.d/${DB_HOST:-postgresql}
     ports:
       - "8071:8000"
     volumes:
@@ -39,7 +39,7 @@ services:
     stdin_open: true
     tty: true
 
-  app-production:
+  app-demo:
     build:
       context: .
       target: production
@@ -49,10 +49,11 @@ services:
     image: magnify:production
     platform: linux/amd64
     environment:
-      - DJANGO_CONFIGURATION=ContinuousIntegration
+      - DJANGO_CONFIGURATION=Production
     env_file:
-      - env.d/development/common
-      - env.d/development/${DB_HOST:-postgresql}
+      - env.d/common
+      - env.d/demo
+      - env.d/${DB_HOST:-postgresql}
     ports:
       - "8072:8000"
     depends_on:
@@ -65,7 +66,7 @@ services:
     volumes:
       - ./docker/files/etc/nginx/${NGINX_CONF:-conf.d}:/etc/nginx/conf.d:ro
     depends_on:
-      - app-production
+      - app-demo
 
   node:
     image: node:16.15
@@ -80,7 +81,7 @@ services:
     volumes:
       - ".:/app"
     env_file:
-      - env.d/development/crowdin
+      - env.d/crowdin
     user: "${DOCKER_USER:-1000}"
     working_dir: /app
 
@@ -128,7 +129,7 @@ services:
       ports:
         - "5433:5432"
       env_file:
-        - env.d/development/kc_postgresql
+        - env.d/kc_postgresql
 
   keycloak:
     image: quay.io/keycloak/keycloak:20.0.1
