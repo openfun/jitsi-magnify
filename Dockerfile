@@ -145,6 +145,7 @@ CMD python sandbox/manage.py runserver 0.0.0.0:8000
 FROM core as production
 
 ENV DJANGO_SETTINGS_MODULE="settings"
+ENV DJANGO_CONFIGURATION="Production"
 
 ARG MAGNIFY_STATIC_ROOT=/data/static
 
