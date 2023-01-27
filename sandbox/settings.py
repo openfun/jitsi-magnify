@@ -152,9 +152,7 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
             "USER": values.Value(
                 "magnify", environ_name="DB_USER", environ_prefix=None
             ),
-            "PASSWORD": values.Value(
-                "pass", environ_name="DB_PASSWORD", environ_prefix=None
-            ),
+            "PASSWORD": values.Value(environ_name="DB_PASSWORD", environ_prefix=None),
             "HOST": values.Value(
                 "postgresql", environ_name="DB_HOST", environ_prefix=None
             ),
