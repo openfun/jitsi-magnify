@@ -1,8 +1,8 @@
-# Jitsi magnify
+# Jitsi Magnify
 
-An authentication and room management system for Jitsi based on Django.
+An authentication, room and meeting management system for Jitsi based on Django/React.
 
-Jitsi magnify is built with [ReactJS](https://fr.reactjs.org/) for the frontend, and
+Jitsi Magnify is built with [ReactJS](https://fr.reactjs.org/) for the frontend, and
 [Django](https://www.djangoproject.com/) for the backend.
 
 ## Getting started
@@ -30,15 +30,17 @@ The easiest way to start working on the project is to use our `Makefile` :
 $ make bootstrap
 ```
 
-This command builds the `app` container, installs dependencies and performs database migrations. It's a good idea to use this command each time you are pulling code from the project repository to avoid dependency-releated or migration-releated issues.
+This command builds the `app` container, installs dependencies and performs database migrations.
+It's a good idea to use this command each time you are pulling code from the project repository
+to avoid dependency-releated or migration-releated issues.
 
-Now that your Docker services are up, let's running them :
+When the command stops, check that all services are running as expected:
 
 ```bash
-$ make run
+$ docker-compose ps
 ```
 
-You should be able to access to the API overview interface at [http://localhost:8071](http://localhost:8071).
+You should now be able to access the demo site at [localhost:8070](http://localhost:8070).
 
 Finally, you can see all available commands in our `Makefile` with :
 
@@ -46,46 +48,41 @@ Finally, you can see all available commands in our `Makefile` with :
 $ make help
 ```
 
-If you're preparing for production, it is recommended to host media files in an object storage.
-We've cooked [Terraform scripts](https://www.terraform.io/) and a [documentation](docs/media.md)
-to make it easy if, like us, you are planning to use [Swift](https://docs.openstack.org/swift). Read more about it: docs/media.md.
-
-If you're planning to use AWS S3 or another object storage service, please let us know by opening
-an [issue](https://github.com/openfun/jitsi-magnify/issues) or even better a
-[pull request](https://github.com/openfun/jitsi-magnify/pulls) to add it to the project.
-
 ### Django admin
 
-You can access the Django admin site at [http://localhost:8071/admin](http://localhost:8071).
+You can access the Django admin site at [localhost:8071/admin](http://localhost:8071/admin/).
 
-You first need to create a superuser account :
+To access the Django admin, you will first need to create a superuser account:
 
 ```bash
 $ make superuser
 ```
 
-## Guides
+## Running Magnify in production
 
-### Explanation
+### Configure a Jitsi instance
 
-Jitsi magnify helps with authenticating users when they access jitsi rooms. Currently, magnify either gets information from logged in user or inputs default values and token payload, and then redirects to jitsi instance with the token.
+Before running Magnify, you will need a Jitsi instance with JWT authentication activated:
 
-### Usage in production
-
-The domain of jitsi instance that uses magnify should be referenced in `env.d/common`. As for jitsi, env variables should be set to enable jwt auth and to redirect to magnify instance. 
-
-Variables for jwt are : 
-````
+```
 ENABLE_AUTH=1
 AUTH_TYPE=jwt
-JWT_APP_ID={JWT_JITSI_APP_ID}
+JWT_APP_ID=magnify
 JWT_APP_SECRET={JWT_JITSI_APP_SECRET}
-TOKEN_AUTH_URL=https://{JWT_JITSI_DOMAIN}/api/token/{room}
-````
+```
 
-In prosody env, you should also set variable `XMPP_DOMAIN={JWT_JITSI_XMPP_DOMAIN}`.
+In the Prosody configuration, you should also set the variable:
+`XMPP_DOMAIN={JWT_JITSI_XMPP_DOMAIN}`.
 
-The above JWT_JITSI_APP_ID, JWT_JITSI_APP_SECRET, JWT_JITSI_DOMAIN and JWT_JITSI_XMPP_DOMAIN variables are equal to the values in `env.d/common`.
+The `JWT_JITSI_APP_SECRET` and `JWT_JITSI_XMPP_DOMAIN` variables should be set to the same value
+in your Jitsi instance and in Magnify.
+
+### Configure Magnify
+
+The easiest way to run Magnify in production is to use the [official Docker image][1].
+
+Configuration is done via environment variables as detailed in our
+[configuration guide](docs/env.md).
 
 ## Contributing
 
@@ -100,3 +97,5 @@ the recommandations from our
 ## License
 
 This work is released under the MIT License (see [LICENSE](./LICENSE)).
+
+[1]: https://hub.docker.com/r/fundocker/jitsi-magnify
