@@ -1,20 +1,33 @@
-# Environment variables
+# Configuration guide
 
 The `Magnify` project tries to follow the [12 factors app](https://12factor.net/) and so relies
-on environment variables for configuration.
+only on environment variables for configuration.
 
-This documentation applies to the production environment. The development stack is predefined to
-work off the shelf based on environment variables in `env.d`.
+This configuration guide applies to the production environment. The development stack is
+predefined to work off-the-shelf based on environment variables defined in `env.d` at the root of
+the project.
 
-In order to select the `production` environment, you must set the `DJANGO_CONFIGURATION`
-environment variable to `production` as it conditions will version of the settings will be loaded.
+When running [Magnify's official Docker image](https://hub.docker.com/r/fundocker/jitsi-magnify),
+our predefined production settings are applied by default.
+
+You may apply other predefined settings by setting the `DJANGO_CONFIGURATION` environment variable:
+
+```bash
+$ docker run -e DJANGO_CONFIGURATION=PreProduction ... fundocker/jitsi-magnify:main
+```
 
 Other possible values for this envionment variable are: `Build`, `ContinuousIntegration`,
-`Development`, `Preprod`, `Staging` and `Test`.
+`Development`, `Preprod`, `Staging` and `Test`. You may define your own settings by overriding
+the `/app/sandbox/settings.py` file.
+
+Depending on the predefined settings you run, a set of additional environment variables must be
+set. In the following, we give a reference guide of all the environment variables you can set
+to configure the way Magnify operates in production. The ones that are required are marked with
+a 🔴 sign.
 
 ### General Django settings
 
-#### DJANGO_ALLOWED_HOSTS
+#### 🔴 DJANGO_ALLOWED_HOSTS
 
 A string of comma separated domains that Django should accept and answer to.
 
@@ -25,7 +38,7 @@ See [Django documentation][allowed-hosts] for more details about this setting.
 - Default: [] (all originating domains are rejected)
 - Example: `example1.com, example2.com`
 
-#### DJANGO_SECRET_KEY
+#### 🔴 DJANGO_SECRET_KEY
 
 Standard Django secret key used to make the instance unique and generate hashes such as CSRF
 tokens or auth keys.
@@ -106,19 +119,7 @@ For more information, see [documentation][drf-authentication].
 
 ### Magnify specific settings
 
-#### MAGNIFY_ALLOW_UNREGISTERED_ROOMS
-
-Whether users can join a room that is not reserved in Magnify. When activated, Magnify will
-generate a Jitsi JWT token to any user visiting any room that is not registered.
-
-- Type: Boolean as string
-  * True: 'yes', 'y', 'true', '1'
-  * False: 'no', 'n', 'false', '0', '' (empty string)
-- Required: No
-- Default: True
-- Example: `true`
-
-#### MAGNIFY_API_URL
+#### 🔴 MAGNIFY_API_URL
 
 The base url of the API that the frontend should contact. It allows to point to a specific version
 of the API.
@@ -139,7 +140,7 @@ For more information, see [DRF Simple JWT documentation][algorithm]
 - Default: `RS256`
 - Example: `RS512`, `HS256`, etc.
 
-#### MAGNIFY_JWT_JWK_URL
+#### 🔴 MAGNIFY_JWT_JWK_URL
 
 Dynamically resolve the public keys needed to verify the signing of OIDC tokens.
 
@@ -150,7 +151,7 @@ For more information, see [DRF Simple JWT documentation][jwk-url]
 - Default: None
 - Example: `http://keycloak.com/realms/magnify/protocol/openid-connect/certs`
 
-#### MAGNIFY_JWT_VERIFYING_KEY
+#### 🔴 MAGNIFY_JWT_VERIFYING_KEY
 
 The public key used to verify OIDC tokens.
 
@@ -177,7 +178,8 @@ Mapping between fields of the Magnify's User model and fields in the OIDC token 
 authenticate requests.
 
 - Type: String
-- Required: No
+- Required: No, but if you keep the default value, Authentication will work correctly only if
+  your JWT tokens contain a `name` and a `preferred_username` fields.
 - Default:
     ```
     {
@@ -188,6 +190,17 @@ authenticate requests.
     ```
 - Example: `{"email": "email", "name": "name", "username": "preferred_username"}`
 
+#### MAGNIFY_ALLOW_UNREGISTERED_ROOMS
+
+Whether users can join a room that is not reserved in Magnify. When activated, Magnify will
+generate a Jitsi JWT token to any user visiting any room that is not registered.
+
+- Type: Boolean as string
+  * True: 'yes', 'y', 'true', '1'
+  * False: 'no', 'n', 'false', '0', '' (empty string)
+- Required: No
+- Default: True
+- Example: `true`
 
 ### Jitsi-related settings
 
@@ -214,7 +227,7 @@ For reference, the Jitsi JWT token is a json string of the form:
 }
 ```
 
-#### JITSI_DOMAIN
+#### 🔴 JITSI_DOMAIN
 
 Domain on which the Jitsi instance that is used by Magnify to host conferences is hosted.
 
@@ -223,13 +236,38 @@ Domain on which the Jitsi instance that is used by Magnify to host conferences i
 - Default: `meeting.education`
 - Example: `meet.jit.si`
 
+#### 🔴 JITSI_XMPP_DOMAIN
+
+XMPP domain of the Jitsi instance to which Magnify should connect.
+
+- Type: String
+- Required: Yes
+- Example: `meet.jitsi`
+
+#### 🔴 JITSI_SECRET_KEY
+
+Secret key of the Jitsi instance to which Magnify should connect. Ask this from the people
+operating the Jitsi instance.
+
+- Type: String
+- Required: Yes
+- Example: `lyb3}eDqJB:^~I[kdzG3Db>@_<)pus[KsbT<Q&0R.v_OLq&Y44W`
+
+#### JITSI_APP_ID
+
+Identifier of the Magnify app with regards to the Jitsi instance.
+
+- Type: String
+- Required: No
+- Default: `magnify`
+- Example: `my-magnify`
 
 #### JITSI_GUEST_AVATAR
 
 URL of the avatar image that should be used for guest users.
 
 - Type: String
-- Required: None
+- Required: No
 - Default: ""
 - Example: `https://example.com/wp-content/uploads/2019/01/default-user-icon-8.jpg`
 
@@ -241,31 +279,6 @@ Name that should be used for guest users.
 - Required: No
 - Default: `Guest`
 - Example: `Fellow Magnifyer`
-
-#### JITSI_APP_ID
-
-Identifier of the Magnify app with regards to the Jitsi instance.
-
-- Type: String
-- Required: No
-- Default: `magnify`
-- Example: `my-magnify`
-
-#### JITSI_XMPP_DOMAIN
-
-XMPP domain of the Jitsi instance to which Magnify should connect.
-
-- Type: String
-- Required: Yes
-- Example: `meet.jitsi`
-
-#### JITSI_SECRET_KEY
-
-Secret key of the Jitsi instance to which Magnify should connect.
-
-- Type: String
-- Required: Yes
-- Example: `lyb3}eDqJB:^~I[kdzG3Db>@_<)pus[KsbT<Q&0R.v_OLq&Y44W`
 
 #### JITSI_TOKEN_EXPIRATION_SECONDS
 
@@ -283,7 +296,7 @@ Expiration delay in seconds of the JWT tokens issued by Magnify to connect to th
 Full path to the Python class of the backend used by Magnify to connect to the database.
 
 - Type: String
-- Required: Yes
+- Required: No
 - Default: `django.db.backends.postgresql_psycopg2` (Postgresql)
 
 #### DB_HOST
@@ -310,14 +323,14 @@ Name of the user to connect to the database used by Magnify.
 - Required: No
 - Default: `magnify`
 
-#### DB_PASSWORD
+#### 🔴 DB_PASSWORD
 
 Password corresponding to the user specified in `DB_USER` and used by Magnify to
 connect to the database.
 
 - Type: String
-- Required: No
-- Default: `pass`
+- Required: Yes
+- Example: `13f1ef@^xqmc=pjv1(!hko7li2a#!f_vuv%cq8$sr2363yn^3!`
 
 #### DB_PORT
 
@@ -329,20 +342,21 @@ Port used by Magnify to connect to the database.
 
 ### Keycloak-related settings
 
-#### KEYCLOAK_URL
+#### 🔴 KEYCLOAK_URL
 
 Keycloak URL to which Magnify should send users to authenticate.
 
 - Type: String
 - Required: Yes
-- Example: `keycloak.com`
+- Example: `http://keycloak.com`
 
 #### KEYCLOAK_REALM
 
 Keycloak realm to which Magnify should send users to authenticate.
 
 - Type: String
-- Required: No
+- Required: No, but with the default value, your Keycloak instance will need to present a realm
+  called `magnify`
 - Default: `magnify`
 - Example: `my-magnify`
 
@@ -351,7 +365,8 @@ Keycloak realm to which Magnify should send users to authenticate.
 Keycloak client with which users should be authenticated in order to consume Magnify.
 
 - Type: String
-- Required: No
+- Required: No, but with the default value, your Keycloak instance will need to present a client
+  called `magnify-frontend`
 - Default: `magnify-frontend`
 - Example: `my-magnify-frontend`
 
@@ -393,7 +408,7 @@ The path from where the `crowdin-cli` will work, this path should point to the `
 By default its value is `/app/src` and while you are using the container configured in our `docker-compose` file you have no need to change it.
 
 - Type: String
-- Required: None
+- Required: No
 - Default: `/app/src`
 
 [algorithm]: https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#algorithm
