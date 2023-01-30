@@ -202,6 +202,18 @@ generate a Jitsi JWT token to any user visiting any room that is not registered.
 - Default: True
 - Example: `true`
 
+#### MAGNIFY_JWT_USER_DEVICE_AUDIENCES
+
+A list of "audiences" (`aud` attribute in the OIDC token) that will be flagged as being reserved
+to device users. This allows us to differentiate these users in the interface and customize
+their experience and access rights.
+
+- Type: List as string
+- Required: No
+- Default: []
+- Example: `magnify-box,sip-gateway`
+
+
 ### Jitsi-related settings
 
 The following settings define the Jitsi instance and the payload of the Jitsi JWT tokens

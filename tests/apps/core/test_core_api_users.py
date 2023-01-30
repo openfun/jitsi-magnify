@@ -1,6 +1,7 @@
 """
 Tests for Users API endpoints in Magnify's core app.
 """
+import random
 from unittest import mock
 from zoneinfo import ZoneInfo
 
@@ -109,6 +110,7 @@ class UsersApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(user1.id),
+                "is_device": False,
                 "language": user1.language,
                 "name": user1.name,
                 "timezone": user1.timezone.key,
@@ -130,6 +132,7 @@ class UsersApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(user1.id),
+                "is_device": False,
                 "language": user1.language,
                 "name": user1.name,
                 "timezone": user1.timezone.key,
@@ -171,6 +174,7 @@ class UsersApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(user1.id),
+                "is_device": False,
                 "language": user1.language,
                 "name": user1.name,
                 "timezone": user1.timezone.key,
@@ -192,6 +196,7 @@ class UsersApiTestCase(APITestCase):
             results[0],
             {
                 "id": str(user1.id),
+                "is_device": False,
                 "language": user1.language,
                 "name": user1.name,
                 "timezone": user1.timezone.key,
@@ -257,6 +262,7 @@ class UsersApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(user.id),
+                "is_device": False,
                 "language": user.language,
                 "name": user.name,
                 "email": user.email,
@@ -282,6 +288,7 @@ class UsersApiTestCase(APITestCase):
             response.json(),
             {
                 "id": str(other_user.id),
+                "is_device": False,
                 "language": other_user.language,
                 "name": other_user.name,
                 "timezone": other_user.timezone.key,
@@ -291,6 +298,7 @@ class UsersApiTestCase(APITestCase):
 
     def test_api_users_create_anonymous_successful(self):
         """Anonymous users should be able to create users."""
+        is_device = random.choice([True, False])
         with mock.patch(
             "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
         ):
@@ -298,6 +306,7 @@ class UsersApiTestCase(APITestCase):
                 "/api/users/",
                 {
                     "email": "thomas.jeffersion@example.com",
+                    "is_device": is_device,
                     "language": "fr",
                     "name": "Thomas Jefferson",
                     "username": "thomas",
@@ -311,6 +320,7 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(user.email, "thomas.jeffersion@example.com")
         self.assertEqual(user.name, "Thomas Jefferson")
         self.assertEqual(user.username, "thomas")
+        self.assertEqual(user.is_device, is_device)
 
         self.assertIn("pbkdf2_sha256", user.password)
         self.assertTrue(check_password("mypassword", user.password))
@@ -320,6 +330,7 @@ class UsersApiTestCase(APITestCase):
             {
                 "id": str(user.id),
                 "email": "thomas.jeffersion@example.com",
+                "is_device": is_device,
                 "language": "fr",
                 "name": "Thomas Jefferson",
                 "username": "thomas",
@@ -331,6 +342,7 @@ class UsersApiTestCase(APITestCase):
         """Authenticated users should be able to create users."""
         user = UserFactory()
         jwt_token = AccessToken.for_user(user)
+        is_device = random.choice([True, False])
 
         with mock.patch(
             "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
@@ -339,6 +351,7 @@ class UsersApiTestCase(APITestCase):
                 "/api/users/",
                 {
                     "email": "thomas.jeffersion@example.com",
+                    "is_device": is_device,
                     "language": "fr",
                     "name": "Thomas Jefferson",
                     "username": "thomas",
@@ -353,6 +366,7 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(user.email, "thomas.jeffersion@example.com")
         self.assertEqual(user.name, "Thomas Jefferson")
         self.assertEqual(user.language, "fr")
+        self.assertEqual(user.is_device, is_device)
 
         self.assertIn("pbkdf2_sha256", user.password)
         self.assertTrue(check_password("mypassword", user.password))
@@ -362,6 +376,7 @@ class UsersApiTestCase(APITestCase):
             {
                 "id": str(user.id),
                 "email": "thomas.jeffersion@example.com",
+                "is_device": is_device,
                 "language": "fr",
                 "name": "Thomas Jefferson",
                 "username": "thomas",
@@ -432,6 +447,7 @@ class UsersApiTestCase(APITestCase):
             {
                 "name": "New name",
                 "email": "new@example.com",
+                "is_device": True,
                 "language": "fr",
                 "timezone": "America/Toronto",
                 "username": "new-username",
@@ -445,7 +461,8 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(user.username, "new-username")
         self.assertEqual(user.timezone.key, "America/Toronto")
 
-        # The email field should be readonly
+        # The `email` and `is_device` fields should be readonly
+        self.assertFalse(user.is_device)
         self.assertEqual(user.email, "old@example.com")
 
     def test_api_users_update_authenticated_other(self):
@@ -464,6 +481,7 @@ class UsersApiTestCase(APITestCase):
             {
                 "name": "New name",
                 "email": "new@example.com",
+                "is_device": True,
                 "timezone": "America/Toronto",
                 "username": "new-username",
             },
@@ -472,6 +490,7 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 403)
 
         other_user.refresh_from_db()
+        self.assertFalse(other_user.is_device)
         self.assertEqual(other_user.email, "old@example.com")
         self.assertEqual(other_user.name, "Old name")
         self.assertEqual(other_user.username, "old-username")
@@ -558,6 +577,7 @@ class UsersApiTestCase(APITestCase):
             {
                 "id": str(user.id),
                 "email": user.email,
+                "is_device": False,
                 "language": user.language,
                 "name": user.name,
                 "username": user.username,
@@ -586,6 +606,7 @@ class UsersApiTestCase(APITestCase):
             {
                 "id": str(user.id),
                 "email": user.email,
+                "is_device": False,
                 "language": user.language,
                 "name": user.name,
                 "timezone": user.timezone.key,

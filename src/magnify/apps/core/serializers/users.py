@@ -14,8 +14,16 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ["id", "email", "language", "name", "timezone", "username"]
-        read_only_fields = ["id", "email"]
+        fields = [
+            "id",
+            "email",
+            "is_device",
+            "language",
+            "name",
+            "timezone",
+            "username",
+        ]
+        read_only_fields = ["id", "email", "is_device"]
 
     def to_representation(self, instance):
         """Remove private fields for user instances other than the logged-in user."""
@@ -33,7 +41,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ["id", "email", "language", "name", "username", "password"]
+        fields = [
+            "id",
+            "email",
+            "is_device",
+            "language",
+            "name",
+            "username",
+            "password",
+        ]
         extra_kwargs = {"password": {"write_only": True}}
 
     def save(self, *args, **kwargs):

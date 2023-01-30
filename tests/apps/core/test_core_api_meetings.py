@@ -195,6 +195,7 @@ class MeetingsApiTestCase(APITestCase):
                     "user": {
                         "id": str(user.id),
                         "email": user.email,
+                        "is_device": False,
                         "language": user.language,
                         "name": user.name,
                         "timezone": user.timezone.key,
@@ -605,6 +606,7 @@ class MeetingsApiTestCase(APITestCase):
                     "user": {
                         "id": str(user.id),
                         "email": user.email,
+                        "is_device": False,
                         "language": user.language,
                         "name": user.name,
                         "timezone": user.timezone.key,
@@ -617,6 +619,7 @@ class MeetingsApiTestCase(APITestCase):
                     "meeting": str(meeting.id),
                     "user": {
                         "id": str(other_user.id),
+                        "is_device": False,
                         "language": other_user.language,
                         "name": other_user.name,
                         "timezone": other_user.timezone.key,
@@ -703,6 +706,7 @@ class MeetingsApiTestCase(APITestCase):
                     "meeting": str(meeting.id),
                     "user": {
                         "id": str(other_user.id),
+                        "is_device": False,
                         "language": other_user.language,
                         "name": other_user.name,
                         "timezone": other_user.timezone.key,
@@ -792,6 +796,7 @@ class MeetingsApiTestCase(APITestCase):
                     "meeting": str(meeting.id),
                     "user": {
                         "id": str(other_user.id),
+                        "is_device": False,
                         "language": other_user.language,
                         "name": other_user.name,
                         "timezone": other_user.timezone.key,

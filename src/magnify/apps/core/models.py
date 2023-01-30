@@ -104,6 +104,11 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     timezone = TimeZoneField(
         choices_display="WITH_GMT_OFFSET", use_pytz=False, default=settings.TIME_ZONE
     )
+    is_device = models.BooleanField(
+        _("device"),
+        default=False,
+        help_text=_("Designates whether the user is a device or a real user."),
+    )
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
