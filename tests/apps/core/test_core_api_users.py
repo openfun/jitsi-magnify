@@ -6,6 +6,7 @@ from unittest import mock
 from zoneinfo import ZoneInfo
 
 from django.contrib.auth.hashers import check_password
+from django.test.utils import override_settings
 
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
@@ -296,6 +297,25 @@ class UsersApiTestCase(APITestCase):
             },
         )
 
+    def test_api_users_create_anonymous_forbidden(self):
+        """Anonymous users should not be able to create users via the API if not allowed."""
+        with mock.patch(
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
+        ):
+            response = self.client.post(
+                "/api/users/",
+                {
+                    "email": "thomas.jeffersion@example.com",
+                    "language": "fr",
+                    "name": "Thomas Jefferson",
+                    "username": "thomas",
+                    "password": "mypassword",
+                },
+            )
+        self.assertEqual(response.status_code, 401)
+        self.assertFalse(User.objects.exists())
+
+    @override_settings(ALLOW_API_USER_CREATE=True)
     def test_api_users_create_anonymous_successful(self):
         """Anonymous users should be able to create users."""
         is_device = random.choice([True, False])
@@ -338,6 +358,31 @@ class UsersApiTestCase(APITestCase):
             },
         )
 
+    def test_api_users_create_authenticated_forbidden(self):
+        """
+        Authenticated users should not be able to create users via the API if not allowed.
+        """
+        user = UserFactory()
+        jwt_token = AccessToken.for_user(user)
+
+        with mock.patch(
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
+        ):
+            response = self.client.post(
+                "/api/users/",
+                {
+                    "email": "thomas.jeffersion@example.com",
+                    "language": "fr",
+                    "name": "Thomas Jefferson",
+                    "username": "thomas",
+                    "password": "mypassword",
+                },
+                HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
+            )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(User.objects.count(), 1)
+
+    @override_settings(ALLOW_API_USER_CREATE=True)
     def test_api_users_create_authenticated_successful(self):
         """Authenticated users should be able to create users."""
         user = UserFactory()
@@ -384,6 +429,7 @@ class UsersApiTestCase(APITestCase):
             },
         )
 
+    @override_settings(ALLOW_API_USER_CREATE=True)
     def test_api_users_create_authenticated_existing_username(self):
         """
         A user trying to create a user with a username that already exists
@@ -409,6 +455,7 @@ class UsersApiTestCase(APITestCase):
             response.json(), {"username": ["A user with that username already exists."]}
         )
 
+    @override_settings(ALLOW_API_USER_CREATE=True)
     def test_api_users_create_authenticated_existing_email(self):
         """
         A user trying to create a user with an email that already exists

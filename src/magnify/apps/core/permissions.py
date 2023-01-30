@@ -1,4 +1,6 @@
 """Permission handlers for Magnify's core app."""
+from django.conf import settings
+
 from rest_framework import permissions
 
 from .models import RoleChoices
@@ -37,6 +39,9 @@ class IsSelf(permissions.BasePermission):
         Only if the user is logged-in and sts and the current logged in user is one
         of its administrator.
         """
+        if view.action == "create":
+            return getattr(settings, "ALLOW_API_USER_CREATE", False)
+
         if view.action in ["list", "retrieve"]:
             return request.user.is_authenticated
 
