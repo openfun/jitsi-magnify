@@ -200,6 +200,18 @@ generate a Jitsi JWT token to any user visiting any room that is not registered.
   * False: 'no', 'n', 'false', '0', '' (empty string)
 - Required: No
 - Default: True
+- Example: `false`
+
+#### MAGNIFY_ALLOW_API_USER_CREATE
+
+Whether users can be created via the API. When not allowed, user handling is delegated to
+an external tool and Magnify creates users on-the-fly based on OIDC tokens received.
+
+- Type: Boolean as string
+  * True: 'yes', 'y', 'true', '1'
+  * False: 'no', 'n', 'false', '0', '' (empty string)
+- Required: No
+- Default: False
 - Example: `true`
 
 #### MAGNIFY_JWT_USER_DEVICE_AUDIENCES

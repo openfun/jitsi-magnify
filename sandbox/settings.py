@@ -137,6 +137,9 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
     ALLOW_UNREGISTERED_ROOMS = values.BooleanValue(
         True, environ_name="MAGNIFY_ALLOW_UNREGISTERED_ROOMS", environ_prefix=None
     )
+    ALLOW_API_USER_CREATE = values.BooleanValue(
+        False, environ_name="MAGNIFY_ALLOW_API_USER_CREATE", environ_prefix=None
+    )
 
     # Database
     DATABASES = {
