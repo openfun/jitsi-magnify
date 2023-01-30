@@ -160,7 +160,7 @@ class RoomMeetingsApiTestCase(APITestCase):
                 "frequency": 1,
                 "is_public": True,
                 "jitsi": {
-                    "meeting": str(meeting.id),
+                    "meeting": meeting.jitsi_name,
                     "token": "the token",
                 },
                 "monthly_type": "date_day",
