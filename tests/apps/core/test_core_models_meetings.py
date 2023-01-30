@@ -49,3 +49,8 @@ class MeetingsModelsTestCase(TestCase):
             context.exception.messages,
             ["Ensure this value has at most 500 characters (it has 501)."],
         )
+
+    def test_models_meetings_jitsi_name(self):
+        """The Jitsi name should be the meeting ID stripped of all dashes."""
+        meeting = MeetingFactory(id="2a76d5ee-8310-4a28-8e7f-c34dbdc4dd8a")
+        self.assertEqual(meeting.jitsi_name, "2a76d5ee83104a288e7fc34dbdc4dd8a")

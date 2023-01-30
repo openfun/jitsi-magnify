@@ -235,13 +235,13 @@ class MeetingsApiTestCase(APITestCase):
                 "timezone": "Europe/Paris",
                 "weekdays": "3",
                 "jitsi": {
-                    "meeting": str(meeting.id),
+                    "meeting": meeting.jitsi_name,
                     "token": "the token",
                 },
             },
         )
         is_owner = user == meeting.owner
-        mock_token.assert_called_once_with(user, str(meeting.id), is_admin=is_owner)
+        mock_token.assert_called_once_with(user, meeting.jitsi_name, is_admin=is_owner)
 
     def test_api_meetings_list_authenticated_filter_and_occurrences(self):
         """
@@ -476,7 +476,7 @@ class MeetingsApiTestCase(APITestCase):
                 "recurring_until": "2022-07-07T09:00:00Z",
                 "timezone": "Europe/Paris",
                 "weekdays": "3",
-                "jitsi": {"meeting": str(meeting.id), "token": "the token"},
+                "jitsi": {"meeting": meeting.jitsi_name, "token": "the token"},
             },
         )
         mock_token.assert_called_once()
@@ -534,11 +534,11 @@ class MeetingsApiTestCase(APITestCase):
                 "recurring_until": "2022-07-07T09:00:00Z",
                 "timezone": "Europe/Paris",
                 "weekdays": "3",
-                "jitsi": {"meeting": str(meeting.id), "token": "the token"},
+                "jitsi": {"meeting": meeting.jitsi_name, "token": "the token"},
             },
         )
 
-        mock_token.assert_called_once_with(user, str(meeting.id), is_admin=False)
+        mock_token.assert_called_once_with(user, meeting.jitsi_name, is_admin=False)
 
     def test_api_meetings_retrieve_authenticated_private(self):
         """
@@ -651,10 +651,10 @@ class MeetingsApiTestCase(APITestCase):
                 "recurring_until": "2022-07-07T09:00:00Z",
                 "timezone": "Europe/Paris",
                 "weekdays": "3",
-                "jitsi": {"meeting": str(meeting.id), "token": "the token"},
+                "jitsi": {"meeting": meeting.jitsi_name, "token": "the token"},
             },
         )
-        mock_token.assert_called_once_with(user, str(meeting.id), is_admin=False)
+        mock_token.assert_called_once_with(user, meeting.jitsi_name, is_admin=False)
 
     @mock.patch(
         "magnify.apps.core.serializers.meetings.generate_token",
@@ -746,10 +746,10 @@ class MeetingsApiTestCase(APITestCase):
                 "recurring_until": "2022-07-07T09:00:00Z",
                 "timezone": "Europe/Paris",
                 "weekdays": "3",
-                "jitsi": {"meeting": str(meeting.id), "token": "the token"},
+                "jitsi": {"meeting": meeting.jitsi_name, "token": "the token"},
             },
         )
-        mock_token.assert_called_once_with(user, str(meeting.id), is_admin=False)
+        mock_token.assert_called_once_with(user, meeting.jitsi_name, is_admin=False)
 
     @mock.patch(
         "magnify.apps.core.serializers.meetings.generate_token",
@@ -826,10 +826,10 @@ class MeetingsApiTestCase(APITestCase):
                 "recurring_until": "2022-07-07T09:00:00Z",
                 "timezone": "Europe/Paris",
                 "weekdays": "3",
-                "jitsi": {"meeting": str(meeting.id), "token": "the token"},
+                "jitsi": {"meeting": meeting.jitsi_name, "token": "the token"},
             },
         )
-        mock_token.assert_called_once_with(user, str(meeting.id), is_admin=True)
+        mock_token.assert_called_once_with(user, meeting.jitsi_name, is_admin=True)
 
     def test_api_meetings_retrieve_occurrences(self):
         """
