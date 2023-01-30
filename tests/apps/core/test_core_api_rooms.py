@@ -383,6 +383,7 @@ class RoomsApiTestCase(APITestCase):
                         "id": str(user_access.user.id),
                         # Email is visible only by self
                         "email": user_access.user.email,
+                        "is_device": False,
                         "language": user_access.user.language,
                         "name": user_access.user.name,
                         "timezone": user_access.user.timezone.key,
@@ -396,6 +397,7 @@ class RoomsApiTestCase(APITestCase):
                     "group": None,
                     "user": {
                         "id": str(other_user_access.user.id),
+                        "is_device": False,
                         "language": other_user_access.user.language,
                         "name": other_user_access.user.name,
                         "timezone": other_user_access.user.timezone.key,
@@ -475,6 +477,7 @@ class RoomsApiTestCase(APITestCase):
                     "resource": str(room.id),
                     "user": {
                         "id": str(other_user_access.user.id),
+                        "is_device": False,
                         "language": other_user_access.user.language,
                         "name": other_user_access.user.name,
                         "timezone": other_user_access.user.timezone.key,
@@ -557,6 +560,7 @@ class RoomsApiTestCase(APITestCase):
                     "group": None,
                     "user": {
                         "id": str(other_user_access.user.id),
+                        "is_device": False,
                         "language": other_user_access.user.language,
                         "name": other_user_access.user.name,
                         "timezone": other_user_access.user.timezone.key,
@@ -572,6 +576,7 @@ class RoomsApiTestCase(APITestCase):
                         "id": str(user_access.user.id),
                         # Email is visible only by self
                         "email": user_access.user.email,
+                        "is_device": False,
                         "language": user_access.user.language,
                         "name": user_access.user.name,
                         "timezone": user_access.user.timezone.key,
@@ -645,6 +650,7 @@ class RoomsApiTestCase(APITestCase):
                         "group": None,
                         "user": {
                             "id": str(user.id),
+                            "is_device": False,
                             "language": user.language,
                             "name": user.name,
                             "username": user.username,

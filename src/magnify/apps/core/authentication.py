@@ -26,9 +26,14 @@ class DelegatedJWTAuthentication(JWTAuthentication):
             for field, oidc_field in settings.JWT_USER_FIELDS_SYNC.items()
             if oidc_field in validated_token
         }
-        # We trust the provider for user authentication
-        defaults.update({"password": "!", "is_active": True})
 
+        # Check audience for known device client
+        is_device = validated_token.get("aud") in getattr(
+            settings, "JWT_USER_DEVICE_AUDIENCES", []
+        )
+
+        # Update or create the user
+        defaults.update({"password": "!", "is_active": True, "is_device": is_device})
         user, _created = self.user_model.objects.update_or_create(
             **{api_settings.USER_ID_FIELD: user_id}, defaults=defaults
         )

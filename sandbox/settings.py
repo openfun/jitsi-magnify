@@ -198,6 +198,11 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
         environ_name="MAGNIFY_JWT_USER_FIELDS_SYNC",
         environ_prefix=None,
     )
+    JWT_USER_DEVICE_AUDIENCES = values.ListValue(
+        [],
+        environ_name="MAGNIFY_JWT_USER_DEVICE_AUDIENCES",
+        environ_prefix=None,
+    )
 
     # Login/registration related settings
     LOGIN_REDIRECT_URL = "/"
