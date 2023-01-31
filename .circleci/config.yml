@@ -489,6 +489,7 @@ jobs:
           paths:
             - src/frontend/magnify/apps/magnify-site/i18n/frontend.json
             - src/frontend/magnify/packages/components/i18n/frontend.json
+            - src/frontend/magnify/packages/components/dist
       - save_cache:
           paths:
             - ./node_modules
@@ -543,21 +544,23 @@ jobs:
 
   # Publishing to npm requires that you have define the NPM_TOKEN secret
   # environment variables in CircleCI UI (with your PyPI credentials)
-#  npm:
-#    docker:
-#      - image: cimg/node:16.15
-#        auth:
-#          username: $DOCKER_USER
-#          password: $DOCKER_PASS
-#    working_directory: ~/fun
-#    steps:
-#      - *checkout_fun
-#      - run:
-#          name: Authenticate with registry
-#          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/fun/.npmrc
-#      - run:
-#          name: Publish package
-#          command: npm publish src/frontend/magnify/
+  npm:
+    docker:
+      - image: cimg/node:16.15
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: ~/fun
+    steps:
+      - *checkout_fun
+      - attach_workspace:
+          at: ~/fun
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/fun/.npmrc
+      - run:
+          name: Publish @openfun/magnify-components package
+          command: npm publish src/frontend/magnify/packages/components
 
   # ---- DockerHub publication job ----
   hub:
@@ -767,17 +770,18 @@ workflows:
       # NPM publication.
       #
       # Publish frontend package to NPM only if all build, lint and test jobs
-      # succeed and it has been tagged with a tag starting with the letter v
-#      - npm:
-#          requires:
-#            - check-versions
-#            - lint-front
-#            - test-front
-#          filters:
-#            branches:
-#              ignore: /.*/
-#            tags:
-#              only: /^v.*/
+      # succeed, and it has been tagged with a tag starting with the letter v
+      - npm:
+          requires:
+            - check-versions
+            - build-front
+            - lint-front
+            - test-front
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
 
       # DockerHub publication.
       #
