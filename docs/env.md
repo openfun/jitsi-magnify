@@ -36,7 +36,16 @@ See [Django documentation][allowed-hosts] for more details about this setting.
 - Type: List as comma separated string
 - Required: Yes
 - Default: [] (all originating domains are rejected)
-- Example: `example1.com, example2.com`
+- Example: `example1.com,example2.com`
+
+> **Warning**
+> The following syntax does not work:
+>  `DJANGO_ALLOWED_HOSTS=["example1.com"," example2.com"]`
+>
+> It would set the ALLOWED_HOST setting in Django to `['["example1.com"," example2.com"]']` which is not what you want.
+>
+> You should enter the list as a comma separated string:
+> `DJANGO_ALLOWED_HOSTS=example1.com,example2.com`
 
 #### 🔴 DJANGO_SECRET_KEY
 
