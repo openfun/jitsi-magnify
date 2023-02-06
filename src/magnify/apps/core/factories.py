@@ -18,13 +18,22 @@ from . import models as core_models
 # pylint: disable=no-member
 
 
+class UniqueFaker(factory.Faker):
+    """A Faker util that ensures values uniqueness."""
+
+    @classmethod
+    def _get_faker(cls, locale=None):
+        """Get a faker that ensures values uniqueness."""
+        return super()._get_faker(locale=locale).unique
+
+
 class UserFactory(factory.django.DjangoModelFactory):
     """Create fake users for testing."""
 
     class Meta:
         model = settings.AUTH_USER_MODEL
 
-    username = factory.Faker("user_name")
+    username = UniqueFaker("user_name")
     email = factory.Faker("email")
     jwt_sub = factory.Faker("uuid4")
     language = fuzzy.FuzzyChoice([lang[0] for lang in settings.LANGUAGES])
@@ -145,7 +154,7 @@ class RoomFactory(ResourceFactory):
     class Meta:
         model = core_models.Room
 
-    name = factory.Faker("catch_phrase")
+    name = UniqueFaker("catch_phrase")
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
 
 
