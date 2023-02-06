@@ -48,7 +48,8 @@ def exception_handler(exc, context):
 def get_frontend_configuration(request):
     """Returns the frontend configuration dict as configured in settings."""
     frontend_configuration = {
-        "JITSI_DOMAIN": settings.JITSI_CONFIGURATION["jitsi_domain"]
+        "JITSI_DOMAIN": settings.JITSI_CONFIGURATION["jitsi_domain"],
+        "LANGUAGE_CODE": settings.LANGUAGE_CODE,
     }
     frontend_configuration.update(settings.FRONTEND_CONFIGURATION)
     return Response(frontend_configuration)
