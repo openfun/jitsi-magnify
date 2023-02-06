@@ -35,5 +35,6 @@ class FrontendConfigurationTestCase(APITestCase):
                 "KEYCLOAK_REALM": "magnify",
                 "KEYCLOAK_CLIENT_ID": "magnify-front",
                 "KEYCLOAK_EXPIRATION_SECONDS": 1800,
+                "LANGUAGE_CODE": "en",
             },
         )
