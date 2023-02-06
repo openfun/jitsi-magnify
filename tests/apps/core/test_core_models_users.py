@@ -18,12 +18,36 @@ class UsersModelsTestCase(TestCase):
         user = UserFactory()
         self.assertEqual(str(user), user.username)
 
-    def test_models_users_email_normalization(self):
-        """The email field should be automatically normalized upon saving."""
+    def test_models_users_username_null(self):
+        """The "username" field should not be null."""
+        with self.assertRaises(ValidationError) as context:
+            UserFactory(username=None)
+
+        self.assertEqual(
+            context.exception.messages,
+            ["This field cannot be null."],
+        )
+
+    def test_models_users_username_empty(self):
+        """The "username" field should not be empty."""
+        with self.assertRaises(ValidationError) as context:
+            UserFactory(username="")
+
+        self.assertEqual(
+            context.exception.messages,
+            ["This field cannot be blank."],
+        )
+
+    def test_models_users_username_unique(self):
+        """The "username" field should be unique."""
         user = UserFactory()
-        user.email = "Thomas.Jefferson@Example.com"
-        user.save()
-        self.assertEqual(user.email, "Thomas.Jefferson@example.com")
+        with self.assertRaises(ValidationError) as context:
+            UserFactory(username=user.username)
+
+        self.assertEqual(
+            context.exception.messages,
+            ["A user with that username already exists."],
+        )
 
     def test_models_users_username_max_length(self):
         """The username field should be 30 characters maximum."""
@@ -71,6 +95,22 @@ class UsersModelsTestCase(TestCase):
                 "Username must contain only lower case letters, numbers, underscores and hyphens."
             ],
         )
+
+    def test_models_users_email_empty(self):
+        """The "email" field can be empty."""
+        UserFactory(email="")
+
+    def test_models_users_email_unique(self):
+        """The "email" field is not unique."""
+        user = UserFactory()
+        UserFactory(email=user.email)
+
+    def test_models_users_email_normalization(self):
+        """The email field should be automatically normalized upon saving."""
+        user = UserFactory()
+        user.email = "Thomas.Jefferson@Example.com"
+        user.save()
+        self.assertEqual(user.email, "Thomas.Jefferson@example.com")
 
     def test_models_users_ordering(self):
         """Users should be returned ordered by their username."""

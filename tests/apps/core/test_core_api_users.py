@@ -358,9 +358,78 @@ class UsersApiTestCase(APITestCase):
             },
         )
 
-    def test_api_users_create_authenticated_forbidden(self):
+    @override_settings(ALLOW_API_USER_CREATE=True)
+    def test_api_users_create_anonymous_existing_username(self):
         """
-        Authenticated users should not be able to create users via the API if not allowed.
+        Trying to create a user with a username that already exists should receive a 400 error.
+        """
+        user = UserFactory()
+
+        response = self.client.post(
+            "/api/users/",
+            {
+                "email": "thomas.jeffersion@example.com",
+                "language": "fr",
+                "name": "Thomas Jefferson",
+                "username": user.username,
+                "password": "mypassword",
+            },
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.json(), {"username": ["A user with that username already exists."]}
+        )
+
+    @override_settings(ALLOW_API_USER_CREATE=True)
+    def test_api_users_create_anonymous_existing_email(self):
+        """
+        It should be possible to create a user with an email that already exists.
+        """
+        user = UserFactory()
+
+        with mock.patch(
+            "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
+        ):
+            response = self.client.post(
+                "/api/users/",
+                {
+                    "email": user.email,
+                    "language": "fr",
+                    "name": "Thomas Jefferson",
+                    "username": "thomas",
+                    "password": "mypassword",
+                },
+            )
+
+        self.assertEqual(response.status_code, 201)
+
+        self.assertEqual(User.objects.filter(email=user.email).count(), 2)
+        new_user = User.objects.get(username="thomas")
+        self.assertEqual(new_user.email, user.email)
+        self.assertEqual(new_user.name, "Thomas Jefferson")
+        self.assertEqual(new_user.language, "fr")
+        self.assertFalse(new_user.is_device)
+
+        self.assertIn("pbkdf2_sha256", new_user.password)
+        self.assertTrue(check_password("mypassword", new_user.password))
+
+        self.assertEqual(
+            response.json(),
+            {
+                "id": str(new_user.id),
+                "email": user.email,
+                "is_device": False,
+                "language": "fr",
+                "name": "Thomas Jefferson",
+                "username": "thomas",
+                "auth": MOCK_TOKENS,
+            },
+        )
+
+    def test_api_users_create_authenticated_settings_forbidden(self):
+        """
+        Authenticated users should not be able to create users via the API if settings allow.
         """
         user = UserFactory()
         jwt_token = AccessToken.for_user(user)
@@ -383,11 +452,12 @@ class UsersApiTestCase(APITestCase):
         self.assertEqual(User.objects.count(), 1)
 
     @override_settings(ALLOW_API_USER_CREATE=True)
-    def test_api_users_create_authenticated_successful(self):
-        """Authenticated users should be able to create users."""
+    def test_api_users_create_authenticated_settings_authorized(self):
+        """
+        Authenticated users should not be able to create users via the API even settings allow.
+        """
         user = UserFactory()
         jwt_token = AccessToken.for_user(user)
-        is_device = random.choice([True, False])
 
         with mock.patch(
             "magnify.apps.core.utils.get_tokens_for_user", return_value=MOCK_TOKENS
@@ -396,7 +466,6 @@ class UsersApiTestCase(APITestCase):
                 "/api/users/",
                 {
                     "email": "thomas.jeffersion@example.com",
-                    "is_device": is_device,
                     "language": "fr",
                     "name": "Thomas Jefferson",
                     "username": "thomas",
@@ -404,82 +473,8 @@ class UsersApiTestCase(APITestCase):
                 },
                 HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
             )
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(User.objects.count(), 2)
-
-        user = User.objects.get(username="thomas")
-        self.assertEqual(user.email, "thomas.jeffersion@example.com")
-        self.assertEqual(user.name, "Thomas Jefferson")
-        self.assertEqual(user.language, "fr")
-        self.assertEqual(user.is_device, is_device)
-
-        self.assertIn("pbkdf2_sha256", user.password)
-        self.assertTrue(check_password("mypassword", user.password))
-
-        self.assertEqual(
-            response.json(),
-            {
-                "id": str(user.id),
-                "email": "thomas.jeffersion@example.com",
-                "is_device": is_device,
-                "language": "fr",
-                "name": "Thomas Jefferson",
-                "username": "thomas",
-                "auth": MOCK_TOKENS,
-            },
-        )
-
-    @override_settings(ALLOW_API_USER_CREATE=True)
-    def test_api_users_create_authenticated_existing_username(self):
-        """
-        A user trying to create a user with a username that already exists
-        should receive a 400 error.
-        """
-        user = UserFactory()
-        jwt_token = AccessToken.for_user(user)
-
-        response = self.client.post(
-            "/api/users/",
-            {
-                "email": "thomas.jeffersion@example.com",
-                "language": "fr",
-                "name": "Thomas Jefferson",
-                "username": user.username,
-                "password": "mypassword",
-            },
-            HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
-        )
-
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(
-            response.json(), {"username": ["A user with that username already exists."]}
-        )
-
-    @override_settings(ALLOW_API_USER_CREATE=True)
-    def test_api_users_create_authenticated_existing_email(self):
-        """
-        A user trying to create a user with an email that already exists
-        should receive a 400 error.
-        """
-        user = UserFactory()
-        jwt_token = AccessToken.for_user(user)
-
-        response = self.client.post(
-            "/api/users/",
-            {
-                "email": user.email,
-                "language": "fr",
-                "name": "Thomas Jefferson",
-                "username": "thomas",
-                "password": "mypassword",
-            },
-            HTTP_AUTHORIZATION=f"Bearer {jwt_token}",
-        )
-
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(
-            response.json(), {"email": ["User with this email already exists."]}
-        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(User.objects.count(), 1)
 
     def test_api_users_update_authenticated_self(self):
         """
