@@ -40,7 +40,10 @@ class IsSelf(permissions.BasePermission):
         of its administrator.
         """
         if view.action == "create":
-            return getattr(settings, "ALLOW_API_USER_CREATE", False)
+            return (
+                getattr(settings, "ALLOW_API_USER_CREATE", False)
+                and not request.user.is_authenticated
+            )
 
         if view.action in ["list", "retrieve"]:
             return request.user.is_authenticated
