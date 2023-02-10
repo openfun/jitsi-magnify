@@ -8,6 +8,7 @@ import { useAuthContext } from '../../../context';
 import { useLocale } from '../../../i18n';
 import { UsersRepository } from '../../../services';
 import { MagnifyLocales } from '../../../utils';
+import { getDefaultLocale } from '../../../utils/settings';
 import { LocalizedForm } from '../../design-system/Formik/LanguageChange';
 import { FormikSelectLanguage } from '../../design-system/Formik/Select/Language';
 import { FormikValuesChange } from '../../design-system/Formik/ValuesChange/FormikValuesChange';
@@ -50,7 +51,7 @@ export const UserProfilePreferences = () => {
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
       initialValues={{
-        language: authContext.user?.language ?? MagnifyLocales.EN,
+        language: authContext.user?.language ?? getDefaultLocale(),
       }}
     >
       <FormikValuesChange debounceTime={200}>

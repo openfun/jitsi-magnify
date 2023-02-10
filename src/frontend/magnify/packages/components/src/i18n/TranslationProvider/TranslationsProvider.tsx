@@ -2,7 +2,8 @@ import { Box, Spinner } from 'grommet';
 import React, { useEffect, useMemo, useState } from 'react';
 import { IntlProvider, MessageFormatElement, useIntl } from 'react-intl';
 import { Maybe } from '../../types/misc';
-import { MAGNIFY_LOCALE_KEY, MagnifyLocales } from '../../utils';
+import { MAGNIFY_LOCALE_KEY } from '../../utils';
+import { getDefaultLocale } from '../../utils/settings';
 import { loadLocaleData } from '../Loaders';
 
 export interface TranslationProviderProps {
@@ -43,8 +44,8 @@ const LocaleContext = React.createContext<Maybe<LocaleContextInterface>>(undefin
 
 export const TranslationProvider = ({
   children,
-  locale = MagnifyLocales.EN,
-  defaultLocale = MagnifyLocales.EN,
+  locale = getDefaultLocale(),
+  defaultLocale = getDefaultLocale(),
   initTranslation = true,
 }: TranslationProviderProps) => {
   const [currentLocale, setCurrentLocale] = useState(
