@@ -10,7 +10,7 @@ import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 import { useLocale } from '../../../i18n/TranslationProvider/TranslationsProvider';
 import { UsersRepository } from '../../../services/users/users.repository';
 
-import { MagnifyLocales } from '../../../utils';
+import { getDefaultLocale } from '../../../utils/settings';
 import { FormikInput } from '../../design-system/Formik/Input';
 import { LocalizedForm } from '../../design-system/Formik/LanguageChange';
 import { FormikSelectLanguage } from '../../design-system/Formik/Select/Language';
@@ -94,7 +94,7 @@ export const IdentityForm = () => {
         name: authContext.user?.name ?? '',
         username: authContext.user?.username ?? '',
         email: authContext.user?.email ?? '',
-        language: authContext.user?.language ?? MagnifyLocales.EN,
+        language: authContext.user?.language ?? getDefaultLocale(),
       }}
     >
       <LocalizedForm>

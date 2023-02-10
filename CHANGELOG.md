@@ -12,3 +12,4 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Enable CORS Headers
 - Add Multilingual
+- Add default language management with LANGUAGE_CODE
