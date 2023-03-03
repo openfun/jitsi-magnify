@@ -1,11 +1,15 @@
 {
-  "components.profile.identityForm.usernameLabel": {
-    "description": "The label for the username field",
-    "message": "Username"
-  },
   "i18n.commonMessages.back": {
     "description": "Back message",
     "message": "Back"
+  },
+  "i18n.commonMessages.error": {
+    "description": "Error label",
+    "message": "Error"
+  },
+  "i18n.commonMessages.requestError": {
+    "description": "Default error message when a request fail",
+    "message": "An error has occurred, please try again or refresh the page"
   },
   "utils.routes.rooms.rooms.label": {
     "description": "The label of the rooms view.",
@@ -19,30 +23,6 @@
     "description": "Label of the home view.",
     "message": "Home"
   },
-  "view.rooms.list.roomsListLabel": {
-    "description": "Label for the list of rooms",
-    "message": "My rooms"
-  },
-  "view.rooms.list.roomsListViewTitle": {
-    "description": "Page title for the rooms list page",
-    "message": "My Rooms"
-  },
-  "view.rooms.list.startInstantRoomTitle": {
-    "description": "Title for the start instant room block",
-    "message": "Start a conference"
-  },
-  "view.rooms.login": {
-    "description": "label to login",
-    "message": "Log in"
-  },
-  "view.rooms.logout": {
-    "description": "label to logout",
-    "message": "Logout"
-  },
-  "view.rooms.register": {
-    "description": "label to register",
-    "message": "Create an account"
-  },
   "view.rooms.settings.roomSettingsTitle": {
     "description": "Page title for the rooms settings page",
     "message": "Room settings"
@@ -54,5 +34,9 @@
   "view.rooms.title_part_two": {
     "description": "Main title",
     "message": "and quality up to 500 people"
+  },
+  "view.users.preferences.title": {
+    "description": "The label for the User preferences title",
+    "message": "User preferences"
   }
 }

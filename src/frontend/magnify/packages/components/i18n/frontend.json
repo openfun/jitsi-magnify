@@ -67,6 +67,30 @@
     "description": "Messages shown on hover when form is not dirty ",
     "message": "No changes detected"
   },
+  "components.designSystem.formik.select.language.languageLabel": {
+    "description": "Label for the language select label",
+    "message": "language"
+  },
+  "components.designSystem.layout.simpleLayout.login": {
+    "description": "label to login",
+    "message": "Log in"
+  },
+  "components.designSystem.layout.simpleLayout.logout": {
+    "description": "label to logout",
+    "message": "Logout"
+  },
+  "components.designSystem.layout.simpleLayout.register": {
+    "description": "label to register",
+    "message": "Create an account"
+  },
+  "components.designSystem.modal.errorRequest.modalTitle": {
+    "description": "The label of the rooms view.",
+    "message": "An error has occurred because you are not logged in, please log in."
+  },
+  "components.designSystem.modal.errorRequest.notLogged": {
+    "description": "The label of the rooms view.",
+    "message": "An error has occurred, please retry."
+  },
   "components.designSystem.waitingRow.title": {
     "description": "Accessibility label for the blinking card when waiting for a list of row",
     "message": "Loading..."
@@ -227,18 +251,6 @@
     "description": "Text for the add member button",
     "message": "Add a member"
   },
-  "components.rooms.config.users.emptyResult": {
-    "description": "Empty search result string",
-    "message": "No results with this email or username"
-  },
-  "components.rooms.config.users.searchUserLabel": {
-    "description": "Label for the search user input in the search user modal",
-    "message": "Find a user"
-  },
-  "components.rooms.config.users.searchUserPlaceholder": {
-    "description": "Placeholder for the search user input in the search user modal",
-    "message": "Search by email or full username"
-  },
   "components.rooms.config.users.sectionTitle": {
     "description": "Ttitle for the members section ",
     "message": "Members"
@@ -283,6 +295,22 @@
     "description": "Label for the submit button to register a new room",
     "message": "Register room"
   },
+  "components.users.searchModal.emptyResult": {
+    "description": "Empty search result string",
+    "message": "No results with this email or username"
+  },
+  "components.users.searchModal.searchUserErrorText": {
+    "description": "Label for the search user error message",
+    "message": "An error has occurred"
+  },
+  "components.users.searchModal.searchUserLabel": {
+    "description": "Label for the search user input in the search user modal",
+    "message": "Find a user"
+  },
+  "components.users.searchModal.searchUserPlaceholder": {
+    "description": "Placeholder for the search user input in the search user modal",
+    "message": "Search by email or full username"
+  },
   "i18n.Messages.commonTranslation.account": {
     "description": "Account label",
     "message": "Account"
@@ -298,6 +326,10 @@
   "i18n.Messages.commonTranslation.delete": {
     "description": "Delete message",
     "message": "Delete"
+  },
+  "i18n.Messages.commonTranslation.error": {
+    "description": "Error message",
+    "message": "Error"
   },
   "i18n.Messages.commonTranslation.logout": {
     "description": "Logout label",
@@ -358,17 +390,5 @@
   "validationMesssages.emailInvalid": {
     "description": "The error message for the email field",
     "message": "Email is invalid"
-  },
-  "view.rooms.login": {
-    "description": "label to login",
-    "message": "Log in"
-  },
-  "view.rooms.logout": {
-    "description": "label to logout",
-    "message": "Logout"
-  },
-  "view.rooms.register": {
-    "description": "label to register",
-    "message": "Create an account"
   }
 }
