@@ -1,11 +1,15 @@
 {
-  "components.profile.identityForm.usernameLabel": {
-    "description": "The label for the username field",
-    "message": "Nom d'utilisateur"
-  },
   "i18n.commonMessages.back": {
     "description": "Back message",
     "message": "Retour"
+  },
+  "i18n.commonMessages.error": {
+    "description": "Error label",
+    "message": "Erreur"
+  },
+  "i18n.commonMessages.requestError": {
+    "description": "Default error message when a request fail",
+    "message": "Une erreur est survenue, veuillez réessayer ou actualiser la page"
   },
   "utils.routes.rooms.rooms.label": {
     "description": "The label of the rooms view.",
@@ -19,30 +23,6 @@
     "description": "Label of the home view.",
     "message": "Accueil"
   },
-  "view.rooms.list.roomsListLabel": {
-    "description": "Label for the list of rooms",
-    "message": "Mes salles"
-  },
-  "view.rooms.list.roomsListViewTitle": {
-    "description": "Page title for the rooms list page",
-    "message": "Mes Salles"
-  },
-  "view.rooms.list.startInstantRoomTitle": {
-    "description": "Title for the start instant room block",
-    "message": "Démarrer une conférence"
-  },
-  "view.rooms.login": {
-    "description": "label to login",
-    "message": "Se connecter"
-  },
-  "view.rooms.logout": {
-    "description": "label to logout",
-    "message": "Se déconnecter"
-  },
-  "view.rooms.register": {
-    "description": "label to register",
-    "message": "Créer un compte"
-  },
   "view.rooms.settings.roomSettingsTitle": {
     "description": "Page title for the rooms settings page",
     "message": "Paramètres de la salle"
@@ -54,5 +34,9 @@
   "view.rooms.title_part_two": {
     "description": "Main title",
     "message": "et de qualité jusqu'à 500 personnes"
+  },
+  "view.users.preferences.title": {
+    "description": "The label for the User preferences title",
+    "message": "Préférences utilisateur"
   }
 }

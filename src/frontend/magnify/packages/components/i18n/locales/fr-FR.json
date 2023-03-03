@@ -67,6 +67,30 @@
     "description": "Messages shown on hover when form is not dirty ",
     "message": "Aucun changement détecté"
   },
+  "components.designSystem.formik.select.language.languageLabel": {
+    "description": "Label for the language select label",
+    "message": "langue"
+  },
+  "components.designSystem.layout.simpleLayout.login": {
+    "description": "label to login",
+    "message": "Se connecter"
+  },
+  "components.designSystem.layout.simpleLayout.logout": {
+    "description": "label to logout",
+    "message": "Déconnexion"
+  },
+  "components.designSystem.layout.simpleLayout.register": {
+    "description": "label to register",
+    "message": "Créer un compte"
+  },
+  "components.designSystem.modal.errorRequest.modalTitle": {
+    "description": "The label of the rooms view.",
+    "message": "Une erreur est survenue car vous n'êtes pas connecté, veuillez vous connecter."
+  },
+  "components.designSystem.modal.errorRequest.notLogged": {
+    "description": "The label of the rooms view.",
+    "message": "Une erreur est survenue, merci de réessayer."
+  },
   "components.designSystem.waitingRow.title": {
     "description": "Accessibility label for the blinking card when waiting for a list of row",
     "message": "Chargement..."
@@ -227,18 +251,6 @@
     "description": "Text for the add member button",
     "message": "Ajouter un membre"
   },
-  "components.rooms.config.users.emptyResult": {
-    "description": "Empty search result string",
-    "message": "Aucun résultat avec cet email ou ce nom d'utilisateur"
-  },
-  "components.rooms.config.users.searchUserLabel": {
-    "description": "Label for the search user input in the search user modal",
-    "message": "Trouver un utilisateur"
-  },
-  "components.rooms.config.users.searchUserPlaceholder": {
-    "description": "Placeholder for the search user input in the search user modal",
-    "message": "Recherche par son email ou son nom d’utilisateur"
-  },
   "components.rooms.config.users.sectionTitle": {
     "description": "Ttitle for the members section ",
     "message": "Membres"
@@ -283,6 +295,22 @@
     "description": "Label for the submit button to register a new room",
     "message": "Réserver la salle"
   },
+  "components.users.searchModal.emptyResult": {
+    "description": "Empty search result string",
+    "message": "Aucun résultat avec cet email ou ce nom d'utilisateur"
+  },
+  "components.users.searchModal.searchUserErrorText": {
+    "description": "Label for the search user error message",
+    "message": "Une erreur est survenue"
+  },
+  "components.users.searchModal.searchUserLabel": {
+    "description": "Label for the search user input in the search user modal",
+    "message": "Trouver un utilisateur"
+  },
+  "components.users.searchModal.searchUserPlaceholder": {
+    "description": "Placeholder for the search user input in the search user modal",
+    "message": "Recherche via un email ou un nom d’utilisateur"
+  },
   "i18n.Messages.commonTranslation.account": {
     "description": "Account label",
     "message": "Mon Compte"
@@ -298,6 +326,10 @@
   "i18n.Messages.commonTranslation.delete": {
     "description": "Delete message",
     "message": "Supprimer"
+  },
+  "i18n.Messages.commonTranslation.error": {
+    "description": "Error message",
+    "message": "Erreur"
   },
   "i18n.Messages.commonTranslation.logout": {
     "description": "Logout label",
@@ -358,17 +390,5 @@
   "validationMesssages.emailInvalid": {
     "description": "The error message for the email field",
     "message": "Email non valide"
-  },
-  "view.rooms.login": {
-    "description": "label to login",
-    "message": "Se connecter"
-  },
-  "view.rooms.logout": {
-    "description": "label to logout",
-    "message": "Se déconnecter"
-  },
-  "view.rooms.register": {
-    "description": "label to register",
-    "message": "Créer un compte"
   }
 }
