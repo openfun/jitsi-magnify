@@ -13,3 +13,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - Enable CORS Headers
 - Add Multilingual
 - Add default language management with LANGUAGE_CODE
+
+### Fixed
+
+- Use only room.slug to get room.jitsi_name

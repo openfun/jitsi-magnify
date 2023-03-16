@@ -402,7 +402,7 @@ class Room(Resource):
     @property
     def jitsi_name(self):
         """The name used for the room in Jitsi."""
-        return f"{self.slug:s}-{self.id!s}"
+        return self.slug
 
 
 class Meeting(BaseModel):
