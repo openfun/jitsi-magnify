@@ -47,7 +47,7 @@ class RoomsApiTestCase(APITestCase):
                 "is_administrable": False,
                 "is_public": True,
                 "jitsi": {
-                    "room": f"{room_public.slug:s}-{room_public.id!s}",
+                    "room": str(room_public.id).replace("-", ""),
                     "token": "the token",
                 },
                 "name": room_public.name,
@@ -166,8 +166,27 @@ class RoomsApiTestCase(APITestCase):
             },
         )
 
+    def test_api_rooms_retrieve_anonymous_private_pk_no_dashes(self):
+        """It should be possible to get a room by its id stripped of its dashes."""
+        room = RoomFactory(is_public=False)
+        id_no_dashes = str(room.id).replace("-", "")
+
+        response = self.client.get(f"/api/rooms/{id_no_dashes:s}/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "id": str(room.id),
+                "is_administrable": False,
+                "is_public": False,
+                "name": room.name,
+                "slug": room.slug,
+            },
+        )
+
     def test_api_rooms_retrieve_anonymous_private_slug(self):
-        """It sbhould be possible to get a room by its slug."""
+        """It should be possible to get a room by its slug."""
         room = RoomFactory(is_public=False)
         response = self.client.get(f"/api/rooms/{room.slug!s}/")
 
@@ -276,7 +295,7 @@ class RoomsApiTestCase(APITestCase):
                 "is_administrable": False,
                 "is_public": True,
                 "jitsi": {
-                    "room": f"{room.slug:s}-{room.id!s}",
+                    "room": str(room.id).replace("-", ""),
                     "token": "the token",
                 },
                 "name": room.name,
@@ -304,6 +323,7 @@ class RoomsApiTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+        expected_room = str(room.id).replace("-", "")
         self.assertEqual(
             response.json(),
             {
@@ -311,16 +331,14 @@ class RoomsApiTestCase(APITestCase):
                 "is_administrable": False,
                 "is_public": True,
                 "jitsi": {
-                    "room": f"{room.slug:s}-{room.id!s}",
+                    "room": expected_room,
                     "token": "the token",
                 },
                 "name": room.name,
                 "slug": room.slug,
             },
         )
-        mock_token.assert_called_once_with(
-            user, f"{room.slug:s}-{room.id!s}", is_admin=False
-        )
+        mock_token.assert_called_once_with(user, expected_room, is_admin=False)
 
     def test_api_rooms_retrieve_authenticated(self):
         """
@@ -418,6 +436,7 @@ class RoomsApiTestCase(APITestCase):
                 },
             ],
         )
+        expected_room = str(room.id).replace("-", "")
         self.assertEqual(
             content_dict,
             {
@@ -425,16 +444,14 @@ class RoomsApiTestCase(APITestCase):
                 "is_administrable": False,
                 "is_public": room.is_public,
                 "jitsi": {
-                    "room": f"{room.slug:s}-{room.id!s}",
+                    "room": expected_room,
                     "token": "the token",
                 },
                 "name": room.name,
                 "slug": room.slug,
             },
         )
-        mock_token.assert_called_once_with(
-            user, f"{room.slug:s}-{room.id!s}", is_admin=False
-        )
+        mock_token.assert_called_once_with(user, expected_room, is_admin=False)
 
     @mock.patch(
         "magnify.apps.core.serializers.rooms.generate_token", return_value="the token"
@@ -506,6 +523,7 @@ class RoomsApiTestCase(APITestCase):
                 },
             ],
         )
+        expected_room = str(room.id).replace("-", "")
         self.assertEqual(
             content_dict,
             {
@@ -513,16 +531,14 @@ class RoomsApiTestCase(APITestCase):
                 "is_administrable": False,
                 "is_public": room.is_public,
                 "jitsi": {
-                    "room": f"{room.slug:s}-{room.id!s}",
+                    "room": str(room.id).replace("-", ""),
                     "token": "the token",
                 },
                 "name": room.name,
                 "slug": room.slug,
             },
         )
-        mock_token.assert_called_once_with(
-            user, f"{room.slug:s}-{room.id!s}", is_admin=False
-        )
+        mock_token.assert_called_once_with(user, expected_room, is_admin=False)
 
     @mock.patch(
         "magnify.apps.core.serializers.rooms.generate_token", return_value="the token"
@@ -597,6 +613,7 @@ class RoomsApiTestCase(APITestCase):
                 },
             ],
         )
+        expected_room = str(room.id).replace("-", "")
         self.assertEqual(
             content_dict,
             {
@@ -605,16 +622,14 @@ class RoomsApiTestCase(APITestCase):
                 "is_public": room.is_public,
                 "configuration": {},
                 "jitsi": {
-                    "room": f"{room.slug:s}-{room.id!s}",
+                    "room": expected_room,
                     "token": "the token",
                 },
                 "name": room.name,
                 "slug": room.slug,
             },
         )
-        mock_token.assert_called_once_with(
-            user, f"{room.slug:s}-{room.id!s}", is_admin=True
-        )
+        mock_token.assert_called_once_with(user, expected_room, is_admin=True)
 
     @mock.patch(
         "magnify.apps.core.serializers.rooms.generate_token", return_value="the token"
@@ -640,6 +655,7 @@ class RoomsApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         access1, access2 = room.accesses.all()
+        expected_room = str(room.id).replace("-", "")
         self.assertCountEqual(
             response.json(),
             {
@@ -673,16 +689,14 @@ class RoomsApiTestCase(APITestCase):
                 "is_public": room.is_public,
                 "configuration": {},
                 "jitsi": {
-                    "room": f"{room.slug:s}-{room.id!s}",
+                    "room": expected_room,
                     "token": "the token",
                 },
                 "name": room.name,
                 "slug": room.slug,
             },
         )
-        mock_token.assert_called_once_with(
-            administrator, f"{room.slug:s}-{room.id!s}", is_admin=True
-        )
+        mock_token.assert_called_once_with(administrator, expected_room, is_admin=True)
 
     def test_api_rooms_create_anonymous(self):
         """Anonymous users should not be allowed to create rooms."""
