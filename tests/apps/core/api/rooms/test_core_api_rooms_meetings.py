@@ -21,7 +21,7 @@ from magnify.apps.core.models import MeetingAccess
 @mock.patch(
     "magnify.apps.core.serializers.meetings.generate_token", return_value="the token"
 )
-class RoomMeetingsApiTestCase(APITestCase):
+class MeetingsRoomsApiTestCase(APITestCase):
     """Test requests on magnify's coreapp room meeting API endpoint."""
 
     # Anonymous
