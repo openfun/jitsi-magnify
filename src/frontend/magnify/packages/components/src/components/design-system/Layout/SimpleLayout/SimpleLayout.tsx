@@ -73,7 +73,7 @@ export const SimpleLayout = ({ urlLogo, ...props }: PropsWithChildren<Props>) =>
         color={'3d3d3d'}
         gap={'20px'}
         height={'100vh'}
-        overflow={'scroll'}
+        overflow={'auto'}
         pad={'4rem 2rem 2rem 2rem'}
         style={{ gap: '20px', flex: 2, position: 'relative' }}
       >
