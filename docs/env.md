@@ -59,6 +59,19 @@ See [Django documentation][secret-key] for more information about this setting.
 - Default: None
 - Example: `13f1ef@^xqmc=pjv1(!hko7li2a#!f_vuv%cq8$sr2363yn^3!`
 
+#### DJANGO_LANGUAGE_CODE
+
+A string to set the default language code for this installation. This should be in standard
+language ID format. For example, U.S. English is "en-us".
+
+At the moment, Magnify does not allow to override Django's `LANGUAGES` setting so the
+`LANGUAGE_CODE` setting can only be set to `en` or `fr`.
+
+- Type: String [en|fr]
+- Required: No
+- Default: `en`
+- Example: `fr`
+
 #### DJANGO_CSRF_TRUSTED_ORIGINS
 
 A list of trusted origins for unsafe requests (e.g. POST).
