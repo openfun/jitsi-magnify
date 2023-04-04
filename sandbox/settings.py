@@ -290,7 +290,7 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
 
     # Languages
     # - Django
-    LANGUAGE_CODE = "en"
+    LANGUAGE_CODE = values.Value("en")
 
     # Careful! Languages should be ordered by priority, as this tuple is used to get
     # fallback/default languages throughout the app.
