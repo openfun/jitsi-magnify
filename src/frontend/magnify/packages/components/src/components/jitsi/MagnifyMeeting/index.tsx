@@ -13,6 +13,7 @@ import { DEFAULT_JITSI_DOMAIN } from '../../../utils/settings';
 export interface MagnifyMeetingProps {
   roomSlug?: string;
   roomName: string;
+  roomDisplayName: string;
   meetingId?: string;
   configuration?: RoomSettings;
   jwt?: string;
@@ -71,6 +72,7 @@ export const MagnifyMeeting = ({
   const getConfig = (): object => {
     return {
       ...configuration,
+      subject: props.roomDisplayName,
       toolbarButtons: getToolbarButtons(),
       prejoinConfig: {
         enabled: configuration?.waitingRoomEnabled ?? true,

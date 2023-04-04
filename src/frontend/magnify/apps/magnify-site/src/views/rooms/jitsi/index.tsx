@@ -39,7 +39,8 @@ export function RoomsJitsiView() {
           <MagnifyMeeting
             configuration={room?.configuration ?? defaultConfiguration}
             jwt={room.jitsi.token}
-            roomName={room.name ?? room.jitsi.room}
+            roomDisplayName={room.name}
+            roomName={room.jitsi.room}
           />
         </Box>
       )}
