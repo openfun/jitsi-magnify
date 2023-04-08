@@ -391,7 +391,13 @@ class Build(Base):
     SECRET_KEY = "ThisIsAnExampleKeyForBuildPurposeOnly"  # nosec
     JWT_JITSI_SECRET_KEY = "ThisIsAnExampleKeyForBuildPurposeOnly"  # nosec
 
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": str(
+                values.Value("whitenoise.storage.CompressedManifestStaticFilesStorage")
+            ),
+        },
+    }
 
 
 class Development(Base):
@@ -470,9 +476,13 @@ class Production(Base):
     # For static files in production, we want to use a backend that includes a hash in
     # the filename, that is calculated from the file content, so that browsers always
     # get the updated version of each file.
-    STATICFILES_STORAGE = values.Value(
-        "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    )
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": str(
+                values.Value("whitenoise.storage.CompressedManifestStaticFilesStorage")
+            ),
+        },
+    }
 
 
 class Feature(Production):
