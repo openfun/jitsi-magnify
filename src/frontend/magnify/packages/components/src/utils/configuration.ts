@@ -8,6 +8,7 @@ declare global {
       KEYCLOAK_CLIENT_ID: string;
       KEYCLOAK_URL: string;
       KEYCLOAK_EXPIRATION_SECONDS: number;
+      MAGNIFY_SHOW_REGISTER_LINK: boolean;
       LANGUAGE_CODE: Maybe<string>;
       KEYCLOAK_REALM: string;
       JITSI_DOMAIN: string;

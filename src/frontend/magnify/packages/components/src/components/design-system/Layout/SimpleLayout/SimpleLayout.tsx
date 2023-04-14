@@ -84,12 +84,14 @@ export const SimpleLayout = ({ urlLogo, ...props }: PropsWithChildren<Props>) =>
         >
           {!isLog && (
             <Fragment>
-              <Button
-                primary
-                label={intl.formatMessage(messages.register)}
-                onClick={() => router.goToRegister()}
-                size={'small'}
-              />
+              {window.config.MAGNIFY_SHOW_REGISTER_LINK && (
+                <Button
+                  primary
+                  label={intl.formatMessage(messages.register)}
+                  onClick={() => router.goToRegister()}
+                  size={'small'}
+                />
+              )}
               <Text
                 alignSelf={'center'}
                 color={'brand'}
