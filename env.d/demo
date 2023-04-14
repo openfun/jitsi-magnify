@@ -1,2 +1,3 @@
 DJANGO_ALLOWED_HOSTS=localhost
+DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost:8070
 DRF_DEFAULT_AUTHENTICATION_CLASSES=magnify.apps.core.authentication.DelegatedJWTAuthentication
