@@ -264,6 +264,8 @@ jobs:
           DJANGO_CONFIGURATION: Test
           DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
           JWT_JITSI_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
+          MAGNIFY_API_URL: http://localhost:8070/api
+          KEYCLOAK_URL: http://localhost:8080
           PYTHONPATH: /home/circleci/fun/sandbox
           magnify_ES_HOST: localhost
           DB_ENGINE: django.db.backends.mysql
@@ -349,6 +351,8 @@ jobs:
           DJANGO_CONFIGURATION: Test
           DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
           JWT_JITSI_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
+          MAGNIFY_API_URL: http://localhost:8070/api
+          KEYCLOAK_URL: http://localhost:8080
           PYTHONPATH: /home/circleci/fun/sandbox
           DB_HOST: localhost
           DB_NAME: magnify
