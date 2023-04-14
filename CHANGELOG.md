@@ -16,3 +16,4 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - Use the backend's jitsi name to match the JWT token and set the subject to
   the actual room name.
 - Fix the css of scrolling of the `SimpleLayout` component
+- Use a "back" link instead of a breadcrumb in the room settings page.

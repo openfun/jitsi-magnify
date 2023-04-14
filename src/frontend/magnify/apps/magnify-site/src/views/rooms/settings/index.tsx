@@ -8,7 +8,7 @@ import {
   useTranslations,
 } from '@openfun/magnify-components';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Box, Notification, Spinner } from 'grommet';
+import { Box, Button, Notification, Spinner } from 'grommet';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
@@ -80,7 +80,10 @@ export function RoomSettingsView() {
   };
 
   return (
-    <DefaultPage title={intl.formatMessage(roomSettingsMessages.roomSettingsTitle)}>
+    <DefaultPage
+      enableBreadcrumb={false}
+      title={intl.formatMessage(roomSettingsMessages.roomSettingsTitle)}
+    >
       <>
         {isLoading && <Spinner />}
         {!isLoading && error && (
@@ -92,6 +95,14 @@ export function RoomSettingsView() {
         )}
         {!isLoading && error == null && room && (
           <>
+            <Button
+              color={'brand'}
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
+              {intl.formatMessage(commonMessages.back)}
+            </Button>
             <RoomConfig room={room} />
             <Box margin={'15px 0'}>
               <RoomUsersConfig
