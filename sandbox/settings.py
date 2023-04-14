@@ -94,6 +94,9 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
     # Frontend
     FRONTEND_CONFIGURATION = {
         "API_URL": values.Value(environ_name="MAGNIFY_API_URL", environ_prefix=None),
+        "SHOW_REGISTER_LINK": values.BooleanValue(
+            True, environ_name="MAGNIFY_SHOW_REGISTER_LINK", environ_prefix=None
+        ),
         "KEYCLOAK_URL": values.Value(environ_name="KEYCLOAK_URL", environ_prefix=None),
         "KEYCLOAK_REALM": values.Value(
             "magnify", environ_name="KEYCLOAK_REALM", environ_prefix=None
