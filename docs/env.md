@@ -59,6 +59,18 @@ See [Django documentation][secret-key] for more information about this setting.
 - Default: None
 - Example: `13f1ef@^xqmc=pjv1(!hko7li2a#!f_vuv%cq8$sr2363yn^3!`
 
+#### 🔴 DJANGO_CSRF_TRUSTED_ORIGINS
+
+A list of trusted origins for unsafe requests (e.g. POST). Must at least contain the domain on
+which the backend is hosted for the Django admin site to work.
+
+See [Django documentation][csrf-trusted-origins] for more information about this setting.
+
+- Type: List as comma separated strings
+- Required: No
+- Default: [] (all originating domains are rejected)
+- Example: `https://subdomain.example1.com, https://*.example2.com`
+
 #### DJANGO_LANGUAGE_CODE
 
 A string to set the default language code for this installation. This should be in standard
@@ -71,17 +83,6 @@ At the moment, Magnify does not allow to override Django's `LANGUAGES` setting s
 - Required: No
 - Default: `en`
 - Example: `fr`
-
-#### DJANGO_CSRF_TRUSTED_ORIGINS
-
-A list of trusted origins for unsafe requests (e.g. POST).
-
-See [Django documentation][csrf-trusted-origins] for more information about this setting.
-
-- Type: List as comma separated strings
-- Required: No
-- Default: []
-- Example: `https://subdomain.example1.com, https://*.example2.com`
 
 #### DJANGO_CORS_ALLOWED_ORIGINS
 
