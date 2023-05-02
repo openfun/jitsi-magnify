@@ -5,10 +5,10 @@ import { MagnifyLocales } from '../../utils';
 export default function createRandomUser(): User {
   return {
     id: faker.datatype.uuid(),
-    username: faker.name.findName(),
+    username: faker.internet.userName(),
     email: faker.internet.email(),
     language: MagnifyLocales.EN,
-    name: faker.name.findName(),
+    name: faker.name.fullName(),
   };
 }
 
