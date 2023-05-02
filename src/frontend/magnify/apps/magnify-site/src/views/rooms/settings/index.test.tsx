@@ -10,7 +10,7 @@ import { server } from '../../../mocks/server';
 import { RoomSettingsView } from './index';
 
 describe('RoomSettingsView', () => {
-  it('Test', async () => {
+  it('renders', async () => {
     server.use(
       rest.get(buildApiUrl('/rooms/123/'), (req, res, ctx) => {
         return res(ctx.json([defaultRoom]));

@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 import { DEFAULT_BASE_API_URL } from '../../utils/constants/config';
 import { KeycloakService } from '../keycloak';
 
@@ -28,7 +28,7 @@ export class HttpService {
     });
 
     api.interceptors.request.use(
-      (config: AxiosRequestConfig) => {
+      (config) => {
         const token = KeycloakService.getToken();
         if (config.headers && token != null) {
           config.headers['Authorization'] = `Bearer ${token}`;
@@ -47,7 +47,7 @@ export class HttpService {
         return response;
       },
       async (error: AxiosError) => {
-        const originalRequest = error.config;
+        const originalRequest = error.config!;
         const isRetry = HttpService.retry.get(originalRequest.url + '');
         if (error.response?.status === 401 && originalRequest.url && !isRetry) {
           HttpService.retry.set(originalRequest.url, true);
