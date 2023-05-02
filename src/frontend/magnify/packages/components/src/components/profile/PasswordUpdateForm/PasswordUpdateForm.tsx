@@ -57,7 +57,7 @@ export const PasswordUpdateForm = () => {
       new_password: Yup.string().required(),
       confirmPassword: Yup.string()
         .oneOf(
-          [Yup.ref('new_password'), null],
+          [Yup.ref('new_password')],
           intl.formatMessage(validationMessages.confirmDoesNotMatch),
         )
         .required(),
