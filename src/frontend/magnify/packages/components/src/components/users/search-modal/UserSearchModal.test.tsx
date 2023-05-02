@@ -1,4 +1,4 @@
-import { act, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import React from 'react';
@@ -6,14 +6,14 @@ import { describe, expect, it, vi } from 'vitest';
 import { server } from '../../../mocks/server';
 import { buildApiUrl } from '../../../services';
 import { UsersApiRoutes } from '../../../utils';
-import { render, screen } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
 import { UserSearchModal } from './index';
 
 describe('UserSearch Modal', () => {
   it('should render successfully', async () => {
     const user = userEvent.setup();
     const onSelectUser = vi.fn();
-    const { baseElement } = render(
+    const { baseElement } = renderWrappedInTestingProvider(
       <UserSearchModal isOpen={true} modalUniqueId={'search-user'} onSelectUser={onSelectUser} />,
     );
     const addButton = await screen.findByRole('button', { name: 'Add' });
@@ -59,7 +59,7 @@ describe('UserSearch Modal', () => {
         return res(ctx.status(500), ctx.json({}));
       }),
     );
-    render(
+    renderWrappedInTestingProvider(
       <UserSearchModal isOpen={true} modalUniqueId={'search-user'} onSelectUser={onSelectUser} />,
     );
     const userTextInput = await screen.findByRole('textbox', { name: 'Find a user' });

@@ -1,15 +1,15 @@
-import { act, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import createRandomUser from '../../../../factories/users';
-import { render, screen } from '../../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../../utils/test-utils';
 import { UserRowBase } from './RowUserBase';
 
 describe('RowUserBase', () => {
   it('basic should render successfully', async () => {
     const randomUser = createRandomUser();
-    render(<UserRowBase user={randomUser} />);
+    renderWrappedInTestingProvider(<UserRowBase user={randomUser} />);
     await screen.findByText(randomUser.username);
     await screen.findByText(randomUser.name);
   });
@@ -18,7 +18,9 @@ describe('RowUserBase', () => {
     const user = userEvent.setup();
     const randomUser = createRandomUser();
     const onToggle = vi.fn();
-    render(<UserRowBase onToggle={onToggle} showSelect={true} user={randomUser} />);
+    renderWrappedInTestingProvider(
+      <UserRowBase onToggle={onToggle} showSelect={true} user={randomUser} />,
+    );
     const checkbox: HTMLInputElement = await screen.findByRole('checkbox');
     expect(checkbox?.checked).toEqual(false);
     await act(() => {
@@ -32,14 +34,18 @@ describe('RowUserBase', () => {
 
   it('should render successfully with checkbox selected', async () => {
     const randomUser = createRandomUser();
-    render(<UserRowBase isSelected={true} showSelect={true} user={randomUser} />);
+    renderWrappedInTestingProvider(
+      <UserRowBase isSelected={true} showSelect={true} user={randomUser} />,
+    );
     const checkbox: HTMLInputElement = await screen.findByRole('checkbox');
     expect(checkbox?.checked).toEqual(true);
   });
 
   it('should render successfully with rightContent', async () => {
     const randomUser = createRandomUser();
-    render(<UserRowBase rightContent={<div>right</div>} user={randomUser} />);
+    renderWrappedInTestingProvider(
+      <UserRowBase rightContent={<div>right</div>} user={randomUser} />,
+    );
     await screen.findByText('right');
   });
 
@@ -47,7 +53,7 @@ describe('RowUserBase', () => {
     const user = userEvent.setup();
     const randomUser = createRandomUser();
     const onClick = vi.fn();
-    render(<UserRowBase onClick={onClick} user={randomUser} />);
+    renderWrappedInTestingProvider(<UserRowBase onClick={onClick} user={randomUser} />);
 
     const userElement = await screen.findByText(randomUser.name);
     await act(() => {
@@ -63,7 +69,7 @@ describe('RowUserBase', () => {
     const user = userEvent.setup();
     const onHelloClick = vi.fn();
     const randomUser = createRandomUser();
-    render(
+    renderWrappedInTestingProvider(
       <UserRowBase
         moreActions={[{ label: 'Hello', onClick: onHelloClick }]}
         showActions={true}

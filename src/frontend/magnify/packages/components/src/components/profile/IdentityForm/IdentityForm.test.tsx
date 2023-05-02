@@ -1,14 +1,14 @@
-import { act } from '@testing-library/react';
+import { act, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { fireEvent, render, screen } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
 import { IdentityForm } from './IdentityForm';
 
 describe('IdentityForm', () => {
   it('should render a form that can be filled and submited', async () => {
     const user = userEvent.setup();
 
-    render(<IdentityForm />);
+    renderWrappedInTestingProvider(<IdentityForm />);
 
     const nameInput = screen.getByRole('textbox', { name: 'Name' });
     const usernameInput = screen.getByRole('textbox', { name: 'Username' });

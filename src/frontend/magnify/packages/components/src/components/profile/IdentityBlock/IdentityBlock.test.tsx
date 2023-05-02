@@ -1,10 +1,11 @@
+import { screen } from '@testing-library/react';
 import React from 'react';
-import { render, screen } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
 import { IdentityBlock } from './IdentityBlock';
 
 describe('IdentityBlock', () => {
   it('should render the avatar and identity forms with right default values', async () => {
-    render(<IdentityBlock />);
+    renderWrappedInTestingProvider(<IdentityBlock />);
 
     const nameInput = screen.getByLabelText('Name');
     const usernameInput = screen.getByLabelText('Username');

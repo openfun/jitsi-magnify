@@ -1,13 +1,14 @@
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { render, screen } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
 import { AuthForms } from './AuthForms';
 
 describe('AuthForms', () => {
   it('renders the login form by default', async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWrappedInTestingProvider(
       <AuthForms footerLabel={'Footer text'} footerRouteLabel={'Footer Route Label'}>
         <div>Create an account</div>
       </AuthForms>,
