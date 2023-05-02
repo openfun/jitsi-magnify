@@ -1,16 +1,16 @@
-import { act } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { vi } from 'vitest';
 import { defaultRoom } from '../../../mocks/allHandlers/rooms/roomsHandlers';
-import { render, screen } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
 import { RegisterRoomForm } from './RegisterRoomForm';
 
 describe('RegisterRoomForm', () => {
   it('should be possible to submit the form', async () => {
     const onSuccess = vi.fn();
     const user = userEvent.setup();
-    render(<RegisterRoomForm onSuccess={onSuccess} />);
+    renderWrappedInTestingProvider(<RegisterRoomForm onSuccess={onSuccess} />);
 
     // 1) Fill in the form
     screen.getByRole('button', { name: 'Register room' });

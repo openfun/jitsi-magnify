@@ -1,15 +1,15 @@
-import { act } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { validationMessages } from '../../../i18n/Messages';
 import { MagnifyLocales } from '../../../utils';
-import { render, screen } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
 import { SignupForm, SignupFormValues } from './SignupForm';
 
 describe('SignupForm', () => {
   it('shoud display the errors when the form is invalid', async () => {
     const user = userEvent.setup();
-    render(<SignupForm />);
+    renderWrappedInTestingProvider(<SignupForm />);
 
     const input: SignupFormValues = {
       email: 'invalid@email',

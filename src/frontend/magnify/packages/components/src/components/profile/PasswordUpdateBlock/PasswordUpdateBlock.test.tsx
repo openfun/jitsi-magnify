@@ -1,10 +1,11 @@
+import { screen } from '@testing-library/react';
 import React from 'react';
-import { render, screen } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
 import { PasswordUpdateBlock } from './PasswordUpdateBlock';
 
 describe('PasswordUpdateBlock', () => {
   it('should render the form and an explanation', () => {
-    render(<PasswordUpdateBlock />);
+    renderWrappedInTestingProvider(<PasswordUpdateBlock />);
 
     // Verify we get the form
     screen.getByLabelText('Previous password') as HTMLInputElement;

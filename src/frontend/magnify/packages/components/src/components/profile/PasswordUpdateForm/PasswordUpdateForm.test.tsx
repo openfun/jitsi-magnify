@@ -1,14 +1,14 @@
-import { act } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { validationMessages } from '../../../i18n/Messages';
-import { fireEvent, render, screen } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
 import { PasswordUpdateForm } from './PasswordUpdateForm';
 
 describe('PasswordUpdateForm', () => {
   it('should render a form that can be filled and submited', async () => {
     const user = userEvent.setup();
-    render(<PasswordUpdateForm />);
+    renderWrappedInTestingProvider(<PasswordUpdateForm />);
 
     const previousPasswordInput = screen.getByLabelText('Previous password') as HTMLInputElement;
     const newPasswordInput = screen.getByLabelText('New password') as HTMLInputElement;

@@ -1,9 +1,8 @@
-import { act, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-
 import createRandomRoom from '../../../factories/rooms';
-import { render, screen } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
 import { RegisterRoom } from './RegisterRoom';
 
 describe('RegisterRoom', () => {
@@ -11,7 +10,7 @@ describe('RegisterRoom', () => {
     const roomToCreate = createRandomRoom();
     const user = userEvent.setup();
 
-    render(<RegisterRoom />);
+    renderWrappedInTestingProvider(<RegisterRoom />);
 
     // 1) Open the form
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
