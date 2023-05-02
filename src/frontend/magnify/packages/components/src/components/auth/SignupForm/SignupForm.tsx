@@ -119,10 +119,7 @@ export const SignupForm = () => {
       language: Yup.string().required(),
       password: Yup.string().required(),
       confirmPassword: Yup.string()
-        .oneOf(
-          [Yup.ref('password'), null],
-          intl.formatMessage(validationMessages.confirmDoesNotMatch),
-        )
+        .oneOf([Yup.ref('password')], intl.formatMessage(validationMessages.confirmDoesNotMatch))
         .required(),
     });
   }, [locale.currentLocale]);
