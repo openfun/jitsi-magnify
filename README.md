@@ -16,8 +16,8 @@ Make sure you have a recent version of Docker and
 $ docker -v
   Docker version 20.10.2, build 2291f61
 
-$ docker-compose -v
-  docker-compose version 1.27.4, build 40524192
+$ docker compose version
+  Docker Compose version v2.17.3 
 ```
 
 >⚠️ You may need to run the following commands with `sudo` but this can be
@@ -37,7 +37,7 @@ to avoid dependency-releated or migration-releated issues.
 When the command stops, check that all services are running as expected:
 
 ```bash
-$ docker-compose ps
+$ docker compose ps
 ```
 
 You should now be able to access the demo site at [localhost:8070](http://localhost:8070).

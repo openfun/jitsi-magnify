@@ -42,7 +42,7 @@ endif
 DOCKER_UID           = $(shell id -u)
 DOCKER_GID           = $(shell id -g)
 DOCKER_USER          = $(DOCKER_UID):$(DOCKER_GID)
-COMPOSE              = DOCKER_USER=$(DOCKER_USER) DB_HOST=$(DB_HOST) DB_PORT=$(DB_PORT) docker-compose
+COMPOSE              = DOCKER_USER=$(DOCKER_USER) DB_HOST=$(DB_HOST) DB_PORT=$(DB_PORT) docker compose
 COMPOSE_RUN          = $(COMPOSE) run --rm
 COMPOSE_EXEC         = $(COMPOSE) exec
 COMPOSE_EXEC_APP     = $(COMPOSE_EXEC) app
@@ -102,7 +102,7 @@ run: ## start the production and development servers
 	@$(WAIT_APP)
 .PHONY: run
 
-status: ## an alias for "docker-compose ps"
+status: ## an alias for "docker compose ps"
 	@$(COMPOSE) ps
 .PHONY: status
 
