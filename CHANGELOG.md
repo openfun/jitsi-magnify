@@ -10,6 +10,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Upgrade docker compose to latest version
 - Enable CORS Headers
 - Add Multilingual
 - Add default language management with LANGUAGE_CODE
