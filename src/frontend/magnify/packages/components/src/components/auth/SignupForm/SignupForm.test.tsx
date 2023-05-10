@@ -12,13 +12,15 @@ describe('SignupForm', () => {
     renderWrappedInTestingProvider(<SignupForm />);
 
     const input: SignupFormValues = {
-      email: 'invalid@email',
+      email: 'invalid@email.',
       username: 'invalid@!',
       password: '123',
       confirmPassword: '1234',
       name: 'valid',
       language: MagnifyLocales.EN,
     };
+
+    await screen.findByText('Create an account');
 
     await act(async () => {
       await user.type(screen.getByRole('textbox', { name: 'Name' }), input.confirmPassword);
@@ -31,9 +33,7 @@ describe('SignupForm', () => {
 
     await screen.findByText('email must be a valid email');
     expect(screen.queryByText(validationMessages.usernameInvalid.defaultMessage)).toBeNull();
-    expect(
-      await screen.findByText(validationMessages.confirmDoesNotMatch.defaultMessage),
-    ).toBeInTheDocument();
+    await screen.findByText('New password and its confirmation do not match');
     expect(screen.getByRole('button', { name: 'Signup' })).toBeDisabled();
   });
 });

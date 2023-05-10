@@ -50,7 +50,6 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
 
   useEffect(() => {
     window.config = TESTING_CONF;
-    HttpService.init(TESTING_CONF.API_URL);
   }, []);
 
   return (
