@@ -1,4 +1,4 @@
-import { ComponentStory } from '@storybook/react';
+import { StoryFn } from '@storybook/react';
 import { Box } from 'grommet';
 import React from 'react';
 import { withRouter } from 'storybook-addon-react-router-v6';
@@ -12,7 +12,7 @@ export default {
   decorators: [withRouter],
 };
 
-const Template: ComponentStory<typeof IntroductionLayout> = (args) => (
+const Template: StoryFn<typeof IntroductionLayout> = (args) => (
   <Box height="100vh" width="100vw">
     <IntroductionLayout {...args}>
       <div>Hello !</div>
@@ -20,9 +20,12 @@ const Template: ComponentStory<typeof IntroductionLayout> = (args) => (
   </Box>
 );
 
-export const Simple = Template.bind({});
-Simple.args = {
-  urlCover: filename,
-  urlLogo: logo,
-  background: 'linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)',
+export const Simple = {
+  render: Template,
+
+  args: {
+    urlCover: filename,
+    urlLogo: logo,
+    background: 'linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)',
+  },
 };

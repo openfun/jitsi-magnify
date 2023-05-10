@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 
 import React from 'react';
 
@@ -9,9 +9,9 @@ import { ResponsiveLayout } from './ResponsiveLayout';
 export default {
   title: 'Layout/ResponsiveLayout',
   component: ResponsiveLayout,
-} as ComponentMeta<typeof ResponsiveLayout>;
+} as Meta<typeof ResponsiveLayout>;
 
-const Template: ComponentStory<typeof ResponsiveLayout> = (args) => {
+const Template: StoryFn<typeof ResponsiveLayout> = (args) => {
   return (
     <ResponsiveLayout {...args}>
       <MagnifyPageContent actions={<RegisterRoom />} title={'Page title'}>
@@ -21,4 +21,6 @@ const Template: ComponentStory<typeof ResponsiveLayout> = (args) => {
   );
 };
 
-export const appLayout = Template.bind({});
+export const appLayout = {
+  render: Template,
+};

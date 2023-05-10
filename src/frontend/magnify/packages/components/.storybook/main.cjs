@@ -11,12 +11,17 @@ module.exports = {
     '@bbbtech/storybook-formik/register',
     'storybook-addon-react-router-v6'
   ],
-  "framework": "@storybook/react",
+  "framework": {
+    name: "@storybook/react-vite",
+    options: {}
+  },
+  "features": {
+    "storyStoreV7": true
+  },
   "core": {
     "builder": "@storybook/builder-vite"
   },
-
-  "features": {
-    "storyStoreV7": true
+  docs: {
+    autodocs: true
   }
 }

@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 
 import { Button, Card } from 'grommet';
 import React from 'react';
@@ -9,9 +9,9 @@ import { MagnifyPageContent } from './MagnifyPageContent';
 export default {
   title: 'Layout/PageContent',
   component: MagnifyPageContent,
-} as ComponentMeta<typeof MagnifyPageContent>;
+} as Meta<typeof MagnifyPageContent>;
 
-const Template: ComponentStory<typeof MagnifyPageContent> = (args) => {
+const Template: StoryFn<typeof MagnifyPageContent> = (args) => {
   return (
     <ResponsiveLayout {...args}>
       <MagnifyPageContent actions={<Button primary label={'Add'} />} title={'Page title'}>
@@ -21,4 +21,6 @@ const Template: ComponentStory<typeof MagnifyPageContent> = (args) => {
   );
 };
 
-export const pageContent = Template.bind({});
+export const pageContent = {
+  render: Template,
+};

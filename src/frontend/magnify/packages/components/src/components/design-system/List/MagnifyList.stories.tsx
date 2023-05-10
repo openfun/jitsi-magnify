@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { _users } from '../../../factories/users';
 import MagnifyList from './MagnifyList';
@@ -6,9 +6,9 @@ import MagnifyList from './MagnifyList';
 export default {
   title: 'DesignSystem/MagnifyList',
   component: MagnifyList,
-} as ComponentMeta<typeof MagnifyList>;
+} as Meta<typeof MagnifyList>;
 
-const Template: ComponentStory<typeof MagnifyList> = (args) => {
+const Template: StoryFn<typeof MagnifyList> = (args) => {
   return (
     <MagnifyList
       rows={_users}
@@ -21,5 +21,6 @@ const Template: ComponentStory<typeof MagnifyList> = (args) => {
   );
 };
 
-// create the template and stories
-export const basic = Template.bind({});
+export const basic = {
+  render: Template,
+};

@@ -1,4 +1,4 @@
-import { ComponentStory } from '@storybook/react';
+import { StoryFn } from '@storybook/react';
 import React from 'react';
 import { AuthForms } from './AuthForms';
 
@@ -7,8 +7,8 @@ export default {
   component: AuthForms,
 };
 
-const Template: ComponentStory<typeof AuthForms> = () => (
-  <AuthForms isLogin={true}>Hello !</AuthForms>
-);
+const Template: StoryFn<typeof AuthForms> = () => <AuthForms isLogin={true}>Hello !</AuthForms>;
 
-export const Simple = Template.bind({});
+export const Simple = {
+  render: Template,
+};
