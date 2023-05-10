@@ -1,4 +1,4 @@
-import { ComponentStory } from '@storybook/react';
+import { StoryFn } from '@storybook/react';
 import React from 'react';
 import { withRouter } from 'storybook-addon-react-router-v6';
 import { SignupForm } from './SignupForm';
@@ -9,10 +9,12 @@ export default {
   decorators: [withRouter],
 };
 
-const Template: ComponentStory<typeof SignupForm> = () => (
+const Template: StoryFn<typeof SignupForm> = () => (
   <div>
     <SignupForm />
   </div>
 );
 
-export const Simple = Template.bind({});
+export const Simple = {
+  render: Template,
+};

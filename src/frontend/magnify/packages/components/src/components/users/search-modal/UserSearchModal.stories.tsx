@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Button } from 'grommet';
 import { rest } from 'msw';
 import React from 'react';
@@ -10,9 +10,9 @@ import { UserSearchModal } from '.';
 export default {
   title: 'Users/SearchModal',
   component: UserSearchModal,
-} as ComponentMeta<typeof UserSearchModal>;
+} as Meta<typeof UserSearchModal>;
 
-const Template: ComponentStory<typeof UserSearchModal> = (args) => {
+const Template: StoryFn<typeof UserSearchModal> = (args) => {
   const modal = useMagnifyModal();
   return (
     <>
@@ -28,16 +28,20 @@ const Template: ComponentStory<typeof UserSearchModal> = (args) => {
   );
 };
 
-// create the template and stories
-export const basic = Template.bind({});
-export const error = Template.bind({});
+export const basic = {
+  render: Template,
+};
 
-error.parameters = {
-  msw: {
-    handlers: [
-      rest.get(buildApiUrl(UsersApiRoutes.SEARCH), (req, res, ctx) => {
-        return res(ctx.status(500), ctx.json({}));
-      }),
-    ],
+export const error = {
+  render: Template,
+
+  parameters: {
+    msw: {
+      handlers: [
+        rest.get(buildApiUrl(UsersApiRoutes.SEARCH), (req, res, ctx) => {
+          return res(ctx.status(500), ctx.json({}));
+        }),
+      ],
+    },
   },
 };

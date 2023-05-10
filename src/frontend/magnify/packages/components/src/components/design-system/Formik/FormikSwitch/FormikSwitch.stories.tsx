@@ -1,5 +1,5 @@
 import withFormik from '@bbbtech/storybook-formik';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { FormikSwitch } from './FormikSwitch';
 
@@ -12,18 +12,20 @@ export default {
       initialValues: { testChecked: true },
     },
   },
-} as ComponentMeta<typeof FormikSwitch>;
+} as Meta<typeof FormikSwitch>;
 
-const Template: ComponentStory<typeof FormikSwitch> = (args, context) => (
+const Template: StoryFn<typeof FormikSwitch> = (args, context) => (
   <div>
     {context.parameters.title}
     <FormikSwitch {...args} />
   </div>
 );
 
-export const basicSwitch = Template.bind({});
+export const basicSwitch = {
+  render: Template,
 
-basicSwitch.args = {
-  name: 'testChecked',
-  label: 'Test FormikSwitch',
+  args: {
+    name: 'testChecked',
+    label: 'Test FormikSwitch',
+  },
 };

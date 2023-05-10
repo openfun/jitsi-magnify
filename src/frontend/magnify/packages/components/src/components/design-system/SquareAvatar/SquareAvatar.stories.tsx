@@ -1,4 +1,4 @@
-import { ComponentStory } from '@storybook/react';
+import { StoryFn } from '@storybook/react';
 import React from 'react';
 import { defaultUser } from '../../../mocks/allHandlers/login/loginHandlers';
 import { SquareAvatar } from './SquareAvatar';
@@ -8,20 +8,20 @@ export default {
   component: SquareAvatar,
 };
 
-const Template: ComponentStory<typeof SquareAvatar> = (args) => <SquareAvatar {...args} />;
-
 const fakeUser = defaultUser;
 
-export const Simple = Template.bind({});
-Simple.args = {
-  src: '',
-  title: fakeUser.name,
+export const Simple = {
+  args: {
+    src: '',
+    title: fakeUser.name,
+  },
 };
 
-export const WithMore = Template.bind({});
-WithMore.args = {
-  more: true,
-  title: 'There is more',
+export const WithMore = {
+  args: {
+    more: true,
+    title: 'There is more',
+  },
 };
 
 export const Empty = () => (
@@ -34,8 +34,9 @@ export const Empty = () => (
   </div>
 );
 
-export const Fallback = Template.bind({});
-Fallback.args = {
-  title: fakeUser.name,
-  src: '',
+export const Fallback = {
+  args: {
+    title: fakeUser.name,
+    src: '',
+  },
 };

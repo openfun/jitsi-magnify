@@ -1,5 +1,5 @@
 import withFormik from '@bbbtech/storybook-formik';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import * as Yup from 'yup';
 import { FormikInput } from './FormikInput';
@@ -18,24 +18,27 @@ export default {
       validationSchema: defaultSchema,
     },
   },
-} as ComponentMeta<typeof FormikInput>;
+} as Meta<typeof FormikInput>;
 
-const Template: ComponentStory<typeof FormikInput> = (args, context) => (
+const Template: StoryFn<typeof FormikInput> = (args, context) => (
   <div>
     {context.parameters.title}
     <FormikInput {...args} />
   </div>
 );
 
-export const basicInput = Template.bind({});
+export const basicInput = {
+  render: Template,
 
-basicInput.args = {
-  name: 'username',
-  placeholder: 'Username',
-  label: 'name',
-};
-basicInput.parameters = {
-  title: 'Test',
+  args: {
+    name: 'username',
+    placeholder: 'Username',
+    label: 'name',
+  },
+
+  parameters: {
+    title: 'Test',
+  },
 };
 
 const inputWithErrorsSchema = Yup.object().shape({
@@ -45,19 +48,21 @@ const inputWithErrorsSchema = Yup.object().shape({
     .required('Your name is required'),
 });
 
-export const inputWithErrors = Template.bind({});
+export const inputWithErrors = {
+  render: Template,
 
-inputWithErrors.args = {
-  name: 'username',
-  label: 'Name',
-};
+  args: {
+    name: 'username',
+    label: 'Name',
+  },
 
-inputWithErrors.parameters = {
-  title: 'Input with errors',
-  formik: {
-    initialValues: { username: '' },
-    initialTouched: { username: true },
-    initialErrors: { username: 'Your name is required' },
-    validationSchema: inputWithErrorsSchema,
+  parameters: {
+    title: 'Input with errors',
+    formik: {
+      initialValues: { username: '' },
+      initialTouched: { username: true },
+      initialErrors: { username: 'Your name is required' },
+      validationSchema: inputWithErrorsSchema,
+    },
   },
 };

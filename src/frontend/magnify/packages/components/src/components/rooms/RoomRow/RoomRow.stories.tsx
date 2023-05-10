@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { withRouter } from 'storybook-addon-react-router-v6';
 import createRandomRoom from '../../../factories/rooms';
@@ -8,14 +8,12 @@ export default {
   title: 'Rooms/RoomRow',
   component: RoomRow,
   decorators: [withRouter],
-} as ComponentMeta<typeof RoomRow>;
+} as Meta<typeof RoomRow>;
 
-// Template
-const Template: ComponentStory<typeof RoomRow> = (args: RoomRowProps) => <RoomRow {...args} />;
+export const Simple = {
+  args: { baseJitsiUrl: '/', room: createRandomRoom() },
+};
 
-// Stories
-export const Simple = Template.bind({});
-Simple.args = { baseJitsiUrl: '/', room: createRandomRoom() };
-
-export const Admin = Template.bind({});
-Admin.args = { baseJitsiUrl: '/', room: createRandomRoom(true) };
+export const Admin = {
+  args: { baseJitsiUrl: '/', room: createRandomRoom(true) },
+};
