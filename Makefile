@@ -66,7 +66,7 @@ WAIT_KC_DB           = $(COMPOSE_RUN) dockerize -wait tcp://kc_postgresql:5432 -
 default: help
 
 # -- Project
-bootstrap: ## install development dependencies
+bootstrap: ## Install development dependencies
 bootstrap: \
   env.d/crowdin \
   data/media/.keep \
@@ -79,20 +79,20 @@ bootstrap: \
 .PHONY: bootstrap
 
 # -- Docker/compose
-build: ## build the app container
+build: ## Build the app container
 	@$(COMPOSE) build app
 	@$(COMPOSE) build app-demo
 .PHONY: build
 
-down: ## remove stack (warning: it removes the database container)
+down: ## Remove stack (warning: it removes the database container)
 	@$(COMPOSE) down
 .PHONY: down
 
-logs: ## display app logs (follow mode)
+logs: ## Display app logs (follow mode)
 	@$(COMPOSE) logs -f app
 .PHONY: logs
 
-run: ## start the production and development servers
+run: ## Start the production and development servers
 	@$(COMPOSE) up -d app
 	@$(COMPOSE) up -d nginx
 	@$(COMPOSE) up -d keycloak
@@ -102,11 +102,11 @@ run: ## start the production and development servers
 	@$(WAIT_APP)
 .PHONY: run
 
-status: ## an alias for "docker compose ps"
+status: ## An alias for "docker compose ps"
 	@$(COMPOSE) ps
 .PHONY: status
 
-stop: ## stop the development server
+stop: ## Stop the development server
 	@$(COMPOSE) stop
 .PHONY: stop
 
@@ -124,22 +124,22 @@ test-front:
 	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn test
 .PHONY:test-front
 
-lint-front: ## run all front-end "linters"
+lint-front: ## Run all front-end "linters"
 lint-front: \
   lint-front-eslint \
   lint-front-prettier
 .PHONY: lint-front
 
-lint-front-prettier: ## run prettier over js/jsx/json/ts/tsx files -- beware! overwrites files
+lint-front-prettier: ## Run prettier over js/jsx/json/ts/tsx files -- beware! overwrites files
 	@$(COMPOSE_RUN) -e HOME="/tmp" node yarn format:write
 .PHONY: lint-front-prettier
 
-lint-front-eslint: ## lint TypeScript sources
+lint-front-eslint: ## Lint TypeScript sources
 	@$(COMPOSE_RUN) -e HOME="/tmp" node yarn lint
 .PHONY: lint-front-eslint
 
 # -- Back-end
-compilemessages: ## compile the gettext files
+compilemessages: ## Compile the gettext files
 	@$(COMPOSE_RUN) -w /app/src/magnify app python /app/sandbox/manage.py compilemessages
 .PHONY: compilemessages
 
@@ -153,40 +153,40 @@ lint-back: \
   lint-back-bandit
 .PHONY: lint-back
 
-lint-back-diff: ## lint back-end python sources, but only what has changed since master
+lint-back-diff: ## Lint back-end python sources, but only what has changed since master
 	@bin/lint-back-diff
 .PHONY: lint-back-diff
 
-lint-back-black: ## lint back-end python sources with black
+lint-back-black: ## Lint back-end python sources with black
 	@echo 'lint:black started…'
 	@$(COMPOSE_TEST_RUN_APP) black .
 .PHONY: lint-back-black
 
-lint-back-flake8: ## lint back-end python sources with flake8
+lint-back-flake8: ## Lint back-end python sources with flake8
 	@echo 'lint:flake8 started…'
 	@$(COMPOSE_TEST_RUN_APP) flake8 ${PYTHON_FILES} tests
 .PHONY: lint-back-flake8
 
-lint-back-isort: ## automatically re-arrange python imports in back-end code base
+lint-back-isort: ## Automatically re-arrange python imports in back-end code base
 	@echo 'lint:isort started…'
 	@$(COMPOSE_TEST_RUN_APP) isort --atomic ${PYTHON_FILES} tests
 .PHONY: lint-back-isort
 
-lint-back-pylint: ## lint back-end python sources with pylint
+lint-back-pylint: ## Lint back-end python sources with pylint
 	@echo 'lint:pylint started…'
 	@$(COMPOSE_TEST_RUN_APP) pylint ${PYTHON_FILES} tests
 .PHONY: lint-back-pylint
 
-lint-back-bandit: ## lint back-end python sources with bandit
+lint-back-bandit: ## Lint back-end python sources with bandit
 	@echo 'lint:bandit started…'
 	@$(COMPOSE_TEST_RUN_APP) bandit -qr ${PYTHON_FILES}
 .PHONY: lint-back-bandit
 
-messages: ## create the .po files used for i18n
+messages: ## Create the .po files used for i18n
 	@$(COMPOSE_RUN) -w /app/src/magnify app python /app/sandbox/manage.py makemessages --keep-pot
 .PHONY: messages
 
-migrate: ## perform database migrations
+migrate: ## Perform database migrations
 	@$(COMPOSE) up -d ${DB_HOST}
 	@$(WAIT_DB)
 	@$(MANAGE) migrate
@@ -199,20 +199,20 @@ superuser: ## Create an admin user with password "admin"
 	@$(MANAGE) shell -c "from magnify.apps.core.models import User; not User.objects.filter(username='admin').exists() and User.objects.create_superuser('admin', 'admin@example.com', 'admin')"
 .PHONY: superuser
 
-test-back: ## run back-end tests
+test-back: ## Run back-end tests
 	@DB_PORT=$(DB_PORT) bin/pytest
 .PHONY: test-back
 
 # -- Internationalization
-crowdin-download: ## download translated message from Crowdin
+crowdin-download: ## Download translated message from Crowdin
 	@$(COMPOSE_RUN_CROWDIN) download -c crowdin/config.yml
 .PHONY: crowdin-download
 
-crowdin-upload: ## upload source translations to Crowdin
+crowdin-upload: ## Upload source translations to Crowdin
 	@$(COMPOSE_RUN_CROWDIN) upload sources -c crowdin/config.yml
 .PHONY: crowdin-upload
 
-i18n-compile: ## compile translated messages to be used by all applications
+i18n-compile: ## Compile translated messages to be used by all applications
 i18n-compile: \
   i18n-compile-back \
   i18n-compile-front
@@ -226,19 +226,19 @@ i18n-compile-front: ## Compile translated messages for all frontend packages
 	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn compile-translations
 .PHONY: i18n-compile-front
 
-i18n-download-and-compile: ## download all translated messages and compile them to be used by all applications
+i18n-download-and-compile: ## Download all translated messages and compile them to be used by all applications
 i18n-download-and-compile: \
   crowdin-download \
   i18n-compile
 .PHONY: i18n-download-and-compile
 
-i18n-generate: ## generate source translations files for all applications
+i18n-generate: ## Generate source translations files for all applications
 i18n-generate: \
   i18n-generate-back \
-  i18n-generate-front ## generate source translations files for all applications
+  i18n-generate-front ## Generate source translations files for all applications
 .PHONY: i18n-generate
 
-i18n-generate-and-upload: ## generate source translations for all applications and upload then to crowdin
+i18n-generate-and-upload: ## Generate source translations for all applications and upload then to crowdin
 i18n-generate-and-upload: \
   i18n-generate \
   crowdin-upload
@@ -253,7 +253,7 @@ i18n-generate-front: ## Extract strings to be translated from the code of all fr
 .PHONY: i18n-generate-front
 
 # -- Misc
-clean: ## restore repository state as it was freshly cloned
+clean: ## Restore repository state as it was freshly cloned
 	git clean -idx
 .PHONY: clean
 
