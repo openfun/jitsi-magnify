@@ -48,6 +48,7 @@ COMPOSE_EXEC         = $(COMPOSE) exec
 COMPOSE_EXEC_APP     = $(COMPOSE_EXEC) app
 COMPOSE_EXEC_NODE    = $(COMPOSE_EXEC) node
 COMPOSE_RUN_APP      = $(COMPOSE_RUN) app
+COMPOSE_RUN_NODE    = $(COMPOSE_RUN) node
 COMPOSE_RUN_CROWDIN  = $(COMPOSE_RUN) crowdin crowdin
 COMPOSE_TEST_RUN     = $(COMPOSE) run --rm -e DJANGO_CONFIGURATION=Test
 COMPOSE_TEST_RUN_APP = $(COMPOSE_TEST_RUN) app
@@ -123,6 +124,11 @@ test-front: ## Test frontend for each package
 test-front:
 	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn test
 .PHONY:test-front
+
+dev-storybook: ## Run the storybook locally
+dev-storybook:
+	@$(COMPOSE_RUN_NODE) bash -c "cd magnify/packages/components && yarn install && yarn storybook"
+.PHONY: dev-storybook
 
 lint-front: ## run all front-end "linters"
 lint-front: \
