@@ -1,4 +1,4 @@
-import {MagnifyTestingProvider} from "../src";
+import {HttpService, MagnifyTestingProvider, TESTING_CONF} from "../src";
 import * as React from 'react';
 import {initialize, mswDecorator} from 'msw-storybook-addon';
 import {handlers} from "../src/mocks/handlers";
@@ -6,7 +6,7 @@ import '@fontsource/roboto'; // Defaults to weight 400.
 
 // Initialize MSW
 initialize();
-
+HttpService.init(TESTING_CONF.API_URL);
 
 export const decorators = [
   (Story) => (

@@ -1,3 +1,5 @@
+import { HttpService } from '../http';
+
 export interface UrlBuilderParams {
   [key: string]: string | number;
 }
@@ -11,5 +13,10 @@ export class RoutesBuilderService {
     });
 
     return output;
+  }
+
+  public static buildWithBaseUrl(route: string, params: UrlBuilderParams = {}) {
+    const newRoute = `${HttpService.baseUrl}${route}`;
+    return RoutesBuilderService.build(newRoute, params);
   }
 }

@@ -7,10 +7,9 @@ import { defineMessages, useIntl } from 'react-intl';
 import { useErrors } from '../../../hooks/useErrors';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { RoomsRepository } from '../../../services/rooms/rooms.repository';
-import { RoomResponse } from '../../../types';
-import { Room, RoomSettings } from '../../../types/entities/room';
+import { Room, RoomResponse, RoomSettings } from '../../../types';
 import { Maybe } from '../../../types/misc';
-import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
+import { MagnifyQueryKeys } from '../../../utils';
 import { MagnifyCard } from '../../design-system';
 
 import { FormikSwitch } from '../../design-system/Formik/FormikSwitch';
@@ -42,11 +41,15 @@ export const roomConfigMessages = defineMessages({
     description: 'Placeholder for the room password input',
     id: 'components.rooms.config.askForPasswordInputPlaceholder',
   },
-
   enableChat: {
     defaultMessage: 'Enable chat',
     description: 'Label for the toggle in the room configuration that enables chat',
     id: 'components.rooms.config.enableChat',
+  },
+  isPublicRoom: {
+    defaultMessage: 'Public room',
+    description: 'Label for the toggle in the room configuration that make private or public room',
+    id: 'components.rooms.config.isPublic',
   },
   enableScreenSharing: {
     defaultMessage: 'Enable screen sharing',
@@ -88,8 +91,12 @@ export const roomConfigMessages = defineMessages({
   },
 });
 
+interface RoomConfigValues extends RoomSettings {
+  is_public: boolean;
+}
+
 export interface RoomConfigProps {
-  room: Maybe<Room>;
+  room: Room;
 }
 
 export const RoomConfig = ({ room }: RoomConfigProps) => {
@@ -98,41 +105,53 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
   const isMobile = useIsMobile();
   const errors = useErrors();
 
-  const { mutate } = useMutation<Maybe<RoomResponse>, AxiosError, RoomSettings>(
-    async (settings: RoomSettings) => {
+  const updateQueryRoom = (newRoom: Room) => {
+    queryClient.setQueryData([MagnifyQueryKeys.ROOM, room?.id], newRoom);
+    queryClient.setQueryData([MagnifyQueryKeys.ROOM, room?.slug], newRoom);
+    queryClient.setQueryData([MagnifyQueryKeys.ROOMS], (rooms: Room[] = []) => {
+      if (!newRoom?.id) {
+        return rooms;
+      }
+      const newRooms = [...rooms];
+      const index = newRooms.findIndex((roomItem) => {
+        return roomItem.id === newRoom.id;
+      });
+
+      if (index >= 0) {
+        newRooms[index] = newRoom;
+      } else {
+        newRooms.push(newRoom);
+      }
+      return newRooms;
+    });
+  };
+
+  const { mutate } = useMutation<Maybe<RoomResponse>, AxiosError, RoomConfigValues>(
+    async (settings) => {
       if (room == null) {
         return;
       }
-      return await RoomsRepository.update(room.id, { configuration: settings });
+      const { is_public, ...roomConfiguration } = settings;
+      return await RoomsRepository.update(room.id, { is_public, configuration: roomConfiguration });
     },
     {
-      onSuccess: (data) => {
-        queryClient.setQueryData([MagnifyQueryKeys.ROOM, room?.id], data);
-        queryClient.setQueryData([MagnifyQueryKeys.ROOM, room?.slug], data);
-        queryClient.setQueryData([MagnifyQueryKeys.ROOMS], (rooms: Room[] = []) => {
-          if (!data?.id) {
-            return rooms;
-          }
-          const newRooms = [...rooms];
-          const index = newRooms.findIndex((roomItem) => {
-            return roomItem.id === data.id;
-          });
-
-          if (index >= 0) {
-            newRooms[index] = data;
-          } else {
-            newRooms.push(data);
-          }
-          return newRooms;
-        });
+      onSuccess: (newRoom) => {
+        if (newRoom) {
+          updateQueryRoom(newRoom);
+        }
       },
       onError: (error) => {
         errors.onError(error);
+        queryClient.invalidateQueries({
+          predicate: (query) => {
+            return query.queryKey.includes(MagnifyQueryKeys.ROOMS);
+          },
+        });
       },
     },
   );
 
-  const initialValues: RoomSettings = {
+  const initialValues: RoomConfigValues = {
     askForAuthentication: room?.configuration?.askForAuthentication ?? true,
     askForPassword: room?.configuration?.askForPassword ?? false,
     roomPassword: room?.configuration?.roomPassword ?? '',
@@ -141,6 +160,7 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
     startAudioMuted: room?.configuration?.startAudioMuted ?? false,
     startWithVideoMuted: room?.configuration?.startWithVideoMuted ?? true,
     screenSharingEnabled: room?.configuration?.screenSharingEnabled ?? true,
+    is_public: room.is_public,
   };
 
   const columns: Record<ResponsiveValue, GridColumnsType> = {
@@ -175,7 +195,13 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
     <>
       <Formik initialValues={initialValues} onSubmit={(values) => mutate(values)}>
         {(props) => (
-          <FormikValuesChange>
+          <FormikValuesChange
+            onChange={(values: RoomConfigValues) => {
+              const { is_public, ...roomConfiguration } = values;
+              const newRoom: Room = { ...room, is_public, configuration: roomConfiguration };
+              updateQueryRoom(newRoom);
+            }}
+          >
             <Grid
               areas={isMobile ? areas.small : areas.medium}
               columns={isMobile ? columns.small : columns.medium}
@@ -185,6 +211,10 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
               <Box gridArea={'settings'}>
                 <MagnifyCard title={intl.formatMessage(roomConfigMessages.settingsTitle)}>
                   <Box gap={'10px'}>
+                    <FormikSwitch
+                      label={intl.formatMessage(roomConfigMessages.isPublicRoom)}
+                      name={'is_public'}
+                    />
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.enableChat)}
                       name={'enableLobbyChat'}
@@ -210,7 +240,6 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
                   </Box>
                 </MagnifyCard>
               </Box>
-
               <Box gap={'10px'} gridArea={'security'}>
                 <MagnifyCard title={intl.formatMessage(roomConfigMessages.securityTitle)}>
                   <Box gap={'medium'}>
