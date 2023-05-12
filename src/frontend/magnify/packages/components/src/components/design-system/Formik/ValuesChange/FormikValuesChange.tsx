@@ -8,6 +8,7 @@ interface FormikValuesChangeProps {
   enableSubmit?: boolean;
   children?: React.ReactNode;
   forceToSubmit?: boolean;
+  onChange?: (values: any) => void;
 }
 
 export const FormikValuesChange: FunctionComponent<FormikValuesChangeProps> = ({
@@ -23,6 +24,10 @@ export const FormikValuesChange: FunctionComponent<FormikValuesChangeProps> = ({
   }, debounceTime);
 
   React.useEffect(() => {
+    if (formik.isValid) {
+      props.onChange?.(formik.values);
+    }
+
     onValuesChange();
   }, [formik.values]);
 

@@ -1,14 +1,14 @@
 import { faker } from '@faker-js/faker';
 import { rest } from 'msw';
-import { buildApiUrl } from '../../../services/http/http.service';
-import { Room, RoomAccessRole } from '../../../types/entities/room';
-import { MagnifyLocales } from '../../../utils';
-import { RoomsApiRoutes } from '../../../utils/routes/api';
+import { buildApiUrl, RoutesBuilderService } from '../../../services';
+import { Room, RoomAccessRole } from '../../../types';
+import { MagnifyLocales, RoomsApiRoutes } from '../../../utils';
 
 export const defaultRoom: Room = {
   id: '123',
   name: 'test-room',
   slug: 'test-room',
+  is_public: false,
   jitsi: {
     room: 'test-room',
     token: '123',
@@ -39,4 +39,10 @@ export const roomsHandlers = [
   rest.post(buildApiUrl(RoomsApiRoutes.GET), (req, res, ctx) => {
     return res(ctx.json(defaultRoom));
   }),
+  rest.patch(
+    RoutesBuilderService.buildWithBaseUrl(RoomsApiRoutes.UPDATE, { id: ':id' }),
+    (req, res, ctx) => {
+      return res(ctx.json(defaultRoom));
+    },
+  ),
 ];

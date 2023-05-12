@@ -18,6 +18,7 @@ export interface Room {
   name: string;
   slug: string;
   is_administrable: boolean;
+  is_public: boolean;
   jitsi: {
     room: string;
     token: string;

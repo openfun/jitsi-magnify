@@ -104,14 +104,16 @@ export function RoomSettingsView() {
               {intl.formatMessage(commonMessages.back)}
             </Button>
             <RoomConfig room={room} />
-            <Box margin={'15px 0'}>
-              <RoomUsersConfig
-                addUser={addUser}
-                onDeleteUser={deleteUser}
-                onUpdateUser={updateUser}
-                room={room}
-              />
-            </Box>
+            {room && !room.is_public && (
+              <Box margin={'15px 0'}>
+                <RoomUsersConfig
+                  addUser={addUser}
+                  onDeleteUser={deleteUser}
+                  onUpdateUser={updateUser}
+                  room={room}
+                />
+              </Box>
+            )}
           </>
         )}
       </>
