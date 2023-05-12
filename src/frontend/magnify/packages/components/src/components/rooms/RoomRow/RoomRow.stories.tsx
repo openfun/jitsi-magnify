@@ -1,8 +1,8 @@
-import { Meta, StoryFn } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import React from 'react';
 import { withRouter } from 'storybook-addon-react-router-v6';
-import createRandomRoom from '../../../factories/rooms';
-import { RoomRow, RoomRowProps } from './RoomRow';
+import { createRandomRoom } from '../../../factories/rooms';
+import { RoomRow } from './RoomRow';
 
 export default {
   title: 'Rooms/RoomRow',

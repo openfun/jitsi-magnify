@@ -2,8 +2,8 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-import createRandomRoom from '../../../factories/rooms';
-import { Room } from '../../../types/entities/room';
+import { createRandomRoom } from '../../../factories';
+import { Room } from '../../../types';
 import { MagnifyTestingProvider } from '../../app';
 import { RoomRow } from './RoomRow';
 

@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { Room, RoomAccessRole, RoomUserAccesses } from '../../types';
 
-export default function createRandomRoom(isAdmin: boolean = true): Room {
+export function createRandomRoom(isAdmin: boolean = true): Room {
   const id = faker.datatype.uuid();
   const name = faker.lorem.slug();
   const result: Room = {
@@ -9,6 +9,7 @@ export default function createRandomRoom(isAdmin: boolean = true): Room {
     name: name,
     slug: faker.lorem.slug(),
     is_administrable: isAdmin,
+    is_public: false,
     jitsi: {
       token: '123',
       room: `${name}-${id}`,

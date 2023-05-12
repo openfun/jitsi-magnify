@@ -1,8 +1,8 @@
 import { act, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import createRandomRoom from '../../../factories/rooms';
-import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
+import { createRandomRoom } from '../../../factories';
+import { renderWrappedInTestingProvider } from '../../../utils';
 import { RegisterRoom } from './RegisterRoom';
 
 describe('RegisterRoom', () => {

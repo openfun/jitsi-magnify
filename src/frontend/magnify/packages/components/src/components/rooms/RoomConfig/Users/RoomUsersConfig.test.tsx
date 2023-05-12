@@ -5,7 +5,7 @@ import { ResponsiveContext } from 'grommet';
 import React from 'react';
 import { describe, it, Mock, vi } from 'vitest';
 
-import createRandomRoom from '../../../../factories/rooms';
+import { createRandomRoom } from '../../../../factories';
 import { Room } from '../../../../types';
 import { ArrayHelper } from '../../../../utils/helpers/array';
 import { MagnifyTestingProvider } from '../../../app';
