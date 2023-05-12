@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { beforeAll, expect, vi } from 'vitest';
-import createRandomRoom from '../../../factories/rooms';
+import { createRandomRoom } from '../../../factories';
 import { KeycloakService } from '../../../services';
-import { renderWrappedInTestingProvider } from '../../../utils/test-utils';
+import { renderWrappedInTestingProvider } from '../../../utils';
 
 import { MyRooms } from './MyRooms';
 

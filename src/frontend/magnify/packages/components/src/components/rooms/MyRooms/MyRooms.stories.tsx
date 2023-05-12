@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
-import createRandomRoom from '../../../factories/rooms';
+import { createRandomRoom } from '../../../factories/rooms';
 import { MyRooms } from './MyRooms';
 
 export default {
