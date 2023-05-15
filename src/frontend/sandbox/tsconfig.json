@@ -1,0 +1,14 @@
+{
+  "extends": "@lib/typescript-configs/react.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".",
+    "composite": false,
+    "jsx": "react-jsx",
+    "paths": {
+      "@openfun/jitsi-magnify": ["../packages/core/src/index.ts"]
+    }
+  },
+  "include": ["src", "../packages/core/src"],
+  "exclude": ["node_modules","dist"],
+}

@@ -1,16 +1,17 @@
 {
-  "name": "magnify-site",
+  "name": "sandbox",
   "private": true,
+  "license": "MIT",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test-watch": "vitest --ui",
     "coverage": "vitest run --coverage",
-    "compile-translations": "../../../node_modules/@openfun/magnify-components/i18n/compile-translations.cjs ./i18n/locales/*.json",
+    "compile-translations": "../packages/core/i18n/compile-translations.cjs ./i18n/locales/*.json",
     "extract-translations": "formatjs extract './**/*.ts*' --ignore ./node_modules --ignore './**/*.d.ts' --ignore './**/*.stories.ts*' --out-file './i18n/frontend.json' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --format crowdin",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "format:check": "prettier --check src ",
@@ -19,12 +20,10 @@
   "dependencies": {
     "@fontsource/roboto": "4.5.8",
     "@jitsi/react-sdk": "1.3.0",
-    "@openfun/magnify-components": "*",
-    "@magnify/typescript-configs": "*",
-    "eslint-config-custom": "*",
-    "@types/styled-components": "5.1.26",
+    "@openfun/jitsi-magnify": "*",
     "@tanstack/react-query": "4.29.5",
     "@tanstack/react-query-devtools": "4.29.6",
+    "@types/styled-components": "5.1.26",
     "axios": "1.4.0",
     "grommet": "2.32.0",
     "grommet-icons": "4.10.0",
@@ -41,9 +40,10 @@
     "web-vitals": "3.3.1"
   },
   "devDependencies": {
+    "@lib/eslint-config": "*",
+    "@lib/typescript-configs": "*",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "13.0.0",
-    "eslint-config-custom": "*",
     "@testing-library/user-event": "14.4.3",
     "@types/jest": "29.5.1",
     "@types/node": "18.16.3",
@@ -68,6 +68,7 @@
     "ts-jest": "29.1.0",
     "typescript": "5.0.4",
     "vite": "4.3.3",
+    "vite-tsconfig-paths": "4.2.0",
     "vitest": "0.30.1"
   }
 }

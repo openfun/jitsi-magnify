@@ -2,11 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import '@fontsource/roboto';
-import {
-  KeycloakService,
-  MagnifyConfiguration,
-  MagnifyProvider,
-} from '@openfun/magnify-components';
+import { KeycloakService, MagnifyConfiguration, MagnifyProvider } from '@openfun/jitsi-magnify';
 import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
