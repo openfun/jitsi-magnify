@@ -15,6 +15,9 @@
         "extract-translations": {
             "outputs": []
         },
+        "compile-translations": {
+            "outputs": []
+        },
         "lint": {
             "outputs": []
         },
