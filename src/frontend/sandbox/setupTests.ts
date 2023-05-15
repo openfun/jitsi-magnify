@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { HttpService, TESTING_CONF } from '@openfun/magnify-components';
-import { beforeAll, afterEach, afterAll } from 'vitest';
+import { afterAll, afterEach, beforeAll } from 'vitest';
 import { server } from './src/mocks/server';
 
 // Establish API mocking before all tests.
