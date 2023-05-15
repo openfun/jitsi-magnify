@@ -235,6 +235,10 @@
     "description": "Label for the toggle in the room configuration that makes everyone starting without camera",
     "message": "Tout le monde commence sans caméra"
   },
+  "components.rooms.config.isPublic": {
+    "description": "Label for the toggle in the room configuration that make private or public room",
+    "message": "Public room"
+  },
   "components.rooms.config.moderationTitle": {
     "description": "Title for the room configuration section with moderation settings",
     "message": "Modération"
@@ -375,6 +379,30 @@
     "description": "Room role owner",
     "message": "Propriétaire"
   },
+  "i18n.commonMessages.back": {
+    "description": "Back message",
+    "message": "Back"
+  },
+  "i18n.commonMessages.error": {
+    "description": "Error label",
+    "message": "Error"
+  },
+  "i18n.commonMessages.requestError": {
+    "description": "Default error message when a request fail",
+    "message": "An error has occurred, please try again or refresh the page"
+  },
+  "utils.routes.rooms.rooms.label": {
+    "description": "The label of the rooms view.",
+    "message": "Rooms"
+  },
+  "utils.routes.rooms.roomsSettings.label": {
+    "description": "The label of the rooms settings view.",
+    "message": "Settings"
+  },
+  "utils.routes.root.root.label": {
+    "description": "Label of the home view.",
+    "message": "Home"
+  },
   "validationMessages.required": {
     "description": "Messages shown when a field is required but the user did not provide any value",
     "message": "Ce champ est obligatoire"
@@ -390,5 +418,21 @@
   "validationMesssages.emailInvalid": {
     "description": "The error message for the email field",
     "message": "Email non valide"
+  },
+  "view.rooms.settings.roomSettingsTitle": {
+    "description": "Page title for the rooms settings page",
+    "message": "Room settings"
+  },
+  "view.rooms.title_part_one": {
+    "description": "Main title part one",
+    "message": "Secure conference"
+  },
+  "view.rooms.title_part_two": {
+    "description": "Main title",
+    "message": "and quality up to 500 people"
+  },
+  "view.users.preferences.title": {
+    "description": "The label for the User preferences title",
+    "message": "User preferences"
   }
 }

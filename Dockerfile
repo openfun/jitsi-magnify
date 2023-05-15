@@ -39,7 +39,7 @@ COPY ./src/magnify /builder/src/magnify/
 
 # Copy distributed application's statics
 COPY --from=front-builder \
-    /builder/src/frontend/magnify/apps/magnify-site/dist \
+    /builder/src/frontend/sandbox/dist \
     /builder/src/magnify/static/frontend
 
 # Upgrade pip to its latest release to speed up dependencies installation

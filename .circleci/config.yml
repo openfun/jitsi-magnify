@@ -23,8 +23,8 @@ aliases:
     restore_cache:
       name: Restore node_modules cache
       keys:
-        - v10-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
-        - v10-front-dependencies-
+        - v14-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
+        - v14-front-dependencies-
 
 jobs:
   # Git jobs
@@ -117,10 +117,10 @@ jobs:
             echo "magnify version: ${BACKEND_VERSION}"
             # In the frontend workspace
             cat src/frontend/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
-            # In the "magnify" frontend library
-            cat src/frontend/magnify/apps/magnify-site/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
-            # In the "demo" frontend application
-            cat src/frontend/magnify/packages/components/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+            # In the "@openfun/jitsi-magnify" frontend library
+            cat src/frontend/packages/core/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+            # In the "sandbox" frontend application
+            cat src/frontend/sandbox/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
 
   # ---- Docker jobs ----
   # Build the Docker image ready for production
@@ -491,15 +491,15 @@ jobs:
       - persist_to_workspace:
           root: ~/fun
           paths:
-            - src/frontend/magnify/apps/magnify-site/i18n/frontend.json
-            - src/frontend/magnify/packages/components/i18n/frontend.json
-            - src/frontend/magnify/packages/components/dist
+            - src/frontend/sandbox/i18n/frontend.json
+            - src/frontend/packages/core/i18n/frontend.json
+            - src/frontend/packages/core/dist
       - save_cache:
           paths:
             - ./node_modules
-            - ./magnify/apps/magnify-site/node_modules
-            - ./magnify/packages/components/node_modules
-          key: v10-front-dependencies-{{ checksum "yarn.lock" }}
+            - ./sandbox/node_modules
+            - ./packages/core/node_modules
+          key: v14-front-dependencies-{{ checksum "yarn.lock" }}
 
   lint-front:
     docker:
@@ -537,11 +537,8 @@ jobs:
           name: Reconnect build
           command: yarn build
       - run:
-          path: magnify/packages/components
-          name: Test components
-          command: |
-            TEST=$(circleci tests glob "src/**/*.test.tsx" | circleci tests split --split-by=timings)
-            yarn test $TEST
+          name: Test @openfun/jitsi-magnify
+          command: yarn test-components
       - run:
           name: Test frontend demo
           command: yarn test-demo
@@ -563,8 +560,8 @@ jobs:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/fun/.npmrc
       - run:
-          name: Publish @openfun/magnify-components package
-          command: npm publish src/frontend/magnify/packages/components
+          name: Publish @openfun/jitsi-magnify package
+          command: npm publish src/frontend/packages/core
 
   # ---- DockerHub publication job ----
   hub:
