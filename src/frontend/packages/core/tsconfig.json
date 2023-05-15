@@ -1,0 +1,9 @@
+{
+  "extends": "@lib/typescript-configs/react.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src", "./src/translations/*.json"],
+  "exclude": ["node_modules","dist"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
