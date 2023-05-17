@@ -213,6 +213,16 @@ authenticate requests.
     ```
 - Example: `{"email": "email", "name": "name", "username": "preferred_username"}`
 
+#### MAGNIFY_JITSI_ROOM_PREFIX
+
+A prefix that will be added in front of the room UUID to compose the Jitsi room name used
+for the conference.
+
+- Type: string
+- Required: No
+- Default: ""
+- Example: `123`
+
 #### MAGNIFY_ALLOW_UNREGISTERED_ROOMS
 
 Whether users can join a room that is not reserved in Magnify. When activated, Magnify will

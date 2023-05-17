@@ -6,6 +6,7 @@ from zoneinfo import ZoneInfo
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from magnify.apps.core.factories import MeetingFactory
 from magnify.apps.core.models import Meeting
@@ -54,3 +55,9 @@ class MeetingsModelsTestCase(TestCase):
         """The Jitsi name should be the meeting ID stripped of all dashes."""
         meeting = MeetingFactory(id="2a76d5ee-8310-4a28-8e7f-c34dbdc4dd8a")
         self.assertEqual(meeting.jitsi_name, "2a76d5ee83104a288e7fc34dbdc4dd8a")
+
+    @override_settings(JITSI_ROOM_PREFIX="1-2-3")
+    def test_models_meetings_name_prefix(self):
+        """It should be possible to set a prefix on the Jitsi room name."""
+        room = MeetingFactory(id="f629e68e-e256-44fe-8ba6-a7e0849de00b")
+        self.assertEqual(room.jitsi_name, "123f629e68ee25644fe8ba6a7e0849de00b")
