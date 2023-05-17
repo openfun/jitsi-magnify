@@ -4,6 +4,7 @@ Unit tests for the Room model
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from magnify.apps.core.factories import (
     GroupFactory,
@@ -48,6 +49,12 @@ class RoomsModelsTestCase(TestCase):
                 "Ensure this value has at most 100 characters (it has 101).",
             ],
         )
+
+    @override_settings(JITSI_ROOM_PREFIX="1-2-3")
+    def test_models_rooms_name_prefix(self):
+        """It should be possible to set a prefix on the Jitsi room name."""
+        room = RoomFactory(id="f629e68e-e256-44fe-8ba6-a7e0849de00b")
+        self.assertEqual(room.jitsi_name, "123f629e68ee25644fe8ba6a7e0849de00b")
 
     def test_models_rooms_slug_unique(self):
         """Room slugs should be unique."""

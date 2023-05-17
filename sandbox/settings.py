@@ -137,6 +137,9 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
         ),
     }
 
+    JITSI_ROOM_PREFIX = values.Value(
+        "", environ_name="MAGNIFY_JITSI_ROOM_PREFIX", environ_prefix=None
+    )
     ALLOW_UNREGISTERED_ROOMS = values.BooleanValue(
         True, environ_name="MAGNIFY_ALLOW_UNREGISTERED_ROOMS", environ_prefix=None
     )

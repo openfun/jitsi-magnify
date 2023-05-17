@@ -402,7 +402,7 @@ class Room(Resource):
     @property
     def jitsi_name(self):
         """The name used for the room in Jitsi."""
-        return str(self.id).replace("-", "")
+        return f"{settings.JITSI_ROOM_PREFIX}{self.id!s}".replace("-", "")
 
 
 class Meeting(BaseModel):
@@ -511,7 +511,7 @@ class Meeting(BaseModel):
     @property
     def jitsi_name(self):
         """The name used as Jitsi room for this meeting."""
-        return str(self.id).replace("-", "")
+        return f"{settings.JITSI_ROOM_PREFIX}{self.id!s}".replace("-", "")
 
     def is_guest(self, user):
         """Return True if the user is a guest, either directly or via a group."""
