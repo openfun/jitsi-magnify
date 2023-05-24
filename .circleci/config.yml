@@ -23,8 +23,8 @@ aliases:
     restore_cache:
       name: Restore node_modules cache
       keys:
-        - v14-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
-        - v14-front-dependencies-
+        - v18-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
+        - v18-front-dependencies-
 
 jobs:
   # Git jobs
@@ -499,7 +499,7 @@ jobs:
             - ./node_modules
             - ./sandbox/node_modules
             - ./packages/core/node_modules
-          key: v14-front-dependencies-{{ checksum "yarn.lock" }}
+          key: v18-front-dependencies-{{ checksum "yarn.lock" }}
 
   lint-front:
     docker:
@@ -531,14 +531,8 @@ jobs:
       - *checkout_fun
       - *restore_node_modules
       - run:
-          # If we run "yarn test" without first rebuilding the "magnify" library, it will not be found
-          # We're not sure why this happens but it is related to the fact that we restore node_moduels
-          # from the cache.
-          name: Reconnect build
-          command: yarn build
-      - run:
           path: packages/core
-          name: Test @openfun/jitsi-magnify
+          name: Test components
           command: |
             TEST=$(circleci tests glob "src/**/*.test.tsx" | circleci tests split --split-by=timings)
             yarn test $TEST
