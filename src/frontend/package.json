@@ -26,7 +26,7 @@
     "lint-magnify": "turbo run lint --filter=@openfun/jitsi-magnify",
     "scripts:new-component": "cd scripts && yarn new-component",
     "scripts:new-icon": "cd scripts && yarn new-icon",
-    "test": "turbo run test --parallel --no-cache",
+    "test": "turbo run test --parallel",
     "test-components": "turbo run test --filter=@openfun/jitsi-magnify",
     "test-demo": "turbo run test --filter=sandbox",
     "verify-all": "yarn format:check && yarn lint && yarn build && yarn test"
