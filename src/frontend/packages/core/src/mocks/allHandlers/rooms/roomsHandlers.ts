@@ -16,11 +16,11 @@ export const defaultRoom: Room = {
   is_administrable: true,
   accesses: [
     {
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       role: RoomAccessRole.OWNER,
       room: '123',
       user: {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         name: 'John Doe',
         username: 'johnDoe',
         language: MagnifyLocales.EN,

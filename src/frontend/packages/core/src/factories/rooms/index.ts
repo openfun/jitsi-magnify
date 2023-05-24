@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { Room, RoomAccessRole, RoomUserAccesses } from '../../types';
 
 export function createRandomRoom(isAdmin: boolean = true): Room {
-  const id = faker.datatype.uuid();
+  const id = faker.string.uuid();
   const name = faker.lorem.slug();
   const result: Room = {
     id: id,
@@ -23,12 +23,12 @@ export function createRandomRoom(isAdmin: boolean = true): Room {
 
 export function createRoomUserAccesses(): RoomUserAccesses {
   return {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     role: RoomAccessRole.ADMINISTRATOR,
     room: '123',
     user: {
-      id: faker.datatype.uuid(),
-      name: faker.name.fullName(),
+      id: faker.string.uuid(),
+      name: faker.person.fullName(),
       username: faker.internet.userName(),
       language: 'en',
     },
