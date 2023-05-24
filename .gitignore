@@ -9,6 +9,7 @@ venv
 # Packaging
 build
 dist
+tsconfig.tsbuildinfo
 *.egg-info
 
 # sqlite DB
