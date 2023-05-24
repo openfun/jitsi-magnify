@@ -537,7 +537,7 @@ jobs:
           name: Reconnect build
           command: yarn build
       - run:
-          path: magnify/packages/components
+          path: packages/core
           name: Test @openfun/jitsi-magnify
           command: |
             TEST=$(circleci tests glob "src/**/*.test.tsx" | circleci tests split --split-by=timings)
