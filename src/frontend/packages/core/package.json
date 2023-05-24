@@ -100,5 +100,14 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "jest": {
+    "reporters": [
+      "default",
+      "jest-junit"
+    ]
+  },
+  "jest-junit": {
+    "addFileAttribute": "true"
   }
 }
