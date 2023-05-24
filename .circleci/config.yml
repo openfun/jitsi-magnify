@@ -532,7 +532,7 @@ jobs:
       - *restore_node_modules
       - run:
           path: packages/core
-          name: Test components
+          name: Test @openfun/jitsi-magnify
           command: |
             TEST=$(circleci tests glob "src/**/*.test.tsx" | circleci tests split --split-by=timings)
             yarn test $TEST
