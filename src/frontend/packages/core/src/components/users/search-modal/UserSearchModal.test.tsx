@@ -32,6 +32,7 @@ describe('UserSearch Modal', () => {
     expect(baseElement.getElementsByClassName('user-row')[0]).toHaveStyle(
       'border: 1px solid transparent',
     );
+
     await act(async () => {
       user.click(johnDoe);
       user.click(addButton);
