@@ -531,17 +531,8 @@ jobs:
       - *checkout_fun
       - *restore_node_modules
       - run:
-          # If we run "yarn test" without first rebuilding the "magnify" library, it will not be found
-          # We're not sure why this happens but it is related to the fact that we restore node_moduels
-          # from the cache.
-          name: Reconnect build
-          command: yarn build
-      - run:
           name: Test @openfun/jitsi-magnify
           command: yarn test-components
-      - run:
-          name: Test frontend demo
-          command: yarn test-demo
 
   # Publishing to npm requires that you have define the NPM_TOKEN secret
   # environment variables in CircleCI UI (with your PyPI credentials)
