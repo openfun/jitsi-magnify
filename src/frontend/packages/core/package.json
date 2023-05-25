@@ -30,9 +30,11 @@
     "extract-translations": "formatjs extract './**/*.ts*'  --ignore ./node_modules --ignore './**/*.d.ts' --ignore ./tsconfig.tsbuildinfo --ignore './**/*.stories.ts*' --out-file './i18n/frontend.json' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --format crowdin",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "format:check": "prettier --check src",
-    "format:write": "prettier --write src"
+    "format:write": "prettier --write src",
+    "build-theme": "cunningham -g css -o src"
   },
   "dependencies": {
+    "@openfun/cunningham-react": "0.7.0",
     "formik": "2.4.1",
     "grommet": "2.32.1",
     "grommet-icons": "4.10.0",
@@ -45,8 +47,6 @@
     "@jitsi/react-sdk": "1.3.0",
     "@tanstack/react-query": "4.29.12",
     "axios": "1.4.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
     "react-intl": "6.4.2",
     "react-router-dom": "6.11.2",
     "styled-components": "5.3.11"
@@ -84,6 +84,8 @@
     "msw-storybook-addon": "1.8.0",
     "postcss": "8.4.24",
     "prettier": "2.8.8",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "storybook": "7.0.18",
     "storybook-addon-react-router-v6": "1.0.1",
     "ts-node": "10.9.1",

@@ -1,3 +1,4 @@
+import { CunninghamProvider } from '@openfun/cunningham-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Grommet } from 'grommet';
 import * as React from 'react';
@@ -55,23 +56,25 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
     <TranslationProvider defaultLocale="en" initTranslation={false} locale={locale}>
       <FormErrors />
       <RoutingContextProvider routes={getRouter()}>
-        <Grommet theme={customTheme}>
-          <QueryClientProvider client={queryClient}>
-            <AuthContextProvider
-              initialUser={{
-                id: '123',
-                email: 'john.doe@gmail.com',
-                username: 'JohnDoe',
-                name: 'John Doe',
-                language: MagnifyLocales.EN,
-              }}
-            >
-              <NotificationContextProvider>
-                <ModalContextProvider>{props.children}</ModalContextProvider>
-              </NotificationContextProvider>
-            </AuthContextProvider>
-          </QueryClientProvider>
-        </Grommet>
+        <CunninghamProvider>
+          <Grommet theme={customTheme}>
+            <QueryClientProvider client={queryClient}>
+              <AuthContextProvider
+                initialUser={{
+                  id: '123',
+                  email: 'john.doe@gmail.com',
+                  username: 'JohnDoe',
+                  name: 'John Doe',
+                  language: MagnifyLocales.EN,
+                }}
+              >
+                <NotificationContextProvider>
+                  <ModalContextProvider>{props.children}</ModalContextProvider>
+                </NotificationContextProvider>
+              </AuthContextProvider>
+            </QueryClientProvider>
+          </Grommet>
+        </CunninghamProvider>
       </RoutingContextProvider>
     </TranslationProvider>
   );
