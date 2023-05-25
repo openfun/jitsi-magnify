@@ -12,7 +12,7 @@ import { Maybe } from '../../../types/misc';
 import { MagnifyQueryKeys } from '../../../utils';
 import { MagnifyCard } from '../../design-system';
 
-import { FormikSwitch } from '../../design-system/Formik/FormikSwitch';
+import { FormikSwitch } from '../../design-system/Formik/Switch/FormikSwitch';
 import { FormikInput } from '../../design-system/Formik/Input';
 import { FormikValuesChange } from '../../design-system/Formik/ValuesChange/FormikValuesChange';
 
@@ -109,6 +109,11 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
     queryClient.setQueryData([MagnifyQueryKeys.ROOM, room?.id], newRoom);
     queryClient.setQueryData([MagnifyQueryKeys.ROOM, room?.slug], newRoom);
     queryClient.setQueryData([MagnifyQueryKeys.ROOMS], (rooms: Room[] = []) => {
+      if (rooms.length === 0) {
+        queryClient.invalidateQueries([MagnifyQueryKeys.ROOM]);
+        return;
+      }
+
       if (!newRoom?.id) {
         return rooms;
       }
@@ -210,47 +215,47 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
             >
               <Box gridArea={'settings'}>
                 <MagnifyCard title={intl.formatMessage(roomConfigMessages.settingsTitle)}>
-                  <Box gap={'10px'}>
+                  <Box gap="xxsmall">
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.isPublicRoom)}
-                      name={'is_public'}
+                      name="is_public"
                     />
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.enableChat)}
-                      name={'enableLobbyChat'}
+                      name="enableLobbyChat"
                     />
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.enableScreenSharing)}
-                      name={'screenSharingEnabled'}
+                      name="screenSharingEnabled"
                     />
                   </Box>
                 </MagnifyCard>
               </Box>
               <Box gap={'10px'} gridArea={'moderation'}>
                 <MagnifyCard title={intl.formatMessage(roomConfigMessages.moderationTitle)}>
-                  <Box gap={'medium'} height={'100%'}>
+                  <Box gap="xxsmall" height="100%">
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.everyoneStartsMuted)}
-                      name={'startAudioMuted'}
+                      name="startAudioMuted"
                     />
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.everyoneStartsWithoutCamera)}
-                      name={'startWithVideoMuted'}
+                      name="startWithVideoMuted"
                     />
                   </Box>
                 </MagnifyCard>
               </Box>
               <Box gap={'10px'} gridArea={'security'}>
                 <MagnifyCard title={intl.formatMessage(roomConfigMessages.securityTitle)}>
-                  <Box gap={'medium'}>
+                  <Box gap="xxsmall">
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.enableWaitingRoom)}
-                      name={'waitingRoomEnabled'}
+                      name="waitingRoomEnabled"
                     />
                     <Box gap={'10px'}>
                       <FormikSwitch
                         label={intl.formatMessage(roomConfigMessages.askForPassword)}
-                        name={'askForPassword'}
+                        name="askForPassword"
                       />
                       {props.values.askForPassword === true && (
                         <FormikInput
