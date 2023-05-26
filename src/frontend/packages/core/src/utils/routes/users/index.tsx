@@ -1,6 +1,7 @@
 import React from 'react';
 import { IntlShape } from 'react-intl';
 import { Navigate, Outlet, RouteObject } from 'react-router-dom';
+import { RequireUser } from '../../../components';
 import { UserPreference } from '../../../views/users/preferences';
 
 export enum UserPath {
@@ -15,7 +16,11 @@ export const getUsersRoutes = (intl: IntlShape): RouteObject => {
     children: [
       { element: <Navigate to={UserPath.PREFERENCES} />, index: true },
       {
-        element: <UserPreference />,
+        element: (
+          <RequireUser>
+            <UserPreference />
+          </RequireUser>
+        ),
         path: UserPath.PREFERENCES,
       },
     ],

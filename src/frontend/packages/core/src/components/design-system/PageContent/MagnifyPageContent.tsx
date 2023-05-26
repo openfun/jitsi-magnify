@@ -27,7 +27,7 @@ export const MagnifyPageContent = ({ ...props }: MagnifyPageContentProps) => {
       <Grid
         areas={getAreas()}
         columns={isOnMobile ? ['auto'] : ['auto', 'auto']}
-        pad={{ vertical: 'medium' }}
+        pad={{ vertical: 'none' }}
         rows={isOnMobile ? ['auto', 'auto', 'auto'] : ['auto', 'auto']}
       >
         <Heading truncate gridArea={'title'} level={3} margin={{ vertical: 'none' }} size="small">
