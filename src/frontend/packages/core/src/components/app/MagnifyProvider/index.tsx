@@ -1,3 +1,4 @@
+import { CunninghamProvider } from '@openfun/cunningham-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Grommet } from 'grommet';
@@ -49,16 +50,18 @@ export function MagnifyProvider({
     <TranslationProvider locale={locale}>
       <FormErrors />
       <Grommet full theme={customTheme}>
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <AuthContextProvider initialUser={props.initialUser}>
-            <AuthMiddleware>
-              <NotificationContextProvider>
-                <ModalContextProvider>{props.children}</ModalContextProvider>
-              </NotificationContextProvider>
-            </AuthMiddleware>
-          </AuthContextProvider>
-        </QueryClientProvider>
+        <CunninghamProvider>
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <AuthContextProvider initialUser={props.initialUser}>
+              <AuthMiddleware>
+                <NotificationContextProvider>
+                  <ModalContextProvider>{props.children}</ModalContextProvider>
+                </NotificationContextProvider>
+              </AuthMiddleware>
+            </AuthContextProvider>
+          </QueryClientProvider>
+        </CunninghamProvider>
       </Grommet>
     </TranslationProvider>
   );

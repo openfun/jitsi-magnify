@@ -1,11 +1,13 @@
-import { ButtonExtendedProps, Select, Text } from 'grommet';
+import { Select } from '@openfun/cunningham-react';
+import { ButtonExtendedProps, Text } from 'grommet';
+
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 import { useIsSmallSize } from '../../../../../hooks/useIsMobile';
 import { commonMessages } from '../../../../../i18n/Messages/commonMessages';
 import { commonRoomMessages } from '../../../../../i18n/Messages/Room/commonRoomMessages';
 import { RoomAccessRole, RoomUser } from '../../../../../types';
-import { Maybe } from '../../../../../types/misc';
+import { Maybe, SelectOption } from '../../../../../types/misc';
 import { UserRowBase, UserRowBaseProps } from '../../../../users/row/base';
 
 interface RoomUsersConfigRowProps extends UserRowBaseProps<RoomUser> {
@@ -13,7 +15,7 @@ interface RoomUsersConfigRowProps extends UserRowBaseProps<RoomUser> {
   onDelete: () => void;
   role: RoomAccessRole;
   canUpdate: boolean;
-  options?: ButtonExtendedProps[];
+  options?: SelectOption[];
 }
 
 export const RoomUsersConfigRow = ({ ...props }: RoomUsersConfigRowProps) => {
@@ -32,7 +34,7 @@ export const RoomUsersConfigRow = ({ ...props }: RoomUsersConfigRowProps) => {
     ];
   };
 
-  const getDefaultOptions = () => {
+  const getDefaultOptions = (): { value: RoomAccessRole; label: string }[] => {
     return [
       {
         value: RoomAccessRole.OWNER,
@@ -62,19 +64,17 @@ export const RoomUsersConfigRow = ({ ...props }: RoomUsersConfigRowProps) => {
     }
     return (
       <Select
-        plain
-        defaultValue={RoomAccessRole.OWNER}
-        disabledKey="disabled"
-        labelKey={'label'}
-        onChange={({ option }) => props.onUpdateRole(option.value)}
-        options={props.options ?? getDefaultOptions()}
-        size="small"
-        value={props.role}
-        valueKey={{ key: 'value', reduce: true }}
-        width="50%"
-        style={{
-          border: 'none !important',
-          padding: '5px',
+        clearable={false}
+        defaultValue={props.role ?? RoomAccessRole.OWNER}
+        disabled={!props.canUpdate || (props.options && props.options.length === 0)}
+        hideLabel={true}
+        label={intl.formatMessage(commonRoomMessages.roleLabel)}
+        options={props.options && props.options.length > 0 ? props.options : getDefaultOptions()}
+        onChange={(e) => {
+          if (!e.target.value) {
+            return;
+          }
+          props.onUpdateRole(e.target.value as RoomAccessRole);
         }}
       />
     );
