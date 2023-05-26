@@ -1,11 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Box, Button, Notification, Spinner } from 'grommet';
+import { Box, Notification, Spinner } from 'grommet';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 import { RoomConfig, RoomUsersConfig } from '../../../components';
 import { DefaultPage } from '../../../components/DefaultPage';
+import { BackButton } from '../../../components/design-system/Button/Back/BackButton';
 import { useTranslations } from '../../../i18n';
 import { commonMessages } from '../../../i18n/commonMessages';
 import { RoomsRepository } from '../../../services';
@@ -91,14 +92,7 @@ export function RoomSettingsView() {
         )}
         {!isLoading && error == null && room && (
           <>
-            <Button
-              color={'brand'}
-              onClick={() => {
-                navigate(-1);
-              }}
-            >
-              {intl.formatMessage(commonMessages.back)}
-            </Button>
+            <BackButton />
             <RoomConfig room={room} />
             {room && !room.is_public && (
               <Box margin={'15px 0'}>
