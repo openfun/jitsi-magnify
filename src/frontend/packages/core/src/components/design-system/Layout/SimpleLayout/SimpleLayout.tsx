@@ -1,4 +1,5 @@
-import { Box, Button, Image, Stack, Text } from 'grommet';
+import { Button } from '@openfun/cunningham-react';
+import { Box, Image, Stack } from 'grommet';
 import * as React from 'react';
 import { Fragment, PropsWithChildren } from 'react';
 import { defineMessages } from 'react-intl';
@@ -85,22 +86,14 @@ export const SimpleLayout = ({ urlLogo, ...props }: PropsWithChildren<Props>) =>
           {!isLog && (
             <Fragment>
               {window.config.MAGNIFY_SHOW_REGISTER_LINK && (
-                <Button
-                  primary
-                  label={intl.formatMessage(messages.register)}
-                  onClick={() => router.goToRegister()}
-                  size={'small'}
-                />
+                <Button color="secondary" onClick={() => router.goToRegister()} size={'small'}>
+                  {intl.formatMessage(messages.register)}
+                </Button>
               )}
-              <Text
-                alignSelf={'center'}
-                color={'brand'}
-                onClick={() => router.goToLogin()}
-                size={'medium'}
-                style={{ cursor: 'pointer' }}
-              >
+
+              <Button color="primary" onClick={() => router.goToLogin()} size={'small'}>
                 {intl.formatMessage(messages.login)}
-              </Text>
+              </Button>
             </Fragment>
           )}
 

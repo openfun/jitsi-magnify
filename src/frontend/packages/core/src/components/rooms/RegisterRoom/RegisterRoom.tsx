@@ -1,9 +1,10 @@
-import { Box, Button, Layer } from 'grommet';
-import { Add } from 'grommet-icons';
+import { Button } from '@openfun/cunningham-react';
+import { Box, Layer } from 'grommet';
 import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 import { Room } from '../../../types/entities/room';
+import { CunninghamIcon } from '../../design-system/Icon/CunninghamIcon';
 import { RegisterRoomForm } from '../RegisterRoomForm';
 
 const messages = defineMessages({
@@ -43,12 +44,9 @@ export const RegisterRoom = ({ ...props }: RegisterRoomProps) => {
 
   return (
     <>
-      <Button
-        primary
-        icon={<Add size="15px" />}
-        label={intl.formatMessage(messages.addNewRoomLabel)}
-        onClick={handleOpen}
-      />
+      <Button color="primary" icon={<CunninghamIcon iconName="add" />} onClick={handleOpen}>
+        {intl.formatMessage(messages.addNewRoomLabel)}
+      </Button>
       {open && (
         <Layer
           id="confirmDelete"

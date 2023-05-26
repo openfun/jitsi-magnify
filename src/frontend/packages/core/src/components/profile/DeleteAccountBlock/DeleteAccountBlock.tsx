@@ -1,4 +1,5 @@
-import { Box, Button, Card, Heading, Layer, Text } from 'grommet';
+import { Button } from '@openfun/cunningham-react';
+import { Box, Card, Heading, Layer, Text } from 'grommet';
 import { MarginType } from 'grommet/utils';
 import React, { useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
@@ -79,13 +80,9 @@ export const DeleteAccountBlock = ({ margin = { vertical: 'small' } }: DeleteAcc
             <Text>{intl.formatMessage(messages.deleteAccountBlockDescription)}</Text>
           </Box>
           <Box direction="row" margin={{ bottom: 'large', horizontal: 'large' }}>
-            <Button
-              primary
-              color="status-error"
-              label={intl.formatMessage(messages.deleteAccountButtonLabel)}
-              onClick={handleOpen}
-              role="button"
-            />
+            <Button color="danger" onClick={handleOpen}>
+              {intl.formatMessage(messages.deleteAccountButtonLabel)}
+            </Button>
           </Box>
         </Box>
       </Card>
@@ -109,19 +106,12 @@ export const DeleteAccountBlock = ({ margin = { vertical: 'small' } }: DeleteAcc
               justify="end"
               pad={{ top: 'medium', bottom: 'small' }}
             >
-              <Button
-                color="dark-3"
-                label={intl.formatMessage(messages.cancelButtonLabel)}
-                onClick={handleClose}
-                role="button"
-              />
-              <Button
-                primary
-                color="status-critical"
-                label={intl.formatMessage(messages.confirmDeleteAccountButtonLabel)}
-                onClick={handleDelete}
-                role="button"
-              />
+              <Button color="tertiary" onClick={handleClose}>
+                {intl.formatMessage(messages.cancelButtonLabel)}
+              </Button>
+              <Button color={'danger'} onClick={handleDelete} role="button">
+                {intl.formatMessage(messages.confirmDeleteAccountButtonLabel)}
+              </Button>
             </Box>
           </Box>
         </Layer>

@@ -1,7 +1,8 @@
 import { defineMessages } from '@formatjs/intl';
+import { Button } from '@openfun/cunningham-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Box, Button, ButtonExtendedProps, Card, Menu, Notification, Spinner, Text } from 'grommet';
+import { Box, ButtonExtendedProps, Card, Menu, Notification, Spinner, Text } from 'grommet';
 import { Clone, Configure, FormTrash, MoreVertical } from 'grommet-icons';
 
 import React from 'react';
@@ -194,12 +195,10 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
         </Box>
 
         <Box align={'center'} direction="row">
-          <Button
-            primary
-            label={intl.formatMessage(messages.join)}
-            margin={{ left: 'small' }}
-            onClick={() => routing.goToJitsiRoom(room.slug)}
-          />
+          <Box margin={{ left: 'small' }} />
+          <Button color="primary" onClick={() => routing.goToJitsiRoom(room.slug)} size="small">
+            {intl.formatMessage(messages.join)}
+          </Button>
           <Menu
             dropProps={{ stretch: false, align: { top: 'bottom', right: 'right' } }}
             icon={<MoreVertical size={'medium'} />}

@@ -1,5 +1,5 @@
+import { Button } from '@openfun/cunningham-react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Button } from 'grommet';
 import { rest } from 'msw';
 import React from 'react';
 import { buildApiUrl } from '../../../services';
@@ -16,7 +16,9 @@ const Template: StoryFn<typeof UserSearchModal> = (args) => {
   const modal = useMagnifyModal();
   return (
     <>
-      <Button primary label="show modal" onClick={() => modal.openModal()} />
+      <Button color="primary" onClick={() => modal.openModal()}>
+        show modal
+      </Button>
       <UserSearchModal
         {...modal}
         {...args}
