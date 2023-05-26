@@ -95,12 +95,12 @@ export const MagnifyModal = ({
 
 export const useMagnifyModal = () => {
   const [open, setOpen] = useState(false);
-  const openModal = (openCallback?: () => void): void => {
+  const openModal = (event?: any, openCallback?: () => void): void => {
     setOpen(true);
     openCallback?.();
   };
 
-  const closeModal = (closeCallback?: () => void): void => {
+  const closeModal = (event?: any, closeCallback?: () => void): void => {
     setOpen(false);
     closeCallback?.();
   };

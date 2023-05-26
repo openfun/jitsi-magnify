@@ -1,40 +1,42 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { CunninghamProvider } from '@openfun/cunningham-react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Formik } from 'formik';
 import React from 'react';
+import { vi } from 'vitest';
 import { FormikSelect } from './index';
 
 describe('FormikSelect', () => {
-  it('', async () => {
+  it('should render', async () => {
+    const callback = vi.fn((value) => console.log(value));
+    const user = userEvent.setup();
     const options = [
-      { value: 'fr', label: 'French' },
       { value: 'en', label: 'English' },
+      { value: 'fr', label: 'French' },
     ];
     const selectLabel = 'test-select-label';
     const selectName = 'test-select-name';
     render(
-      <Formik initialValues={{ [selectName]: 'fr' }} onSubmit={() => {}}>
-        <FormikSelect
-          label={selectLabel}
-          labelKey="label"
-          name={selectName}
-          options={options}
-          valueKey={{ key: 'value', reduce: true }}
-        />
-      </Formik>,
+      <CunninghamProvider>
+        <Formik initialValues={{ [selectName]: 'fr' }} onSubmit={() => {}}>
+          <FormikSelect
+            changeCallback={callback}
+            fullWidth={true}
+            label={selectLabel}
+            name={selectName}
+            options={options}
+          />
+        </Formik>
+      </CunninghamProvider>,
     );
 
-    screen.getByLabelText(selectLabel);
-    screen.getByText(selectLabel);
-    const input = screen.getByRole('textbox', { name: `${selectName}, fr` });
-    expect(input).toHaveValue('French');
-
-    const button = screen.getByRole('button', { name: `${selectName}; Selected: fr` });
-    act(() => {
-      button.click();
+    const input = await screen.findByRole('combobox', {
+      name: selectLabel,
     });
 
-    await waitFor(() => {
-      screen.getByText('English');
-    });
+    await user.click(input);
+    const englishOption = await screen.findByRole('option', { name: 'English' });
+    await user.click(englishOption);
+    expect(callback).toBeCalledWith('en');
   });
 });

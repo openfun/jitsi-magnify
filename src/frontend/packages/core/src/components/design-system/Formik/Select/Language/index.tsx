@@ -34,11 +34,11 @@ export const FormikSelectLanguage = ({ ...props }: FormikSelectLanguageProps) =>
   return (
     <FormikSelect
       changeCallback={props.changeCallback}
+      clearable={false}
+      fullWidth={true}
       label={intl.formatMessage(messages.languageLabel)}
-      labelKey="label"
       name={'language'}
       options={getAllOptions()}
-      valueKey={{ key: 'value', reduce: true }}
     />
   );
 };

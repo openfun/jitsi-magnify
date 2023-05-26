@@ -1,10 +1,11 @@
-import { Box, Button, ButtonExtendedProps } from 'grommet';
+import { Button } from '@openfun/cunningham-react';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useAuthContext } from '../../../../context';
 import { commonRoomMessages } from '../../../../i18n/Messages/Room/commonRoomMessages';
 import { Room, RoomAccessRole, RoomUser, User } from '../../../../types';
+import { SelectOption } from '../../../../types/misc';
 import { MagnifyCard } from '../../../design-system/Card';
 import MagnifyList from '../../../design-system/List/MagnifyList';
 import { useMagnifyModal } from '../../../design-system/Modal';
@@ -60,7 +61,7 @@ export const RoomUsersConfig = ({ room, ...props }: RoomUsersConfigProps) => {
     props.addUser(user);
   };
 
-  const getAvailableRoles = (user: RoomUser, userRole: RoomAccessRole): ButtonExtendedProps[] => {
+  const getAvailableOptions = (user: RoomUser, userRole: RoomAccessRole): SelectOption[] => {
     if (!room.is_administrable) {
       return [];
     }
@@ -93,7 +94,6 @@ export const RoomUsersConfig = ({ room, ...props }: RoomUsersConfigProps) => {
       },
     ];
   };
-
   const updateRole = (newRole: RoomAccessRole, userId: string, accessId: string): void => {
     props.onUpdateUser(newRole, userId, accessId);
   };
@@ -101,25 +101,25 @@ export const RoomUsersConfig = ({ room, ...props }: RoomUsersConfigProps) => {
   return (
     <>
       <MagnifyCard
-        gapContent={'medium'}
+        gapContent="medium"
         title={intl.formatMessage(roomConfigUserMessages.sectionTitle)}
+        actions={
+          <>
+            {room.is_administrable && (
+              <Button color="primary" onClick={addUserModal.openModal} size="small">
+                {intl.formatMessage(roomConfigUserMessages.addMember)}
+              </Button>
+            )}
+          </>
+        }
       >
-        <Box direction={'row'} justify={'end'}>
-          {room.is_administrable && (
-            <Button
-              primary
-              label={intl.formatMessage(roomConfigUserMessages.addMember)}
-              onClick={() => addUserModal.openModal()}
-            />
-          )}
-        </Box>
         <MagnifyList
           rows={room.accesses ?? []}
           Row={(rowProps) => (
             <RoomUsersConfigRow
               {...rowProps}
               canUpdate={room.is_administrable}
-              options={getAvailableRoles(rowProps.item.user, rowProps.item.role)}
+              options={getAvailableOptions(rowProps.item.user, rowProps.item.role)}
               role={rowProps.item.role}
               user={rowProps.item.user}
               onDelete={() => {

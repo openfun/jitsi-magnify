@@ -1,31 +1,38 @@
+import { Select } from '@openfun/cunningham-react';
 import { useField } from 'formik';
-import { Box, Select, SelectProps, Text } from 'grommet';
+import { Box } from 'grommet';
 import * as React from 'react';
+import { useMemo } from 'react';
+import { Maybe } from '../../../../types/misc';
 
-export interface FormikSelectProps extends SelectProps {
+export type FormikSelectProps = Parameters<typeof Select>[0] & {
   name: string;
   label: string;
   changeCallback?: (option: any) => void;
-}
+};
 
 export const FormikSelect = (props: FormikSelectProps) => {
-  const [field] = useField(props.name);
+  const [field, meta, helpers] = useField(props.name);
+
+  const selectState = useMemo((): Maybe<'success' | 'error'> => {
+    if (!meta.touched) {
+      return undefined;
+    }
+
+    return meta.error === undefined ? 'success' : 'error';
+  }, [meta.error, meta.touched]);
 
   return (
     <Box gap={'5px'}>
-      <label aria-label={props.label} htmlFor={props.name}>
-        <Text size={'xsmall'} weight={'bold'}>
-          {props.label}
-        </Text>
-      </label>
       <Select
-        aria-label={props.name}
-        size={'small'}
         {...props}
         {...field}
+        state={selectState}
+        text={meta.error ?? props.text}
         onChange={(event) => {
-          field.onChange(event);
-          props.changeCallback?.(event.option.value);
+          field.onChange(event.target.value);
+          helpers.setValue(event.target.value, true);
+          props.changeCallback?.(event.target.value);
         }}
       />
     </Box>
