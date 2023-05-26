@@ -1,9 +1,10 @@
+import { Button } from '@openfun/cunningham-react';
 import { useFormikContext } from 'formik';
-import { Box, Button, ButtonExtendedProps, Spinner, Tip } from 'grommet';
-import * as React from 'react';
+import { Box, Spinner, Tip } from 'grommet';
 import { FunctionComponent } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Maybe } from '../../../../types/misc';
+import { LoadingButton } from '../../Button/Loading';
 
 export const formikSubmitButtonMessages = defineMessages({
   isNotDirty: {
@@ -18,10 +19,11 @@ export const formikSubmitButtonMessages = defineMessages({
   },
 });
 
-interface FormikSubmitButtonProps extends ButtonExtendedProps {
+type FormikSubmitButtonProps = Parameters<typeof Button>[0] & {
+  label: string;
   overrideSubmit?: (values: unknown) => void;
   isLoading?: boolean;
-}
+};
 
 export const FormikSubmitButton: FunctionComponent<FormikSubmitButtonProps> = ({ ...props }) => {
   const formik = useFormikContext();
@@ -59,18 +61,22 @@ export const FormikSubmitButton: FunctionComponent<FormikSubmitButtonProps> = ({
       {showTooltipMessage && (
         <Tip content={getTooltipMessage()}>
           <Box>
-            <Button {...props} primary disabled={true} />
+            <Button {...props} disabled={true}>
+              {props.label}
+            </Button>
           </Box>
         </Tip>
       )}
       {canSubmit && (
-        <Button
+        <LoadingButton
           {...props}
-          primary
+          color="primary"
           disabled={formik.isSubmitting || props.isLoading}
           icon={formik.isSubmitting || props.isLoading ? <Spinner size={'xsmall'} /> : undefined}
           onClick={onSubmit}
-        />
+        >
+          {props.label}
+        </LoadingButton>
       )}
     </Box>
   );

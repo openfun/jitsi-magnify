@@ -1,23 +1,15 @@
-import { ErrorMessage, useField } from 'formik';
-import { Box, Text, TextInput, TextInputProps } from 'grommet';
-import { Hide, View } from 'grommet-icons';
-import * as React from 'react';
-import { FunctionComponent, useState } from 'react';
-import styled from 'styled-components';
+import { Input } from '@openfun/cunningham-react';
+import { useField } from 'formik';
+import { Box } from 'grommet';
+import { useMemo, useState } from 'react';
+import { Maybe } from '../../../../types/misc';
 
-const CustomInput = styled(TextInput)`
-  background-color: #f2f7fd;
-  border: none;
-`;
-
-export interface FormikInputProps extends TextInputProps {
-  label: string;
+type WrapperInputProps = Parameters<typeof Input>[0] & {
   name: string;
-  placeholder?: string;
-}
+};
 
-export const FormikInput: FunctionComponent<FormikInputProps> = (props) => {
-  const [field] = useField(props.name);
+export const FormikInput = (props: WrapperInputProps) => {
+  const [field, meta] = useField(props.name);
   const [showPassword, setShowPassword] = useState(false);
 
   const getInputType = (): string => {
@@ -27,51 +19,37 @@ export const FormikInput: FunctionComponent<FormikInputProps> = (props) => {
     return props.type ?? 'text';
   };
 
-  return (
-    <Box gap={'5px'} width="100%">
-      {props.label != '' && (
-        <label htmlFor={props.name}>
-          <Text size={'xsmall'} weight={'bold'}>
-            {props.label}
-          </Text>
-        </label>
-      )}
-      <div>
-        <Box style={{ position: 'relative' }}>
-          <CustomInput
-            {...field}
-            {...props}
-            ref={null}
-            aria-label={props.label !== '' ? props.label : props.name}
-            id={props.name}
-            type={getInputType()}
-          />
-          {props.type === 'password' && (
-            <Box
-              focusIndicator={false}
-              onClick={() => setShowPassword(!showPassword)}
-              style={{
-                cursor: 'pointer',
-                position: 'absolute',
-                top: '8px',
-                right: '10px',
-              }}
-            >
-              {showPassword ? <View /> : <Hide />}
-            </Box>
-          )}
+  const inputState = useMemo((): Maybe<'success' | 'error'> => {
+    if (!meta.touched || (meta.error === undefined && field.value === '')) {
+      return undefined;
+    }
+
+    return meta.error === undefined ? 'success' : 'error';
+  }, [meta.error, meta.touched]);
+
+  const getRightIcon = (): Maybe<React.ReactElement> => {
+    if (props.type === 'password') {
+      return (
+        <Box
+          focusIndicator={false}
+          onClick={() => setShowPassword(!showPassword)}
+          style={{ cursor: 'pointer' }}
+        >
+          <span className="material-icons">{showPassword ? 'visibility' : 'visibility_off'}</span>
         </Box>
-        <ErrorMessage
-          name={props.name}
-          render={(msg: string) => {
-            return (
-              <Text color={'accent-1'} size={'xsmall'}>
-                {msg}
-              </Text>
-            );
-          }}
-        />
-      </div>
-    </Box>
+      );
+    }
+    return undefined;
+  };
+
+  return (
+    <Input
+      {...field}
+      {...props}
+      rightIcon={getRightIcon()}
+      state={inputState}
+      text={meta.error ?? props.text}
+      type={getInputType()}
+    />
   );
 };

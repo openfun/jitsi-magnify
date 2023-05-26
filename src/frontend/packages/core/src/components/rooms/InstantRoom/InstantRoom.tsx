@@ -1,10 +1,11 @@
+import { Button } from '@openfun/cunningham-react';
 import { Form, Formik } from 'formik';
-import { Box, Button } from 'grommet';
+import { Box } from 'grommet';
 import * as React from 'react';
 import { defineMessages } from 'react-intl';
 import { useRouting } from '../../../context';
 import { useTranslations } from '../../../i18n';
-import { FormikInput } from '../../design-system/Formik/Input';
+import { FormikInput } from '../../design-system/Formik/Input/FormikInput';
 
 const messages = defineMessages({
   startButtonLabel: {
@@ -52,18 +53,16 @@ export const InstantRoom = () => {
         <Box flex align={'center'} direction={'row'} width={'100%'}>
           <Box style={{ flexGrow: 1 }}>
             <FormikInput
-              label={''}
-              name={'roomName'}
-              placeholder={intl.formatMessage(messages.startInputPlaceHolder)}
-              width={'100%'}
+              fullWidth
+              label={intl.formatMessage(messages.startInputPlaceHolder)}
+              name="roomName"
             />
           </Box>
-          <Button
-            primary
-            label={intl.formatMessage(messages.startButtonLabel)}
-            margin={{ left: 'small' }}
-            type={'submit'}
-          />
+          <Box margin={{ left: 'small' }}>
+            <Button color="primary" type="submit">
+              {intl.formatMessage(messages.startButtonLabel)}
+            </Button>
+          </Box>
         </Box>
       </Form>
     </Formik>

@@ -1,68 +1,27 @@
-import withFormik from '@bbbtech/storybook-formik';
-import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
-import * as Yup from 'yup';
+import type { Meta, StoryFn, StoryObj } from '@storybook/react';
+import { Formik } from 'formik';
 import { FormikInput } from './FormikInput';
 
-const defaultSchema = Yup.object().shape({
-  username: Yup.string().min(40, 'Too Short!').max(50, 'Too Long!'),
-});
-
-export default {
-  title: 'Formik/Input',
+const meta: Meta<typeof FormikInput> = {
+  title: 'Cunningham/Formik/Input',
   component: FormikInput,
-  decorators: [withFormik],
-  parameters: {
-    formik: {
-      initialValues: { username: 'John Doe' },
-      validationSchema: defaultSchema,
-    },
-  },
 } as Meta<typeof FormikInput>;
+export default meta;
 
-const Template: StoryFn<typeof FormikInput> = (args, context) => (
-  <div>
-    {context.parameters.title}
-    <FormikInput {...args} />
+const Template: StoryFn<typeof FormikInput> = (args) => (
+  <div style={{ paddingBottom: '200px' }}>
+    <Formik initialValues={{ title: '' }} onSubmit={() => {}}>
+      <FormikInput {...args} />
+    </Formik>
   </div>
 );
 
-export const basicInput = {
+type Story = StoryObj<typeof FormikInput>;
+
+export const Primary: Story = {
   render: Template,
-
   args: {
-    name: 'username',
-    placeholder: 'Username',
-    label: 'name',
-  },
-
-  parameters: {
-    title: 'Test',
-  },
-};
-
-const inputWithErrorsSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(1, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Your name is required'),
-});
-
-export const inputWithErrors = {
-  render: Template,
-
-  args: {
-    name: 'username',
-    label: 'Name',
-  },
-
-  parameters: {
-    title: 'Input with errors',
-    formik: {
-      initialValues: { username: '' },
-      initialTouched: { username: true },
-      initialErrors: { username: 'Your name is required' },
-      validationSchema: inputWithErrorsSchema,
-    },
+    name: 'title',
+    label: 'Title',
   },
 };

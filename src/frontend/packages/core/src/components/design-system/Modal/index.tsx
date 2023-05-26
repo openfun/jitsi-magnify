@@ -1,7 +1,6 @@
 import { Box, Button, Heading, Layer, LayerProps } from 'grommet';
 import { Close } from 'grommet-icons';
-import * as React from 'react';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { commonMessages } from '../../../i18n/Messages/commonMessages';
 
@@ -13,7 +12,7 @@ export enum MagnifyModalTypes {
 export interface MagnifyModalProps extends LayerProps {
   modalUniqueId: string;
   isOpen?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
   showFooter?: boolean;
   type?: MagnifyModalTypes;
   validateButtonLabel?: string;
@@ -21,7 +20,7 @@ export interface MagnifyModalProps extends LayerProps {
   validateButtonCallback?: () => void;
   onClose?: () => void;
   titleModal?: string;
-  footer?: React.ReactNode;
+  footer?: ReactNode;
 }
 
 export const MagnifyModal = ({
@@ -30,7 +29,7 @@ export const MagnifyModal = ({
   ...props
 }: MagnifyModalProps) => {
   const intl = useIntl();
-  const getFooter = (): React.ReactNode => {
+  const getFooter = (): ReactNode => {
     if (props.showFooter != null && !props.showFooter) {
       return <></>;
     }
