@@ -11,9 +11,8 @@ import { Room, RoomResponse, RoomSettings } from '../../../types';
 import { Maybe } from '../../../types/misc';
 import { MagnifyQueryKeys } from '../../../utils';
 import { MagnifyCard } from '../../design-system';
-
+import { FormikInput } from '../../design-system/Formik/Input/FormikInput';
 import { FormikSwitch } from '../../design-system/Formik/Switch/FormikSwitch';
-import { FormikInput } from '../../design-system/Formik/Input';
 import { FormikValuesChange } from '../../design-system/Formik/ValuesChange/FormikValuesChange';
 
 export const roomConfigMessages = defineMessages({
@@ -259,11 +258,9 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
                       />
                       {props.values.askForPassword === true && (
                         <FormikInput
+                          fullWidth={true}
                           label={intl.formatMessage(roomConfigMessages.askForPasswordInputLabel)}
-                          name={'roomPassword'}
-                          placeholder={intl.formatMessage(
-                            roomConfigMessages.askForPasswordInputPlaceholder,
-                          )}
+                          name="roomPassword"
                         />
                       )}
                     </Box>

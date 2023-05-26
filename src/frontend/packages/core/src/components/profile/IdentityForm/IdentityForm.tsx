@@ -11,7 +11,7 @@ import { useLocale } from '../../../i18n/TranslationProvider/TranslationsProvide
 import { UsersRepository } from '../../../services/users/users.repository';
 
 import { getDefaultLocale } from '../../../utils/settings';
-import { FormikInput } from '../../design-system/Formik/Input';
+import { FormikInput } from '../../design-system/Formik/Input/FormikInput';
 import { LocalizedForm } from '../../design-system/Formik/LanguageChange';
 import { FormikSelectLanguage } from '../../design-system/Formik/Select/Language';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
@@ -99,18 +99,20 @@ export const IdentityForm = () => {
     >
       <LocalizedForm>
         <Box gap="10px">
-          <FormikInput label={intl.formatMessage(formLabelMessages.name)} name="name" />
+          <FormikInput fullWidth label={intl.formatMessage(formLabelMessages.name)} name="name" />
           <FormikSelectLanguage
             changeCallback={(locale) => {
               locales.setCurrentLocale(locale);
             }}
           />
           <FormikInput
+            fullWidth
             disabled={true}
             label={intl.formatMessage(messages.usernameLabel)}
             name="username"
           />
           <FormikInput
+            fullWidth
             disabled={true}
             label={intl.formatMessage(messages.emailLabel)}
             name="email"

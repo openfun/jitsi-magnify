@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import { useAuthContext, useNotification, useRouting } from '../../../context';
 
 import { UsersRepository } from '../../../services/users/users.repository';
-import { FormikInput } from '../../design-system/Formik/Input';
+import { FormikInput } from '../../design-system/Formik/Input/FormikInput';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
 const messages = defineMessages({
@@ -105,8 +105,13 @@ export const LoginForm = () => {
           </Text>
         </Box>
         <Box gap={'medium'}>
-          <FormikInput label={intl.formatMessage(messages.usernameLabel)} name={'username'} />
           <FormikInput
+            fullWidth
+            label={intl.formatMessage(messages.usernameLabel)}
+            name={'username'}
+          />
+          <FormikInput
+            fullWidth
             label={intl.formatMessage(messages.passwordLabel)}
             name={'password'}
             type={'password'}

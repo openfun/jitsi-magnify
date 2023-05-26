@@ -10,7 +10,7 @@ import { validationMessages } from '../../../i18n/Messages';
 import { UsersRepository } from '../../../services/users/users.repository';
 import { UserResponse } from '../../../types/api/auth';
 import { Maybe } from '../../../types/misc';
-import { FormikInput } from '../../design-system/Formik/Input';
+import { FormikInput } from '../../design-system/Formik/Input/FormikInput';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
 const messages = defineMessages({
@@ -103,16 +103,19 @@ export const PasswordUpdateForm = () => {
       <Form>
         <Box gap={'10px'}>
           <FormikInput
+            fullWidth
             label={intl.formatMessage(messages.previousPasswordLabel)}
             name={'current_password'}
             type={'password'}
           />
           <FormikInput
+            fullWidth
             label={intl.formatMessage(messages.passwordLabel)}
             name={'new_password'}
             type={'password'}
           />
           <FormikInput
+            fullWidth
             label={intl.formatMessage(messages.confirmNewPasswordLabel)}
             name={'confirmPassword'}
             type={'password'}

@@ -10,7 +10,7 @@ import { RoomsRepository } from '../../../services';
 import { Room } from '../../../types/entities/room';
 import { Maybe } from '../../../types/misc';
 import { MagnifyQueryKeys } from '../../../utils/constants/react-query';
-import { FormikInput } from '../../design-system/Formik/Input';
+import { FormikInput } from '../../design-system/Formik/Input/FormikInput';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
 
 const messages = defineMessages({
@@ -93,9 +93,10 @@ export const RegisterRoomForm = ({ onSuccess }: RegisterRoomFormProps) => {
       <Form>
         <FormikInput
           {...{ autoFocus: true }}
+          fullWidth
           label={intl.formatMessage(formLabelMessages.name)}
-          name={'name'}
-          placeholder={intl.formatMessage(messages.namePlaceholder)}
+          name="name"
+          text={intl.formatMessage(messages.namePlaceholder)}
         />
         <FormikSubmitButton
           isLoading={mutation.isLoading}

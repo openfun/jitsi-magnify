@@ -1,6 +1,5 @@
 import { Formik } from 'formik';
-import { Box, Button, Notification, Spinner, Text } from 'grommet';
-import * as React from 'react';
+import { Box, Notification, Spinner, Text } from 'grommet';
 import { useEffect, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import { useTranslations } from '../../../i18n';
@@ -8,7 +7,7 @@ import { commonMessages } from '../../../i18n/Messages/commonMessages';
 import { UsersRepository } from '../../../services';
 import { User } from '../../../types';
 import { Maybe } from '../../../types/misc';
-import { FormikInput } from '../../design-system/Formik/Input';
+import { FormikInput } from '../../design-system/Formik/Input/FormikInput';
 import { FormikValuesChange } from '../../design-system/Formik/ValuesChange/FormikValuesChange';
 import { MagnifyModal, MagnifyModalProps } from '../../design-system/Modal';
 import { UserRow } from '../row';
@@ -96,9 +95,10 @@ export const UserSearchModal = ({ onSelectUser, ...props }: UserSearchModalProps
           <FormikValuesChange debounceTime={400}>
             <Box align={'center'} gap={'medium'} justify={'center'} width={'100%'}>
               <FormikInput
+                fullWidth
                 label={intl.formatMessage(messages.searchUserLabel)}
-                name={'search'}
-                placeholder={intl.formatMessage(messages.searchUserPlaceholder)}
+                name="search"
+                text={intl.formatMessage(messages.searchUserPlaceholder)}
               />
               {loading && <Spinner />}
               {hasError && (

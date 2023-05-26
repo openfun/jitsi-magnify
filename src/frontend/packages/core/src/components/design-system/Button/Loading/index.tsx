@@ -1,17 +1,20 @@
-import { Button, Spinner } from 'grommet';
-import { ButtonExtendedProps } from 'grommet/components/Button';
+import { Button } from '@openfun/cunningham-react';
+import { Spinner } from 'grommet';
 import * as React from 'react';
 
-export interface LoadingButtonProps extends ButtonExtendedProps {
+export type LoadingButtonProps = Parameters<typeof Button>[0] & {
+  label: string;
   loading?: boolean;
-}
+};
 
-export const LoadingButton = ({ loading, ...props }: LoadingButtonProps) => {
+export const LoadingButton = ({ loading, disabled = false, ...props }: LoadingButtonProps) => {
   return (
     <Button
-      disabled={loading}
-      icon={loading ? <Spinner size={'xsmall'} /> : undefined}
+      disabled={loading || disabled}
+      icon={loading ? <Spinner size="xsmall" /> : undefined}
       {...props}
-    />
+    >
+      {props.label}
+    </Button>
   );
 };

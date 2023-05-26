@@ -13,7 +13,7 @@ import { formLabelMessages } from '../../../i18n/Messages/formLabelMessages';
 import { useLocale } from '../../../i18n/TranslationProvider/TranslationsProvider';
 import { UsersRepository } from '../../../services/users/users.repository';
 import { SignUpData, UserResponse } from '../../../types/api/auth';
-import { FormikInput } from '../../design-system/Formik/Input';
+import { FormikInput } from '../../design-system/Formik/Input/FormikInput';
 import { LocalizedForm } from '../../design-system/Formik/LanguageChange';
 import { FormikSelectLanguage } from '../../design-system/Formik/Select/Language';
 import { FormikSubmitButton } from '../../design-system/Formik/SubmitButton/FormikSubmitButton';
@@ -144,18 +144,24 @@ export const SignupForm = () => {
           <Heading color="brand" level={4} margin={'none'}>
             {intl.formatMessage(messages.formTitle)}
           </Heading>
-          <FormikInput label={intl.formatMessage(formLabelMessages.name)} name={'name'} />
-          <FormikInput label={intl.formatMessage(messages.emailLabel)} name={'email'} />
-          <FormikInput label={intl.formatMessage(messages.usernameLabel)} name={'username'} />
+          <FormikInput fullWidth label={intl.formatMessage(formLabelMessages.name)} name={'name'} />
+          <FormikInput fullWidth label={intl.formatMessage(messages.emailLabel)} name={'email'} />
+          <FormikInput
+            fullWidth
+            label={intl.formatMessage(messages.usernameLabel)}
+            name={'username'}
+          />
           <FormikSelectLanguage
             changeCallback={(newLocale) => locale.setCurrentLocale(newLocale)}
           />
           <FormikInput
+            fullWidth
             label={intl.formatMessage(messages.passwordLabel)}
             name={'password'}
             type={'password'}
           />
           <FormikInput
+            fullWidth
             label={intl.formatMessage(messages.confirmPasswordLabel)}
             name={'confirmPassword'}
             type={'password'}
