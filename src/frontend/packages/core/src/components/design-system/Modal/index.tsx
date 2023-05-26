@@ -1,4 +1,5 @@
-import { Box, Button, Heading, Layer, LayerProps } from 'grommet';
+import { Button } from '@openfun/cunningham-react';
+import { Box, Heading, Layer, LayerProps } from 'grommet';
 import { Close } from 'grommet-icons';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -36,11 +37,9 @@ export const MagnifyModal = ({
     if (props.footer != null) {
       return (
         <Box direction={'row'} gap={'medium'} pad={'small'}>
-          <Button
-            secondary
-            label={intl.formatMessage(commonMessages.cancel)}
-            onClick={props.onClose}
-          />
+          <Button color="secondary" onClick={props.onClose}>
+            {intl.formatMessage(commonMessages.cancel)}
+          </Button>
           {props.footer}
         </Box>
       );
@@ -48,21 +47,20 @@ export const MagnifyModal = ({
 
     return (
       <Box direction={'row'} gap={'small'} pad={'small'}>
-        <Button
-          secondary
-          label={intl.formatMessage(commonMessages.cancel)}
-          onClick={props.onClose}
-        />
+        <Button color="secondary" onClick={props.onClose}>
+          {intl.formatMessage(commonMessages.cancel)}
+        </Button>
         {type === MagnifyModalTypes.WARNING && (
           <Button
-            primary
-            color={validateButtonColor}
-            label={props.validateButtonLabel ?? intl.formatMessage(commonMessages.yes)}
+            color="primary"
             onClick={() => {
               props.onClose?.();
               props.validateButtonCallback?.();
             }}
-          />
+          >
+            props.validateButtonLabel ?? intl.formatMessage(commonMessages.yes)
+            {intl.formatMessage(commonMessages.cancel)}
+          </Button>
         )}
       </Box>
     );

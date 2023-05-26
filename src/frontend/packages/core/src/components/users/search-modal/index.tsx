@@ -1,3 +1,4 @@
+import { Button } from '@openfun/cunningham-react';
 import { Formik } from 'formik';
 import { Box, Notification, Spinner, Text } from 'grommet';
 import { useEffect, useState } from 'react';
@@ -82,12 +83,9 @@ export const UserSearchModal = ({ onSelectUser, ...props }: UserSearchModalProps
     <MagnifyModal
       {...props}
       footer={
-        <Button
-          primary
-          disabled={!selectedUser}
-          label={intl.formatMessage(commonMessages.add)}
-          onClick={handleSubmit}
-        />
+        <Button color="primary" disabled={!selectedUser} onClick={handleSubmit}>
+          {intl.formatMessage(commonMessages.add)}
+        </Button>
       }
     >
       <Box pad={'small'} width={{ width: '100%', min: 'medium' }}>

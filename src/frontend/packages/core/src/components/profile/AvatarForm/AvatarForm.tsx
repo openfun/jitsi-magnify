@@ -1,6 +1,7 @@
-import { Avatar, Box, Button, Card } from 'grommet';
+import { Button } from '@openfun/cunningham-react';
+import { Avatar, Box, Card } from 'grommet';
 import { Trash, User } from 'grommet-icons';
-import React from 'react';
+import React, { useRef } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
 export interface AvatarFormProps {
@@ -28,6 +29,7 @@ const messages = defineMessages({
 
 export const AvatarForm = ({ id, src: defaultSrc = '' }: AvatarFormProps) => {
   const intl = useIntl();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [src, setSrc] = React.useState<string>(defaultSrc);
   const [changed, setChanged] = React.useState<boolean>(false);
 
@@ -59,34 +61,27 @@ export const AvatarForm = ({ id, src: defaultSrc = '' }: AvatarFormProps) => {
         {!changed && (
           <label htmlFor="avatar-file-input">
             <Button
-              primary
-              as="div"
-              label={intl.formatMessage(messages.loadNewButtonLabel)}
-              margin={{ top: 'small' }}
+              color="primary"
+              onClick={() => inputRef?.current?.click()}
               style={{ width: '100%' }}
-            />
+              type={'submit'}
+            >
+              {intl.formatMessage(messages.loadNewButtonLabel)}
+            </Button>
           </label>
         )}
 
         {changed && (
-          <Box direction="row" margin={{ top: 'small' }}>
-            <Button
-              primary
-              label={intl.formatMessage(messages.saveNewAvatarButtonLabel)}
-              margin={{ right: 'small', vertical: 'auto' }}
-              style={{ flexGrow: 1 }}
-              type="submit"
-            />
-            <Button
-              hoverIndicator
-              icon={<Trash />}
-              onClick={handleRemove}
-              tip={intl.formatMessage(messages.removeButtonLabel)}
-            />
+          <Box direction="row" justify={'between'} margin={{ top: 'small' }}>
+            <Button color={'primary'}>
+              {intl.formatMessage(messages.saveNewAvatarButtonLabel)}
+            </Button>
+            <Button color={'tertiary'} icon={<Trash color={'accent-1'} />} onClick={handleRemove} />
           </Box>
         )}
 
         <input
+          ref={inputRef}
           accept="image/png, image/jpeg"
           id="avatar-file-input"
           name="avatar-file-input"
