@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
                         validators=[
                             django.core.validators.RegexValidator(
                                 "^[a-z0-9_-]*$",
-                                message="Username must contain only lower case letters, numbers, underscores and hyphens.",
+                                message="username_validator_message",
                             )
                         ],
                         verbose_name="username",

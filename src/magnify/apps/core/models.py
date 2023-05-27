@@ -65,18 +65,23 @@ class BaseModel(models.Model):
         super().save(*args, **kwargs)
 
 
+def username_validator(value):
+    """Wraps RegexValidator lazily to allow overriding the USERNAME_REGEX setting in tests."""
+    RegexValidator(
+        settings.USERNAME_REGEX,
+        # We use a placeholder string here because the meaning of the sentence will only be
+        # defined in translation files in order to allow customizing the regex and making the
+        # message match the new behavior (it would be inconvenient to come up with a mechanism
+        # that allows defining a message in multiple languages via the settings)
+        message=_("username_validator_message"),
+    )(value)
+
+
 class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     """
     User model with uername and name, admin-compliant permissions.
     Username and password are required. Other fields are optional.
     """
-
-    username_validator = RegexValidator(
-        "^[a-z0-9_-]*$",
-        message=_(
-            "Username must contain only lower case letters, numbers, underscores and hyphens."
-        ),
-    )
 
     username = models.CharField(
         _("username"),

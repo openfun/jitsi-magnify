@@ -1,251 +1,251 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: jitsi-magnify\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-30 18:20+0000\n"
-"PO-Revision-Date: 2023-03-03 13:39\n"
-"Last-Translator: \n"
-"Language-Team: French\n"
-"Language: fr_FR\n"
+"POT-Creation-Date: 2023-05-27 04:39+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Crowdin-Project: jitsi-magnify\n"
-"X-Crowdin-Project-ID: 521808\n"
-"X-Crowdin-Language: fr\n"
-"X-Crowdin-File: backend-magnify.pot\n"
-"X-Crowdin-File-ID: 40\n"
-
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 #: apps/core/apps.py:10
 msgid "Magnify's core application"
-msgstr "Application noyau de Magnify"
+msgstr ""
 
 #: apps/core/authentication.py:21
 msgid "Token contained no recognizable user identification"
-msgstr "Le token ne contient aucun utilisateur identifiable"
+msgstr ""
 
 #: apps/core/models.py:29
 msgid "Member"
-msgstr "Membre"
+msgstr ""
 
 #: apps/core/models.py:30
 msgid "Administrator"
-msgstr "Administrateur"
+msgstr ""
 
 #: apps/core/models.py:31
 msgid "Owner"
-msgstr "Propriétaire"
+msgstr ""
 
 #: apps/core/models.py:52
 msgid "id"
-msgstr "id"
+msgstr ""
 
 #: apps/core/models.py:53
 msgid "primary key for the record as UUID"
-msgstr "clé primaire pour l'enregistrement sous forme d'UUID"
+msgstr ""
 
 #: apps/core/models.py:77
-msgid "Username must contain only lower case letters, numbers, underscores and hyphens."
-msgstr "Le nom d'utilisateur doit uniquement contenir des lettres en minuscule, des nombres, des points et des tirets bas."
+msgid "username_validator_message"
+msgstr "Username must contain only lower case letters, numbers, hyphens, periods and underscores."
 
 #: apps/core/models.py:82
 msgid "username"
-msgstr "nom d'utilisateur"
+msgstr ""
 
 #: apps/core/models.py:87
 msgid "A user with that username already exists."
-msgstr "Ce nom d'utilisateur est déjà réservé."
+msgstr ""
 
 #: apps/core/models.py:100
 msgid "language"
-msgstr "langue"
+msgstr ""
 
 #: apps/core/models.py:101
 msgid "The language in which the user wants to see the interface."
-msgstr "La langue dans laquelle l'utilisateur veut voir l'interface."
+msgstr ""
 
 #: apps/core/models.py:103
 msgid "OIDC subject"
-msgstr "Sujet OIDC"
+msgstr ""
 
 #: apps/core/models.py:108
 msgid "device"
-msgstr "appareil"
+msgstr ""
 
 #: apps/core/models.py:110
 msgid "Designates whether the user is a device or a real user."
-msgstr "Indique si l'utilisateur est un appareil ou un utilisateur réel."
+msgstr ""
 
 #: apps/core/models.py:113
 msgid "staff status"
-msgstr "statut d'équipe"
+msgstr ""
 
 #: apps/core/models.py:115
 msgid "Designates whether the user can log into this admin site."
-msgstr "Précise si l'utilisateur peut se connecter à ce site d'administration."
+msgstr ""
 
 #: apps/core/models.py:118
 msgid "active"
-msgstr "actif"
+msgstr ""
 
 #: apps/core/models.py:121
-msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
-msgstr "Précise si cet utilisateur doit être considéré comme actif. Désélectionnez cette option au lieu de supprimer des comptes."
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
 
 #: apps/core/models.py:125
 msgid "date joined"
-msgstr "date d’adhésion"
+msgstr ""
 
 #: apps/core/models.py:136
 msgid "User"
-msgstr "Utilisateur"
+msgstr ""
 
 #: apps/core/models.py:137
 msgid "Users"
-msgstr "Utilisateurs"
+msgstr ""
 
 #: apps/core/models.py:167
 msgid "Label"
-msgstr "Libellé"
+msgstr ""
 
 #: apps/core/models.py:168
 msgid "Labels"
-msgstr "Libellés"
+msgstr ""
 
 #: apps/core/models.py:189
 msgid "Group"
-msgstr "Groupe"
+msgstr ""
 
 #: apps/core/models.py:190
 msgid "Groups"
-msgstr "Groupes"
+msgstr ""
 
 #: apps/core/models.py:224
 msgid "Resource"
-msgstr "Ressource"
+msgstr ""
 
 #: apps/core/models.py:225
 msgid "Resources"
-msgstr "Ressources"
+msgstr ""
 
 #: apps/core/models.py:285
 msgid "Resource access"
-msgstr "Accès à une ressource"
+msgstr ""
 
 #: apps/core/models.py:286
 msgid "Resource accesses"
-msgstr "Accès à une ressource"
+msgstr ""
 
 #: apps/core/models.py:294
 msgid "Resource access with this user and resource already exists."
-msgstr "L'accès à cette ressource pour cet utilisateur existe déjà."
+msgstr ""
 
 #: apps/core/models.py:302
 msgid "Resource access with this group and resource already exists."
-msgstr "L'accès à cette ressource pour ce groupe existe déjà."
+msgstr ""
 
 #: apps/core/models.py:318
 msgid "The 'owner' role can not be assigned to a group."
-msgstr "Le rôle 'propriétaire' ne peut pas être assigné à un groupe."
+msgstr ""
 
 #: apps/core/models.py:371
 msgid "Jitsi room configuration"
-msgstr "Configuration de la salle Jitsi"
+msgstr ""
 
 #: apps/core/models.py:373
 msgid "Values for Jitsi parameters to configure the room via the iframe API."
-msgstr "Valeurs des paramètres Jitsi pour configurer la salle via l'API iframe."
+msgstr ""
 
 #: apps/core/models.py:380
 msgid "Room"
-msgstr "Salle"
+msgstr ""
 
 #: apps/core/models.py:381
 msgid "Rooms"
-msgstr "Salles"
+msgstr ""
 
 #: apps/core/models.py:414
 msgid "Daily"
-msgstr "Quotidien"
+msgstr ""
 
 #: apps/core/models.py:415
 msgid "Weekly"
-msgstr "Hebdomadaire"
+msgstr ""
 
 #: apps/core/models.py:416
 msgid "Monthly"
-msgstr "Mensuel"
+msgstr ""
 
 #: apps/core/models.py:417
 msgid "Yearly"
-msgstr "Annuel"
+msgstr ""
 
 #: apps/core/models.py:422
 msgid "Every month on this date"
-msgstr "Chaque mois à cette date"
+msgstr ""
 
 #: apps/core/models.py:423
 msgid "Every month on the nth week day of the month"
-msgstr "Chaque mois, le n-ième jour de semaine du mois"
+msgstr ""
 
 #: apps/core/models.py:428
 msgid "Weekdays must contain the numbers of the active days."
-msgstr "Les jours de la semaine doivent contenir le nombre de jours actifs."
+msgstr ""
 
 #: apps/core/models.py:434
 msgid "Room that hosts this meeting."
-msgstr "Salle qui héberge cette réunion."
+msgstr ""
 
 #: apps/core/models.py:442
 msgid "User who created the meeting."
-msgstr "Utilisateur qui a créé la réunion."
+msgstr ""
 
 #: apps/core/models.py:482
 msgid "Meeting"
-msgstr "Réunion"
+msgstr ""
 
 #: apps/core/models.py:483
 msgid "Meetings"
-msgstr "Réunions"
+msgstr ""
 
 #: apps/core/models.py:489
 msgid "The start date must be earlier than the end date."
-msgstr "La date de début doit être antérieure à la date de fin."
+msgstr ""
 
 #: apps/core/models.py:497
 msgid "The start date must be earlier than the date of end of recurrence."
-msgstr "La date de début doit être antérieure à la date de fin de la récurrence."
+msgstr ""
 
 #: apps/core/models.py:546
 msgid "Weekdays should contain the start date."
-msgstr "Les jours de la semaine doivent contenir une date de début."
+msgstr ""
 
 #: apps/core/models.py:701
 msgid "Meeting/guest relation"
-msgstr "Relation réunion/invité"
+msgstr ""
 
 #: apps/core/models.py:702
 msgid "Meeting/guest relations"
-msgstr "Relations réunion/invité"
+msgstr ""
 
 #: apps/core/models.py:710
 msgid "This user is already declared as a guest for this meeting."
-msgstr "Cet utilisateur est déjà déclaré comme invité dans cette réunion."
+msgstr ""
 
 #: apps/core/models.py:718
 msgid "This group is already declared as a guest for this meeting."
-msgstr "Ce groupe est déjà déclaré comme invité dans cette réunion."
+msgstr ""
 
 #: apps/core/serializers/groups.py:22
 msgid "The group must have at least one administrator."
-msgstr "Le groupe doit avoir au moins un administrateur."
+msgstr ""
 
 #: apps/core/serializers/meetings.py:30
 msgid "You must be owner of a meeting to add accesses to it."
-msgstr "Vous devez être le propriétaire d'une réunion pour y ajouter des accès."
+msgstr ""
 
 #: apps/core/serializers/rooms.py:53
 msgid "You must be administrator or owner of a room to add accesses to it."
-msgstr "Vous devez être administrateur ou propriétaire d'une salle pour y ajouter des accès."
-
+msgstr ""

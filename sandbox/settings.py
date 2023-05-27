@@ -216,6 +216,12 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
         environ_prefix=None,
     )
 
+    USERNAME_REGEX = values.Value(
+        r"^[a-z0-9_.-]+$",
+        environ_name="MAGNIFY_USERNAME_REGEX",
+        environ_prefix=None,
+    )
+
     # Login/registration related settings
     LOGIN_REDIRECT_URL = "/"
     LOGOUT_REDIRECT_URL = "/"
