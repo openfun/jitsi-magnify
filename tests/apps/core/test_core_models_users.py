@@ -3,6 +3,7 @@ Unit tests for the Room model
 """
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from magnify.apps.core.factories import UserFactory
 from magnify.apps.core.models import User
@@ -60,15 +61,21 @@ class UsersModelsTestCase(TestCase):
             ["Ensure this value has at most 30 characters (it has 31)."],
         )
 
-    def test_models_users_username_characters(self):
-        """The username field should only contain certain characters."""
+    def test_models_users_username_special_characters(self):
+        """The username field should accept periods, dashes and underscores."""
+        user = UserFactory(username="dave.bowman-1_1")
+        self.assertEqual(user.username, "dave.bowman-1_1")
+
+    def test_models_users_username_spaces(self):
+        """The username field should not contain spaces."""
         with self.assertRaises(ValidationError) as context:
             UserFactory(username="a b")
 
         self.assertEqual(
             context.exception.messages,
             [
-                "Username must contain only lower case letters, numbers, underscores and hyphens."
+                "Username must contain only lower case letters, numbers, hyphens, "
+                "periods and underscores."
             ],
         )
 
@@ -80,7 +87,8 @@ class UsersModelsTestCase(TestCase):
         self.assertEqual(
             context.exception.messages,
             [
-                "Username must contain only lower case letters, numbers, underscores and hyphens."
+                "Username must contain only lower case letters, numbers, hyphens, "
+                "periods and underscores."
             ],
         )
 
@@ -92,7 +100,24 @@ class UsersModelsTestCase(TestCase):
         self.assertEqual(
             context.exception.messages,
             [
-                "Username must contain only lower case letters, numbers, underscores and hyphens."
+                "Username must contain only lower case letters, numbers, hyphens, "
+                "periods and underscores."
+            ],
+        )
+
+    @override_settings(USERNAME_REGEX=r"^[a-z0-9_-]+$")
+    def test_models_users_username_override_regex(self):
+        """
+        It should be possible to override the username regex to customize allowed characters.
+        """
+        with self.assertRaises(ValidationError) as context:
+            UserFactory(username="dave.bowman")
+
+        self.assertEqual(
+            context.exception.messages,
+            [
+                "Username must contain only lower case letters, numbers, hyphens, "
+                "periods and underscores."
             ],
         )
 

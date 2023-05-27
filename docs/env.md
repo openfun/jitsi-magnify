@@ -260,6 +260,17 @@ an external tool and Magnify creates users on-the-fly based on OIDC tokens recei
 - Default: False
 - Example: `true`
 
+#### MAGNIFY_USERNAME_REGEX
+
+Defines what characters are accepted on the `username` field of the user model.
+When customizing it, don't forget to update your translations to customize the
+message held by the placeholder string `username_validator_message`.
+
+- Type: String
+- Required: No
+- Default: `^[a-z0-9_.-]+$`
+- Example: `^[a-zA-Z0-9_.-]+$` (accept also upper case letters)
+
 #### MAGNIFY_JWT_USER_DEVICE_AUDIENCES
 
 A list of "audiences" (`aud` attribute in the OIDC token) that will be flagged as being reserved
