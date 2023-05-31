@@ -84,6 +84,55 @@ The easiest way to run Magnify in production is to use the [official Docker imag
 Configuration is done via environment variables as detailed in our
 [configuration guide](docs/env.md).
 
+
+## Frontend
+
+#### Architecture
+
+The front project is split into two parts.
+
+- A first part in `src/frontend/packages/core` contains all the components, services, repositories, and even complete
+  pages required to build a magnify application. It also includes an AppRouter component that creates an app and
+  its default routes
+
+
+- Then a sandbox application (`src/frontend/sandbox`) which aims to demonstrate how to use the core package.
+
+#### Configuration variables
+
+A set of configuration variables is required. All variables can be configured directly through the environment
+variables of the Django project. They are served to the client via the `/config.json` API route.
+
+Here is the list of all the available variables :
+
+```
+{
+  "API_URL": "http://localhost:8071/api" // URL of magnify api,
+  "JITSI_DOMAIN": "exemple.test",
+  "KEYCLOAK_CLIENT_ID": "magnify-front",
+  "KEYCLOAK_EXPIRATION_SECONDS": 1800,
+  "KEYCLOAK_REALM": "magnify",
+  "MAGNIFY_SHOW_REGISTER_LINK": true,
+  "KEYCLOAK_URL": "http://localhost:8080"
+}
+
+```
+You can mock these variables by adding a `config.json` file in the public folder of the sandbox application.
+
+#### Development mode
+
+We have added a compilation option that allows the compiler to directly access the project sources when it encounters
+an import from the `@openfun/jitsi-magnify` package.
+
+As a result, to use package components in the sandbox, you don't need to build the package. You just need to export them.
+
+To learn how to export new components, please open the `src/frontend/packages/core/index.ts` file.
+
+You can now navigate to the `src/frontend/sandbox` folder and run the `yarn dev` command directly. Hot reload will
+work when you modify a component in the `package/core`.
+
+
+
 ## Contributing
 
 This project is intended to be community-driven, so please, do not hesitate to
