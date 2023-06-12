@@ -8,7 +8,7 @@ export interface RoomSettings {
   roomPassword?: string;
   waitingRoomEnabled?: boolean;
   enableLobbyChat?: boolean;
-  startAudioMuted?: boolean;
+  startWithAudioMuted?: boolean;
   startWithVideoMuted?: boolean;
   screenSharingEnabled?: boolean;
 }
@@ -33,7 +33,7 @@ export const defaultConfiguration: RoomSettings = {
   roomPassword: '',
   waitingRoomEnabled: true,
   enableLobbyChat: true,
-  startAudioMuted: false,
+  startWithAudioMuted: false,
   startWithVideoMuted: true,
   screenSharingEnabled: true,
 };
