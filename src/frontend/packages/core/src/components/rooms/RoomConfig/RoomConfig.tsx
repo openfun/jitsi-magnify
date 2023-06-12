@@ -161,7 +161,7 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
     roomPassword: room?.configuration?.roomPassword ?? '',
     waitingRoomEnabled: room?.configuration?.waitingRoomEnabled ?? true,
     enableLobbyChat: room?.configuration?.enableLobbyChat ?? true,
-    startAudioMuted: room?.configuration?.startAudioMuted ?? false,
+    startWithAudioMuted: room?.configuration?.startWithAudioMuted ?? false,
     startWithVideoMuted: room?.configuration?.startWithVideoMuted ?? true,
     screenSharingEnabled: room?.configuration?.screenSharingEnabled ?? true,
     is_public: room.is_public,
@@ -235,7 +235,7 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
                   <Box gap="xxsmall" height="100%">
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.everyoneStartsMuted)}
-                      name="startAudioMuted"
+                      name="startWithAudioMuted"
                     />
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.everyoneStartsWithoutCamera)}
