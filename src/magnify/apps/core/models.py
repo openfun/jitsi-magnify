@@ -201,7 +201,7 @@ class Group(BaseModel):
 class Resource(BaseModel):
     """Model to define access control"""
 
-    is_public = models.BooleanField(default=False)
+    is_public = models.BooleanField(default=settings.DEFAULT_ROOM_IS_PUBLIC)
     users = models.ManyToManyField(
         User,
         through="ResourceAccess",
