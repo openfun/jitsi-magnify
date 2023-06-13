@@ -13,40 +13,21 @@ from magnify.apps.core.factories import GroupFactory, RoomFactory, UserFactory
 class ListRoomsApiTestCase(APITestCase):
     """Test list requests on magnify's core app API endpoints."""
 
-    @mock.patch(
-        "magnify.apps.core.serializers.rooms.generate_token", return_value="the token"
-    )
-    def test_api_rooms_list_anonymous(self, mock_token):
-        """Anonymous users should only be allowed to list public rooms."""
+    def test_api_rooms_list_anonymous(self):
+        """Anonymous users should not be able to list rooms."""
         RoomFactory(is_public=False)
-        room_public = RoomFactory(is_public=True)
+        RoomFactory(is_public=True)
 
         response = self.client.get("/api/rooms/")
         self.assertEqual(response.status_code, 200)
 
         results = response.json()["results"]
-        self.assertEqual(len(results), 1)
-
-        self.assertEqual(
-            results[0],
-            {
-                "id": str(room_public.id),
-                "is_administrable": False,
-                "is_public": True,
-                "jitsi": {
-                    "room": str(room_public.id).replace("-", ""),
-                    "token": "the token",
-                },
-                "name": room_public.name,
-                "slug": room_public.slug,
-            },
-        )
-        mock_token.assert_called_once()
+        self.assertEqual(len(results), 0)
 
     def test_api_rooms_list_authenticated(self):
         """
-        Authenticated users should be able to list rooms that are public
-        or to which they are related directly or via a group.
+        Authenticated users listing rooms, should only see the rooms to which they are
+        related directly or via a group.
         """
         user = UserFactory()
         group = GroupFactory(members=[user])
@@ -56,7 +37,7 @@ class ListRoomsApiTestCase(APITestCase):
         other_group = GroupFactory(members=[other_user])
 
         RoomFactory(is_public=False)
-        room_public = RoomFactory(is_public=True)
+        RoomFactory(is_public=True)
         room_group_access_accesses = RoomFactory(is_public=False, groups=[group])
         room_user_accesses = RoomFactory(is_public=False, users=[user])
         RoomFactory(is_public=False, groups=[other_group])
@@ -68,9 +49,8 @@ class ListRoomsApiTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 200)
         results = response.json()["results"]
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 2)
         expected_ids = {
-            str(room_public.id),
             str(room_group_access_accesses.id),
             str(room_user_accesses.id),
         }
@@ -83,7 +63,7 @@ class ListRoomsApiTestCase(APITestCase):
         user = UserFactory()
         jwt_token = AccessToken.for_user(user)
 
-        rooms = RoomFactory.create_batch(3, is_public=True)
+        rooms = RoomFactory.create_batch(3, users=[user])
         room_ids = [str(room.id) for room in rooms]
 
         response = self.client.get(

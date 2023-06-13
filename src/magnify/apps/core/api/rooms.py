@@ -70,17 +70,19 @@ class RoomViewSet(
     def list(self, request, *args, **kwargs):
         """Limit listed rooms to the ones related to the authenticated user."""
         user = self.request.user
-        queryset = self.filter_queryset(self.get_queryset())
 
         if user.is_authenticated:
-            queryset = queryset.filter(
-                Q(is_public=True)
-                | Q(users=user)
-                | Q(groups__members=user)
-                | Q(groups__administrators=user)
-            ).distinct()
+            queryset = (
+                self.filter_queryset(self.get_queryset())
+                .filter(
+                    Q(users=user)
+                    | Q(groups__members=user)
+                    | Q(groups__administrators=user)
+                )
+                .distinct()
+            )
         else:
-            queryset = queryset.filter(is_public=True)
+            queryset = self.get_queryset().none()
 
         page = self.paginate_queryset(queryset)
         if page is not None:
