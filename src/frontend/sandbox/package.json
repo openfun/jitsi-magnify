@@ -15,11 +15,12 @@
     "extract-translations": "formatjs extract './**/*.ts*' --ignore ./node_modules --ignore './**/*.d.ts' --ignore './**/*.stories.ts*' --out-file './i18n/frontend.json' --id-interpolation-pattern '[sha512:contenthash:base64:6]' --format crowdin",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "format:check": "prettier --check src ",
-    "format:write": "prettier --write src"
+    "format:write": "prettier --write src",
+    "build-theme": "cunningham -g css,ts -o src"
   },
   "dependencies": {
-    "@fontsource/roboto": "5.0.3",
     "@jitsi/react-sdk": "1.3.0",
+    "@openfun/cunningham-react": "0.7.0",
     "@openfun/jitsi-magnify": "*",
     "@tanstack/react-query": "4.29.12",
     "@tanstack/react-query-devtools": "4.29.12",

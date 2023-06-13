@@ -12,7 +12,7 @@ describe('DeleteAccountBlock', () => {
 
     // Verify we get the explanation with appropriate warnings
     const warning = screen.getByText('Danger zone');
-    expect(warning).toHaveStyle('color: rgb(179, 0, 0)');
+    expect(warning).toHaveStyle('color: rgb(218, 0, 0)');
     expect(warning).toHaveStyle('text-transform: uppercase');
     screen.getByText(/this action cannot be undone/);
     screen.getByText(/will delete all your data/);

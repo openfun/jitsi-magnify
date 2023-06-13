@@ -25,6 +25,6 @@ describe('RowUserBase', () => {
 
     const row = container.querySelector(`#user-${randomUser.id}`);
     expect(row).not.toEqual(null);
-    expect(row).toHaveStyle('border: 1px solid #035ccd');
+    expect(row).toHaveStyle('border: 1px solid #055fd2');
   });
 });

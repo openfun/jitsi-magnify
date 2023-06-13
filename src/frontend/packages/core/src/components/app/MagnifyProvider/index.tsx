@@ -1,9 +1,9 @@
-import { CunninghamProvider } from '@openfun/cunningham-react';
+import { CunninghamProvider, DefaultTokens } from '@openfun/cunningham-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Grommet } from 'grommet';
 import * as React from 'react';
-import { PropsWithChildren, useEffect } from 'react';
+import { PropsWithChildren, useEffect, useMemo } from 'react';
 import {
   AuthContextProvider,
   ModalContextProvider,
@@ -13,7 +13,7 @@ import { TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
 import { AuthMiddleware } from '../../../middleware';
 import { HttpService } from '../../../services';
-import { customTheme } from '../../../themes';
+import { getCustomTheme } from '../../../themes';
 import { MagnifyConfiguration } from '../../../types/config';
 import { User } from '../../../types/entities/user';
 
@@ -34,13 +34,19 @@ export interface MagnifyProviderProps {
   translations?: any;
   locale?: string;
   config: MagnifyConfiguration;
+  cunninghamTheme?: DefaultTokens;
 }
 
 export function MagnifyProvider({
   locale,
   config,
+  cunninghamTheme = {},
   ...props
 }: PropsWithChildren<MagnifyProviderProps>) {
+  const themeConfig = useMemo(() => {
+    return getCustomTheme(cunninghamTheme);
+  }, [cunninghamTheme]);
+
   useEffect(() => {
     HttpService.init(config.API_URL);
     window.config = config;
@@ -49,7 +55,7 @@ export function MagnifyProvider({
   return (
     <TranslationProvider locale={locale}>
       <FormErrors />
-      <Grommet full theme={customTheme}>
+      <Grommet full theme={themeConfig}>
         <CunninghamProvider>
           <QueryClientProvider client={queryClient}>
             <ReactQueryDevtools initialIsOpen={false} />

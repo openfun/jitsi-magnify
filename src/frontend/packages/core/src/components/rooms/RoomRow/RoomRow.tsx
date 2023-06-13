@@ -169,7 +169,7 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
   };
 
   return (
-    <Card background="light-2" elevation="0" pad="small" style={{ position: 'relative' }}>
+    <Card background="light-2" elevation="0" pad="xsmall" style={{ position: 'relative' }}>
       {isLoading && (
         <Box
           align={'center'}
