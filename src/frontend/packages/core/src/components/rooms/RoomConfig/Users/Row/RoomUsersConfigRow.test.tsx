@@ -42,7 +42,7 @@ describe('MagnifyListRoomUsersConfigRow', () => {
     const { user } = renderRoomUserConfigRow(RoomAccessRole.OWNER);
     await screen.findByText(user.username);
     await screen.findByText(user.name);
-    expect(screen.getByDisplayValue('Owner')).toBeInTheDocument();
+    await screen.findByText('Owner');
     // Because Owner role
     expect(screen.queryByRole('button', { name: 'Open Menu' })).not.toBeInTheDocument();
   });
@@ -50,20 +50,16 @@ describe('MagnifyListRoomUsersConfigRow', () => {
   it('select another role', async () => {
     const eventUser = userEvent.setup();
     const { onUpdateRole } = renderRoomUserConfigRow(RoomAccessRole.OWNER);
-    const button = await screen.findByRole('button', { name: 'Open Drop; Selected: owner' });
-    await act(() => {
-      eventUser.click(button);
-    });
-    await waitFor(() => {
-      screen.getByText('Owner');
-      screen.getByText('Administrator');
-      screen.getByText('Member');
-      eventUser.click(screen.getByText('Administrator'));
+    const input = await screen.findByRole('combobox', {
+      name: 'Role',
     });
 
-    await waitFor(async () => {
-      expect(onUpdateRole).toHaveBeenNthCalledWith(1, 'administrator');
-    });
+    await eventUser.click(input);
+    expect(screen.getAllByText('Owner').length).equal(2);
+    screen.getByText('Member');
+    const administrator = screen.getByText('Administrator');
+    await eventUser.click(administrator);
+    expect(onUpdateRole).toHaveBeenNthCalledWith(1, 'administrator');
   });
 
   it('delete role', async () => {

@@ -63,20 +63,23 @@ export const RoomUsersConfigRow = ({ ...props }: RoomUsersConfigRowProps) => {
       );
     }
     return (
-      <Select
-        clearable={false}
-        defaultValue={props.role ?? RoomAccessRole.OWNER}
-        disabled={!props.canUpdate || (props.options && props.options.length === 0)}
-        hideLabel={true}
-        label={intl.formatMessage(commonRoomMessages.roleLabel)}
-        options={props.options && props.options.length > 0 ? props.options : getDefaultOptions()}
-        onChange={(e) => {
-          if (!e.target.value) {
-            return;
-          }
-          props.onUpdateRole(e.target.value as RoomAccessRole);
-        }}
-      />
+      <div>
+        <div>coucou</div>
+        <Select
+          clearable={false}
+          defaultValue={props.role ?? RoomAccessRole.OWNER}
+          disabled={!props.canUpdate || (props.options && props.options.length === 0)}
+          hideLabel={true}
+          label={intl.formatMessage(commonRoomMessages.roleLabel)}
+          options={props.options && props.options.length > 0 ? props.options : getDefaultOptions()}
+          onChange={(e) => {
+            if (!e.target.value) {
+              return;
+            }
+            props.onUpdateRole(e.target.value as RoomAccessRole);
+          }}
+        />
+      </div>
     );
   };
 

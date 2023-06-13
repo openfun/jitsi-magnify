@@ -7,6 +7,6 @@ describe('InstantRoom', () => {
   it('renders', async () => {
     renderWrappedInTestingProvider(<InstantRoom />);
     screen.getByRole('button', { name: 'Start' });
-    screen.getByRole('textbox', { name: 'roomName' });
+    screen.getByRole('textbox', { name: 'Room name' });
   });
 });

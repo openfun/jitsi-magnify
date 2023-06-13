@@ -1,9 +1,9 @@
-import { CunninghamProvider } from '@openfun/cunningham-react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Formik } from 'formik';
 import React from 'react';
 import { vi } from 'vitest';
+import { MagnifyTestingProvider } from '../../../app';
 import { FormikSelect } from './index';
 
 describe('FormikSelect', () => {
@@ -17,17 +17,16 @@ describe('FormikSelect', () => {
     const selectLabel = 'test-select-label';
     const selectName = 'test-select-name';
     render(
-      <CunninghamProvider>
-        <Formik initialValues={{ [selectName]: 'fr' }} onSubmit={() => {}}>
-          <FormikSelect
-            changeCallback={callback}
-            fullWidth={true}
-            label={selectLabel}
-            name={selectName}
-            options={options}
-          />
-        </Formik>
-      </CunninghamProvider>,
+      <Formik initialValues={{ [selectName]: 'fr' }} onSubmit={() => {}}>
+        <FormikSelect
+          changeCallback={callback}
+          fullWidth={true}
+          label={selectLabel}
+          name={selectName}
+          options={options}
+        />
+      </Formik>,
+      { wrapper: MagnifyTestingProvider },
     );
 
     const input = await screen.findByRole('combobox', {

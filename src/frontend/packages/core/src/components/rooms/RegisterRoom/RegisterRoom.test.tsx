@@ -15,7 +15,7 @@ describe('RegisterRoom', () => {
     // 1) Open the form
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     await act(async () => {
-      await user.click(screen.getByRole('button', { name: 'Add Room' }));
+      await user.click(screen.getByRole('button', { name: 'add Room' }));
     });
     screen.getByRole('dialog');
 
