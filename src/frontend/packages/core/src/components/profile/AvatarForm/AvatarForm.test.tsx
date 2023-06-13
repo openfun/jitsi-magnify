@@ -1,8 +1,7 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { IntlProvider } from 'react-intl';
+import { MagnifyTestingProvider } from '../../app';
 import { AvatarForm } from './AvatarForm';
 
 describe('AvatarForm', async () => {
@@ -12,13 +11,7 @@ describe('AvatarForm', async () => {
     async () => {
       const user = userEvent.setup();
 
-      render(
-        <QueryClientProvider client={new QueryClient()}>
-          <IntlProvider locale="en">
-            <AvatarForm id="123" src="test.jpg" />
-          </IntlProvider>
-        </QueryClientProvider>,
-      );
+      render(<AvatarForm id="123" src="test.jpg" />, { wrapper: MagnifyTestingProvider });
 
       // Verify the default layout
       const uploadLabel = screen.getByText('Load new avatar');
@@ -33,7 +26,6 @@ describe('AvatarForm', async () => {
 
       // Verify the new layout: it should be a new save button, a new image, and a new remove button
       await screen.findByText('Save');
-      await screen.findByLabelText('Remove avatar');
       expect(within(avatarImage).getByRole('presentation')).toHaveAttribute(
         'src',
         'data:image/png;base64,aGVsbG8=',

@@ -10,7 +10,7 @@ describe('MagnifyCard', () => {
         <div>Test body</div>
       </MagnifyCard>,
     );
-    screen.getByRole('heading', { level: 3, name: 'Test' });
+    screen.getByRole('heading', { level: 4, name: 'Test' });
     screen.getByText('Test body');
   });
 });
