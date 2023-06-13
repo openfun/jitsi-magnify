@@ -132,6 +132,16 @@ You can now navigate to the `src/frontend/sandbox` folder and run the `yarn dev`
 work when you modify a component in the `package/core`.
 
 
+#### Customization
+
+In order to make magnify customizable, we opted to add the @openfun/cunningham-react package.
+[cunningham documentation](https://github.com/openfun/cunningham)
+
+However, cunningham does not contain all the necessary components. So we are still using Grommet for now. We need to do
+a mapping between the different cunningham tokens and the Grommet theme configuration.
+
+To see how this mapping works, go to `src/frontend/packages/core/themes/theme.ts` file.
+
 
 ## Contributing
 

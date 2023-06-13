@@ -39,7 +39,7 @@ describe('UserSearch Modal', () => {
 
     await waitFor(() => {
       expect(baseElement.getElementsByClassName('user-row')[0]).toHaveStyle(
-        'border: 1px solid #035ccd',
+        'border: 1px solid #055fd2',
       );
       expect(onSelectUser).toHaveBeenNthCalledWith(1, {
         id: '123',

@@ -1,9 +1,9 @@
+import { KeycloakService, MagnifyConfiguration, MagnifyProvider } from '@openfun/jitsi-magnify';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import '@fontsource/roboto';
-import { KeycloakService, MagnifyConfiguration, MagnifyProvider } from '@openfun/jitsi-magnify';
 import App from './App';
+import { tokens as cunningham } from './cunningham-tokens';
+import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -20,7 +20,7 @@ async function render() {
       () => {
         root.render(
           <React.StrictMode>
-            <MagnifyProvider config={config}>
+            <MagnifyProvider config={config} cunninghamTheme={cunningham}>
               <App />
             </MagnifyProvider>
           </React.StrictMode>,

@@ -2,8 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Grommet } from 'grommet';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-
-import { customTheme } from '../../../themes';
+import { MagnifyTestingProvider } from '../../app';
 import { Toggle, ToggleProps } from './Toggle';
 
 function StatefullToggle(props: ToggleProps) {
@@ -24,13 +23,9 @@ describe('Toggle', () => {
   });
 
   it('should change its value on click', () => {
-    render(
-      <Grommet theme={customTheme}>
-        <IntlProvider locale="en">
-          <StatefullToggle label="This is a toggle" title="My toggle" />
-        </IntlProvider>
-      </Grommet>,
-    );
+    render(<StatefullToggle label="This is a toggle" title="My toggle" />, {
+      wrapper: MagnifyTestingProvider,
+    });
     const toggle = screen.getByTitle('My toggle');
     expect(toggle).toHaveAttribute('aria-checked', 'false');
 

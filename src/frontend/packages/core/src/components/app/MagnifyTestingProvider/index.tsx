@@ -1,8 +1,7 @@
 import { CunninghamProvider } from '@openfun/cunningham-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Grommet } from 'grommet';
-import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, PropsWithChildren } from 'react';
 import {
   AuthContextProvider,
   ModalContextProvider,
@@ -11,13 +10,11 @@ import {
 import { RoutingContextInterface, RoutingContextProvider } from '../../../context/routing';
 import { TranslationProvider } from '../../../i18n';
 import { FormErrors } from '../../../i18n/FormErrors';
-import { customTheme } from '../../../themes';
+import { getCustomTheme } from '../../../themes';
 import { TESTING_CONF } from '../../../types/config';
 import { MagnifyLocales } from '../../../utils';
 
-export interface MagnifyTestingProviderProps {
-  children?: React.ReactNode;
-}
+export type MagnifyTestingProviderProps = PropsWithChildren<{}>;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,6 +45,8 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
     };
   };
 
+  const theme = getCustomTheme();
+
   useEffect(() => {
     window.config = TESTING_CONF;
   }, []);
@@ -57,7 +56,7 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
       <FormErrors />
       <RoutingContextProvider routes={getRouter()}>
         <CunninghamProvider>
-          <Grommet theme={customTheme}>
+          <Grommet theme={theme}>
             <QueryClientProvider client={queryClient}>
               <AuthContextProvider
                 initialUser={{

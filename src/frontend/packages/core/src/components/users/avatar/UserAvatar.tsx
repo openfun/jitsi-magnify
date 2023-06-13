@@ -55,7 +55,9 @@ export const UserAvatar = ({ username, name, backgroundColor }: UserAvatarProps)
 
   return (
     <Avatar background={getBackgroundColor()} size={'40px'}>
-      <Text style={{ textDecoration: 'none' }}>{initials}</Text>
+      <Text color={'white'} style={{ textDecoration: 'none' }}>
+        {initials}
+      </Text>
     </Avatar>
   );
 };
