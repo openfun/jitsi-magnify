@@ -223,6 +223,19 @@ for the conference.
 - Default: ""
 - Example: `123`
 
+#### MAGNIFY_DEFAULT_ROOM_IS_PUBLIC
+
+Whether rooms are created as public by default. Rooms that are not marked as public, will not
+deliver any Jitsi JWT token to users who are not authenticated or to users who have not been
+assigned any role in the room.
+
+- Type: Boolean as string
+  * True: 'yes', 'y', 'true', '1'
+  * False: 'no', 'n', 'false', '0', '' (empty string)
+- Required: No
+- Default: True
+- Example: `false`
+
 #### MAGNIFY_ALLOW_UNREGISTERED_ROOMS
 
 Whether users can join a room that is not reserved in Magnify. When activated, Magnify will

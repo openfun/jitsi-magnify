@@ -111,9 +111,9 @@ class RoomsModelsTestCase(TestCase):
         self.assertEqual(list(room.labels.all()), [label])
 
     def test_models_rooms_is_public_default(self):
-        """A room should not be public by default."""
+        """A room should be public by default."""
         room = Room.objects.create(name="room")
-        self.assertFalse(room.is_public)
+        self.assertTrue(room.is_public)
 
     # Access rights methods
 
