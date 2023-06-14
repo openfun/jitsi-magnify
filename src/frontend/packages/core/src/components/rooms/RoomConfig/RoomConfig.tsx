@@ -216,10 +216,6 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
                 <MagnifyCard title={intl.formatMessage(roomConfigMessages.settingsTitle)}>
                   <Box gap="xxsmall">
                     <FormikSwitch
-                      label={intl.formatMessage(roomConfigMessages.isPublicRoom)}
-                      name="is_public"
-                    />
-                    <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.enableChat)}
                       name="enableLobbyChat"
                     />
@@ -247,6 +243,10 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
               <Box gap={'10px'} gridArea={'security'}>
                 <MagnifyCard title={intl.formatMessage(roomConfigMessages.securityTitle)}>
                   <Box gap="xxsmall">
+                    <FormikSwitch
+                      label={intl.formatMessage(roomConfigMessages.isPublicRoom)}
+                      name="is_public"
+                    />
                     <FormikSwitch
                       label={intl.formatMessage(roomConfigMessages.enableWaitingRoom)}
                       name="waitingRoomEnabled"
