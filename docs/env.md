@@ -266,6 +266,10 @@ Defines what characters are accepted on the `username` field of the user model.
 When customizing it, don't forget to update your translations to customize the
 message held by the placeholder string `username_validator_message`.
 
+Make sure your identity provider (Keycloak in the case of our development sandbox)
+is not more permissive on username characters otherwise a user can be created in the
+identity provider with a username that will then be rejected by Django.
+
 - Type: String
 - Required: No
 - Default: `^[a-z0-9_.-]+$`
