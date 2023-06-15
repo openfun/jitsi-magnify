@@ -1109,7 +1109,10 @@
         "id": "96260850-72a5-4b49-b96b-5a33d0b5337d",
         "providerId": "declarative-user-profile",
         "subComponents": {},
-        "config": {}
+        "config": {
+          "config-pieces-count" : [ "1" ],
+          "config-piece-0" : [ "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"pattern\":{\"pattern\":\"^[a-z0-9_.-]+$\",\"error-message\":\"Username must contain only lower case letters, numbers, hyphens, periods and underscores.\"}},\"selector\":{\"scopes\":[]},\"permissions\":{\"edit\":[],\"view\":[]},\"annotations\":{\"\":\"\"}},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}}},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}}},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}}}]}" ]
+        }
       }
     ],
     "org.keycloak.keys.KeyProvider": [
@@ -1876,6 +1879,7 @@
     "cibaExpiresIn": "120",
     "cibaAuthRequestedUserHint": "login_hint",
     "oauth2DeviceCodeLifespan": "600",
+    "userProfileEnabled" : "true",
     "clientOfflineSessionMaxLifespan": "0",
     "oauth2DevicePollingInterval": "5",
     "clientSessionIdleTimeout": "0",
