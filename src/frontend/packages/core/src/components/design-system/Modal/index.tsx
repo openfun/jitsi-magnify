@@ -58,8 +58,7 @@ export const MagnifyModal = ({
               props.validateButtonCallback?.();
             }}
           >
-            props.validateButtonLabel ?? intl.formatMessage(commonMessages.yes)
-            {intl.formatMessage(commonMessages.cancel)}
+            {props.validateButtonLabel ?? intl.formatMessage(commonMessages.yes)}
           </Button>
         )}
       </Box>
@@ -72,7 +71,13 @@ export const MagnifyModal = ({
         <Layer {...props} id={props.modalUniqueId}>
           <Box pad={'small'} style={{ position: 'relative' }} width={'100%'}>
             <Box style={{ position: 'absolute', top: '10px', right: '10px' }}>
-              <Close color={'white'} cursor={'pointer'} onClick={props.onClose} size={'small'} />
+              <Close
+                color={'white'}
+                cursor={'pointer'}
+                data-testid={'closeIcon'}
+                onClick={props.onClose}
+                size={'small'}
+              />
             </Box>
             {props.titleModal != null && (
               <Heading level={4} margin={'small'}>
