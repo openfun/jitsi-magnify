@@ -1,7 +1,7 @@
 import { Button } from '@openfun/cunningham-react';
 import { Box, Image, Stack } from 'grommet';
 import * as React from 'react';
-import { Fragment, PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { useRouting } from '../../../../context';
@@ -40,67 +40,65 @@ export const SimpleLayout = ({ urlLogo, ...props }: PropsWithChildren<Props>) =>
   const isMobile = useIsMobile();
 
   return (
-    <Box direction={'row'}>
+    <>
       {!isMobile && (
-        <Box
-          background={'linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)'}
-          color={'white'}
-          height={'100vh'}
-          pad={'2rem'}
-          style={{ overflow: 'hidden', flex: 2, minWidth: '20rem' }}
-        >
-          <Box background={'light-5'} height={'100%'} width={'100%'}>
-            <Stack fill>
-              <Box
-                background={'linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)'}
-                height="100%"
-                width="100%"
-              />
-              <Box direction="column" height="100%" justify="between">
-                <Box flex={{ grow: 1 }} height={{ max: '33vh' }} justify="center" margin="auto 25%">
-                  <Image alt="logo" src={urlLogo} />
+        <Box height={'100%'} style={{ width: '50%', position: 'fixed', left: 0, top: 0 }}>
+          <Box
+            background={'linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)'}
+            color={'white'}
+            style={{ overflow: 'hidden', flex: 2, minWidth: '20rem' }}
+          >
+            <Box background={'light-5'} height={'100%'} width={'100%'}>
+              <Stack fill>
+                <Box
+                  height="100%"
+                  width="100%"
+                  style={{
+                    background: `bottom no-repeat url(${cover}),
+                                          linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)`,
+                  }}
+                />
+                <Box direction="column" height="100%" justify="between">
+                  <Box margin="5% 25%">
+                    <Image alt="logo" height={'300px'} src={urlLogo} />
+                  </Box>
                 </Box>
-                <Box flex={{ grow: 2 }} height={{ max: '66vh' }} justify={'end'}>
-                  <Image alt="illustration" src={cover} width="100%" />
-                </Box>
-              </Box>
-            </Stack>
+              </Stack>
+            </Box>
           </Box>
         </Box>
       )}
-
       <Box
         background={'light-2'}
-        color={'3d3d3d'}
-        gap={'20px'}
-        height={'100vh'}
-        overflow={'auto'}
+        height={'100%'}
         pad={'4rem 2rem 2rem 2rem'}
-        style={{ gap: '20px', flex: 2, position: 'relative' }}
+        style={{
+          width: isMobile ? '100%' : '50%',
+          marginLeft: isMobile ? '0%' : '50%',
+          overflow: 'auto',
+        }}
       >
-        <Box
-          direction={'row'}
-          gap={'20px'}
-          style={{ gap: '20px', position: 'absolute', top: 20, right: 20 }}
-        >
-          {!isLog && (
-            <Fragment>
-              {window.config.MAGNIFY_SHOW_REGISTER_LINK && (
-                <Button color="secondary" onClick={() => router.goToRegister()} size={'small'}>
-                  {intl.formatMessage(messages.register)}
+        <div>
+          <Box direction={'row'} style={{ gap: '20px', position: 'absolute', top: 20, right: 20 }}>
+            {!isLog && (
+              <>
+                {window.config.MAGNIFY_SHOW_REGISTER_LINK && (
+                  <Button color="secondary" onClick={() => router.goToRegister()} size={'small'}>
+                    {intl.formatMessage(messages.register)}
+                  </Button>
+                )}
+
+                <Button color="primary" onClick={router.goToLogin} size={'small'}>
+                  {intl.formatMessage(messages.login)}
                 </Button>
-              )}
+              </>
+            )}
 
-              <Button color="primary" onClick={() => router.goToLogin()} size={'small'}>
-                {intl.formatMessage(messages.login)}
-              </Button>
-            </Fragment>
-          )}
-
-          {isLog && <ResponsiveLayoutHeaderAvatar />}
-        </Box>
-        {props.children}
+            {isLog && <ResponsiveLayoutHeaderAvatar />}
+          </Box>
+          <Box style={{ gap: '10px' }}>{props.children}</Box>
+        </div>
       </Box>
-    </Box>
+    </>
   );
 };
