@@ -33,7 +33,7 @@ describe('RoomSettingsView', () => {
     screen.getByText('Members');
   });
 
-  it('renders privfate room', async () => {
+  it('renders public room', async () => {
     server.use(
       rest.get(buildApiUrl('/rooms/:id/'), (req, res, ctx) => {
         const room = createRandomRoom();
@@ -54,6 +54,6 @@ describe('RoomSettingsView', () => {
     await render(<TestingContainer router={router} />);
     await screen.findByText('Settings');
     screen.getByText('Room settings');
-    expect(screen.queryByText('Members')).toBe(null);
+    expect(screen.queryByText('Members')).not.toBe(null);
   });
 });
