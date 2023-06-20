@@ -237,7 +237,7 @@
   },
   "components.rooms.config.isPublic": {
     "description": "Label for the toggle in the room configuration that make private or public room",
-    "message": "Public room"
+    "message": "Espace virtuelle publique"
   },
   "components.rooms.config.moderationTitle": {
     "description": "Title for the room configuration section with moderation settings",
@@ -249,7 +249,7 @@
   },
   "components.rooms.config.settingsTitle": {
     "description": "Title for the room configuration section with general settings",
-    "message": "Réglages"
+    "message": "Paramètres"
   },
   "components.rooms.config.users.addMember": {
     "description": "Text for the add member button",
@@ -345,7 +345,7 @@
   },
   "i18n.Messages.commonTranslation.settings": {
     "description": "Settings label",
-    "message": "Réglages"
+    "message": "Paramètres"
   },
   "i18n.Messages.commonTranslation.validate": {
     "description": "Validate message",
@@ -381,27 +381,27 @@
   },
   "i18n.commonMessages.back": {
     "description": "Back message",
-    "message": "Back"
+    "message": "Retour"
   },
   "i18n.commonMessages.error": {
     "description": "Error label",
-    "message": "Error"
+    "message": "Erreur"
   },
   "i18n.commonMessages.requestError": {
     "description": "Default error message when a request fail",
-    "message": "An error has occurred, please try again or refresh the page"
+    "message": "Une erreur est survenue, veuillez réessayer ou actualiser la page"
   },
   "utils.routes.rooms.rooms.label": {
     "description": "The label of the rooms view.",
-    "message": "Rooms"
+    "message": "Salles"
   },
   "utils.routes.rooms.roomsSettings.label": {
     "description": "The label of the rooms settings view.",
-    "message": "Settings"
+    "message": "Paramètres"
   },
   "utils.routes.root.root.label": {
     "description": "Label of the home view.",
-    "message": "Home"
+    "message": "Accueil"
   },
   "validationMessages.required": {
     "description": "Messages shown when a field is required but the user did not provide any value",
@@ -421,18 +421,18 @@
   },
   "view.rooms.settings.roomSettingsTitle": {
     "description": "Page title for the rooms settings page",
-    "message": "Room settings"
+    "message": "Paramètres de l'espace virtuelle"
   },
   "view.rooms.title_part_one": {
     "description": "Main title part one",
-    "message": "Secure conference"
+    "message": "Conférences sécurisées"
   },
   "view.rooms.title_part_two": {
     "description": "Main title",
-    "message": "and quality up to 500 people"
+    "message": "et de qualité jusqu'à 500 personnes"
   },
   "view.users.preferences.title": {
     "description": "The label for the User preferences title",
-    "message": "User preferences"
+    "message": "Préférences utilisateur"
   }
 }
