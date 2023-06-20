@@ -10,6 +10,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Improve a few french translations issues in the fr-Fr.json
 - Switch the first letter of the help comments in the makefile to uppercase
 - Upgrade docker compose to latest version
 - Enable CORS Headers
