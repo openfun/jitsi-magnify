@@ -261,6 +261,7 @@ export const RoomConfig = ({ room }: RoomConfigProps) => {
                           fullWidth={true}
                           label={intl.formatMessage(roomConfigMessages.askForPasswordInputLabel)}
                           name="roomPassword"
+                          type={'password'}
                         />
                       )}
                     </Box>
