@@ -72,6 +72,7 @@ bootstrap: \
   data/media/.keep \
   data/smedia/.keep \
   data/static/.keep \
+  install-front \
   build \
   run \
   migrate \
