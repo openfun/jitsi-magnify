@@ -84,8 +84,8 @@
   --c--theme--font--weights--bold: 500;
   --c--theme--font--weights--extrabold: 700;
   --c--theme--font--weights--black: 900;
-  --c--theme--font--families--base: Roboto;
-  --c--theme--font--families--accent: Roboto;
+  --c--theme--font--families--base: 'Roboto Flex Variable', sans-serif;
+  --c--theme--font--families--accent: 'Roboto Flex Variable', sans-serif;
   --c--theme--spacings--xl: 4rem;
   --c--theme--spacings--l: 3rem;
   --c--theme--spacings--b: 1.625rem;

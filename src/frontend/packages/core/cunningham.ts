@@ -2,7 +2,12 @@ import { DefaultTokens } from '@openfun/cunningham-react';
 
 const config: DefaultTokens = {
   theme: {
-    colors: {},
+    font: {
+      families: {
+        base: '"Roboto Flex Variable", sans-serif',
+        accent: '"Roboto Flex Variable", sans-serif',
+      },
+    },
   },
 };
 

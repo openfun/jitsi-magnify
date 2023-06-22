@@ -85,7 +85,10 @@ export const tokens = {
         s: '0.6875rem',
       },
       weights: { thin: 100, regular: 300, medium: 400, bold: 500, extrabold: 700, black: 900 },
-      families: { base: 'Roboto', accent: 'Roboto' },
+      families: {
+        base: '"Roboto Flex Variable", sans-serif',
+        accent: '"Roboto Flex Variable", sans-serif',
+      },
     },
     spacings: { xl: '4rem', l: '3rem', b: '1.625rem', s: '1rem', t: '0.5rem', st: '0.25rem' },
     transitions: {
