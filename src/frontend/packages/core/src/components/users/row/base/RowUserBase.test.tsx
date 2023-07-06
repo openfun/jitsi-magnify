@@ -14,6 +14,12 @@ describe('RowUserBase', () => {
     await screen.findByText(randomUser.name);
   });
 
+  it('basic render with empty Box instead of Menu if there is not actions defined', async () => {
+    const randomUser = createRandomUser();
+    renderWrappedInTestingProvider(<UserRowBase user={randomUser} />);
+    await screen.findByTestId('emptyBox');
+  });
+
   it('should render successfully with checkbox not selected', async () => {
     const user = userEvent.setup();
     const randomUser = createRandomUser();
