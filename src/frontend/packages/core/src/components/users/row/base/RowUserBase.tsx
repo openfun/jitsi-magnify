@@ -60,13 +60,16 @@ export const UserRowBase = <T extends RowUserType>({
       </Box>
       <Box align={'center'} direction={'row'} gap={'small'}>
         {props.rightContent}
-        {showActions && props.moreActions && props.moreActions.length > 0 && (
-          <Menu
-            dropProps={{ stretch: false, align: { top: 'bottom', right: 'right' } }}
-            icon={<MoreVertical size={'15px'} style={{ cursor: 'pointer' }} />}
-            items={props.moreActions}
-          />
-        )}
+        {showActions &&
+          (props.moreActions && props.moreActions.length > 0 ? (
+            <Menu
+              dropProps={{ stretch: false, align: { top: 'top', right: 'right' } }}
+              icon={<MoreVertical size={'15px'} style={{ cursor: 'pointer' }} />}
+              items={props.moreActions}
+            />
+          ) : (
+            <Box data-testid="emptyBox" style={{ minWidth: '47px' }} />
+          ))}
       </Box>
     </Box>
   );
