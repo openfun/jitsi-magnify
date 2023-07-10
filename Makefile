@@ -120,6 +120,11 @@ build-front:
 	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn install
 	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn build
 
+run-front: ## start frontend development server with live reload
+run-front:
+	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn install
+	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend -p 3200:3200 node yarn dev
+
 test-front: ## Test frontend for each package
 test-front:
 	@$(COMPOSE_RUN) -e HOME="/tmp" -w /app/src/frontend node yarn test
