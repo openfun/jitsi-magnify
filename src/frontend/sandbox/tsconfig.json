@@ -7,7 +7,8 @@
     "jsx": "react-jsx",
     "paths": {
       "@openfun/jitsi-magnify": ["../packages/core/src/index.ts"]
-    }
+    },
+    "types": ["vitest/globals", "vite/client", "vitest-dom/extend-expect"]
   },
   "include": ["src", "../packages/core/src"],
   "exclude": ["node_modules","dist"],

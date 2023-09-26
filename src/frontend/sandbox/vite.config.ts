@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     tsconfigPaths(),
     react({
-      jsxRuntime: true,
+      jsxRuntime: 'automatic',
     }),
   ],
   build: {

@@ -2,7 +2,8 @@
   "extends": "@lib/typescript-configs/react.json",
   "compilerOptions": {
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["vitest/globals", "vite/client", "vitest-dom/extend-expect"]
   },
   "include": ["src", "./src/translations/*.json"],
   "exclude": ["node_modules","dist"],
