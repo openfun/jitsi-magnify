@@ -1,4 +1,5 @@
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
+import 'vitest-dom/extend-expect';
 import { HttpService, TESTING_CONF } from '@openfun/magnify-components';
 import { afterAll, afterEach, beforeAll } from 'vitest';
 import { server } from './src/mocks/server';
