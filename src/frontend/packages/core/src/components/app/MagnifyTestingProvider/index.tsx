@@ -52,7 +52,11 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   }, []);
 
   return (
-    <TranslationProvider defaultLocale="en" initTranslation={false} locale={locale}>
+    <TranslationProvider
+      defaultLocale="en"
+      initTranslation={false}
+      locale={locale || TESTING_CONF.LANGUAGE_CODE}
+    >
       <FormErrors />
       <RoutingContextProvider routes={getRouter()}>
         <CunninghamProvider>

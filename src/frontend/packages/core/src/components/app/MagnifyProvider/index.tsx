@@ -53,7 +53,7 @@ export const MagnifyProvider = ({
   }, [config]);
 
   return (
-    <TranslationProvider locale={locale}>
+    <TranslationProvider locale={locale || config.LANGUAGE_CODE}>
       <FormErrors />
       <Grommet full theme={themeConfig}>
         <CunninghamProvider>
