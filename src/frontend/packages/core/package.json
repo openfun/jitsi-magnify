@@ -48,7 +48,7 @@
     "axios": "1.5.0",
     "react-intl": "6.4.7",
     "react-router-dom": "6.16.0",
-    "styled-components": "6.0.8"
+    "styled-components": "<6"
   },
   "devDependencies": {
     "@bbbtech/storybook-formik": "3.0.0",
@@ -90,6 +90,7 @@
     "react-dom": "18.2.0",
     "storybook": "7.4.5",
     "storybook-addon-react-router-v6": "2.0.7",
+    "styled-components": "5.3.11",
     "ts-node": "10.9.1",
     "tslib": "2.6.2",
     "typescript": "5.2.2",
