@@ -10,8 +10,8 @@ from django.contrib.auth.hashers import make_password
 from django.utils.text import slugify
 
 import factory
+import pytz
 from factory import fuzzy
-from timezone_field import TimeZoneField
 
 from . import models as core_models
 
@@ -28,7 +28,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     email = factory.Faker("email")
     jwt_sub = factory.Faker("uuid4")
     language = fuzzy.FuzzyChoice([lang[0] for lang in settings.LANGUAGES])
-    timezone = fuzzy.FuzzyChoice(TimeZoneField.get_default_zoneinfo_tzs())
+    timezone = fuzzy.FuzzyChoice([ZoneInfo(tz) for tz in pytz.all_timezones])
     name = factory.Faker("name")
     password = make_password("password")
 
@@ -158,7 +158,7 @@ class MeetingFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("catch_phrase")
     owner = factory.SubFactory(UserFactory)
     start = factory.Faker("future_datetime", tzinfo=ZoneInfo("UTC"))
-    timezone = fuzzy.FuzzyChoice(TimeZoneField.get_default_zoneinfo_tzs())
+    timezone = fuzzy.FuzzyChoice([ZoneInfo(tz) for tz in pytz.all_timezones])
 
     @factory.lazy_attribute
     def end(self):
