@@ -185,7 +185,7 @@
   },
   "components.rooms.RoomRow.deleteModalTitle": {
     "description": "Title modal for delete action",
-    "message": "Suppression de la salle"
+    "message": "Suppression de l'espace virtuel"
   },
   "components.rooms.RoomRow.join": {
     "description": "Join the room",
@@ -197,7 +197,7 @@
   },
   "components.rooms.RoomRow.warningDelete": {
     "description": "Waning message for a delete action",
-    "message": "Êtes-vous sûr de vouloir supprimer cette salle? Un autre utilisateur pourra alors la réserver"
+    "message": "Êtes-vous sûr de vouloir supprimer cet espace virtuel ? Un autre utilisateur pourra alors la réserver"
   },
   "components.rooms.config.askForAuthentication": {
     "description": "Label for the toggle in the room configuration (security) that enables asking for authentication when joining a room",
@@ -209,7 +209,7 @@
   },
   "components.rooms.config.askForPasswordInputLabel": {
     "description": "Label for the room password input",
-    "message": "Mot de passe de la salle"
+    "message": "Mot de passe"
   },
   "components.rooms.config.askForPasswordInputPlaceholder": {
     "description": "Placeholder for the room password input",
@@ -237,7 +237,7 @@
   },
   "components.rooms.config.isPublic": {
     "description": "Label for the toggle in the room configuration that make private or public room",
-    "message": "Espace virtuelle publique"
+    "message": "Espace virtuel publique"
   },
   "components.rooms.config.moderationTitle": {
     "description": "Title for the room configuration section with moderation settings",
@@ -265,39 +265,39 @@
   },
   "components.rooms.instantRoom.startInputPlaceHolder": {
     "description": "Label for the input to start an instant room",
-    "message": "Nom de la salle"
+    "message": "Nom de l'espace virtuel"
   },
   "components.rooms.myRooms.claim_room": {
     "description": "Claiming a room label",
-    "message": "Réclamer une salle"
+    "message": "Réclamer un espace virtuel"
   },
   "components.rooms.myRooms.emptyRoomListMessage": {
     "description": "The message to display when there are no rooms.",
-    "message": "Aucune pièce n'a encore été créée. Cliquez sur le bouton \" + Salle \" pour en créer une."
+    "message": "Aucun espace n'a encore été créé. Cliquez sur le bouton \" + Espace virtuel \" pour en créer un."
   },
   "components.rooms.myRooms.myRoomCardTitle": {
     "description": "Label for the button to register a new room",
-    "message": "Liste des salles"
+    "message": "Liste des espaces virtuels"
   },
   "components.rooms.registerRoom.addNewRoomLabel": {
     "description": "Label for the button to register a new room",
-    "message": "Salle"
+    "message": "Espace virtuel"
   },
   "components.rooms.registerRoom.registerNewRoomLabel": {
     "description": "Label for the button to register a new room",
-    "message": "Réserver une nouvelle salle"
+    "message": "Réserver un nouvel espace virtuel"
   },
   "components.rooms.registerRoomForm.namePlaceholder": {
     "description": "Placeholder for the name field",
-    "message": "Nom de la salle (ex : Entretien avec John)"
+    "message": "Nom de l'espace virtuel (ex : Entretien avec John)"
   },
   "components.rooms.registerRoomForm.registerRoomDialogLabel": {
     "description": "Label for the dialog to register a new room",
-    "message": "Réserver une nouvelle salle"
+    "message": "Réserver un nouvel espace virtuel"
   },
   "components.rooms.registerRoomForm.registerRoomSubmitLabel": {
     "description": "Label for the submit button to register a new room",
-    "message": "Réserver la salle"
+    "message": "Réserver un espace virtuel"
   },
   "components.users.searchModal.emptyResult": {
     "description": "Empty search result string",
@@ -393,7 +393,7 @@
   },
   "utils.routes.rooms.rooms.label": {
     "description": "The label of the rooms view.",
-    "message": "Salles"
+    "message": "Espaces virtuels"
   },
   "utils.routes.rooms.roomsSettings.label": {
     "description": "The label of the rooms settings view.",
@@ -421,7 +421,7 @@
   },
   "view.rooms.settings.roomSettingsTitle": {
     "description": "Page title for the rooms settings page",
-    "message": "Paramètres de l'espace virtuelle"
+    "message": "Paramètres de l'espace virtuel"
   },
   "view.rooms.title_part_one": {
     "description": "Main title part one",
