@@ -27,7 +27,7 @@ class MeetingsFactoriesTestCase(TestCase):
         """We should be able to attach users to a meeting."""
         users = UserFactory.create_batch(2)
         MeetingFactory(users=users)
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             [access.user for access in MeetingAccess.objects.all()],
             users,
             ordered=False,
@@ -37,7 +37,7 @@ class MeetingsFactoriesTestCase(TestCase):
         """We should be able to attach groups to a meeting."""
         groups = GroupFactory.create_batch(2)
         MeetingFactory(groups=groups)
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             [access.group for access in MeetingAccess.objects.all()],
             groups,
             ordered=False,
