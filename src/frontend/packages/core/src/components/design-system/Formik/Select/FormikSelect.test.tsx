@@ -8,7 +8,7 @@ import { FormikSelect } from './index';
 
 describe('FormikSelect', () => {
   it('should render', async () => {
-    const callback = vi.fn((value) => console.log(value));
+    const callback = vi.fn();
     const user = userEvent.setup();
     const options = [
       { value: 'en', label: 'English' },

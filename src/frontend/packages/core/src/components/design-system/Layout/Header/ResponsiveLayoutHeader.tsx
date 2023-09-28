@@ -37,14 +37,14 @@ export const ResponsiveLayoutHeader: FunctionComponent<ResponsiveLayoutHeaderPro
   ...props
 }) => {
   return (
-    <HeaderContainer justify={'between'}>
-      <Box aria-label={'logo-container'} direction={'row'}>
+    <HeaderContainer justify="between">
+      <Box aria-label="logo-container" direction="row">
         {props.logoSrc && (
-          <img alt={'logo'} height={props.logoHeight ?? '60px'} src={props.logoSrc} />
+          <img alt="logo" height={props.logoHeight ?? '60px'} src={props.logoSrc} />
         )}
       </Box>
 
-      <Box align={'center'} direction="row" gap="medium" justify={'center'}>
+      <Box align="center" direction="row" gap="medium" justify="center">
         <ResponsiveLayoutHeaderNav />
         <ResponsiveLayoutHeaderAvatar />
       </Box>

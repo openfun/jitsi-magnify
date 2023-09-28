@@ -5,13 +5,13 @@ describe('ArrayHelper', () => {
   const testingArrayString: string[] = ['a', 'b', 'c'];
   const testingArrayBool: boolean[] = [true, false];
   it('finds index with findElementIndex', async () => {
-    testingArrayNumber.map((item, index) => {
+    testingArrayNumber.forEach((item, index) => {
       expect(ArrayHelper.findElementIndex(testingArrayNumber, item)).toEqual(index);
     });
-    testingArrayString.map((item, index) => {
+    testingArrayString.forEach((item, index) => {
       expect(ArrayHelper.findElementIndex(testingArrayString, item)).toEqual(index);
     });
-    testingArrayBool.map((item, index) => {
+    testingArrayBool.forEach((item, index) => {
       expect(ArrayHelper.findElementIndex(testingArrayBool, item)).toEqual(index);
     });
   });

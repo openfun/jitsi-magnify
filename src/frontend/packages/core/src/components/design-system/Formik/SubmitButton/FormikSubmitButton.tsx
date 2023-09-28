@@ -72,7 +72,7 @@ export const FormikSubmitButton: FunctionComponent<FormikSubmitButtonProps> = ({
           {...props}
           color="primary"
           disabled={formik.isSubmitting || props.isLoading}
-          icon={formik.isSubmitting || props.isLoading ? <Spinner size={'xsmall'} /> : undefined}
+          icon={formik.isSubmitting || props.isLoading ? <Spinner size="xsmall" /> : undefined}
           onClick={onSubmit}
         >
           {props.label}

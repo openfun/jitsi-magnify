@@ -9,7 +9,7 @@ import {
 import { RoutesBuilderService } from '../routes/RoutesBuilder.service';
 
 export class UsersRepository {
-  public static async login(username: string, password: string): Promise<LoginResponse> {
+  static async login(username: string, password: string): Promise<LoginResponse> {
     const response = await HttpService.MagnifyAuthApi.post<LoginResponse>(UsersApiRoutes.LOGIN, {
       username,
       password,
@@ -18,13 +18,13 @@ export class UsersRepository {
     return response.data;
   }
 
-  public static logout(): void {
+  static logout(): void {
     localStorage.removeItem(SESSION_REFRESH_ACCESS_TOKEN_KEY);
     localStorage.removeItem(SESSION_ACCESS_TOKEN_KEY);
-    HttpService.MagnifyApi.defaults.headers.common['Authorization'] = `Bearer ${null}`;
+    HttpService.MagnifyApi.defaults.headers.common.Authorization = `Bearer ${null}`;
   }
 
-  public static async search(term: string): Promise<User[]> {
+  static async search(term: string): Promise<User[]> {
     const response = await HttpService.MagnifyApi.get<UserResponse[]>(UsersApiRoutes.SEARCH, {
       params: {
         q: term,
@@ -33,7 +33,7 @@ export class UsersRepository {
     return response.data;
   }
 
-  public static async signIn(data?: SignUpData): Promise<UserResponse> {
+  static async signIn(data?: SignUpData): Promise<UserResponse> {
     const response = await HttpService.MagnifyAuthApi.post<UserResponse>(
       UsersApiRoutes.CREATE,
       data,
@@ -41,18 +41,18 @@ export class UsersRepository {
     return response.data;
   }
 
-  public static async me(): Promise<UserResponse | undefined> {
+  static async me(): Promise<UserResponse | undefined> {
     const response = await HttpService.MagnifyApi.get<UserResponse>(UsersApiRoutes.ME);
     return response.data;
   }
 
-  public static async update(userId: string, updatedData: UpdateUserData): Promise<UserResponse> {
+  static async update(userId: string, updatedData: UpdateUserData): Promise<UserResponse> {
     const url = RoutesBuilderService.build(UsersApiRoutes.UPDATE, { id: userId });
     const response = await HttpService.MagnifyApi.patch<UserResponse>(url, updatedData);
     return response.data;
   }
 
-  public static async changePassword(
+  static async changePassword(
     current_password: string,
     new_password: string,
   ): Promise<UserResponse> {

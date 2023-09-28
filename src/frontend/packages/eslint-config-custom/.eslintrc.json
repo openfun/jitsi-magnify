@@ -52,7 +52,7 @@
     "import/prefer-default-export": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/label-has-associated-control": "warn",
-    "no-console": ["error", { "allow": ["warn"] }],
+    "no-console": ["error", { "allow": ["warn", "error"] }],
     "no-else-return": "off",
     "no-empty-function": "off",
     "no-nested-ternary": "warn",

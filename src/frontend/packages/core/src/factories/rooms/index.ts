@@ -5,8 +5,8 @@ export function createRandomRoom(isAdmin: boolean = true): Room {
   const id = faker.string.uuid();
   const name = faker.lorem.slug();
   const result: Room = {
-    id: id,
-    name: name,
+    id,
+    name,
     slug: faker.lorem.slug(),
     is_administrable: isAdmin,
     is_public: false,

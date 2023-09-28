@@ -17,11 +17,7 @@ export interface MagnifyListProps<TRowProps extends Row> {
   Row: React.FC<RowPropsExtended<TRowProps>>;
 }
 
-export default function MagnifyList<TRowProps extends Row>({
-  rows,
-  Row,
-  ...props
-}: MagnifyListProps<TRowProps>) {
+const MagnifyList = <TRowProps extends Row>({ rows, Row }: MagnifyListProps<TRowProps>) => {
   const [selected, setSelected] = useState<Record<string, boolean>>(
     Object.fromEntries(rows.map((row) => [row.id, false])),
   );
@@ -31,7 +27,7 @@ export default function MagnifyList<TRowProps extends Row>({
   };
 
   return (
-    <Box gap={'10px'}>
+    <Box gap="10px">
       {rows.map((row) => (
         <Row
           key={row.id}
@@ -42,4 +38,6 @@ export default function MagnifyList<TRowProps extends Row>({
       ))}
     </Box>
   );
-}
+};
+
+export default MagnifyList;

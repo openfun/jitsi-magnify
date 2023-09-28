@@ -11,9 +11,9 @@ export interface ResponsiveLayoutProps {
 
 export const ResponsiveLayout = ({ ...props }: ResponsiveLayoutProps) => {
   return (
-    <Box background={'rgb(249, 250, 251)'} height={{ min: '100vh' }}>
+    <Box background="rgb(249, 250, 251)" height={{ min: '100vh' }}>
       <ResponsiveLayoutHeader {...props} />
-      <Page fill={true} kind="narrow" pad={'xxsmall'}>
+      <Page fill={true} kind="narrow" pad="xxsmall">
         <PageContent>{props.children}</PageContent>
       </Page>
     </Box>

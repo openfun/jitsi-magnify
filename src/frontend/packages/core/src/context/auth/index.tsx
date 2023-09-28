@@ -31,12 +31,12 @@ export const AuthContextProvider = ({ children, ...props }: AuthContextProviderP
 
   const context: AuthContextInterface = React.useMemo(
     () => ({
-      user: user,
-      updateUser: (user: Maybe<User> | null) => {
-        queryClient.setQueryData([MagnifyQueryKeys.AUTH_USER], user);
-        setUser(user);
-        if (user?.language && locales.currentLocale !== user.language) {
-          locales.setCurrentLocale(user.language);
+      user,
+      updateUser: (newUser: Maybe<User> | null) => {
+        queryClient.setQueryData([MagnifyQueryKeys.AUTH_USER], newUser);
+        setUser(newUser);
+        if (newUser?.language && locales.currentLocale !== newUser.language) {
+          locales.setCurrentLocale(newUser.language);
         }
       },
     }),

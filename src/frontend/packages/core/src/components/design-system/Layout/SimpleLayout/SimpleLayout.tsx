@@ -42,13 +42,13 @@ export const SimpleLayout = ({ urlLogo, ...props }: PropsWithChildren<Props>) =>
   return (
     <>
       {!isMobile && (
-        <Box height={'100%'} style={{ width: '50%', position: 'fixed', left: 0, top: 0 }}>
+        <Box height="100%" style={{ width: '50%', position: 'fixed', left: 0, top: 0 }}>
           <Box
-            background={'linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)'}
-            color={'white'}
+            background="linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)"
+            color="white"
             style={{ overflow: 'hidden', flex: 2, minWidth: '20rem' }}
           >
-            <Box background={'light-5'} height={'100%'} width={'100%'}>
+            <Box background="light-5" height="100%" width="100%">
               <Stack fill>
                 <Box
                   height="100%"
@@ -60,7 +60,7 @@ export const SimpleLayout = ({ urlLogo, ...props }: PropsWithChildren<Props>) =>
                 />
                 <Box direction="column" height="100%" justify="between">
                   <Box margin="5% 25%">
-                    <Image alt="logo" height={'300px'} src={urlLogo} />
+                    <Image alt="logo" height="300px" src={urlLogo} />
                   </Box>
                 </Box>
               </Stack>
@@ -69,9 +69,9 @@ export const SimpleLayout = ({ urlLogo, ...props }: PropsWithChildren<Props>) =>
         </Box>
       )}
       <Box
-        background={'light-2'}
-        height={'100%'}
-        pad={'4rem 2rem 2rem 2rem'}
+        background="light-2"
+        height="100%"
+        pad="4rem 2rem 2rem 2rem"
         style={{
           width: isMobile ? '100%' : '50%',
           marginLeft: isMobile ? '0%' : '50%',
@@ -79,16 +79,16 @@ export const SimpleLayout = ({ urlLogo, ...props }: PropsWithChildren<Props>) =>
         }}
       >
         <div>
-          <Box direction={'row'} style={{ gap: '20px', position: 'absolute', top: 20, right: 20 }}>
+          <Box direction="row" style={{ gap: '20px', position: 'absolute', top: 20, right: 20 }}>
             {!isLog && (
               <>
                 {window.config.MAGNIFY_SHOW_REGISTER_LINK && (
-                  <Button color="secondary" onClick={() => router.goToRegister()} size={'small'}>
+                  <Button color="secondary" onClick={() => router.goToRegister()} size="small">
                     {intl.formatMessage(messages.register)}
                   </Button>
                 )}
 
-                <Button color="primary" onClick={router.goToLogin} size={'small'}>
+                <Button color="primary" onClick={router.goToLogin} size="small">
                   {intl.formatMessage(messages.login)}
                 </Button>
               </>

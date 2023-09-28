@@ -1,5 +1,4 @@
 import { Meta } from '@storybook/react';
-import React from 'react';
 import { RegisterRoomForm } from './RegisterRoomForm';
 
 export default {
@@ -9,6 +8,7 @@ export default {
 
 export const basicRegisterRoomForm = {
   args: {
+    // eslint-disable-next-line no-alert
     onSuccess: () => alert('Success!'),
   },
 };

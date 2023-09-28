@@ -78,7 +78,7 @@ export const Toggle = ({
         {...(variant === ToggleVariant.PRIMARY
           ? { background: 'light-3', pad: 'small', round: 'xsmall' }
           : {})}
-        direction={'row'}
+        direction="row"
         width={width}
       >
         <Stack anchor="left" margin={{ top: 'auto', bottom: 'auto', left: 'small' }}>

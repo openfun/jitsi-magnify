@@ -1,3 +1,5 @@
+// Disable extraneous dependencies rule because this file is only used in development
+/* eslint-disable import/no-extraneous-dependencies */
 import { Button } from '@openfun/cunningham-react';
 import { Meta, StoryFn } from '@storybook/react';
 import { rest } from 'msw';

@@ -19,7 +19,7 @@ import { SimpleLayout } from '../design-system';
 export const AppRouter = () => {
   const intl = useTranslations();
 
-  let routes: RouteObject[] = [
+  const routes: RouteObject[] = [
     {
       path: RootPath.HOME,
       element: (
@@ -29,10 +29,10 @@ export const AppRouter = () => {
       ),
       children: [
         {
-          ...getRootRoute(intl, [
+          ...getRootRoute([
             { index: true, element: <Navigate to={RootPath.HOME} /> },
             { ...getRoomsRoutes(intl) },
-            { ...getUsersRoutes(intl) },
+            { ...getUsersRoutes() },
           ]),
         },
 
@@ -40,7 +40,7 @@ export const AppRouter = () => {
         {
           index: true,
           element: (
-            <SimpleLayout urlLogo={'/assets/logo-fun-mooc.svg'}>
+            <SimpleLayout urlLogo="/assets/logo-fun-mooc.svg">
               <RoomsListView />
             </SimpleLayout>
           ),
@@ -50,11 +50,7 @@ export const AppRouter = () => {
     },
   ];
 
-  let router = createBrowserRouter(routes);
+  const router = createBrowserRouter(routes);
 
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+  return <RouterProvider router={router} />;
 };

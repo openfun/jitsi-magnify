@@ -19,11 +19,6 @@ export const UserRow = ({ ...props }: UserRowProps) => {
   };
 
   return (
-    <UserRowBase
-      {...props}
-      className={'user-row'}
-      id={`user-${props.user.id}`}
-      style={getStyles()}
-    />
+    <UserRowBase {...props} className="user-row" id={`user-${props.user.id}`} style={getStyles()} />
   );
 };

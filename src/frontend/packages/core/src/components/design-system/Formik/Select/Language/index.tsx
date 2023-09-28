@@ -37,7 +37,7 @@ export const FormikSelectLanguage = ({ ...props }: FormikSelectLanguageProps) =>
       clearable={false}
       fullWidth={true}
       label={intl.formatMessage(messages.languageLabel)}
-      name={'language'}
+      name="language"
       options={getAllOptions()}
     />
   );

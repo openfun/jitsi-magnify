@@ -4,19 +4,15 @@ import createRandomUser from '../../../../factories/users';
 
 import { UserRowBase } from '.';
 
-export default {
-  title: 'Users/Row/Base',
-  component: UserRowBase,
-} as Meta<typeof UserRowBase>;
-
-const Template: StoryFn<typeof UserRowBase> = (args) => {
-  return (
-    <>
-      <UserRowBase showSelect={true} user={createRandomUser()} />
-    </>
-  );
+const Template: StoryFn<typeof UserRowBase> = () => {
+  return <UserRowBase showSelect={true} user={createRandomUser()} />;
 };
 
 export const basic = {
   render: Template,
 };
+
+export default {
+  title: 'Users/Row/Base',
+  component: UserRowBase,
+} as Meta<typeof UserRowBase>;

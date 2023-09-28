@@ -1,3 +1,5 @@
+// Disable extraneous dependencies rule because this file is only used in development
+/* eslint-disable import/no-extraneous-dependencies */
 import { faker } from '@faker-js/faker';
 import { rest } from 'msw';
 import { buildApiUrl, RoutesBuilderService } from '../../../services';

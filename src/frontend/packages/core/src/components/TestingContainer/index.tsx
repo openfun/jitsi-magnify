@@ -1,16 +1,16 @@
-import { Router as RemixRouter } from '@remix-run/router/dist/router';
-import * as React from 'react';
-import { PropsWithChildren } from 'react';
+import { useMemo, PropsWithChildren } from 'react';
 import { createMemoryRouter, NavLink, RouterProvider } from 'react-router-dom';
 import { MagnifyTestingProvider } from '../app';
 import { ResponsiveLayout } from '../design-system';
 
 export interface TestingContainerProps {
-  router?: RemixRouter;
+  router?: ReturnType<typeof createMemoryRouter>;
 }
 
-export const TestingContainer = ({ ...props }: PropsWithChildren<TestingContainerProps>) => {
-  const getRouter = (): RemixRouter => {
+const CrumbElement = () => <NavLink to="/">Home</NavLink>;
+
+export const TestingContainer = (props: PropsWithChildren<TestingContainerProps>) => {
+  const router = useMemo(() => {
     if (props.router) {
       return props.router;
     }
@@ -20,20 +20,18 @@ export const TestingContainer = ({ ...props }: PropsWithChildren<TestingContaine
         {
           path: '/default',
           handle: {
-            crumb: () => {
-              return <NavLink to={'/'}>Home</NavLink>;
-            },
+            crumb: CrumbElement,
           },
           element: <ResponsiveLayout>{props.children}</ResponsiveLayout>,
         },
       ],
       { initialEntries: ['/default'], initialIndex: 1 },
     );
-  };
+  }, [props.router, props.children]);
 
   return (
     <MagnifyTestingProvider>
-      <RouterProvider router={getRouter()} />
+      <RouterProvider router={router} />
     </MagnifyTestingProvider>
   );
 };

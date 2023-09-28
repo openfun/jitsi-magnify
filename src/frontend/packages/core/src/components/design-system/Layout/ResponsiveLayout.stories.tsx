@@ -14,7 +14,7 @@ export default {
 const Template: StoryFn<typeof ResponsiveLayout> = (args) => {
   return (
     <ResponsiveLayout {...args}>
-      <MagnifyPageContent actions={<RegisterRoom />} title={'Page title'}>
+      <MagnifyPageContent actions={<RegisterRoom />} title="Page title">
         <MyRooms baseJitsiUrl="*" />
       </MagnifyPageContent>
     </ResponsiveLayout>

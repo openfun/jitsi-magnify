@@ -35,7 +35,7 @@ export const InstantRoom = () => {
   const randomRoom = (length: number = 40): string => {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-0123456789';
-    let charactersLength = characters.length;
+    const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
@@ -50,7 +50,7 @@ export const InstantRoom = () => {
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       <Form>
-        <Box flex align={'center'} direction={'row'} width={'100%'}>
+        <Box flex align="center" direction="row" width="100%">
           <Box style={{ flexGrow: 1 }}>
             <FormikInput
               fullWidth

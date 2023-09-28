@@ -1,6 +1,8 @@
 import './App.css';
 import { AppRouter } from '@openfun/jitsi-magnify';
 
-export default function App() {
+const App = () => {
   return <AppRouter />;
-}
+};
+
+export default App;

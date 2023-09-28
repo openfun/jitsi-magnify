@@ -14,7 +14,7 @@ describe('UserSearch Modal', () => {
     const user = userEvent.setup();
     const onSelectUser = vi.fn();
     const { baseElement } = renderWrappedInTestingProvider(
-      <UserSearchModal isOpen={true} modalUniqueId={'search-user'} onSelectUser={onSelectUser} />,
+      <UserSearchModal isOpen={true} modalUniqueId="search-user" onSelectUser={onSelectUser} />,
     );
     const addButton = await screen.findByRole('button', { name: 'Add' });
     const userTextInput = await screen.findByRole('textbox', { name: 'Find a user' });
@@ -60,7 +60,7 @@ describe('UserSearch Modal', () => {
       }),
     );
     renderWrappedInTestingProvider(
-      <UserSearchModal isOpen={true} modalUniqueId={'search-user'} onSelectUser={onSelectUser} />,
+      <UserSearchModal isOpen={true} modalUniqueId="search-user" onSelectUser={onSelectUser} />,
     );
     const userTextInput = await screen.findByRole('textbox', { name: 'Find a user' });
 

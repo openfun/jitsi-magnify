@@ -15,7 +15,7 @@ export class HttpService {
 
   static MagnifyAuthApi: AxiosInstance;
 
-  public static init(baseUrl: string): void {
+  static init(baseUrl: string): void {
     HttpService.baseUrl = baseUrl;
     HttpService.MagnifyAuthApi = axios.create({
       baseURL: baseUrl,
@@ -31,7 +31,7 @@ export class HttpService {
       (config) => {
         const token = KeycloakService.getToken();
         if (config.headers && token != null) {
-          config.headers['Authorization'] = `Bearer ${token}`;
+          config.headers.Authorization = `Bearer ${token}`;
         }
 
         return config;
@@ -61,11 +61,11 @@ export class HttpService {
     HttpService.MagnifyApi = api;
   }
 
-  public static buildApiUrl(route: string): string {
+  static buildApiUrl(route: string): string {
     return `${HttpService.baseUrl}${route}`;
   }
 
-  public static setTokens(access?: string, refresh?: string): void {
+  static setTokens(access?: string, refresh?: string): void {
     if (access != null) {
       localStorage.setItem(SESSION_ACCESS_TOKEN_KEY, access);
     } else {

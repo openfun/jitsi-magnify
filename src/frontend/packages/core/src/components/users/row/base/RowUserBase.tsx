@@ -30,41 +30,41 @@ export const UserRowBase = <T extends RowUserType>({
 }: UserRowBaseProps<T>) => {
   return (
     <Box
-      align={'center'}
-      background={'light-2'}
+      align="center"
+      background="light-2"
       className={props.className}
-      direction={'row'}
+      direction="row"
       id={props?.id}
-      justify={'between'}
+      justify="between"
       onClick={() => props.onClick?.(user)}
-      pad={'xsmall'}
+      pad="xsmall"
       style={{ ...props.style, borderRadius: '8px' }}
-      width={'100%'}
+      width="100%"
     >
-      <Box align={'center'} direction={'row'} gap={'small'} justify={'between'}>
+      <Box align="center" direction="row" gap="small" justify="between">
         {props?.showSelect && (
-          <Box background={'white'}>
-            <CheckBox checked={props.isSelected} onChange={props.onToggle} role={'checkbox'} />
+          <Box background="white">
+            <CheckBox checked={props.isSelected} onChange={props.onToggle} role="checkbox" />
           </Box>
         )}
 
         <UserAvatar name={user.name} username={user.username} />
-        <Box align={'start'} direction={'column'} justify={'center'}>
-          <Text color={'text-strong'} size={'small'} weight={'bold'}>
+        <Box align="start" direction="column" justify="center">
+          <Text color="text-strong" size="small" weight="bold">
             {user?.name}
           </Text>
-          <Text color={'text-xweak'} size={'xsmall'}>
+          <Text color="text-xweak" size="xsmall">
             {user?.username}
           </Text>
         </Box>
       </Box>
-      <Box align={'center'} direction={'row'} gap={'small'}>
+      <Box align="center" direction="row" gap="small">
         {props.rightContent}
         {showActions &&
           (props.moreActions && props.moreActions.length > 0 ? (
             <Menu
               dropProps={{ stretch: false, align: { top: 'top', right: 'right' } }}
-              icon={<MoreVertical size={'15px'} style={{ cursor: 'pointer' }} />}
+              icon={<MoreVertical size="15px" style={{ cursor: 'pointer' }} />}
               items={props.moreActions}
             />
           ) : (

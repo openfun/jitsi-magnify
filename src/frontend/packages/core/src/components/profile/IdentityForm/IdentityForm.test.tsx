@@ -11,7 +11,9 @@ describe('IdentityForm', () => {
     renderWrappedInTestingProvider(<IdentityForm />);
 
     const nameInput = screen.getByRole('textbox', { name: 'Name' });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const usernameInput = screen.getByRole('textbox', { name: 'Username' });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const emailInput = screen.getByRole('textbox', { name: 'Email' });
 
     // Save button is initially disabled (no modification)

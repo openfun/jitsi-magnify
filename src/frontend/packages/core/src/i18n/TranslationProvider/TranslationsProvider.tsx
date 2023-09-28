@@ -55,18 +55,18 @@ export const TranslationProvider = ({
     useState<Maybe<Record<string, string> | Record<string, MessageFormatElement[]>>>(undefined);
 
   const updateLocale = (newLocale: string): void => {
-    getTranslation(newLocale).then((translations) => {
-      setTranslations(translations);
+    getTranslation(newLocale).then((newTranslations) => {
+      setTranslations(newTranslations);
       setCurrentLocale(newLocale);
     });
   };
 
   const localeContext: LocaleContextInterface = useMemo(
     () => ({
-      currentLocale: currentLocale,
-      setCurrentLocale: (locale: string) => {
-        localStorage.setItem(MAGNIFY_LOCALE_KEY, locale);
-        updateLocale(locale);
+      currentLocale,
+      setCurrentLocale: (newLocale: string) => {
+        localStorage.setItem(MAGNIFY_LOCALE_KEY, newLocale);
+        updateLocale(newLocale);
       },
     }),
     [currentLocale],
@@ -88,7 +88,7 @@ export const TranslationProvider = ({
       >
         {(translations || !initTranslation) && children}
         {initTranslation && !translations && (
-          <Box align={'center'} height={'100vh'} justify={'center'} width={'100vh'}>
+          <Box align="center" height="100vh" justify="center" width="100vh">
             <Spinner />
           </Box>
         )}

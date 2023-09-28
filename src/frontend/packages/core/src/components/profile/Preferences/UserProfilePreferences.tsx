@@ -29,7 +29,7 @@ export const UserProfilePreferences = () => {
         return;
       }
 
-      return await UsersRepository.update(authContext.user.id, data);
+      return UsersRepository.update(authContext.user.id, data);
     },
     {
       retry: 0,

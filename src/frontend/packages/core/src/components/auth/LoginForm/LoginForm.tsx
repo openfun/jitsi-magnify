@@ -67,7 +67,7 @@ export const LoginForm = () => {
   const { mutate, isLoading } = useMutation(
     async (data: FormValues) => {
       await UsersRepository.login(data.username, data.password);
-      return await UsersRepository.me();
+      return UsersRepository.me();
     },
     {
       retry: 0,
@@ -96,7 +96,7 @@ export const LoginForm = () => {
       validationSchema={validationSchema}
     >
       <Form>
-        <Box gap={'xsmall'}>
+        <Box gap="xsmall">
           <Heading color="brand" level={4}>
             {intl.formatMessage(messages.formTitle)}
           </Heading>
@@ -104,17 +104,17 @@ export const LoginForm = () => {
             {intl.formatMessage(messages.formExplanation)}
           </Text>
         </Box>
-        <Box gap={'medium'}>
+        <Box gap="medium">
           <FormikInput
             fullWidth
             label={intl.formatMessage(messages.usernameLabel)}
-            name={'username'}
+            name="username"
           />
           <FormikInput
             fullWidth
             label={intl.formatMessage(messages.passwordLabel)}
-            name={'password'}
-            type={'password'}
+            name="password"
+            type="password"
           />
           <Box direction="row" justify="end" margin={{ top: 'small' }}>
             <FormikSubmitButton

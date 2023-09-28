@@ -22,7 +22,7 @@ export const roomSettingsMessages = defineMessages({
   },
 });
 
-export function RoomSettingsView() {
+export const RoomSettingsView = () => {
   const intl = useTranslations();
   const { id } = useParams();
   const queryClient = useQueryClient();
@@ -94,7 +94,7 @@ export function RoomSettingsView() {
           <Box gap="15px">
             <BackButton />
             <RoomConfig room={room} />
-            <Box margin={'15px 0'}>
+            <Box margin="15px 0">
               <RoomUsersConfig
                 addUser={addUser}
                 onDeleteUser={deleteUser}
@@ -107,4 +107,4 @@ export function RoomSettingsView() {
       </>
     </DefaultPage>
   );
-}
+};

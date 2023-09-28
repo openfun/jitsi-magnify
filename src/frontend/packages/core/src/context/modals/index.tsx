@@ -75,7 +75,7 @@ export const ModalContextProvider = ({ ...props }: ModalsContextProviderProps) =
       })}
       <MagnifyErrorRequestModal
         error={lastErrorRequest}
-        modalUniqueId={'error-request-modal'}
+        modalUniqueId="error-request-modal"
         {...errorRequestModal}
         onClose={() => {
           setLastErrorRequest(undefined);

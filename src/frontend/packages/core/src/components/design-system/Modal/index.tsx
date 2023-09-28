@@ -24,19 +24,15 @@ export interface MagnifyModalProps extends LayerProps {
   footer?: ReactNode;
 }
 
-export const MagnifyModal = ({
-  type = MagnifyModalTypes.NORMAL,
-  validateButtonColor = 'brand',
-  ...props
-}: MagnifyModalProps) => {
+export const MagnifyModal = ({ type = MagnifyModalTypes.NORMAL, ...props }: MagnifyModalProps) => {
   const intl = useIntl();
   const getFooter = (): ReactNode => {
     if (props.showFooter != null && !props.showFooter) {
-      return <></>;
+      return null;
     }
     if (props.footer != null) {
       return (
-        <Box direction={'row'} gap={'medium'} pad={'small'}>
+        <Box direction="row" gap="medium" pad="small">
           <Button color="secondary" onClick={props.onClose}>
             {intl.formatMessage(commonMessages.cancel)}
           </Button>
@@ -46,7 +42,7 @@ export const MagnifyModal = ({
     }
 
     return (
-      <Box direction={'row'} gap={'small'} pad={'small'}>
+      <Box direction="row" gap="small" pad="small">
         <Button color="secondary" onClick={props.onClose}>
           {intl.formatMessage(commonMessages.cancel)}
         </Button>
@@ -65,33 +61,31 @@ export const MagnifyModal = ({
     );
   };
 
+  if (!props.isOpen) return null;
+
   return (
-    <>
-      {props.isOpen && (
-        <Layer {...props} id={props.modalUniqueId}>
-          <Box pad={'small'} style={{ position: 'relative' }} width={'100%'}>
-            <Box style={{ position: 'absolute', top: '10px', right: '10px' }}>
-              <Close
-                color={'white'}
-                cursor={'pointer'}
-                data-testid={'closeIcon'}
-                onClick={props.onClose}
-                size={'small'}
-              />
-            </Box>
-            {props.titleModal != null && (
-              <Heading level={4} margin={'small'}>
-                {props.titleModal}
-              </Heading>
-            )}
-            <Box>{props.children}</Box>
-            <Box align={'end'} justify={'center'} width={'100%'}>
-              {getFooter()}
-            </Box>
-          </Box>
-        </Layer>
-      )}
-    </>
+    <Layer {...props} id={props.modalUniqueId}>
+      <Box pad="small" style={{ position: 'relative' }} width="100%">
+        <Box style={{ position: 'absolute', top: '10px', right: '10px' }}>
+          <Close
+            color="white"
+            cursor="pointer"
+            data-testid="closeIcon"
+            onClick={props.onClose}
+            size="small"
+          />
+        </Box>
+        {props.titleModal != null && (
+          <Heading level={4} margin="small">
+            {props.titleModal}
+          </Heading>
+        )}
+        <Box>{props.children}</Box>
+        <Box align="end" justify="center" width="100%">
+          {getFooter()}
+        </Box>
+      </Box>
+    </Layer>
   );
 };
 

@@ -8,7 +8,7 @@ describe('Introduction Layout', () => {
   it('should render the signup form by default', async () => {
     await act(async () => {
       renderWrappedInTestingProvider(
-        <ResponsiveContext.Provider value={'large'}>
+        <ResponsiveContext.Provider value="large">
           <IntroductionLayout background="light-2" urlCover="cover.png" urlLogo="logo.png">
             <div>Hello !</div>
           </IntroductionLayout>

@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
 });
 
-export const AvatarForm = ({ id, src: defaultSrc = '' }: AvatarFormProps) => {
+export const AvatarForm = ({ src: defaultSrc = '' }: AvatarFormProps) => {
   const intl = useIntl();
   const inputRef = useRef<HTMLInputElement>(null);
   const [src, setSrc] = React.useState<string>(defaultSrc);
@@ -35,7 +35,6 @@ export const AvatarForm = ({ id, src: defaultSrc = '' }: AvatarFormProps) => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
   };
 
   const handleRemove = () => {
@@ -64,7 +63,7 @@ export const AvatarForm = ({ id, src: defaultSrc = '' }: AvatarFormProps) => {
               color="primary"
               onClick={() => inputRef?.current?.click()}
               style={{ width: '100%' }}
-              type={'submit'}
+              type="submit"
             >
               {intl.formatMessage(messages.loadNewButtonLabel)}
             </Button>
@@ -72,11 +71,9 @@ export const AvatarForm = ({ id, src: defaultSrc = '' }: AvatarFormProps) => {
         )}
 
         {changed && (
-          <Box direction="row" justify={'between'} margin={{ top: 'small' }}>
-            <Button color={'primary'}>
-              {intl.formatMessage(messages.saveNewAvatarButtonLabel)}
-            </Button>
-            <Button color={'tertiary'} icon={<Trash color={'accent-1'} />} onClick={handleRemove} />
+          <Box direction="row" justify="between" margin={{ top: 'small' }}>
+            <Button color="primary">{intl.formatMessage(messages.saveNewAvatarButtonLabel)}</Button>
+            <Button color="tertiary" icon={<Trash color="accent-1" />} onClick={handleRemove} />
           </Box>
         )}
 

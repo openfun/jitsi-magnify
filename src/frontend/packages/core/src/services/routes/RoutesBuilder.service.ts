@@ -5,17 +5,17 @@ export interface UrlBuilderParams {
 }
 
 export class RoutesBuilderService {
-  public static build(route: string, params: UrlBuilderParams = {}): string {
+  static build(route: string, params: UrlBuilderParams = {}): string {
     let output = route;
 
-    Object.keys(params).map((key) => {
+    Object.keys(params).forEach((key) => {
       output = output.replace(`:${key}`, params[key].toString());
     });
 
     return output;
   }
 
-  public static buildWithBaseUrl(route: string, params: UrlBuilderParams = {}) {
+  static buildWithBaseUrl(route: string, params: UrlBuilderParams = {}) {
     const newRoute = `${HttpService.baseUrl}${route}`;
     return RoutesBuilderService.build(newRoute, params);
   }

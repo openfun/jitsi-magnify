@@ -13,9 +13,9 @@ import { MagnifyQueryKeys } from '../../../../../utils/constants/react-query';
 import { UserAvatar } from '../../../../users';
 
 interface ResponsiveLayoutHeaderAvatarProps {}
-export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHeaderAvatarProps> = ({
-  ...props
-}) => {
+export const ResponsiveLayoutHeaderAvatar: FunctionComponent<
+  ResponsiveLayoutHeaderAvatarProps
+> = () => {
   const intl = useIntl();
   const avatarRef = useRef<HTMLDivElement>(null);
   const routing = useRouting();
@@ -30,7 +30,7 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
   });
 
   return (
-    <Box ref={avatarRef} align={'center'} direction={'row'} justify={'center'}>
+    <Box ref={avatarRef} align="center" direction="row" justify="center">
       <Menu
         dropProps={{ stretch: false, align: { top: 'bottom', right: 'right' } }}
         items={[
@@ -38,7 +38,7 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
             icon: <User />,
             onClick: () => routing.goToAccount(),
             label: (
-              <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+              <Box alignSelf="center" margin={{ left: 'xsmall' }}>
                 {intl.formatMessage(commonMessages.account)}
               </Box>
             ),
@@ -47,7 +47,7 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
             icon: <Configure />,
             onClick: () => routing.goToPreferences(),
             label: (
-              <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+              <Box alignSelf="center" margin={{ left: 'xsmall' }}>
                 {intl.formatMessage(commonMessages.preferences)}
               </Box>
             ),
@@ -56,7 +56,7 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
             icon: <Logout />,
             onClick: () => logoutUser(),
             label: (
-              <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+              <Box alignSelf="center" margin={{ left: 'xsmall' }}>
                 {intl.formatMessage(commonMessages.logout)}
               </Box>
             ),
@@ -65,7 +65,7 @@ export const ResponsiveLayoutHeaderAvatar: FunctionComponent<ResponsiveLayoutHea
       >
         {authContext.user && (
           <UserAvatar
-            backgroundColor={'brand'}
+            backgroundColor="brand"
             name={authContext.user.name}
             username={authContext.user.username}
           />

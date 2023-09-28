@@ -6,7 +6,7 @@ import { MagnifyCard } from './MagnifyCard';
 describe('MagnifyCard', () => {
   it('should render successfully a MagnifyCard', async () => {
     render(
-      <MagnifyCard title={'Test'}>
+      <MagnifyCard title="Test">
         <div>Test body</div>
       </MagnifyCard>,
     );

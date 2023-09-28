@@ -13,16 +13,14 @@ describe('MagnifyList', () => {
     ];
 
     const Wrapper = (
-      <>
-        <MagnifyList
-          rows={elements}
-          Row={(props) => (
-            <div onClick={(event) => props.onToggle()} role={'presentation'}>
-              {props.item.name} - selected: {props.selected ? 'true' : 'false'}
-            </div>
-          )}
-        />
-      </>
+      <MagnifyList
+        rows={elements}
+        Row={(props) => (
+          <div onClick={props.onToggle} role="presentation">
+            {props.item.name} - selected: {props.selected ? 'true' : 'false'}
+          </div>
+        )}
+      />
     );
 
     render(Wrapper);
@@ -39,7 +37,7 @@ describe('MagnifyList', () => {
 
   it('should render successfully without row', async () => {
     const elements: { id: string; name: string }[] = [];
-    render(<MagnifyList Row={(props) => <div>Empty</div>} rows={elements} />);
+    render(<MagnifyList Row={() => <div>Empty</div>} rows={elements} />);
     expect(screen.queryByText('Empty')).toBe(null);
   });
 });

@@ -12,12 +12,12 @@ describe('Should show a ResponsiveLayoutHeaderNav', () => {
     });
     const navItems: ResponsiveLayoutHeaderNavItemProps[] = [
       {
-        icon: <AppsRounded aria-label={''} color={'plain'} size={'18px'} />,
+        icon: <AppsRounded aria-label="" color="plain" size="18px" />,
         label: 'Rooms',
         goToRoute: () => {},
       },
     ];
-    navItems.map((item) => {
+    navItems.forEach((item) => {
       screen.getByLabelText(item.label);
     });
   });

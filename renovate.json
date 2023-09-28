@@ -12,12 +12,8 @@
       "matchPackageNames": [
         "@testing-library/react",
         "@types/faker",
-        "@types/react",
-        "@types/react-dom",
         "faker",
         "node-fetch",
-        "react",
-        "react-dom",
         "styled-components"
       ]
     },

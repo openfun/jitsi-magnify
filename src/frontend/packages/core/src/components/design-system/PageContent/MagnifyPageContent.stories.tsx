@@ -15,7 +15,7 @@ export default {
 const Template: StoryFn<typeof MagnifyPageContent> = (args) => {
   return (
     <ResponsiveLayout {...args}>
-      <MagnifyPageContent actions={<Button color="primary">Add</Button>} title={'Page title'}>
+      <MagnifyPageContent actions={<Button color="primary">Add</Button>} title="Page title">
         <Card>Exemple Page Content</Card>
       </MagnifyPageContent>
     </ResponsiveLayout>

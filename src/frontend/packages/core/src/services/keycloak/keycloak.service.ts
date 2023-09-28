@@ -12,7 +12,7 @@ export interface KeycloakServiceConfig {
 export class KeycloakService {
   static _kc: Keycloak;
 
-  public static initKeycloak(
+  static initKeycloak(
     redirectUri: string,
     configuration: KeycloakServiceConfig,
     onAuthenticatedCallback: (isAuth: boolean, user?: User) => void,
@@ -21,7 +21,7 @@ export class KeycloakService {
 
     kcObject
       .init({
-        redirectUri: redirectUri,
+        redirectUri,
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
         silentCheckSsoFallback: false,
@@ -39,19 +39,19 @@ export class KeycloakService {
     KeycloakService._kc = kcObject;
   }
 
-  public static getToken(): Maybe<string> {
+  static getToken(): Maybe<string> {
     return KeycloakService._kc?.token;
   }
 
-  public static isLoggedIn(): boolean {
+  static isLoggedIn(): boolean {
     return !!KeycloakService._kc?.token;
   }
 
-  public static getUsername(): Maybe<string> {
+  static getUsername(): Maybe<string> {
     return KeycloakService._kc?.tokenParsed?.preferred_username;
   }
 
-  public static async updateToken(
+  static async updateToken(
     successCallback?: () => void,
     failedCallback?: () => void,
   ): Promise<void> {

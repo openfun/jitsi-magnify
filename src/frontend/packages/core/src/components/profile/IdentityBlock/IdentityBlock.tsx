@@ -16,7 +16,7 @@ export const IdentityBlock = ({ margin = { vertical: 'small' } }: IdentityBlockP
 
   return (
     <Card background="white" margin={margin} pad={isSmall ? 'medium' : 'small'}>
-      <Box align={'center'} direction={isSmall ? 'column' : 'row'} justify={'center'}>
+      <Box align="center" direction={isSmall ? 'column' : 'row'} justify="center">
         <Box margin={{ vertical: 'auto', horizontal: 'medium' }}>
           <AvatarForm key={user?.id || ''} id={user?.id} />
         </Box>

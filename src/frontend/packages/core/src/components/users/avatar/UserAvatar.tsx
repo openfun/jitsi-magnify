@@ -36,11 +36,11 @@ export const UserAvatar = ({ username, name, backgroundColor }: UserAvatarProps)
       const customName = name.replace(/\s+/g, ' ').trim();
       const splitName = customName.split(' ');
 
-      let initials = splitName[0][0];
+      let chars = splitName[0][0];
       if (splitName[1].length > 0) {
-        initials += splitName[1][0];
+        chars += splitName[1][0];
       }
-      return initials.toUpperCase();
+      return chars.toUpperCase();
     }
     const customUsername = username.replace(/\s+/g, ' ').trim();
     return customUsername[0];
@@ -54,8 +54,8 @@ export const UserAvatar = ({ username, name, backgroundColor }: UserAvatarProps)
   };
 
   return (
-    <Avatar background={getBackgroundColor()} size={'40px'}>
-      <Text color={'white'} style={{ textDecoration: 'none' }}>
+    <Avatar background={getBackgroundColor()} size="40px">
+      <Text color="white" style={{ textDecoration: 'none' }}>
         {initials}
       </Text>
     </Avatar>

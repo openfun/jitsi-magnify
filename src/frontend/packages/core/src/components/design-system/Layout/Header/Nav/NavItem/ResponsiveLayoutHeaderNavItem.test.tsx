@@ -6,7 +6,7 @@ import { ResponsiveLayoutHeaderNavItem } from './ResponsiveLayoutHeaderNavItem';
 
 describe('Should show a ResponsiveLayoutHeaderNavItem', () => {
   it('display ResponsiveLayoutHeaderNavItem', async () => {
-    render(<ResponsiveLayoutHeaderNavItem icon={<Add aria-label={''} />} label={'Home'} />, {
+    render(<ResponsiveLayoutHeaderNavItem icon={<Add aria-label="" />} label="Home" />, {
       wrapper: MagnifyTestingProvider,
     });
 

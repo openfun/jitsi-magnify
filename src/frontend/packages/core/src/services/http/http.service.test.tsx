@@ -25,17 +25,13 @@ describe('HttpService', () => {
       await HttpService.MagnifyApi.get(testingRoute);
     } catch (error: any) {
       expect(error.response.status).toEqual(401);
-      expect(HttpService.MagnifyApi.defaults.headers.common['Authorization']).toEqual(
-        'Bearer null',
-      );
+      expect(HttpService.MagnifyApi.defaults.headers.common.Authorization).toEqual('Bearer null');
     }
   });
   it('it sends a request as a logged user', async () => {
     HttpService.retry.set(testingRoute, false);
     const response = await HttpService.MagnifyApi.get(testingRoute);
     expect(response.data).toEqual('Hello');
-    expect(HttpService.MagnifyApi.defaults.headers.common['Authorization']).not.toEqual(
-      'Bearer null',
-    );
+    expect(HttpService.MagnifyApi.defaults.headers.common.Authorization).not.toEqual('Bearer null');
   });
 });

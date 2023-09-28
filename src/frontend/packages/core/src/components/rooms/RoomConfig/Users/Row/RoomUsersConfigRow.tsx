@@ -57,7 +57,7 @@ export const RoomUsersConfigRow = ({ ...props }: RoomUsersConfigRowProps) => {
     }
     if (!props.canUpdate) {
       return (
-        <Text margin={'0 5px'} size="small">
+        <Text margin="0 5px" size="small">
           {props.role}
         </Text>
       );

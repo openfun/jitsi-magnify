@@ -13,16 +13,16 @@ export const ResponsiveLayoutHeaderNavItem: FunctionComponent<
 > = ({ ...props }) => {
   return (
     <Box
-      align={'center'}
-      direction={'row'}
-      gap={'xsmall'}
-      justify={'center'}
+      align="center"
+      direction="row"
+      gap="xsmall"
+      justify="center"
       onClick={() => props.goToRoute?.()}
-      pad={'6px'}
-      round={'xsmall'}
+      pad="6px"
+      round="xsmall"
     >
       {props.icon}
-      <Text aria-label={props.label} color={'black'} size={'small'}>
+      <Text aria-label={props.label} color="black" size="small">
         {props.label}
       </Text>
     </Box>
