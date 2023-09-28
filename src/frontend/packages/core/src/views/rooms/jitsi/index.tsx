@@ -7,7 +7,7 @@ import { RoomsRepository } from '../../../services';
 import { defaultConfiguration } from '../../../types';
 import { MagnifyQueryKeys } from '../../../utils';
 
-export function RoomsJitsiView() {
+export const RoomsJitsiView = () => {
   const { id } = useParams();
 
   const { data: room, isLoading } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
@@ -20,9 +20,9 @@ export function RoomsJitsiView() {
 
   return (
     <Box
-      align={'center'}
-      background={'white'}
-      justify={'center'}
+      align="center"
+      background="white"
+      justify="center"
       style={{
         zIndex: 10,
         position: 'absolute',
@@ -33,7 +33,7 @@ export function RoomsJitsiView() {
       }}
     >
       {room && (
-        <Box width={'100%'}>
+        <Box width="100%">
           <MagnifyMeeting
             configuration={room?.configuration ?? defaultConfiguration}
             jwt={room.jitsi.token}
@@ -45,4 +45,4 @@ export function RoomsJitsiView() {
       {!room && isLoading && <Spinner />}
     </Box>
   );
-}
+};

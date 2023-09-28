@@ -8,18 +8,18 @@ import { RoomAccessRole, RoomUser } from '../../../../../types';
 import { MagnifyTestingProvider } from '../../../../app';
 import { RoomUsersConfigRow } from './RoomUsersConfigRow';
 
-interface renderRoomUserResponse {
+interface RenderRoomUserResponse {
   onDelete: Mock;
   onUpdateRole: Mock;
   user: RoomUser;
 }
 
-const renderRoomUserConfigRow = (role: RoomAccessRole): renderRoomUserResponse => {
+const renderRoomUserConfigRow = (role: RoomAccessRole): RenderRoomUserResponse => {
   const onDelete = vi.fn();
   const onUpdateRole = vi.fn();
   const user = createRandomUser();
   render(
-    <ResponsiveContext.Provider value={'large'}>
+    <ResponsiveContext.Provider value="large">
       <RoomUsersConfigRow
         canUpdate={true}
         onDelete={onDelete}

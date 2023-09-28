@@ -7,7 +7,7 @@ import { MagnifyPageContent } from './MagnifyPageContent';
 describe('MagnifyPageContent', () => {
   it('shouldRender a MagnifyPageContent with title, children and actionButton', async () => {
     renderWrappedInTestingProvider(
-      <MagnifyPageContent actions={<Button>add room</Button>} title={'Rooms'}>
+      <MagnifyPageContent actions={<Button>add room</Button>} title="Rooms">
         <div>Hello !</div>
       </MagnifyPageContent>,
     );

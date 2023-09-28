@@ -88,10 +88,10 @@ export const UserSearchModal = ({ onSelectUser, ...props }: UserSearchModalProps
         </Button>
       }
     >
-      <Box pad={'small'} width={{ width: '100%', min: 'medium' }}>
+      <Box pad="small" width={{ width: '100%', min: 'medium' }}>
         <Formik initialValues={{ search: '' }} onSubmit={(values) => onSearch(values.search)}>
           <FormikValuesChange debounceTime={400}>
-            <Box align={'center'} gap={'medium'} justify={'center'} width={'100%'}>
+            <Box align="center" gap="medium" justify="center" width="100%">
               <FormikInput
                 fullWidth
                 label={intl.formatMessage(messages.searchUserLabel)}
@@ -100,7 +100,7 @@ export const UserSearchModal = ({ onSelectUser, ...props }: UserSearchModalProps
               />
               {loading && <Spinner />}
               {hasError && (
-                <Box width={'100%'}>
+                <Box width="100%">
                   <Notification
                     message={intl.formatMessage(messages.searchUserErrorText)}
                     status="critical"
@@ -116,7 +116,7 @@ export const UserSearchModal = ({ onSelectUser, ...props }: UserSearchModalProps
                       <UserRow
                         key={user.id}
                         isSelected={selectedUser?.id === user.id}
-                        onClick={(user) => setSelectedUser(user)}
+                        onClick={setSelectedUser}
                         user={user}
                       />
                     );

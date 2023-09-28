@@ -1,4 +1,3 @@
-import { defineMessages } from '@formatjs/intl';
 import { Button } from '@openfun/cunningham-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -6,7 +5,7 @@ import { Box, ButtonExtendedProps, Card, Menu, Notification, Spinner, Text } fro
 import { Clone, Configure, FormTrash, MoreVertical } from 'grommet-icons';
 
 import React from 'react';
-import { useIntl } from 'react-intl';
+import { useIntl, defineMessages } from 'react-intl';
 
 import { useNotification } from '../../../context';
 import { useModal } from '../../../context/modals';
@@ -24,11 +23,6 @@ export interface RoomRowProps {
    * The room to display
    */
   room: Room;
-  /**
-   * The base path to the jitsi page to redirect on join
-   * The room id will be appended to this path
-   */
-  baseJitsiUrl: string;
 }
 
 const messages = defineMessages({
@@ -65,7 +59,7 @@ const messages = defineMessages({
   },
 });
 
-export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
+export const RoomRow = ({ room }: RoomRowProps) => {
   const intl = useIntl();
   const routing = useRouting();
 
@@ -77,10 +71,10 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
 
   const { mutate, isLoading } = useMutation(
     async (roomId: string) => {
-      return await RoomsRepository.delete(roomId);
+      return RoomsRepository.delete(roomId);
     },
     {
-      onSuccess: (newRoom) => {
+      onSuccess: () => {
         queryClient.setQueryData([MagnifyQueryKeys.ROOMS], (rooms: Room[] = []) => {
           const newRooms = [...rooms];
           const index = newRooms.findIndex((roomItem) => {
@@ -104,9 +98,7 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
       validateButtonCallback: () => mutate(room.id),
       validateButtonLabel: intl.formatMessage(commonMessages.delete),
       titleModal: intl.formatMessage(messages.deleteModalTitle),
-      children: (
-        <Notification message={intl.formatMessage(messages.warningDelete)} status={'info'} />
-      ),
+      children: <Notification message={intl.formatMessage(messages.warningDelete)} status="info" />,
     });
   };
 
@@ -126,12 +118,12 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
     let result: ButtonExtendedProps[] = [
       {
         icon: (
-          <Box alignSelf={'center'}>
-            <Configure size={'14px'} />
+          <Box alignSelf="center">
+            <Configure size="14px" />
           </Box>
         ),
         label: (
-          <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+          <Box alignSelf="center" margin={{ left: 'xsmall' }}>
             {intl.formatMessage(commonMessages.settings)}
           </Box>
         ),
@@ -139,12 +131,12 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
       },
       {
         icon: (
-          <Box alignSelf={'center'}>
-            <Clone size={'small'} />
+          <Box alignSelf="center">
+            <Clone size="small" />
           </Box>
         ),
         label: (
-          <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+          <Box alignSelf="center" margin={{ left: 'xsmall' }}>
             {intl.formatMessage(messages.copyRoomLink)}
           </Box>
         ),
@@ -156,7 +148,7 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
       const settingsButtonProps: ButtonExtendedProps = {
         icon: <FormTrash />,
         label: (
-          <Box alignSelf={'center'} margin={{ left: 'xsmall' }}>
+          <Box alignSelf="center" margin={{ left: 'xsmall' }}>
             {intl.formatMessage(commonMessages.delete)}
           </Box>
         ),
@@ -172,38 +164,38 @@ export const RoomRow = ({ room, baseJitsiUrl }: RoomRowProps) => {
     <Card background="light-2" elevation="0" pad="xsmall" style={{ position: 'relative' }}>
       {isLoading && (
         <Box
-          align={'center'}
-          background={'#ffffff8c'}
-          justify={'center'}
+          align="center"
+          background="#ffffff8c"
+          justify="center"
           style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
         >
           <Spinner />
         </Box>
       )}
       <Box
-        align={'center'}
+        align="center"
         direction={isSmallSize ? 'column' : 'row'}
-        gap={'20px'}
+        gap="20px"
         justify={isSmallSize ? 'center' : 'between'}
       >
         <Box direction="row" gap="small" margin="auto 0px">
           <Box margin="auto 0px">
-            <Text color="brand" size="medium" truncate={'tip'} weight="bold">
+            <Text color="brand" size="medium" truncate="tip" weight="bold">
               {room.name}
             </Text>
           </Box>
         </Box>
 
-        <Box align={'center'} direction="row">
+        <Box align="center" direction="row">
           <Box margin={{ left: 'small' }} />
           <Button color="primary" onClick={() => routing.goToJitsiRoom(room.slug)} size="small">
             {intl.formatMessage(messages.join)}
           </Button>
           <Menu
             dropProps={{ stretch: false, align: { top: 'bottom', right: 'right' } }}
-            icon={<MoreVertical size={'medium'} />}
+            icon={<MoreVertical size="medium" />}
             items={getMoreActionsItems()}
-            justifyContent={'center'}
+            justifyContent="center"
           />
         </Box>
       </Box>

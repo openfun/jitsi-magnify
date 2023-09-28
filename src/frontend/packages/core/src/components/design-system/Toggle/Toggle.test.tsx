@@ -5,10 +5,10 @@ import { IntlProvider } from 'react-intl';
 import { MagnifyTestingProvider } from '../../app';
 import { Toggle, ToggleProps } from './Toggle';
 
-function StatefullToggle(props: ToggleProps) {
+const StatefullToggle = (props: ToggleProps) => {
   const [checked, setChecked] = React.useState(false);
   return <Toggle {...props} checked={checked} onChange={() => setChecked(() => !checked)} />;
-}
+};
 
 describe('Toggle', () => {
   it('should render as a checkbox', () => {

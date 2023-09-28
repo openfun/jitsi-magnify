@@ -12,7 +12,7 @@ export const getCustomTheme = (partialTheme: DefaultTokens = {}): ThemeType => {
       },
     },
     page: {
-      ['narrow']: {
+      narrow: {
         width: { min: 'xsmall', max: 'xlarge' },
       },
     },

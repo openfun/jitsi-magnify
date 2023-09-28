@@ -20,7 +20,7 @@ const messages = defineMessages({
   },
 });
 
-export function RoomsListView() {
+export const RoomsListView = () => {
   const intl = useTranslations();
 
   const { data: rooms, isLoading } = useQuery([MagnifyQueryKeys.ROOMS], RoomsRepository.getAll, {
@@ -29,18 +29,18 @@ export function RoomsListView() {
 
   return (
     <>
-      <Box align={'center'} direction={'column'} height={{ min: 'auto' }} justify={'center'}>
-        <Heading color={'brand'} level={1} margin="none" textAlign={'center'}>
+      <Box align="center" direction="column" height={{ min: 'auto' }} justify="center">
+        <Heading color="brand" level={1} margin="none" textAlign="center">
           {intl.formatMessage(messages.title_part_one)}
         </Heading>
-        <Heading color={'brand'} level={3} margin="none" textAlign={'center'}>
+        <Heading color="brand" level={3} margin="none" textAlign="center">
           {intl.formatMessage(messages.title_part_two)}
         </Heading>
       </Box>
       <CustomCard>
         <InstantRoom />
       </CustomCard>
-      <MyRooms baseJitsiUrl={'/j'} isLoading={isLoading} rooms={rooms ?? []} />
+      <MyRooms baseJitsiUrl="/j" isLoading={isLoading} rooms={rooms ?? []} />
     </>
   );
-}
+};

@@ -1,5 +1,4 @@
 import React from 'react';
-import { IntlShape } from 'react-intl';
 import { Navigate, Outlet, RouteObject } from 'react-router-dom';
 import { RequireUser } from '../../../components';
 import { UserPreference } from '../../../views/users/preferences';
@@ -9,7 +8,7 @@ export enum UserPath {
   PREFERENCES = '/app/users/preferences',
 }
 
-export const getUsersRoutes = (intl: IntlShape): RouteObject => {
+export const getUsersRoutes = (): RouteObject => {
   return {
     path: UserPath.ROOT,
     element: <Outlet />,

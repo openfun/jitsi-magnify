@@ -1,13 +1,13 @@
 import { Button } from '@openfun/cunningham-react';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useAuthContext } from '../../../../context';
 import { commonRoomMessages } from '../../../../i18n/Messages/Room/commonRoomMessages';
-import { Room, RoomAccessRole, RoomUser, User } from '../../../../types';
+import { Room, RoomAccessRole, RoomUser, RoomUserAccesses, User } from '../../../../types';
 import { SelectOption } from '../../../../types/misc';
 import { MagnifyCard } from '../../../design-system/Card';
-import MagnifyList from '../../../design-system/List/MagnifyList';
+import MagnifyList, { RowPropsExtended } from '../../../design-system/List/MagnifyList';
 import { useMagnifyModal } from '../../../design-system/Modal';
 import { UserSearchModal } from '../../../users/search-modal';
 import { RoomUsersConfigRow } from './Row';
@@ -38,19 +38,6 @@ export const RoomUsersConfig = ({ room, ...props }: RoomUsersConfigProps) => {
   const authContext = useAuthContext();
   const [currentUserRole, setCurrentUserRole] = useState<string>('owner');
   const [numberOfOwner, setNumberOfOwner] = useState(0);
-
-  useEffect(() => {
-    let numberOfOwner = 0;
-    room.accesses?.forEach((access) => {
-      if (access.role === RoomAccessRole.OWNER) {
-        numberOfOwner++;
-      }
-      if (access.user.id === authContext.user?.id) {
-        setCurrentUserRole(access.role);
-      }
-    });
-    setNumberOfOwner(numberOfOwner);
-  }, [room]);
 
   const onSelectUser = (user?: User): void => {
     addUserModal.closeModal();
@@ -98,44 +85,57 @@ export const RoomUsersConfig = ({ room, ...props }: RoomUsersConfigProps) => {
     props.onUpdateUser(newRole, userId, accessId);
   };
 
+  const RoomUserAccessRow = useCallback(
+    (rowProps: RowPropsExtended<RoomUserAccesses>) => (
+      <RoomUsersConfigRow
+        {...rowProps}
+        canUpdate={room.is_administrable}
+        options={getAvailableOptions(rowProps.item.user, rowProps.item.role)}
+        role={rowProps.item.role}
+        user={rowProps.item.user}
+        onDelete={() => {
+          props.onDeleteUser(rowProps.item.id);
+        }}
+        onUpdateRole={(newRole: RoomAccessRole) =>
+          updateRole(newRole, rowProps.item.user.id, rowProps.item.id)
+        }
+      />
+    ),
+    [room],
+  );
+
+  useEffect(() => {
+    let countOfOwner = 0;
+    room.accesses?.forEach((access) => {
+      if (access.role === RoomAccessRole.OWNER) {
+        countOfOwner++;
+      }
+      if (access.user.id === authContext.user?.id) {
+        setCurrentUserRole(access.role);
+      }
+    });
+    setNumberOfOwner(countOfOwner);
+  }, [room]);
+
   return (
     <>
       <MagnifyCard
         gapContent="medium"
         title={intl.formatMessage(roomConfigUserMessages.sectionTitle)}
         actions={
-          <>
-            {room.is_administrable && (
-              <Button color="primary" onClick={addUserModal.openModal} size="small">
-                {intl.formatMessage(roomConfigUserMessages.addMember)}
-              </Button>
-            )}
-          </>
+          room.is_administrable && (
+            <Button color="primary" onClick={addUserModal.openModal} size="small">
+              {intl.formatMessage(roomConfigUserMessages.addMember)}
+            </Button>
+          )
         }
       >
-        <MagnifyList
-          rows={room.accesses ?? []}
-          Row={(rowProps) => (
-            <RoomUsersConfigRow
-              {...rowProps}
-              canUpdate={room.is_administrable}
-              options={getAvailableOptions(rowProps.item.user, rowProps.item.role)}
-              role={rowProps.item.role}
-              user={rowProps.item.user}
-              onDelete={() => {
-                props.onDeleteUser(rowProps.item.id);
-              }}
-              onUpdateRole={(newRole: RoomAccessRole) =>
-                updateRole(newRole, rowProps.item.user.id, rowProps.item.id)
-              }
-            />
-          )}
-        />
+        <MagnifyList rows={room.accesses ?? []} Row={RoomUserAccessRow} />
       </MagnifyCard>
 
       <UserSearchModal
         {...addUserModal}
-        modalUniqueId={'add-room-user'}
+        modalUniqueId="add-room-user"
         onSelectUser={onSelectUser}
       />
     </>

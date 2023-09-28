@@ -33,15 +33,15 @@ const locale = 'en';
 export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
   const getRouter = (): RoutingContextInterface => {
     return {
-      goToDefaultPage: () => console.log('goToDefaultPage'),
-      goToLogout: () => console.log('goToLogout'),
-      goToLogin: () => console.log('goToLogin'),
-      goToRegister: () => console.log('goToRegister'),
-      goToAccount: () => console.log('goToAccount'),
-      goToPreferences: () => console.log('goToPreferences'),
-      goToJitsiRoom: () => console.log('goToJitsiRoom'),
-      goToRoomsList: () => console.log('goToRoomsList'),
-      goToRoomSettings: () => console.log('goToRoomSettings'),
+      goToDefaultPage: vi.fn(() => 'goToDefaultPage'),
+      goToLogout: vi.fn(() => 'goToLogout'),
+      goToLogin: vi.fn(() => 'goToLogin'),
+      goToRegister: vi.fn(() => 'goToRegister'),
+      goToAccount: vi.fn(() => 'goToAccount'),
+      goToPreferences: vi.fn(() => 'goToPreferences'),
+      goToJitsiRoom: vi.fn(() => 'goToJitsiRoom'),
+      goToRoomsList: vi.fn(() => 'goToRoomsList'),
+      goToRoomSettings: vi.fn(() => 'goToRoomSettings'),
     };
   };
 

@@ -18,8 +18,7 @@ const messages = defineMessages({
     id: 'components.profile.deleteAccountBlock.title',
   },
   deleteAccountBlockDescription: {
-    defaultMessage: `You can delete your account. This will delete all your data and
-        your account will be removed from the system. Note that this action cannot be undone.`,
+    defaultMessage: `You can delete your account. This will delete all your data and your account will be removed from the system. Note that this action cannot be undone.`,
     description: 'The description of the delete account block',
     id: 'components.profile.deleteAccountBlock.description',
   },
@@ -68,7 +67,7 @@ export const DeleteAccountBlock = ({ margin = { vertical: 'small' } }: DeleteAcc
 
   return (
     <>
-      <Card background={'white'} margin={margin}>
+      <Card background="white" margin={margin}>
         <Box margin="small">
           <Box margin="large">
             <Text color="status-error" style={{ textTransform: 'uppercase' }} weight="bold">
@@ -109,7 +108,7 @@ export const DeleteAccountBlock = ({ margin = { vertical: 'small' } }: DeleteAcc
               <Button color="tertiary" onClick={handleClose}>
                 {intl.formatMessage(messages.cancelButtonLabel)}
               </Button>
-              <Button color={'danger'} onClick={handleDelete} role="button">
+              <Button color="danger" onClick={handleDelete} role="button">
                 {intl.formatMessage(messages.confirmDeleteAccountButtonLabel)}
               </Button>
             </Box>

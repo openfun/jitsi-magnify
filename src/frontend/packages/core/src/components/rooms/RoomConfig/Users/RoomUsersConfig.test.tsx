@@ -11,7 +11,7 @@ import { ArrayHelper } from '../../../../utils/helpers/array';
 import { MagnifyTestingProvider } from '../../../app';
 import { RoomUsersConfig } from './RoomUsersConfig';
 
-interface renderRoomUserResponse {
+interface RenderRoomUserResponse {
   onDelete: Mock;
   onUpdateRole: Mock;
 
@@ -22,14 +22,14 @@ interface renderRoomUserResponse {
   container: HTMLElement;
 }
 
-const renderRoomUserConfig = (): renderRoomUserResponse => {
+const renderRoomUserConfig = (): RenderRoomUserResponse => {
   const onDelete = vi.fn();
   const onUpdateRole = vi.fn();
   const addUser = vi.fn();
   const room = createRandomRoom();
 
   const { container, baseElement } = render(
-    <ResponsiveContext.Provider value={'large'}>
+    <ResponsiveContext.Provider value="large">
       <RoomUsersConfig
         addUser={addUser}
         onDeleteUser={onDelete}

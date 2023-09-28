@@ -21,7 +21,7 @@ export const FormikSwitch = (props: FormikSwitchProps) => {
 
   return (
     <Switch
-      labelSide={'right'}
+      labelSide="right"
       {...field}
       {...props}
       checked={field.value}

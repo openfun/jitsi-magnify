@@ -37,12 +37,12 @@ export interface MagnifyProviderProps {
   cunninghamTheme?: DefaultTokens;
 }
 
-export function MagnifyProvider({
+export const MagnifyProvider = ({
   locale,
   config,
   cunninghamTheme = {},
   ...props
-}: PropsWithChildren<MagnifyProviderProps>) {
+}: PropsWithChildren<MagnifyProviderProps>) => {
   const themeConfig = useMemo(() => {
     return getCustomTheme(cunninghamTheme);
   }, [cunninghamTheme]);
@@ -71,4 +71,4 @@ export function MagnifyProvider({
       </Grommet>
     </TranslationProvider>
   );
-}
+};

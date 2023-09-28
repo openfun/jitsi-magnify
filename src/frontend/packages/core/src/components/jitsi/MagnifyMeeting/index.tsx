@@ -29,7 +29,7 @@ export const MagnifyMeeting = ({
   const routing = useRouting();
 
   // Users
-  const [users, setUsers] = React.useState<any[]>([]);
+  const [, setUsers] = React.useState<any[]>([]);
   const handleParticipantsChanged = () => {
     const participants = apiRef.current?.getParticipantsInfo();
     setUsers(participants || []);
@@ -88,7 +88,7 @@ export const MagnifyMeeting = ({
       jwt={props.jwt}
       onApiReady={handleApiReady}
       roomName={props.roomName}
-      spinner={() => <Spinner />}
+      spinner={Spinner}
     />
   );
 };

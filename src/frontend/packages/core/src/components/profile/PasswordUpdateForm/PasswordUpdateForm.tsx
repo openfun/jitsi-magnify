@@ -69,7 +69,7 @@ export const PasswordUpdateForm = () => {
       if (authContext.user?.id == null) {
         return;
       }
-      return await UsersRepository.changePassword(data.current_password, data.new_password);
+      return UsersRepository.changePassword(data.current_password, data.new_password);
     },
     {
       retry: 0,
@@ -101,24 +101,24 @@ export const PasswordUpdateForm = () => {
       }}
     >
       <Form>
-        <Box gap={'10px'}>
+        <Box gap="10px">
           <FormikInput
             fullWidth
             label={intl.formatMessage(messages.previousPasswordLabel)}
-            name={'current_password'}
-            type={'password'}
+            name="current_password"
+            type="password"
           />
           <FormikInput
             fullWidth
             label={intl.formatMessage(messages.passwordLabel)}
-            name={'new_password'}
-            type={'password'}
+            name="new_password"
+            type="password"
           />
           <FormikInput
             fullWidth
             label={intl.formatMessage(messages.confirmNewPasswordLabel)}
-            name={'confirmPassword'}
-            type={'password'}
+            name="confirmPassword"
+            type="password"
           />
           <FormikSubmitButton
             isLoading={mutation.isLoading}

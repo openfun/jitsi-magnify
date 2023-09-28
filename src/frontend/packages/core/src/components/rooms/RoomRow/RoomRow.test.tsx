@@ -10,7 +10,7 @@ import { RoomRow } from './RoomRow';
 describe('RoomRow', () => {
   it('should render the row indicating that user is admin', async () => {
     const room: Room = createRandomRoom();
-    render(<RoomRow baseJitsiUrl={'meeting.education'} room={room} />, {
+    render(<RoomRow room={room} />, {
       wrapper: MagnifyTestingProvider,
     });
     screen.getByText(room.name ?? '');
@@ -18,7 +18,7 @@ describe('RoomRow', () => {
   it('should display notification when link was copied to clipboard', async () => {
     const room: Room = createRandomRoom();
     const user = userEvent.setup();
-    render(<RoomRow baseJitsiUrl={'meeting.education'} room={room} />, {
+    render(<RoomRow room={room} />, {
       wrapper: MagnifyTestingProvider,
     });
     await act(() => {

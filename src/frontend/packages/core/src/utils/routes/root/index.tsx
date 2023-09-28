@@ -1,5 +1,4 @@
 import React from 'react';
-import { defineMessages, IntlShape } from 'react-intl';
 import { Navigate, Outlet, RouteObject } from 'react-router-dom';
 import { SimpleLayout } from '../../../components';
 import { RoomsPath } from '../rooms';
@@ -9,19 +8,11 @@ export enum RootPath {
   HOME = '/',
 }
 
-const rootRouteLabels = defineMessages({
-  [RootPath.ROOT]: {
-    defaultMessage: 'Home',
-    description: 'Label of the home view.',
-    id: 'utils.routes.root.root.label',
-  },
-});
-
-export const getRootRoute = (intl: IntlShape, children: RouteObject[]): RouteObject => {
+export const getRootRoute = (children: RouteObject[]): RouteObject => {
   return {
     path: RootPath.ROOT,
     element: (
-      <SimpleLayout urlLogo={'/assets/logo-fun-mooc.svg'}>
+      <SimpleLayout urlLogo="/assets/logo-fun-mooc.svg">
         <Outlet />
       </SimpleLayout>
     ),

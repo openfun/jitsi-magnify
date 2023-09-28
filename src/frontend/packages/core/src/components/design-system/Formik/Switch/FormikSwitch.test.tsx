@@ -15,7 +15,7 @@ describe('FormikSwitch', () => {
     render(
       <Formik initialValues={{ testSwitch: true }} onSubmit={handleSubmit}>
         <FormikValuesChange>
-          <FormikSwitch label={'testSwitch'} name={'testSwitch'} />
+          <FormikSwitch label="testSwitch" name="testSwitch" />
         </FormikValuesChange>
       </Formik>,
     );

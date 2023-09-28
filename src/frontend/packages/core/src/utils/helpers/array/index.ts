@@ -1,5 +1,5 @@
 export class ArrayHelper {
-  public static findElementIndex<T extends number | string | boolean>(
+  static findElementIndex<T extends number | string | boolean>(
     array: T[],
     element: T,
   ): number | null {
@@ -9,7 +9,7 @@ export class ArrayHelper {
     return index >= 0 ? index : null;
   }
 
-  public static removeItem<T extends number | string | boolean>(array: T[], element: T): any {
+  static removeItem<T extends number | string | boolean>(array: T[], element: T): any {
     const newArray = [...array];
     const index = ArrayHelper.findElementIndex(newArray, element);
     if (index != null) {
@@ -18,10 +18,7 @@ export class ArrayHelper {
     return newArray;
   }
 
-  public static async resolveAll<T>(
-    array: Array<T>,
-    callback: (item: T, index: number) => Promise<void>,
-  ) {
+  static async resolveAll<T>(array: Array<T>, callback: (item: T, index: number) => Promise<void>) {
     await Promise.all(array.map(callback));
   }
 }

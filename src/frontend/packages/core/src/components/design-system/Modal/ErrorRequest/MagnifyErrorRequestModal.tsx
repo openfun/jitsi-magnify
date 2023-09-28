@@ -40,8 +40,8 @@ export const MagnifyErrorRequestModal = ({ error, ...props }: Props) => {
 
   return (
     <MagnifyModal titleModal={intl.formatMessage(commonMessages.error)} {...props}>
-      <Box pad={'10px'}>
-        <Text size={'medium'}>{getMessage()}</Text>
+      <Box pad="10px">
+        <Text size="medium">{getMessage()}</Text>
       </Box>
     </MagnifyModal>
   );

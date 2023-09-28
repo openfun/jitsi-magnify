@@ -1,5 +1,4 @@
 import { Meta } from '@storybook/react';
-import React from 'react';
 import { createRandomRoom } from '../../../../factories';
 import { RoomUsersConfig } from './RoomUsersConfig';
 

@@ -12,4 +12,4 @@ export default function createRandomUser(): User {
   };
 }
 
-export const _users = [...Array(5)].map(() => createRandomUser());
+export const createRandomUsers = (count: number = 5) => [...Array(count)].map(createRandomUser);

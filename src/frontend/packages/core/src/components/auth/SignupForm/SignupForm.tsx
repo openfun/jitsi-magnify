@@ -84,7 +84,7 @@ export const SignupForm = () => {
     async (data: SignUpData) => {
       await UsersRepository.signIn({ ...data });
       await UsersRepository.login(data.username, data.password);
-      return await UsersRepository.me();
+      return UsersRepository.me();
     },
     {
       onSuccess: (user?: UserResponse) => {
@@ -140,16 +140,16 @@ export const SignupForm = () => {
       validationSchema={validationSchema}
     >
       <LocalizedForm>
-        <Box gap={'medium'}>
-          <Heading color="brand" level={4} margin={'none'}>
+        <Box gap="medium">
+          <Heading color="brand" level={4} margin="none">
             {intl.formatMessage(messages.formTitle)}
           </Heading>
-          <FormikInput fullWidth label={intl.formatMessage(formLabelMessages.name)} name={'name'} />
-          <FormikInput fullWidth label={intl.formatMessage(messages.emailLabel)} name={'email'} />
+          <FormikInput fullWidth label={intl.formatMessage(formLabelMessages.name)} name="name" />
+          <FormikInput fullWidth label={intl.formatMessage(messages.emailLabel)} name="email" />
           <FormikInput
             fullWidth
             label={intl.formatMessage(messages.usernameLabel)}
-            name={'username'}
+            name="username"
           />
           <FormikSelectLanguage
             changeCallback={(newLocale) => locale.setCurrentLocale(newLocale)}
@@ -157,14 +157,14 @@ export const SignupForm = () => {
           <FormikInput
             fullWidth
             label={intl.formatMessage(messages.passwordLabel)}
-            name={'password'}
-            type={'password'}
+            name="password"
+            type="password"
           />
           <FormikInput
             fullWidth
             label={intl.formatMessage(messages.confirmPasswordLabel)}
-            name={'confirmPassword'}
-            type={'password'}
+            name="confirmPassword"
+            type="password"
           />
           <Box direction="row" justify="end" margin={{ top: 'small' }}>
             <FormikSubmitButton

@@ -1,3 +1,5 @@
+// Disable extraneous dependencies rule because this file is only used in development
+/* eslint-disable import/no-extraneous-dependencies */
 import { rest } from 'msw';
 import { buildApiUrl } from '../../../services/http/http.service';
 import { User } from '../../../types';

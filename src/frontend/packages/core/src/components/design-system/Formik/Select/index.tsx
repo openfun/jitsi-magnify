@@ -23,7 +23,7 @@ export const FormikSelect = (props: FormikSelectProps) => {
   }, [meta.error, meta.touched]);
 
   return (
-    <Box gap={'5px'}>
+    <Box gap="5px">
       <Select
         {...props}
         {...field}

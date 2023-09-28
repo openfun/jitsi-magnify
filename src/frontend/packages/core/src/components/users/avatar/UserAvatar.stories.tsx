@@ -7,8 +7,8 @@ export default {
   component: UserAvatar,
 } as Meta<typeof UserAvatar>;
 
-const Template: StoryFn<typeof UserAvatar> = (args) => {
-  return <UserAvatar username={'JohnDoe'} />;
+const Template: StoryFn<typeof UserAvatar> = () => {
+  return <UserAvatar username="JohnDoe" />;
 };
 
 export const basic = {

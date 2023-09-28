@@ -30,20 +30,15 @@ export const MagnifyPageContent = ({ ...props }: MagnifyPageContentProps) => {
         pad={{ vertical: 'none' }}
         rows={isOnMobile ? ['auto', 'auto', 'auto'] : ['auto', 'auto']}
       >
-        <Heading truncate gridArea={'title'} level={3} margin={{ vertical: 'none' }} size="small">
+        <Heading truncate gridArea="title" level={3} margin={{ vertical: 'none' }} size="small">
           {props?.title}
         </Heading>
 
-        <Box
-          direction={'row'}
-          gridArea={'actions'}
-          justify={isOnMobile ? 'start' : 'end'}
-          width={'auto'}
-        >
+        <Box direction="row" gridArea="actions" justify={isOnMobile ? 'start' : 'end'} width="auto">
           {props.actions}
         </Box>
 
-        <Box gridArea={'breadcrumbs'}>{props.breadcrumb}</Box>
+        <Box gridArea="breadcrumbs">{props.breadcrumb}</Box>
       </Grid>
 
       {props.children}

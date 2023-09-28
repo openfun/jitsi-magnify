@@ -1,3 +1,5 @@
+import './index.scss';
+
 export * from './components';
 export * from './i18n';
 export * from './themes';
@@ -7,4 +9,3 @@ export * from './utils';
 export * from './services';
 export * from './types';
 export * from './factories';
-import './index.scss';

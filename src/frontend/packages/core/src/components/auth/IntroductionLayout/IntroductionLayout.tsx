@@ -19,7 +19,7 @@ export const IntroductionLayout = ({
   return (
     <Grid columns={{ count: isMobile ? 1 : 2, size: 'flex' }} gap="none">
       {!isMobile && (
-        <Box background={'light-5'}>
+        <Box background="light-5">
           <Stack fill>
             <Box background={background} height="100%" width="100%" />
             <Box direction="column" height="100%" justify="between">
@@ -33,7 +33,7 @@ export const IntroductionLayout = ({
           </Stack>
         </Box>
       )}
-      <Box background={'light-2'}>{children}</Box>
+      <Box background="light-2">{children}</Box>
     </Grid>
   );
 };

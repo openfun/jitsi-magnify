@@ -16,12 +16,12 @@ export const UserPreference = () => {
   const intl = useTranslations();
 
   return (
-    <Box gap={'small'}>
+    <Box gap="small">
       <div>
         <BackButton />
       </div>
       <CustomCard>
-        <Heading color={'brand'} level={4} margin={'none'}>
+        <Heading color="brand" level={4} margin="none">
           {intl.formatMessage(messages.title)}
         </Heading>
         <UserProfilePreferences />

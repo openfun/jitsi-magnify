@@ -11,15 +11,13 @@ import {
 
 interface ResponsiveLayoutHeaderNavProps {}
 
-export const ResponsiveLayoutHeaderNav: FunctionComponent<ResponsiveLayoutHeaderNavProps> = ({
-  ...props
-}) => {
+export const ResponsiveLayoutHeaderNav: FunctionComponent<ResponsiveLayoutHeaderNavProps> = () => {
   const isSmall = useIsSmallSize();
   const routing = useRouting();
 
   const navItems: ResponsiveLayoutHeaderNavItemProps[] = [
     {
-      icon: <AppsRounded aria-label={''} color={'plain'} size={'18px'} />,
+      icon: <AppsRounded aria-label="" color="plain" size="18px" />,
       label: 'Rooms',
       goToRoute: routing.goToRoomsList,
     },
@@ -28,11 +26,11 @@ export const ResponsiveLayoutHeaderNav: FunctionComponent<ResponsiveLayoutHeader
   return (
     <Box
       align="center"
-      background={'rgb(244, 246, 248)'}
+      background="rgb(244, 246, 248)"
       direction="row"
-      justify={'center'}
+      justify="center"
       pad={isSmall ? '5px 10px' : '7px 20px'}
-      round={'small'}
+      round="small"
     >
       {navItems.map((item) => {
         return <ResponsiveLayoutHeaderNavItem key={item.label} {...item} />;

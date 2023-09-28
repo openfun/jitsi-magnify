@@ -8,9 +8,9 @@ export interface SquareAvatarProps {
   more?: boolean;
 }
 
-function Avatar(props: AvatarExtendedProps) {
+const Avatar = (props: AvatarExtendedProps) => {
   return <GrommetAvatar round="xsmall" size="40px" {...props} />;
-}
+};
 
 export const SquareAvatar = ({ src, title, more }: SquareAvatarProps) => {
   // Case 1: we want to display a "..." icon

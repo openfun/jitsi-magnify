@@ -16,9 +16,7 @@ const messages = defineMessages({
     id: 'components.profile.passwordUpdateBlock.title',
   },
   updatePasswordBlockDescription: {
-    defaultMessage: `Your password is used to authenticate your account and 
-        to protect your data. To make it stronger, choose a password with more 
-        than 8 characters, including a mix of letters, numbers and symbols.`,
+    defaultMessage: `Your password is used to authenticate your account and to protect your data. To make it stronger, choose a password with more than 8 characters, including a mix of letters, numbers and symbols.`,
     description: 'The description of the password update block',
     id: 'components.profile.passwordUpdateBlock.description',
   },

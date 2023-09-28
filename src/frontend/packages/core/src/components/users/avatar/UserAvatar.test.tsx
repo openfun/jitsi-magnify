@@ -6,37 +6,37 @@ import { UserAvatar } from './UserAvatar';
 
 describe('UserAvatar', () => {
   it('should render successfully with username', async () => {
-    renderWrappedInTestingProvider(<UserAvatar username={'JohnDoe'} />);
+    renderWrappedInTestingProvider(<UserAvatar username="JohnDoe" />);
     await screen.findByText('J');
   });
 
   it('should render successfully with username', async () => {
-    renderWrappedInTestingProvider(<UserAvatar username={'     JohnDoe      '} />);
+    renderWrappedInTestingProvider(<UserAvatar username="     JohnDoe      " />);
     await screen.findByText('J');
   });
 
   it('should render successfully with username', async () => {
-    renderWrappedInTestingProvider(<UserAvatar username={'     JohnDoe     Doe '} />);
+    renderWrappedInTestingProvider(<UserAvatar username="     JohnDoe     Doe " />);
     await screen.findByText('J');
   });
 
   it('should render successfully with name', async () => {
-    renderWrappedInTestingProvider(<UserAvatar name={'John Doe'} username={'DoeJohn'} />);
+    renderWrappedInTestingProvider(<UserAvatar name="John Doe" username="DoeJohn" />);
     await screen.findByText('JD');
   });
   it('should render successfully with name', async () => {
     renderWrappedInTestingProvider(
-      <UserAvatar name={'John Doe John Doe John Doe'} username={'DoeJohn'} />,
+      <UserAvatar name="John Doe John Doe John Doe" username="DoeJohn" />,
     );
     await screen.findByText('JD');
   });
   it('should render successfully with long spacing name', async () => {
-    renderWrappedInTestingProvider(<UserAvatar name={'John          Doe'} username={'DoeJohn'} />);
+    renderWrappedInTestingProvider(<UserAvatar name="John          Doe" username="DoeJohn" />);
     await screen.findByText('JD');
   });
   it('should render successfully with long spacing name', async () => {
     renderWrappedInTestingProvider(
-      <UserAvatar name={'    John          Doe       '} username={'DoeJohn'} />,
+      <UserAvatar name="    John          Doe       " username="DoeJohn" />,
     );
     await screen.findByText('JD');
   });
