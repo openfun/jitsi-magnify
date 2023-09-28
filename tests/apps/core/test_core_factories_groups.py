@@ -24,7 +24,7 @@ class GroupsFactoriesTestCase(TestCase):
         rooms = RoomFactory.create_batch(2)
         group = GroupFactory(resources=rooms)
 
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             group.resources.all(), [r.resource for r in rooms], ordered=False
         )
         self.assertEqual(list(rooms[0].groups.all()), [group])
@@ -34,7 +34,7 @@ class GroupsFactoriesTestCase(TestCase):
         users = UserFactory.create_batch(2)
         group = GroupFactory(members=users)
 
-        self.assertQuerysetEqual(group.members.all(), users, ordered=False)
+        self.assertQuerySetEqual(group.members.all(), users, ordered=False)
         self.assertEqual(list(users[0].is_member_of.all()), [group])
 
     def test_factories_groups_administrators(self):
@@ -42,5 +42,5 @@ class GroupsFactoriesTestCase(TestCase):
         users = UserFactory.create_batch(2)
         group = GroupFactory(administrators=users)
 
-        self.assertQuerysetEqual(group.administrators.all(), users, ordered=False)
+        self.assertQuerySetEqual(group.administrators.all(), users, ordered=False)
         self.assertEqual(list(users[0].is_administrator_of.all()), [group])
