@@ -137,6 +137,19 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
         ),
     }
 
+    LIVEKIT_CONFIGURATION = {
+        "livekit_token_expiration_seconds": values.Value(300, environ_name="LIVEKIT_TOKEN_EXPIRATION_SECONDS", environ_prefix=None
+        ),
+        "livekit_api_key": values.Value(environ_name="LIVEKIT_API_KEY", environ_prefix=None
+        ),
+        "livekit_api_secret": values.Value(environ_name="LIVEKIT_API_SECRET", environ_prefix=None
+        ),
+        "livekit_domain": values.Value(environ_name="LIVEKIT_DOMAIN", environ_prefix=None
+        ),
+
+
+    }
+
     JITSI_ROOM_PREFIX = values.Value(
         "", environ_name="MAGNIFY_JITSI_ROOM_PREFIX", environ_prefix=None
     )
@@ -315,30 +328,50 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
 
     # Logging
     LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": True,
-        "formatters": {
-            "verbose": {
-                "format": "%(levelname)s %(asctime)s %(module)s "
-                "%(process)d %(thread)d %(message)s"
-            }
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
         },
-        "handlers": {
-            "console": {
-                "level": "DEBUG",
-                "class": "logging.StreamHandler",
-                "formatter": "verbose",
-            }
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
         },
-        "loggers": {
-            "django.db.backends": {
-                "level": "ERROR",
-                "handlers": ["console"],
-                "propagate": False,
-            }
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'null': {
+            'class': 'logging.NullHandler',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+        },
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'py.warnings': {
+            'handlers': ['console'],
         },
     }
-
+}
     # Cache
     CACHES = {
         "default": {
@@ -355,6 +388,8 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
             ),
         },
     }
+    import logging.config
+    logging.config.dictConfig(LOGGING)
 
     # Sentry
     SENTRY_DSN = values.Value(None, environ_name="SENTRY_DSN")
@@ -522,3 +557,4 @@ class PreProduction(Production):
 
     nota bene: it should inherit from the Production environment.
     """
+
