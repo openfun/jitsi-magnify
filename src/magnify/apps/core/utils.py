@@ -6,6 +6,8 @@ from datetime import date, timedelta
 from django.conf import settings
 from django.utils import timezone
 
+from livekit import api
+
 import jwt
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -44,41 +46,30 @@ def get_nth_week_number(original_date):
     return nb_weeks
 
 
-def create_token_payload(user, room, is_admin=False):
+def create_video_grants(user, room, is_admin=False):
+    """Creates video grants given room and user permission"""
+    grants = api.VideoGrants(room_join = True, room = room, can_publish= False, room_admin=is_admin)
+    return grants
+
+
+def create_livekit_token(user, room, is_admin=False) :
     """Create the payload so that it contains each information jitsi requires"""
     expiration_seconds = int(
-        settings.JITSI_CONFIGURATION["jitsi_token_expiration_seconds"]
+        settings.LIVEKIT_CONFIGURATION["livekit_token_expiration_seconds"]
     )
-    token_payload = {
-        "exp": timezone.now() + timedelta(seconds=expiration_seconds),
-        "iat": timezone.now(),
-        "moderator": is_admin or user.is_staff,
-        "aud": "jitsi",
-        "iss": settings.JITSI_CONFIGURATION["jitsi_app_id"],
-        "sub": settings.JITSI_CONFIGURATION["jitsi_xmpp_domain"],
-        "room": room,
-    }
 
-    jitsi_user = {
-        "avatar": settings.JITSI_CONFIGURATION.get("jitsi_guest_avatar"),
-        "name": user.username
-        if user.is_authenticated
-        else settings.JITSI_CONFIGURATION.get("jitsi_guest_username"),
-        "email": user.email if user.is_authenticated else "",
-    }
+    video_grants = create_video_grants(user, room, is_admin)
+    token_payload = api.AccessToken(
+        settings.LIVEKIT_CONFIGURATION["livekit_api_key"],
+        settings.LIVEKIT_CONFIGURATION["livekit_api_secret"],
+    ).with_identity(settings.LIVEKIT_CONFIGURATION["livekit_domain"]).with_name(user.username).with_grants(video_grants).with_ttl(timedelta(seconds=expiration_seconds))
 
-    token_payload["context"] = {"user": jitsi_user}
-    return token_payload
+    return token_payload.to_jwt()
 
 
 def generate_token(user, room, is_admin=False):
     """Generate the access token that will give access to the room"""
-    token_payload = create_token_payload(user, room, is_admin=is_admin)
-    token = jwt.encode(
-        token_payload,
-        settings.JITSI_CONFIGURATION["jitsi_secret_key"],
-        algorithm="HS256",
-    )
+    token = create_livekit_token(user, room, is_admin)
 
     return token
 
@@ -86,7 +77,7 @@ def generate_token(user, room, is_admin=False):
 def get_tokens_for_user(user):
     """Get JWT tokens for user authentication."""
     refresh = RefreshToken.for_user(user)
-
+    test = settings.LIVEKIT_CONFIGURATION["livekit_token_expiration_seconds"]
     return {
         "refresh": str(refresh),
         "access": str(refresh.access_token),
