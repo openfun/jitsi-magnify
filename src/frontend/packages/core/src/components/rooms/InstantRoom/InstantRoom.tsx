@@ -44,7 +44,7 @@ export const InstantRoom = () => {
 
   const onSubmit = (values: FormValues): void => {
     const roomName = values.roomName !== '' ? values.roomName : randomRoom();
-    routing.goToJitsiRoom(roomName);
+    routing.goToLiveKitRoom(roomName);
   };
 
   return (

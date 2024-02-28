@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RoutingContextProvider } from '../../context';
 import { KeycloakService } from '../../services';
-import { JitsiPath } from '../../utils/routes/jitsi';
+import { LiveKitPath } from '../../utils/routes/livekit';
 import { RoomsPath } from '../../utils/routes/rooms';
 import { RootPath } from '../../utils/routes/root';
 import { UserPath } from '../../utils/routes/users';
@@ -37,8 +37,8 @@ export const DefaultProvider = ({ ...props }: DefaultProviderProps) => {
         goToAccount: () => {
           KeycloakService._kc.accountManagement();
         },
-        goToJitsiRoom: (roomId: string) => {
-          navigate(JitsiPath.WEB_CONF.replace(':id', roomId));
+        goToLiveKitRoom: (roomId: string) => {
+          navigate(LiveKitPath.WEB_CONF.replace(':id', roomId));
         },
         goToRoomsList: () => navigate(RootPath.HOME),
         goToRoomSettings: (roomId?: string) => {

@@ -39,7 +39,7 @@ export const MagnifyTestingProvider = (props: MagnifyTestingProviderProps) => {
       goToRegister: vi.fn(() => 'goToRegister'),
       goToAccount: vi.fn(() => 'goToAccount'),
       goToPreferences: vi.fn(() => 'goToPreferences'),
-      goToJitsiRoom: vi.fn(() => 'goToJitsiRoom'),
+      goToLiveKitRoom: vi.fn(() => 'goToLiveKitRoom'),
       goToRoomsList: vi.fn(() => 'goToRoomsList'),
       goToRoomSettings: vi.fn(() => 'goToRoomSettings'),
     };

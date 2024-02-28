@@ -7,7 +7,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { useTranslations } from '../../i18n';
-import { getJitsiRoutes } from '../../utils/routes/jitsi';
+import { getLiveKitRoutes } from '../../utils/routes/livekit';
 import { getRoomsRoutes } from '../../utils/routes/rooms';
 import { getRootRoute, RootPath } from '../../utils/routes/root';
 
@@ -36,11 +36,11 @@ export const AppRouter = () => {
           ]),
         },
 
-        { ...getJitsiRoutes() },
+        { ...getLiveKitRoutes() },
         {
           index: true,
           element: (
-            <SimpleLayout urlLogo="/assets/logo-fun-mooc.svg">
+            <SimpleLayout urlLogo="/assets/logo-fun-mooc.svg" >
               <RoomsListView />
             </SimpleLayout>
           ),

@@ -8,7 +8,7 @@ export interface RoutingContextInterface {
   goToRegister: () => void;
   goToAccount: () => void;
   goToPreferences: () => void;
-  goToJitsiRoom: (roomId: string) => void;
+  goToLiveKitRoom: (roomId: string) => void;
   goToRoomsList: () => void;
   goToRoomSettings: (roomId?: string) => void;
 }

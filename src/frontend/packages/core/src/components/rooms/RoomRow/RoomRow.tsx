@@ -188,7 +188,7 @@ export const RoomRow = ({ room }: RoomRowProps) => {
 
         <Box align="center" direction="row">
           <Box margin={{ left: 'small' }} />
-          <Button color="primary" onClick={() => routing.goToJitsiRoom(room.slug)} size="small">
+          <Button color="primary" onClick={() => routing.goToLiveKitRoom(room.slug)} size="small">
             {intl.formatMessage(messages.join)}
           </Button>
           <Menu
