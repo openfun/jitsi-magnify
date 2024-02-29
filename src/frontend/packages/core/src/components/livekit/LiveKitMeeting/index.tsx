@@ -1,4 +1,4 @@
-import { LiveKitRoom, VideoConference, PreJoin } from '@livekit/components-react'
+import { LiveKitRoom, VideoConference, PreJoin} from '@livekit/components-react'
 
 import { DEFAULT_LIVEKIT_DOMAIN } from '../../../utils/settings'
 
@@ -7,6 +7,7 @@ import { Room } from 'livekit-client';
 import { Fragment, useMemo, useState } from 'react';
 import { Box } from 'grommet';
 import { useAuthContext } from '../../../context';
+import { useNavigate } from 'react-router-dom';
 
 export interface LiveKitMeetingProps {
     token: string
@@ -25,7 +26,8 @@ export const LiveKitMeeting = ({
 }: LiveKitMeetingProps) => {
 
     const { user } = useAuthContext()
-    const [ready, setReady] = useState(false)
+    const navigate = useNavigate()
+    const [ready, setReady] = useState<boolean>(false)
     const [choices, setChoices] = useState<LocalUserChoices>({
         videoEnabled: true,
         audioEnabled: false,
@@ -51,6 +53,10 @@ export const LiveKitMeeting = ({
         setReady(true)
     }
 
+    const onDisconnected = () => {
+        navigate('/')
+    }
+
     return (
         <Fragment>
             {!ready &&
@@ -58,7 +64,7 @@ export const LiveKitMeeting = ({
                     <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={false}></PreJoin>
                 </Box>
             }
-            {ready && <LiveKitRoom data-lk-theme="default" serverUrl={DEFAULT_LIVEKIT_DOMAIN} token={props.token} connect={true} room={new Room(roomOptions)} audio={choices.audioEnabled} video={choices.videoEnabled} connectOptions={{ autoSubscribe: true }}>
+            {ready && <LiveKitRoom onDisconnected={onDisconnected} data-lk-theme="default" serverUrl={DEFAULT_LIVEKIT_DOMAIN} token={props.token} connect={true} room={new Room(roomOptions)} audio={choices.audioEnabled} video={choices.videoEnabled} connectOptions={{ autoSubscribe: true }}>
                 <VideoConference />
             </LiveKitRoom>}
         </Fragment>
