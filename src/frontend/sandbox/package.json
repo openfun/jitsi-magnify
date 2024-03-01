@@ -40,6 +40,7 @@
     "stream-browserify": "3.0.0",
     "styled-components": "5.3.11",
     "validator": "13.11.0",
+    "vite-plugin-filter-replace": "^0.1.13",
     "web-vitals": "3.4.0"
   },
   "devDependencies": {
