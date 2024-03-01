@@ -16,9 +16,8 @@ export const RoomLiveKitView = () => {
       if (room && room.jitsi?.token == null) {
         return <>Room Privé, connectez vous</>;
       }
-
-    return (
+      return (
         room &&
-        <LiveKitMeeting token={room.jitsi.token}/>
-    )
+        <LiveKitMeeting token={room.jitsi.token}/> || <>Error while joining room</>
+      )
 }
