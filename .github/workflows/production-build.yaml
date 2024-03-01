@@ -3,7 +3,7 @@ name: production-build
 on:
   push:
     branches:
-      - 'livekit'
+      - 'github-action'
   pull_request:
     branches:
       - 'livekit'
