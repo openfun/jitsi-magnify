@@ -4,7 +4,7 @@ import { useAuthContext } from "../../../context"
 import { MagnifyQueryKeys } from "../../../utils";
 import { useParams } from "react-router-dom";
 import { RoomsRepository } from "../../../services";
-import React, { useContext, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import { Box } from "grommet";
 import { PreJoin } from "@livekit/components-react";
 
@@ -54,7 +54,8 @@ export const RoomLiveKitView = () => {
   }
 
   return (
-    !isLoading && (
+    <Fragment>
+    {!isLoading &&  (
       ready ?
         <UserPresets.Provider value={choices}>
           <LiveKitMeeting token={room!.jitsi.token} />
@@ -62,7 +63,8 @@ export const RoomLiveKitView = () => {
         <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={true}></PreJoin>
         </Box>
-    )
+    )}
+    </Fragment>
   )
 }
 
