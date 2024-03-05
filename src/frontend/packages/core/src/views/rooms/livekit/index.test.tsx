@@ -1,98 +1,83 @@
-import { MemoryRouter, createMemoryRouter, useNavigate } from "react-router-dom";
+import { createMemoryRouter} from "react-router-dom";
 import { describe, it } from "vitest";
 import { RoomLiveKitView } from ".";
-import { act, fireEvent, getByText, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { TestingContainer } from "../../../components/TestingContainer";
 import userEvent from "@testing-library/user-event";
-import { server } from "../../../mocks/server";
-import { rest } from "msw";
-import { buildApiUrl } from "../../../services";
-import { createRandomRoom } from "../../../factories";
-import { useAuthContext } from "../../../context";
-import React from "react";
+import { MediaStreamTrack, MediaDeviceInfo } from "../../../utils/media/mediastream.test";
 
-
+const router = createMemoryRouter(
+    [
+        {
+            path: '/:id',
+            element: <RoomLiveKitView />,
+        },
+    ],
+    { initialEntries: ['/123'], initialIndex: 1 },
+);
 
 describe('LiveKitView', () => {
-    it("Should allow one to join the room", async () => {
 
-        // Mock local storage
-        const mockLocalStorage = (() => {
-            let store = {} as Storage;
+    beforeEach(() => {
+        render(<TestingContainer router={router} />)
+    })
 
-            return {
-                getItem(key: string) {
-                    return store[key];
-                },
+    beforeAll(() => {
+        vi.spyOn(window.HTMLVideoElement.prototype, 'play').mockImplementation(async () => { })
 
-                setItem(key: string, value: string) {
-                    store[key] = value;
-                },
+        window.MediaStream = vi.fn().mockImplementation(() => (new MediaStreamTrack()))
 
-                removeItem(key: string) {
-                    delete store[key];
-                },
-
-                clear() {
-                    store = {} as Storage;
-                },
-            };
-        })();
-
-        // Mock navigator media
-        interface MockedMedia {
-            getTracks: any
-        }
-
-        class MockeMedia {
-            getTracks() {
-                return []
-            }
-        }
+        window.isSecureContext = true;
 
         const mockGetUserMedia = vi.fn(async () => {
-            return new Promise<MockedMedia>(resolve => {
-                resolve(new MockeMedia())
+            return new Promise<MediaStreamTrack>(resolve => {
+                resolve(new MediaStreamTrack())
             })
         })
 
         Object.defineProperty(global.navigator, 'mediaDevices', {
             value: {
                 getUserMedia: mockGetUserMedia,
+                enumerateDevices: () => {
+                    return [new MediaDeviceInfo("1"), new MediaDeviceInfo("2")]
+                },
+                addEventListener: () => { },
+                removeEventListener: () => { }
             },
         })
+    })
 
-        const router = createMemoryRouter(
-            [
-                {
-                    path: '/:id',
-                    element: <RoomLiveKitView />,
-                },
-            ],
-            { initialEntries: ['/123'], initialIndex: 1 },
-        );
-
-        render(<TestingContainer router={router} />)
-
+    it("Should allow one to join a room", async () => {
         await waitFor(() => expect(screen.getByText("Join Room")).not.toBe(null))
 
-    }),
-        it("Should set your username according to your magnify user", async () => {
+    })
+    it("Should set your username according to your magnify user", async () => {
+        await waitFor(() => expect(screen.getByDisplayValue('JohnDoe')).toBeInTheDocument())
 
-            const AuthContext = React.createContext({ user: "Bob" });
+    })
+    it("Should verify that the form will submit the username", async () => {
+        // Setup user
+        const user = userEvent.setup();
 
-            const router = createMemoryRouter(
-                [
-                    {
-                        path: '/:id',
-                        element: <AuthContext.Provider value={{ user: "Bob" }} ><RoomLiveKitView /></AuthContext.Provider>,
-                    },
-                ],
-                { initialEntries: ['/123'], initialIndex: 1 },
-            );
-
-            render(<TestingContainer router={router} />)
-            await waitFor(() => expect(screen.getByDisplayValue('JohnDoe')).toBeInTheDocument())
-
+        // Test submit
+        const handleOnSubmitMock = vi.fn((e: Event) => {
+            const data = new FormData(e.target as HTMLFormElement);
+            assert(data.get('username') == "JohnDoe")
         })
+
+        const join = screen.getByText('Join Room')
+        expect(join).not.toBeDisabled()
+
+        const form = await screen.getByText("Join Room").parentElement
+        form!.onsubmit = handleOnSubmitMock;
+        await act(() => fireEvent.submit(form!))
+
+    })
+    it("Should verify that the devices are displayed correctly", async () => {
+        const user = userEvent.setup();
+        const camera = screen.getByText("Camera")
+        await act(() => user.click(camera!))
+        const internalCamera = screen.getAllByText("Internal camera")
+        assert(internalCamera.length == 2)
+    })
 })
