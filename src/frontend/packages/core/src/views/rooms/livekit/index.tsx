@@ -20,7 +20,6 @@ const UserPresets = React.createContext<LocalUserChoices>({} as LocalUserChoices
 
 export const usePresets = () => {
   const context = useContext(UserPresets)
-  console.log(context)
   return context
 }
 
