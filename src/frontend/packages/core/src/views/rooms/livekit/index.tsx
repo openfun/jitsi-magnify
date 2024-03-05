@@ -40,7 +40,6 @@ export const RoomLiveKitView = () => {
   })
 
   const handlePreJoinSubmit = (choices: LocalUserChoices) => {
-    console.log("choices : ", choices)
     setChoices(choices)
     setReady(true)
   }
