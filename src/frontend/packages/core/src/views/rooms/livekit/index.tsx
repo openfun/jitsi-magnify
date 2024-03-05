@@ -7,6 +7,15 @@ import { RoomsRepository } from "../../../services";
 import React, { Fragment, useContext, useState } from "react";
 import { Box } from "grommet";
 import { PreJoin } from "@livekit/components-react";
+import { defineMessages, useIntl } from "react-intl";
+
+const messages = defineMessages({
+    privateRoomError: {
+      defaultMessage: 'Private room, you must connect.',
+      description: 'Error when attempting to join a private room while not registered',
+      id: 'views.rooms.livekit.index.privateRoom'
+    }
+})
 
 export interface LocalUserChoices {
   videoEnabled: boolean,
@@ -25,6 +34,7 @@ export const usePresets = () => {
 
 export const RoomLiveKitView = () => {
 
+  const intl = useIntl();
   const { id } = useParams()
 
   const [ready, setReady] = useState<boolean>()
@@ -48,7 +58,7 @@ export const RoomLiveKitView = () => {
   });
 
   if (room && room.jitsi?.token == null) {
-    return <>Room Privé, connectez vous</>;
+    return <>{intl.formatMessage(messages.privateRoomError)}</>;
   }
 
   return (
