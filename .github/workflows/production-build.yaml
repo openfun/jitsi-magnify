@@ -1,15 +1,15 @@
 name: production-build
 
 on:
-  push:
-    branches:
-      - 'github-action'
-  pull_request:
+  pull_request_target:
+    types:
+      - closed
     branches:
       - 'livekit'
 
 jobs:
   docker:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       -
