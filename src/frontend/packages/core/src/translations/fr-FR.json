@@ -107,5 +107,6 @@
   "components.rooms.config.settingsTitle": "Paramètres",
   "components.auth.SignupForm.submitButtonLabel": "S'inscrire",
   "i18n.Messages.formLabelMessages.name": "Nom",
-  "components.auth.LoginForm.submitButtonLabel": "Se connecter"
+  "components.auth.LoginForm.submitButtonLabel": "Se connecter",
+  "views.rooms.livekit.index.privateRoom": "Cette room est privée, veuillez vous connecter !"
 }
