@@ -1,7 +1,5 @@
 import { LiveKitRoom, VideoConference, PreJoin, useTracks, useMediaDevices, useRoomContext } from '@livekit/components-react'
 
-import { DEFAULT_LIVEKIT_DOMAIN } from '../../../utils/settings'
-
 import '@livekit/components-styles';
 import { Room } from 'livekit-client';
 import { Fragment, useMemo, useState } from 'react';
@@ -39,7 +37,7 @@ export const LiveKitMeeting = ({
     }
 
     return (
-        <LiveKitRoom data-lk-theme="default" serverUrl={DEFAULT_LIVEKIT_DOMAIN} token={props.token} connect={true} room={new Room(roomOptions)} audio={choices.audioEnabled} onDisconnected={handleDisconnect} video={choices.videoEnabled} connectOptions={{ autoSubscribe: true }}>
+        <LiveKitRoom data-lk-theme="default" serverUrl={window.config.LIVEKIT_DOMAIN} token={props.token} connect={true} room={new Room(roomOptions)} audio={choices.audioEnabled} onDisconnected={handleDisconnect} video={choices.videoEnabled} connectOptions={{ autoSubscribe: true }}>
             <VideoConference />
         </LiveKitRoom>
     )

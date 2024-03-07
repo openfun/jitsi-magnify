@@ -109,6 +109,7 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
             environ_name="KEYCLOAK_EXPIRATION_SECONDS",
             environ_prefix=None,
         ),
+        "LIVEKIT_DOMAIN": values.Value(environ_name="LIVEKIT_DOMAIN", environ_prefix=None)
     }
 
     # Application definition

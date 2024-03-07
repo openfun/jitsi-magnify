@@ -12,6 +12,7 @@ declare global {
       LANGUAGE_CODE: Maybe<string>;
       KEYCLOAK_REALM: string;
       JITSI_DOMAIN: string;
+      LIVEKIT_DOMAIN: string;
     };
   }
 }
