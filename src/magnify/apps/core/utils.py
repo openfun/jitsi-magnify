@@ -62,7 +62,7 @@ def create_livekit_token(user, room, is_admin=False) :
     token_payload = api.AccessToken(
         settings.LIVEKIT_CONFIGURATION["livekit_api_key"],
         settings.LIVEKIT_CONFIGURATION["livekit_api_secret"],
-    ).with_identity(settings.LIVEKIT_CONFIGURATION["livekit_domain"]).with_name(user.username).with_grants(video_grants).with_ttl(timedelta(seconds=expiration_seconds))
+    ).with_identity(user.username).with_name(user.username).with_grants(video_grants).with_ttl(timedelta(seconds=expiration_seconds))
 
     return token_payload.to_jwt()
 
