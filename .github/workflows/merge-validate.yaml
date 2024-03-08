@@ -3,7 +3,7 @@ name: merge-validate
 on: 
   pull_request:
     branches:
-      - 'livekit'
+      - livekit
 
 jobs:
   docker:
