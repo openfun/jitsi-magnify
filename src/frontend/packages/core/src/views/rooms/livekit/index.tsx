@@ -4,17 +4,17 @@ import { useAuthContext } from "../../../context"
 import { MagnifyQueryKeys } from "../../../utils";
 import { useParams } from "react-router-dom";
 import { RoomsRepository } from "../../../services";
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { Box } from "grommet";
 import { PreJoin } from "@livekit/components-react";
 import { defineMessages, useIntl } from "react-intl";
 
 const messages = defineMessages({
-    privateRoomError: {
-      defaultMessage: 'Private room, you must connect.',
-      description: 'Error when attempting to join a private room while not registered',
-      id: 'views.rooms.livekit.index.privateRoom'
-    }
+  privateRoomError: {
+    defaultMessage: 'Private room, you must connect.',
+    description: 'Error when attempting to join a private room while not registered',
+    id: 'views.rooms.livekit.index.privateRoom'
+  }
 })
 
 export interface LocalUserChoices {
@@ -33,45 +33,49 @@ export const usePresets = () => {
 }
 
 export const RoomLiveKitView = () => {
-
   const intl = useIntl();
   const { id } = useParams()
-
   const [ready, setReady] = useState<boolean>()
   const user = useAuthContext().user
-
   const [choices, setChoices] = useState<LocalUserChoices>({
     videoEnabled: true,
     audioEnabled: false,
     videoDeviceId: '',
     audioDeviceId: '',
-    username: user?.username ?? '',
+    username: user?.name ?? '',
   })
 
-  const handlePreJoinSubmit = (choices: LocalUserChoices) => {
-    setChoices(choices)
+  const { data: room, isLoading, refetch } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
+    return RoomsRepository.get(id, user ? undefined : choices.username);
+  }, { enabled: false });
+
+  useEffect(() => {
+    if (ready == true) {
+      refetch()
+    }
+  }, [choices])
+
+  const handlePreJoinSubmit = (userChoices: LocalUserChoices) => {
+    setChoices(userChoices)
     setReady(true)
   }
-
-  const { data: room, isLoading } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
-    return RoomsRepository.get(id);
-  });
-
-  if (room && room.jitsi?.token == null) {
+  
+  if (!isLoading && room && (room.livekit?.token == null)) {
     return <>{intl.formatMessage(messages.privateRoomError)}</>;
   }
 
   return (
     <Fragment>
-    {!isLoading &&  (
-      ready ?
-        <UserPresets.Provider value={choices}>
-          <LiveKitMeeting token={room!.jitsi.token} />
-        </UserPresets.Provider> :
-        <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={true}></PreJoin>
-        </Box>
-    )}
+      {
+        ready ? (
+          !isLoading && room?.livekit.token != null &&
+          <UserPresets.Provider value={choices}>
+            <LiveKitMeeting token={room!.livekit.token} />
+          </UserPresets.Provider>) :
+          <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={false}></PreJoin>
+          </Box>
+      }
     </Fragment>
   )
 }

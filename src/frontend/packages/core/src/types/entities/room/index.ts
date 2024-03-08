@@ -19,7 +19,7 @@ export interface Room {
   slug: string;
   is_administrable: boolean;
   is_public: boolean;
-  jitsi: {
+  livekit: {
     room: string;
     token: string;
   };
