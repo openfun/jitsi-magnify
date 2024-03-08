@@ -10,14 +10,14 @@ export class RoomsRepository {
     return response.data;
   }
 
-  static async get(roomId?: string): Promise<RoomResponse | null> {
+  static async get(roomId?: string, guestId?: string): Promise<RoomResponse | null> {
     if (!roomId) {
       console.error('RoomsRepository - get, roomId is null');
       return null;
     }
     const url = RoutesBuilderService.build(RoomsApiRoutes.GET, { id: roomId });
 
-    const response = await HttpService.MagnifyApi.get<RoomResponse>(url);
+    const response = await HttpService.MagnifyApi.get<RoomResponse>(url, { params: guestId ? { guest: guestId } : null });
     return response.data;
   }
 
