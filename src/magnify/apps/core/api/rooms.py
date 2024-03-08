@@ -37,7 +37,6 @@ class RoomViewSet(
             filter_kwargs = {"pk": self.kwargs["pk"]}
         except ValueError:
             filter_kwargs = {"slug": slugify(self.kwargs["pk"])}
-
         queryset = self.filter_queryset(self.get_queryset())
         obj = get_object_or_404(queryset, **filter_kwargs)
         # May raise a permission denied
@@ -55,11 +54,12 @@ class RoomViewSet(
             if not settings.ALLOW_UNREGISTERED_ROOMS:
                 raise
             slug = slugify(self.kwargs["pk"])
+            guest = self.request.GET.get("guest")
             data = {
                 "id": None,
-                "jitsi": {
+                "livekit": {
                     "room": slug,
-                    "token": utils.generate_token(request.user, slug, is_admin=True),
+                    "token": utils.generate_token(request.user, slug, guest, is_admin=True),
                 },
             }
         else:
