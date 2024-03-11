@@ -7,6 +7,7 @@ import { Participant, RemoteParticipant } from "livekit-client"
 import { useRoomService } from "../../../services/livekit/room.services"
 import { SleepIcon, ParticipantsIcon, ScreenSharingOnIcon, ScreenSharingOffIcon, RemoveUserIcon, MoreIcon } from "../utils/icons"
 import { useIsMobile } from "../../../hooks/useIsMobile"
+import { useAudioAllowed, useScreenSharingAllowed, useVideoAllowed } from "../utils/hooks"
 
 
 
@@ -112,16 +113,11 @@ interface UserActionInfo {
 const UserActions = (infos: UserActionInfo) => {
     const roomService = useRoomService()
 
-    const [audio, setAudio] = React.useState<boolean>(true)
-    const [video, setVideo] = React.useState<boolean>(true)
-    const [screenSharing, setScreenSharing] = React.useState<boolean>(true)
-    const { toast } = useToastProvider()
+    const audio = useAudioAllowed(infos.participant.permissions)
+    const video = useVideoAllowed(infos.participant.permissions)
+    const screenSharing = useScreenSharingAllowed(infos.participant.permissions)
 
-    useEffect(() => {
-        setVideo((infos.participant.permissions?.canPublish && (infos.participant.permissions?.canPublishSources ?? [1]).includes(1)) ?? true)
-        setAudio((infos.participant.permissions?.canPublish && (infos.participant.permissions?.canPublishSources ?? [2]).includes(2)) ?? true)
-        setScreenSharing((infos.participant.permissions?.canPublish && (infos.participant.permissions?.canPublishSources ?? [3, 4]).includes(3) && (infos.participant.permissions?.canPublishSources ?? [3, 4]).includes(4)) ?? true)
-    }, [infos])
+    const { toast } = useToastProvider()
 
     const error = () => {
         toast("An error occured", VariantType.ERROR)
