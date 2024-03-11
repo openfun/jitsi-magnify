@@ -10,6 +10,12 @@ jobs:
     name: merge-validate
     runs-on: ubuntu-latest
     steps:
+      - name: Get the Ref
+        id: get-ref
+        uses: ankitvgupta/ref-to-tag-action@master
+        with:
+          ref: ${{ github.ref }}
+          head_ref: ${{ github.head_ref }}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -27,5 +33,5 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
-          push: false
-          tags: jq422pa7.gra7.container-registry.ovh.net/magnify/production:latest
+          push: true
+          tags: jq422pa7.gra7.container-registry.ovh.net/magnify/staging:${{ steps.get-ref.outputs.tag }}
