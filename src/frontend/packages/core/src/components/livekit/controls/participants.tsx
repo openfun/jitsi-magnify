@@ -1,11 +1,11 @@
-import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, LayoutContext, MicDisabledIcon, MicIcon, useLocalParticipant, useParticipants, useRemoteParticipants } from "@livekit/components-react"
+import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, LayoutContext, MicDisabledIcon, MicIcon, useLocalParticipant, useParticipants, useRemoteParticipants, useRoomContext } from "@livekit/components-react"
 import { Button, Toast, VariantType, useToastProvider } from "@openfun/cunningham-react"
 import React, { PropsWithChildren, useContext, useEffect, useState } from "react"
 import { UserAvatar } from "../../users"
 import { Participant, RemoteParticipant} from "livekit-client"
 
 import { useRoomService } from "../../../services/livekit/room.services"
-import { SleepIcon, ParticipantsIcon } from "../utils/icons"
+import { SleepIcon, ParticipantsIcon, ScreenSharingOnIcon, ScreenSharingOffIcon } from "../utils/icons"
 
 
 
@@ -48,10 +48,24 @@ export interface ParticipantLayoutProps extends React.HTMLAttributes<HTMLDivElem
 
 }
 
+interface MetaData {
+    admin : boolean
+}
+
+const DefaultMetaData = {
+    admin : false
+} as MetaData
+
 export const ParticipantsLayout = ({ ...props }: ParticipantLayoutProps) => {
     const participants = useRemoteParticipants()
     const layoutContext = useParticipantLayoutContext()
+    const localParticipant = useLocalParticipant().localParticipant.metadata
+    const localMetaData = ((localParticipant == undefined) ? DefaultMetaData : JSON.parse(localParticipant)) as MetaData
+    const isAdmin = localMetaData.admin
 
+    useEffect(() => {
+        console.log(participants);
+    }, [participants])
     return (
         <div {...props} style={{ display: layoutContext?.visible ? 'block' : 'none', width: "20vw" }} >
             <div style={{ textAlign: "center", position: "relative", alignItems: "center", justifyItems: "center", gridTemplateColumns: "10fr 1fr" }}>
@@ -77,9 +91,9 @@ export const ParticipantsLayout = ({ ...props }: ParticipantLayoutProps) => {
                         <div style={{ gridRow: "1/2", gridColumn: "2/3", textAlign: "left", width: "100%" }}>
                             <p style={{ paddingLeft: "1em" }}> {value.name}</p>
                         </div>
-                        <div style={{ gridRow: "1/2", gridColumn: "3/4" }}>
+                        {isAdmin && <div style={{ gridRow: "1/2", gridColumn: "3/4" }}>
                             <UserActions participant={value} />
-                        </div>
+                        </div>}
                     </div>
                 )
 
@@ -97,14 +111,13 @@ const UserActions = (infos: UserActionInfo) => {
 
     const [audio, setAudio] = React.useState<boolean>(true)
     const [video, setVideo] = React.useState<boolean>(true)
+    const [screenSharing, setScreenSharing] = React.useState<boolean>(true)
     const { toast } = useToastProvider()
 
     useEffect(() => {
-        console.log(infos.participant);
-        
-        console.log('video', (infos.participant.permissions?.canPublish && (infos.participant.permissions?.canPublishSources ?? [1]).includes(1)) ?? true);
         setVideo((infos.participant.permissions?.canPublish && (infos.participant.permissions?.canPublishSources ?? [1]).includes(1)) ?? true)
         setAudio((infos.participant.permissions?.canPublish && (infos.participant.permissions?.canPublishSources ?? [2]).includes(2)) ?? true)
+        setScreenSharing((infos.participant.permissions?.canPublish && ( infos.participant.permissions?.canPublishSources ?? [3,4]).includes(3) && (infos.participant.permissions?.canPublishSources ?? [3,4]).includes(4)) ?? true)
     }, [infos])
 
     const error = () => {
@@ -112,27 +125,31 @@ const UserActions = (infos: UserActionInfo) => {
     }
 
     const audioMute = () => {
-        const allowedSources = [...!audio ? ["MICROPHONE"] : [], ...video ? ["CAMERA"] : []]
-        roomService.setAllowedSources(infos.participant, allowedSources).then(() => {
-            setAudio(!audio)
-        }).catch(() => {
+        const allowedSources = [...!audio ? ["MICROPHONE"] : [], ...video ? ["CAMERA"] : [], ...screenSharing ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
+        roomService.setAllowedSources(infos.participant, allowedSources).catch(() => {
             error()
         })
     }
 
     const videoMute = () => {
-        const allowedSources = [...audio ? ["MICROPHONE"] : [], ...!video ? ["CAMERA"] : []]
-        roomService.setAllowedSources(infos.participant, allowedSources).then(() => {
-            setVideo(!video)
-        }).catch(() => {
+        const allowedSources = [...audio ? ["MICROPHONE"] : [], ...!video ? ["CAMERA"] : [], ...screenSharing ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
+        roomService.setAllowedSources(infos.participant, allowedSources).catch(() => {
             error()
         })
     }
 
+    const screenSharingMute = () => {
+        const allowedSources = [...audio ? ["MICROPHONE"] : [], ...video ? ["CAMERA"] : [], ...!screenSharing ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
+        roomService.setAllowedSources(infos.participant, allowedSources).catch(() => {
+            error()
+        })
+    }
+    
     return (
         <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em" }}>
             <Button style={{ backgroundColor: "transparent" }} onClick={audioMute} icon={audio ? <MicIcon /> : <MicDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={videoMute} icon={video ? <CameraIcon /> : <CameraDisabledIcon />} />
+            <Button style={{ backgroundColor: "transparent" }} onClick={screenSharingMute} icon={screenSharing ? <ScreenSharingOnIcon /> : <ScreenSharingOffIcon />} />
         </div>
     )
 }

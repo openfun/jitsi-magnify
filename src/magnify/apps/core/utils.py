@@ -4,6 +4,7 @@ Utils that can be useful throughout Magnify's core app
 from datetime import date, timedelta
 import random
 import string
+import json
 
 from django.conf import settings
 from django.utils import timezone
@@ -49,7 +50,7 @@ def get_nth_week_number(original_date):
 
 def create_video_grants(room, is_admin=False):
     """Creates video grants given room and user permission"""
-    grants = api.VideoGrants(room_join = True, room = room, can_publish= True, room_admin=is_admin, can_publish_sources=["camera", "microphone"])
+    grants = api.VideoGrants(room_join = True, room = room, can_publish= True, room_admin=is_admin, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
     return grants
 
 
@@ -62,7 +63,7 @@ def create_livekit_token(identity, username, room, is_admin=False) :
     token_payload = api.AccessToken(
         settings.LIVEKIT_CONFIGURATION["livekit_api_key"],
         settings.LIVEKIT_CONFIGURATION["livekit_api_secret"],
-    ).with_identity(identity).with_name(username).with_grants(video_grants).with_ttl(timedelta(seconds=expiration_seconds))
+    ).with_identity(identity).with_name(username).with_grants(video_grants).with_ttl(timedelta(seconds=expiration_seconds)).with_metadata(f"{{ \"admin\" : {json.dumps(is_admin)}}}")
 
     return token_payload.to_jwt()
 
