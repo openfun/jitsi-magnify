@@ -34,6 +34,7 @@
     "build-theme": "cunningham -g css,ts -o src"
   },
   "dependencies": {
+    "@openfun/cunningham-react": "^2.6.0",
     "@tanstack/react-query-devtools": "4.35.3",
     "formik": "2.4.5",
     "grommet": "2.33.2",
@@ -45,7 +46,6 @@
   "peerDependencies": {
     "@livekit/components-react": "^2.0.0",
     "@livekit/components-styles": "^1.0.9",
-    "@openfun/cunningham-react": "1.3.0",
     "@tanstack/react-query": "4.35.3",
     "axios": "1.5.0",
     "livekit-client": "^2.0.3",
@@ -63,7 +63,7 @@
     "@formatjs/intl-relativetimeformat": "11.2.6",
     "@lib/eslint-config": "*",
     "@lib/typescript-configs": "*",
-    "@openfun/cunningham-react": "1.3.0",
+    "@openfun/cunningham-react": "^2.6.0",
     "@rollup/plugin-node-resolve": "15.2.1",
     "@storybook/addon-actions": "7.4.5",
     "@storybook/addon-essentials": "7.4.5",

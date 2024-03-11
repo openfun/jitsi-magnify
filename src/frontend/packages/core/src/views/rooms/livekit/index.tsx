@@ -2,19 +2,21 @@ import { useQuery } from "@tanstack/react-query";
 import { LiveKitMeeting } from "../../../components/livekit"
 import { useAuthContext } from "../../../context"
 import { MagnifyQueryKeys } from "../../../utils";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { RoomsRepository } from "../../../services";
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext, useMemo, useState } from "react";
 import { Box } from "grommet";
-import { PreJoin } from "@livekit/components-react";
+import { LiveKitRoom, PreJoin } from "@livekit/components-react";
 import { defineMessages, useIntl } from "react-intl";
+import { DEFAULT_LIVEKIT_DOMAIN } from "../../../utils/settings";
+import { Room } from "livekit-client";
 
 const messages = defineMessages({
-    privateRoomError: {
-      defaultMessage: 'Private room, you must connect.',
-      description: 'Error when attempting to join a private room while not registered',
-      id: 'views.rooms.livekit.index.privateRoom'
-    }
+  privateRoomError: {
+    defaultMessage: 'Private room, you must connect.',
+    description: 'Error when attempting to join a private room while not registered',
+    id: 'views.rooms.livekit.index.privateRoom'
+  }
 })
 
 export interface LocalUserChoices {
@@ -33,6 +35,12 @@ export const usePresets = () => {
 }
 
 export const RoomLiveKitView = () => {
+
+  const navigate = useNavigate()
+
+  const handleDisconnect = () => {
+    navigate('/')
+  }
 
   const intl = useIntl();
   const { id } = useParams()
@@ -61,17 +69,30 @@ export const RoomLiveKitView = () => {
     return <>{intl.formatMessage(messages.privateRoomError)}</>;
   }
 
+  const roomOptions = useMemo(() => {
+    return ({
+      videoCaptureDefaults: {
+        deviceId: choices.videoDeviceId ?? undefined
+      },
+      audioCaptureDefaults: {
+        deviceId: choices.audioDeviceId ?? undefined
+      },
+      dynacast: true,
+    })
+  }, [choices])
+
   return (
     <Fragment>
-    {!isLoading &&  (
-      ready ?
-        <UserPresets.Provider value={choices}>
-          <LiveKitMeeting token={room!.jitsi.token} />
-        </UserPresets.Provider> :
-        <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={true}></PreJoin>
-        </Box>
-    )}
+      {!isLoading && (
+        ready ?
+          <LiveKitRoom data-lk-theme="default" serverUrl={DEFAULT_LIVEKIT_DOMAIN} token={room?.jitsi.token} connect={true} room={new Room(roomOptions)} audio={choices.audioEnabled} video={choices.videoEnabled} onDisconnected={handleDisconnect} connectOptions={{ autoSubscribe: true }}>
+            <LiveKitMeeting token={room!.jitsi.token} />
+          </LiveKitRoom>
+          :
+          <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={true}></PreJoin>
+          </Box>
+      )}
     </Fragment>
   )
 }
