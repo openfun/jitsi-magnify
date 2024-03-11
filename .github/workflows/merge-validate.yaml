@@ -1,15 +1,13 @@
-name: production-build
+name: merge-validate
 
-on:
-  pull_request_target:
-    types:
-      - closed
+on: 
+  pull_request:
     branches:
-      - 'livekit'
+      - livekit
 
 jobs:
   docker:
-    if: github.event.pull_request.merged == true
+    name: merge-validate
     runs-on: ubuntu-latest
     steps:
       -
@@ -29,5 +27,5 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
-          push: true
+          push: false
           tags: jq422pa7.gra7.container-registry.ovh.net/magnify/production:latest

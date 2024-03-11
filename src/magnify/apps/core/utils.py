@@ -2,15 +2,16 @@
 Utils that can be useful throughout Magnify's core app
 """
 from datetime import date, timedelta
+import random
+import string
 
 from django.conf import settings
 from django.utils import timezone
 
 from livekit import api
 
-import jwt
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from magnify.apps.core import models
 
 def get_date_of_weekday_in_nth_week(year, month, nth_week, week_day):
     """
@@ -46,31 +47,37 @@ def get_nth_week_number(original_date):
     return nb_weeks
 
 
-def create_video_grants(user, room, is_admin=False):
+def create_video_grants(room, is_admin=False):
     """Creates video grants given room and user permission"""
     grants = api.VideoGrants(room_join = True, room = room, can_publish= True, room_admin=is_admin)
     return grants
 
 
-def create_livekit_token(user, room, is_admin=False) :
+def create_livekit_token(identity, username, room, is_admin=False) :
     """Create the payload so that it contains each information jitsi requires"""
     expiration_seconds = int(
         settings.LIVEKIT_CONFIGURATION["livekit_token_expiration_seconds"]
     )
-
-    video_grants = create_video_grants(user, room, is_admin)
+    video_grants = create_video_grants(room, is_admin)
     token_payload = api.AccessToken(
         settings.LIVEKIT_CONFIGURATION["livekit_api_key"],
         settings.LIVEKIT_CONFIGURATION["livekit_api_secret"],
-    ).with_identity(settings.LIVEKIT_CONFIGURATION["livekit_domain"]).with_name(user.username).with_grants(video_grants).with_ttl(timedelta(seconds=expiration_seconds))
+    ).with_identity(identity).with_name(username).with_grants(video_grants).with_ttl(timedelta(seconds=expiration_seconds))
 
     return token_payload.to_jwt()
 
 
-def generate_token(user, room, is_admin=False):
+def generate_token(user, room, guest, is_admin=False):
     """Generate the access token that will give access to the room"""
-    token = create_livekit_token(user, room, is_admin)
 
+    if user.is_anonymous :
+        identity = "guest-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        username = guest
+    else :
+        identity = user.username
+        username = identity
+        
+    token = create_livekit_token(identity,username, room, is_admin)
     return token
 
 

@@ -11,7 +11,7 @@ export const defaultRoom: Room = {
   name: 'test-room',
   slug: 'test-room',
   is_public: false,
-  jitsi: {
+  livekit: {
     room: 'test-room',
     token: '123',
   },

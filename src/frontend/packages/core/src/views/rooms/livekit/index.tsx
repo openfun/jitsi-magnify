@@ -44,28 +44,32 @@ export const RoomLiveKitView = () => {
 
   const intl = useIntl();
   const { id } = useParams()
-
   const [ready, setReady] = useState<boolean>()
   const user = useAuthContext().user
-
   const [choices, setChoices] = useState<LocalUserChoices>({
     videoEnabled: true,
     audioEnabled: false,
     videoDeviceId: '',
     audioDeviceId: '',
-    username: user?.username ?? '',
+    username: user?.name ?? '',
   })
 
-  const handlePreJoinSubmit = (choices: LocalUserChoices) => {
-    setChoices(choices)
+  const { data: room, isLoading, refetch } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
+    return RoomsRepository.get(id, user ? undefined : choices.username);
+  }, { enabled: false });
+
+  useEffect(() => {
+    if (ready == true) {
+      refetch()
+    }
+  }, [choices])
+
+  const handlePreJoinSubmit = (userChoices: LocalUserChoices) => {
+    setChoices(userChoices)
     setReady(true)
   }
-
-  const { data: room, isLoading } = useQuery([MagnifyQueryKeys.ROOM, id], () => {
-    return RoomsRepository.get(id);
-  });
-
-  if (room && room.jitsi?.token == null) {
+  
+  if (!isLoading && room && (room.livekit?.token == null)) {
     return <>{intl.formatMessage(messages.privateRoomError)}</>;
   }
 

@@ -10,7 +10,7 @@ export function createRandomRoom(isAdmin: boolean = true): Room {
     slug: faker.lorem.slug(),
     is_administrable: isAdmin,
     is_public: false,
-    jitsi: {
+    livekit: {
       token: '123',
       room: `${name}-${id}`,
     },

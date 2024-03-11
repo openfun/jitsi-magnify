@@ -1,6 +1,6 @@
 import { Room } from '../../entities';
 
-export interface RoomResponse extends Room {}
+export interface RoomResponse extends Room { }
 export interface RoomsResponse {
   count: number;
   results: Room[];
@@ -8,4 +8,4 @@ export interface RoomsResponse {
 export interface CreateRoomData {
   name: string;
 }
-export interface UpdateRoomData extends Room {}
+export interface UpdateRoomData extends Room { }

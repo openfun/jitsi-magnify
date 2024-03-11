@@ -10,6 +10,8 @@ export interface MagnifyConfiguration {
   JITSI_DOMAIN: string;
   LANGUAGE_CODE: string;
   DEFAULT_LIVEKIT_DOMAIN: string;
+  LIVEKIT_DOMAIN: string;
+
 }
 
 export const TESTING_CONF: MagnifyConfiguration = {
@@ -21,5 +23,6 @@ export const TESTING_CONF: MagnifyConfiguration = {
   KEYCLOAK_EXPIRATION_SECONDS: 1800,
   KEYCLOAK_REALM: 'magnify',
   KEYCLOAK_URL: 'http://localhost:8080',
-  DEFAULT_LIVEKIT_DOMAIN: 'http://localhost:7080'
+  LIVEKIT_DOMAIN: 'http:///localhost:7880'
+
 };
