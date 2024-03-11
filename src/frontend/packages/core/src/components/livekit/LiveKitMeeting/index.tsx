@@ -4,7 +4,7 @@ import { ControlBar, useRoomContext, Chat, LayoutContextProvider, WidgetState } 
 import '@livekit/components-styles';
 import { useState } from 'react';
 import {ConferenceLayout} from '../conference/conference';
-import { ParticipantLayoutToggle, ParticipantLayoutContext, ParticipantsLayout } from '../controls/participants';
+import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext } from '../controls/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
 
 const OpenerIcon = () =>
@@ -56,7 +56,8 @@ export const LiveKitMeeting = ({
 const RoomServiceContext = (props: any) => {
     const room = useRoomContext()
     const service = new RoomService(props.token, room)
-
+    console.log(window.config.LIVEKIT_ROOM_SERVICE_BASE_URL);
+    
     return (
         <RoomServices.Provider value={service}>
             {props.children}

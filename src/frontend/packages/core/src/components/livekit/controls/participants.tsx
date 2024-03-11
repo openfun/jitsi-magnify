@@ -2,7 +2,7 @@ import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, LayoutContext, MicDisabl
 import { Button, Toast, VariantType, useToastProvider } from "@openfun/cunningham-react"
 import React, { PropsWithChildren, useContext, useEffect, useState } from "react"
 import { UserAvatar } from "../../users"
-import { Participant, RemoteParticipant, Track } from "livekit-client"
+import { Participant, RemoteParticipant} from "livekit-client"
 
 import { useRoomService } from "../../../services/livekit/room.services"
 import { SleepIcon, ParticipantsIcon } from "../utils/icons"
@@ -100,8 +100,9 @@ const UserActions = (infos: UserActionInfo) => {
     const { toast } = useToastProvider()
 
     useEffect(() => {
+        console.log(infos.participant);
+        
         console.log('video', (infos.participant.permissions?.canPublish && (infos.participant.permissions?.canPublishSources ?? [1]).includes(1)) ?? true);
-
         setVideo((infos.participant.permissions?.canPublish && (infos.participant.permissions?.canPublishSources ?? [1]).includes(1)) ?? true)
         setAudio((infos.participant.permissions?.canPublish && (infos.participant.permissions?.canPublishSources ?? [2]).includes(2)) ?? true)
     }, [infos])

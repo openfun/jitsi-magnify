@@ -109,7 +109,10 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
             environ_name="KEYCLOAK_EXPIRATION_SECONDS",
             environ_prefix=None,
         ),
-        "LIVEKIT_DOMAIN": values.Value(environ_name="LIVEKIT_DOMAIN", environ_prefix=None)
+        "LIVEKIT_DOMAIN": values.Value(environ_name="LIVEKIT_DOMAIN", environ_prefix=None),
+        "LIVEKIT_ROOM_SERVICE_BASE_URL": values.Value(
+            environ_name="LIVEKIT_ROOM_SERVICE_BASE_URL", environ_prefix=None
+        ),
     }
 
     # Application definition
@@ -140,13 +143,13 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
 
     LIVEKIT_CONFIGURATION = {
         "livekit_token_expiration_seconds": values.Value(300, environ_name="LIVEKIT_TOKEN_EXPIRATION_SECONDS", environ_prefix=None
-        ),
+                                                         ),
         "livekit_api_key": values.Value(environ_name="LIVEKIT_API_KEY", environ_prefix=None
-        ),
+                                        ),
         "livekit_api_secret": values.Value(environ_name="LIVEKIT_API_SECRET", environ_prefix=None
-        ),
+                                           ),
         "livekit_domain": values.Value(environ_name="LIVEKIT_DOMAIN", environ_prefix=None
-        ),
+                                       ),
 
 
     }
@@ -329,50 +332,50 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
 
     # Logging
     LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
+        'version': 1,
+        'disable_existing_loggers': False,
+        'filters': {
+            'require_debug_false': {
+                '()': 'django.utils.log.RequireDebugFalse',
+            },
+            'require_debug_true': {
+                '()': 'django.utils.log.RequireDebugTrue',
+            },
         },
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
+        'handlers': {
+            'console': {
+                'level': 'INFO',
+                'filters': ['require_debug_true'],
+                'class': 'logging.StreamHandler',
+            },
+            'null': {
+                'class': 'logging.NullHandler',
+            },
+            'mail_admins': {
+                'level': 'ERROR',
+                'filters': ['require_debug_false'],
+                'class': 'django.utils.log.AdminEmailHandler'
+            }
         },
-    },
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-        },
-        'null': {
-            'class': 'logging.NullHandler',
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+            },
+            'django.request': {
+                'handlers': ['mail_admins'],
+                'level': 'ERROR',
+                'propagate': False,
+            },
+            'django.security': {
+                'handlers': ['mail_admins'],
+                'level': 'ERROR',
+                'propagate': False,
+            },
+            'py.warnings': {
+                'handlers': ['console'],
+            },
         }
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-        },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django.security': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'py.warnings': {
-            'handlers': ['console'],
-        },
     }
-}
     # Cache
     CACHES = {
         "default": {
@@ -558,4 +561,3 @@ class PreProduction(Production):
 
     nota bene: it should inherit from the Production environment.
     """
-

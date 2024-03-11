@@ -1,9 +1,6 @@
 import { Participant, Room, Track } from "livekit-client"
-import axios, { Axios, AxiosInstance } from "axios"
-import { DEFAULT_BASE_ROOMSERVICE_API_URL } from "../../utils/constants/config"
+import axios, { AxiosInstance } from "axios"
 import React, { useContext } from "react"
-import { ParticipantPermission } from "livekit-client/dist/src/proto/livekit_models_pb"
-import { log } from "@livekit/components-core"
 
 
 class LiveKitService {
@@ -11,7 +8,7 @@ class LiveKitService {
     constructor(token : string) {
         this.api = axios.create(
             {
-                baseURL: DEFAULT_BASE_ROOMSERVICE_API_URL,
+                baseURL: window.config.LIVEKIT_ROOM_SERVICE_BASE_URL,
                 timeout: 1000,
                 headers: {"Authorization": `Bearer ${token}`}
             }

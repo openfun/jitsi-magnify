@@ -1,8 +1,8 @@
 # Django
-DJANGO_SECRET_KEY=ThisIsAnExampleKeyForDevPurposeOnly
+DJANGO_SECRET_KEY="ThisIsAnExampleKeyForDevPurposeOnly"
 
 # Python
-PYTHONPATH=/app/sandbox
+PYTHONPATH="/app/sandbox"
 PYTHONUNBUFFERED=1
 
 # Simple JWT settings for OIDC authentication with Keycloak
@@ -29,3 +29,5 @@ LIVEKIT_TOKEN_EXPIRATION_SECONDS=300
 LIVEKIT_API_SECRET="secret"
 LIVEKIT_API_KEY="key"
 LIVEKIT_DOMAIN="yourdomain"
+LIVEKIT_ROOM_SERVICE_BASE_URL="yourrooserviceapiurl"
+

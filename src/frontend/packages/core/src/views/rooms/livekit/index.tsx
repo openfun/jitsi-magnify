@@ -4,11 +4,10 @@ import { useAuthContext } from "../../../context"
 import { MagnifyQueryKeys } from "../../../utils";
 import { useNavigate, useParams } from "react-router-dom";
 import { RoomsRepository } from "../../../services";
-import React, { Fragment, useContext, useMemo, useState } from "react";
+import React, { Fragment, useContext, useEffect, useMemo, useState } from "react";
 import { Box } from "grommet";
 import { LiveKitRoom, PreJoin } from "@livekit/components-react";
 import { defineMessages, useIntl } from "react-intl";
-import { DEFAULT_LIVEKIT_DOMAIN } from "../../../utils/settings";
 import { Room } from "livekit-client";
 
 const messages = defineMessages({
@@ -85,12 +84,14 @@ export const RoomLiveKitView = () => {
     })
   }, [choices])
 
+
   return (
     <Fragment>
-      {!isLoading && (
+      {(
         ready ?
-          <LiveKitRoom data-lk-theme="default" serverUrl={DEFAULT_LIVEKIT_DOMAIN} token={room?.jitsi.token} connect={true} room={new Room(roomOptions)} audio={choices.audioEnabled} video={choices.videoEnabled} onDisconnected={handleDisconnect} connectOptions={{ autoSubscribe: true }}>
-            <LiveKitMeeting token={room!.jitsi.token} />
+        !isLoading &&
+          <LiveKitRoom data-lk-theme="default" serverUrl={window.config.LIVEKIT_DOMAIN} token={room?.livekit.token} connect={true} room={new Room(roomOptions)} audio={choices.audioEnabled} video={choices.videoEnabled} onDisconnected={handleDisconnect} connectOptions={{ autoSubscribe: true }}>
+            <LiveKitMeeting token={room!.livekit.token} />
           </LiveKitRoom>
           :
           <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
