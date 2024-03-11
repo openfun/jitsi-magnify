@@ -1,4 +1,4 @@
-import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, MicDisabledIcon, MicIcon, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
+import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
 import { Button, Popover, VariantType, useToastProvider } from "@openfun/cunningham-react"
 import React, { PropsWithChildren, useContext, useEffect, useRef, useState } from "react"
 import { UserAvatar } from "../../users"
@@ -169,7 +169,7 @@ const UserActions = (infos: UserActionInfo) => {
         <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: settingsOpened ? "column" : "row", backgroundColor: mobile ? "black" : "" }}>
             <Button style={{ backgroundColor: "transparent" }} onClick={audioMute} icon={audio ? <MicIcon /> : <MicDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={videoMute} icon={video ? <CameraIcon /> : <CameraDisabledIcon />} />
-            <Button style={{ backgroundColor: "transparent" }} onClick={screenSharingMute} icon={screenSharing ? <ScreenSharingOnIcon /> : <ScreenSharingOffIcon />} />
+            <Button style={{ backgroundColor: "transparent" }} onClick={screenSharingMute} icon={screenSharing ? <ScreenShareIcon /> : <ScreenShareStopIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={removeParticipant} icon={<RemoveUserIcon />} />
         </div>
 
