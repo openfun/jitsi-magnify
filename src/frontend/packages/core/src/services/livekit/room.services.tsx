@@ -25,7 +25,8 @@ class LiveKitService {
 enum RoomServiceRoutes {
     mute = "/MutePublishedTrack",
     update = "/UpdateParticipant",
-    describe = "/GetParticipant"
+    describe = "/GetParticipant",
+    remove = "/RemoveParticipant"
 }
 
 export const RoomServices = React.createContext<RoomService>({} as RoomService)
@@ -101,6 +102,17 @@ export class RoomService {
         console.log(res);
         
         return res.status != 200 ? false : true
+    }
+
+    async remove(participant : Participant) : Promise<boolean> {
+        const res = await this.service.api.post(
+            RoomServiceRoutes.remove, {
+                'room' : this.room.name,
+                'identity' : participant.identity
+            }
+        )
+        return res.status != 200 ? false : true
+
     }
 
     async audioMute(participant: Participant): Promise<boolean> {
