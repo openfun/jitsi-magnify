@@ -1,9 +1,9 @@
-import { ControlBar, useRoomContext, Chat, LayoutContextProvider, WidgetState } from '@livekit/components-react'
-
+import { useRoomContext, Chat, LayoutContextProvider, WidgetState, RoomAudioRenderer } from '@livekit/components-react'
+import { ControlBar } from '../controls/bar';
 
 import '@livekit/components-styles';
 import { useState } from 'react';
-import {ConferenceLayout} from '../conference/conference';
+import { ConferenceLayout } from '../conference/conference';
 import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext } from '../controls/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
 import { MagnifyControlBar } from '../controls/custom';
@@ -37,16 +37,16 @@ export const LiveKitMeeting = ({
                 <LayoutContextProvider onWidgetChange={setWidgetState}>
                     <div style={{ maxHeight: "100%", height: "100%", display: "grid", gridTemplateRows: "10fr 1fr", gridTemplateColumns: "0fr 6fr 0fr" }}>
                         <ParticipantsLayout style={{ gridRow: "1/2", gridColumn: "1/2" }} />
-                        <div style={{ position: "relative",gridRow: "1/2", gridColumn: "2/3" }}>
+                        <div style={{ position: "relative", gridRow: "1/2", gridColumn: "2/3" }}>
                             <ConferenceLayout />
-                            <ParticipantLayoutToggle style={{position:"absolute", top:"1em", left:"1em", gridColumn: "1/2", gridRow: "1/2"}} />
                         </div>
-                        <Chat style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width:"20vw" }} />
+                        <Chat style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width: "20vw" }} />
 
-                        <div style={{ gridRow: "2/3", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4"  }}>
-                            <MagnifyControlBar/>
+                        <div style={{ gridRow: "2/3", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
+                            <ControlBar />
                         </div>
                     </div>
+                    <RoomAudioRenderer></RoomAudioRenderer>
                 </LayoutContextProvider>
             </ParticipantLayoutContext>
         </RoomServiceContext>
@@ -58,7 +58,7 @@ const RoomServiceContext = (props: any) => {
     const room = useRoomContext()
     const service = new RoomService(props.token, room)
     console.log(window.config.LIVEKIT_ROOM_SERVICE_BASE_URL);
-    
+
     return (
         <RoomServices.Provider value={service}>
             {props.children}

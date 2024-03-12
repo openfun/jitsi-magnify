@@ -196,8 +196,8 @@ interface AvatarInfo {
 export const ParticipantLayoutToggle = ({ ...props }: ParticipantLayoutProps) => {
     const layoutContext = useParticipantLayoutContext()
     return (
-        <div style={{ ...props.style, visibility: layoutContext?.visible ? 'hidden' : 'visible' }} >
-            <Button onClick={layoutContext?.toggle} icon={<ParticipantsIcon />} />
+        <div style={{ ...props.style }} >
+            <Button onClick={layoutContext?.toggle} icon={ <ParticipantsIcon />} />
         </div>
     )
 }
