@@ -8,7 +8,7 @@ import React, { Fragment, useContext, useEffect, useMemo, useState } from "react
 import { Box } from "grommet";
 import { LiveKitRoom, PreJoin } from "@livekit/components-react";
 import { defineMessages, useIntl } from "react-intl";
-import { Room } from "livekit-client";
+import { Room, RoomOptions } from "livekit-client";
 
 const messages = defineMessages({
   privateRoomError: {
@@ -72,7 +72,7 @@ export const RoomLiveKitView = () => {
     return <>{intl.formatMessage(messages.privateRoomError)}</>;
   }
 
-  const roomOptions = useMemo(() => {
+  const roomOptions = useMemo(() : RoomOptions => {
     return ({
       videoCaptureDefaults: {
         deviceId: choices.videoDeviceId ?? undefined
@@ -81,6 +81,9 @@ export const RoomLiveKitView = () => {
         deviceId: choices.audioDeviceId ?? undefined
       },
       dynacast: true,
+      publishDefaults: {
+        videoCodec: 'vp9'
+      }
     })
   }, [choices])
 

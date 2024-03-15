@@ -165,7 +165,6 @@ const UserActions = (infos: UserActionInfo) => {
 
     const closePopover = () => {
         setSettingsOpened(false)
-        console.log('bob');
     }
 
     const mobile = useIsMobile()
@@ -185,7 +184,7 @@ const UserActions = (infos: UserActionInfo) => {
         </div>
 
     return (
-        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em" }}>
+        <div ref={parentRef} style={{ justifyContent: "space-between", display: "flex", gap: "0.5em" }}>
             {!mobile && <Button style={{ backgroundColor: "transparent" }} onClick={removeParticipant} icon={<RemoveUserIcon />} />}
             {settingsOpened &&
                 <Popover parentRef={parentRef} onClickOutside={closePopover}>
@@ -194,7 +193,7 @@ const UserActions = (infos: UserActionInfo) => {
             <Modal {...kickModal} size={ModalSize.SMALL} title={"Warning"}>
                 {`Do you really want to remove ${infos.participant.name} ?`}
             </Modal>
-            <Button ref={parentRef} onClick={switchPopover} icon={<MoreIcon />} style={{ backgroundColor: "transparent" }} />
+            <Button  onClick={switchPopover} icon={<MoreIcon />} style={{ backgroundColor: "transparent" }} />
         </div>
     )
 }
