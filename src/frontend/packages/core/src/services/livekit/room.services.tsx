@@ -40,6 +40,7 @@ export interface Permissions {
     canSubscribe?: boolean,
     canPublish?: boolean,
     canPublishData?: boolean,
+    canUpdateMetadata?: boolean,
     canPublishSources?: string[]
 }
 
@@ -53,12 +54,13 @@ export class RoomService {
         this.room = room
     }
 
-    async update(participant : Participant, newPermissions : Permissions) : Promise<boolean>{
+    async update(participant : Participant, newPermissions : Permissions, metadata: string) : Promise<boolean>{
         const res = await this.service.api.post(
             RoomServiceRoutes.update, {
             'room': this.room.name,
             'identity': participant.identity,
-            'permission': newPermissions
+            'permission': newPermissions,
+            'metadata': metadata
         }
         )
 
@@ -84,7 +86,7 @@ export class RoomService {
             canPublishSources: sources
         }
         console.log(this.token);
-        return this.update(participant, newPermissions)
+        return this.update(participant, newPermissions, participant.metadata? participant.metadata : "{}")
     }
 
     async mute(participant: Participant, muted: boolean, kind: Track.Source): Promise<boolean> {
@@ -113,6 +115,17 @@ export class RoomService {
         )
         return res.status != 200 ? false : true
 
+    }
+
+    async initParticipant(participant: Participant): Promise<boolean> {
+        const permissions : Permissions ={
+            canPublish: true,
+            canSubscribe: true,
+            canPublishData: true,
+            canUpdateMetadata: true,
+            canPublishSources: ["MICROPHONE", "CAMERA", "SCREEN_SHARE", "SCREEN_SHARE_AUDIO"]
+        }
+        return this.update(participant, permissions, participant.metadata || "{}")
     }
 
     async audioMute(participant: Participant): Promise<boolean> {

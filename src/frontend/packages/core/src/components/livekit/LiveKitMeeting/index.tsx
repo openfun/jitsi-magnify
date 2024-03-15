@@ -1,55 +1,81 @@
-import { useRoomContext, Chat, LayoutContextProvider, WidgetState, RoomAudioRenderer } from '@livekit/components-react'
+import { ControlBar, useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLiveKitRoom } from '@livekit/components-react'
 import { MagnifyControlBar } from '../controls/bar';
 
+
+import { Loader } from '@openfun/cunningham-react';
 import '@livekit/components-styles';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ConferenceLayout } from '../conference/conference';
-import {ParticipantsLayout, ParticipantLayoutContext } from '../controls/participants';
+import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext } from '../controls/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
 
 
-const OpenerIcon = () =>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke='currentColor' width={24} height={24}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-    </svg>
-
-const CloserIcon = () =>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" width={24} height={24} strokeWidth={1.5} stroke="currentColor" >
-        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-    </svg>
-
 export interface LiveKitMeetingProps {
-    token: string
+    token: string,
+    audioInput: boolean,
+    videoInput: boolean
+}
+
+export const WaitingRoom = () => {
+    return (
+        <div style={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "auto", flexDirection: "column" }}>
+            <Loader size='medium' />
+            <h4 > En attente de validation par un administrateur</h4>
+        </div>
+    )
+
 }
 
 export const LiveKitMeeting = ({
     ...props
 }: LiveKitMeetingProps) => {
 
+    const room = useLocalParticipant()
+    useEffect(() => {
+        console.log("room",room.localParticipant.isMicrophoneEnabled);
+    }
+    )
+
     const [widgetState, setWidgetState] = useState<WidgetState>({
         showChat: false,
         unreadMessages: 0,
     });
 
-    return (
-        <RoomServiceContext token={props.token}>
-            <ParticipantLayoutContext visible={true}>
-                <LayoutContextProvider onWidgetChange={setWidgetState}>
-                    <div style={{ maxHeight: "100vh", height: "100%", display: "grid", gridTemplateRows: "10fr 1fr", gridTemplateColumns: "0fr 6fr 0fr" }}>
-                        <ParticipantsLayout style={{ gridRow: "1/2", gridColumn: "1/2", overflow:"hidden" }} />
-                        <div style={{ position: "relative", gridRow: "1/2", gridColumn: "2/3", overflow:"hidden" }}>
-                            <ConferenceLayout />
-                        </div>
-                        <Chat  className={"test"} style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width: "20vw", overflow:"hidden" }} />
+    const localParticipant = useLocalParticipant().localParticipant
+    const permission = useLocalParticipantPermissions()
 
-                        <div style={{ gridRow: "2/3", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
-                            <MagnifyControlBar/>
+    useEffect(() => {
+        if (permission?.canPublish) {
+            console.log("permission", permission);
+            localParticipant?.setCameraEnabled(true).then((e)=> console.log("traack publication result",e));
+        }
+        console.log(props.videoInput + "props.videoInput")
+        localParticipant?.setMicrophoneEnabled(props.audioInput)
+        console.log(localParticipant?.isCameraEnabled + 'isCameraEnabled');
+    }, [permission, localParticipant])
+
+    return (
+        localParticipant?.permissions?.canSubscribe ?
+            <RoomServiceContext token={props.token}>
+                <ParticipantLayoutContext visible={true} >
+                    <LayoutContextProvider onWidgetChange={setWidgetState}>
+                        <div style={{ maxHeight: "100%", height: "100%", display: "grid", gridTemplateRows: "10fr 1fr", gridTemplateColumns: "0fr 6fr 0fr" }}>
+                            <ParticipantsLayout style={{ gridRow: "1/2", gridColumn: "1/2" }} />
+                            <div style={{ position: "relative", gridRow: "1/2", gridColumn: "2/3", overflow: "hidden" }}>
+                                <ConferenceLayout />
+                            </div>
+                            <Chat style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width: "20vw" }} />
+
+                            <div style={{ gridRow: "2/3", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
+                                <MagnifyControlBar />
+                            </div>
                         </div>
-                    </div>
-                    <RoomAudioRenderer></RoomAudioRenderer>
-                </LayoutContextProvider>
-            </ParticipantLayoutContext>
-        </RoomServiceContext>
+                        <RoomAudioRenderer></RoomAudioRenderer>
+                    </LayoutContextProvider>
+                </ParticipantLayoutContext>
+            </RoomServiceContext>
+            :
+            <WaitingRoom />
 
     )
 }

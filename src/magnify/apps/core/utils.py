@@ -50,7 +50,10 @@ def get_nth_week_number(original_date):
 
 def create_video_grants(room, is_admin=False):
     """Creates video grants given room and user permission"""
-    grants = api.VideoGrants(room_join = True, room = room, can_publish= True, room_admin=is_admin, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
+    if is_admin:
+        grants = api.VideoGrants(room_join = True, room = room, can_publish= True, can_subscribe = True, room_admin=is_admin, can_update_own_metadata = True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
+    else:
+        grants = api.VideoGrants(room_join = True, room = room, can_publish= False, can_subscribe = False, room_admin=is_admin, can_update_own_metadata = True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
     return grants
 
 

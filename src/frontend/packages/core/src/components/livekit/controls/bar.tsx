@@ -3,7 +3,7 @@ import { Button, defaultTokens } from "@openfun/cunningham-react"
 import { Track } from "livekit-client"
 import { Card } from "grommet"
 import React, { MouseEventHandler } from "react"
-import { ParticipantLayoutToggle } from "./participants"
+import { ParticipantLayoutToggle, RaiseHand } from "./participants"
 import { useAudioAllowed, useScreenSharingAllowed, useVideoAllowed } from "../utils/hooks"
 import { useIsSmallSize } from "../../../hooks/useIsMobile"
 
@@ -71,6 +71,9 @@ export const ControlBar = (props: ControlBarProps) => {
     const barProps = {...defaultControlBarProps, ...props }
     return (
         <div style={{ padding: "1em", display: 'flex', alignItems: "center", justifyContent: "center", gap: "1em"}}>
+            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                <RaiseHand />
+            </Card>
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
                 <ParticipantLayoutToggle />
             </Card>
