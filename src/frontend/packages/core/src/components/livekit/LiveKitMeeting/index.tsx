@@ -35,12 +35,12 @@ export const LiveKitMeeting = ({
         <RoomServiceContext token={props.token}>
             <ParticipantLayoutContext visible={true}>
                 <LayoutContextProvider onWidgetChange={setWidgetState}>
-                    <div style={{ maxHeight: "100%", height: "100%", display: "grid", gridTemplateRows: "10fr 1fr", gridTemplateColumns: "0fr 6fr 0fr" }}>
-                        <ParticipantsLayout style={{ gridRow: "1/2", gridColumn: "1/2" }} />
-                        <div style={{ position: "relative", gridRow: "1/2", gridColumn: "2/3" }}>
+                    <div style={{ maxHeight: "100vh", height: "100%", display: "grid", gridTemplateRows: "10fr 1fr", gridTemplateColumns: "0fr 6fr 0fr" }}>
+                        <ParticipantsLayout style={{ gridRow: "1/2", gridColumn: "1/2", overflow:"hidden" }} />
+                        <div style={{ position: "relative", gridRow: "1/2", gridColumn: "2/3", overflow:"hidden" }}>
                             <ConferenceLayout />
                         </div>
-                        <Chat  className={"test"} style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width: "20vw" }} />
+                        <Chat  className={"test"} style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width: "20vw", overflow:"hidden" }} />
 
                         <div style={{ gridRow: "2/3", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
                             <MagnifyControlBar/>

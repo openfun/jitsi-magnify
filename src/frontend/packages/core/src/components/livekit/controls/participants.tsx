@@ -5,10 +5,9 @@ import { UserAvatar } from "../../users"
 import { Participant, RemoteParticipant } from "livekit-client"
 
 import { useRoomService } from "../../../services/livekit/room.services"
-import { SleepIcon, ParticipantsIcon, ScreenSharingOnIcon, ScreenSharingOffIcon, RemoveUserIcon, MoreIcon } from "../utils/icons"
+import { SleepIcon, ParticipantsIcon, RemoveUserIcon, MoreIcon } from "../utils/icons"
 import { useIsMobile } from "../../../hooks/useIsMobile"
 import { useAudioAllowed, useScreenSharingAllowed, useVideoAllowed } from "../utils/hooks"
-
 
 
 export interface ParticipantLayoutContextProps {
@@ -119,28 +118,28 @@ const UserActions = (infos: UserActionInfo) => {
 
     const { toast } = useToastProvider()
 
-    const error = () => {
+    const handleError = () => {
         toast("An error occured", VariantType.ERROR)
     }
 
     const audioMute = () => {
         const allowedSources = [...!audio ? ["MICROPHONE"] : [], ...video ? ["CAMERA"] : [], ...screenSharing ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
         roomService.setAllowedSources(infos.participant, allowedSources).catch(() => {
-            error()
+            handleError()
         })
     }
 
     const videoMute = () => {
         const allowedSources = [...audio ? ["MICROPHONE"] : [], ...!video ? ["CAMERA"] : [], ...screenSharing ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
         roomService.setAllowedSources(infos.participant, allowedSources).catch(() => {
-            error()
+            handleError()
         })
     }
 
     const screenSharingMute = () => {
         const allowedSources = [...audio ? ["MICROPHONE"] : [], ...video ? ["CAMERA"] : [], ...!screenSharing ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
         roomService.setAllowedSources(infos.participant, allowedSources).catch(() => {
-            error()
+            handleError()
         })
     }
 
@@ -151,7 +150,7 @@ const UserActions = (infos: UserActionInfo) => {
             await modals.deleteConfirmationModal({ children: `Do you really want to remove ${infos.participant.name} ?` })
                 .then((decision : Decision) => {
                     if (decision == "delete") {
-                        roomService.remove(infos.participant)
+                        roomService.remove(infos.participant).catch(() => handleError())
                     }
                 })
         }
@@ -178,25 +177,25 @@ const UserActions = (infos: UserActionInfo) => {
 
     const parentRef = useRef(null)
     const actionDiv =
-        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: settingsOpened ? "column" : "row", backgroundColor: "black" }}>
+        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: "column", backgroundColor: "black" }}>
             <Button style={{ backgroundColor: "transparent" }} onClick={audioMute} icon={audio ? <MicIcon /> : <MicDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={videoMute} icon={video ? <CameraIcon /> : <CameraDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={screenSharingMute} icon={screenSharing ? <ScreenShareIcon /> : <ScreenShareStopIcon />} />
+            {mobile && <Button style={{ backgroundColor: "transparent" }} onClick={removeParticipant} icon={<RemoveUserIcon />} />}
         </div>
 
     return (
-        <div ref={parentRef} style={{ justifyContent: "space-between", display: "flex", gap: "0.5em" }}>
-            <Button style={{ backgroundColor: "transparent" }} onClick={removeParticipant} icon={<RemoveUserIcon />} />
+        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em" }}>
+            {!mobile && <Button style={{ backgroundColor: "transparent" }} onClick={removeParticipant} icon={<RemoveUserIcon />} />}
             {settingsOpened &&
                 <Popover parentRef={parentRef} onClickOutside={closePopover}>
                     {actionDiv}
                 </Popover>}
             <Modal {...kickModal} size={ModalSize.SMALL} title={"Warning"}>
-                {`Do you really want to kick ${infos.participant.name} ?`}
+                {`Do you really want to remove ${infos.participant.name} ?`}
             </Modal>
-            <Button onClick={switchPopover} icon={<MoreIcon />} style={{ backgroundColor: "transparent" }} />
+            <Button ref={parentRef} onClick={switchPopover} icon={<MoreIcon />} style={{ backgroundColor: "transparent" }} />
         </div>
-
     )
 }
 
