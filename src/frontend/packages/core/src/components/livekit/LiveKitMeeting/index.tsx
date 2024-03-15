@@ -1,12 +1,12 @@
 import { useRoomContext, Chat, LayoutContextProvider, WidgetState, RoomAudioRenderer } from '@livekit/components-react'
-import { ControlBar } from '../controls/bar';
+import { MagnifyControlBar } from '../controls/bar';
 
 import '@livekit/components-styles';
 import { useState } from 'react';
 import { ConferenceLayout } from '../conference/conference';
-import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext } from '../controls/participants';
+import {ParticipantsLayout, ParticipantLayoutContext } from '../controls/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
-import { MagnifyControlBar } from '../controls/custom';
+
 
 const OpenerIcon = () =>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke='currentColor' width={24} height={24}>
@@ -40,10 +40,10 @@ export const LiveKitMeeting = ({
                         <div style={{ position: "relative", gridRow: "1/2", gridColumn: "2/3" }}>
                             <ConferenceLayout />
                         </div>
-                        <Chat style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width: "20vw" }} />
+                        <Chat  className={"test"} style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width: "20vw" }} />
 
                         <div style={{ gridRow: "2/3", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
-                            <ControlBar />
+                            <MagnifyControlBar/>
                         </div>
                     </div>
                     <RoomAudioRenderer></RoomAudioRenderer>

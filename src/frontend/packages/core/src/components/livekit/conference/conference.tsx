@@ -13,9 +13,9 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
     const focusTrack = usePinnedTracks(layoutContext)?.[0]
 
     return (
-        <div style={{ height: "100%", maxHeight: "90vh" }}>
+        <div style={{ height: "100%" }}>
             {!focusTrack ? (
-                <div className="lk-grid-layout-wrapper">
+                <div className="lk-grid-layout-wrapper" style={{height:"100%"}}>
                     <GridLayout tracks={tracks}>
                         <ParticipantTile />
                     </GridLayout>
