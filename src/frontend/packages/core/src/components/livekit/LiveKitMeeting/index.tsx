@@ -29,19 +29,18 @@ export const LiveKitMeeting = ({
     ...props
 }: LiveKitMeetingProps) => {
 
-    const room = useLocalParticipant()
-    useEffect(() => {
-        console.log("room",room.localParticipant.isMicrophoneEnabled);
-    }
-    )
-
     const [widgetState, setWidgetState] = useState<WidgetState>({
         showChat: false,
         unreadMessages: 0,
     });
 
+    const permissions = useLocalParticipantPermissions()
+    useEffect(() => {
+        console.log("permissions", permissions);
+    }, [permissions])
+    
     return (
-        localParticipant?.permissions?.canSubscribe ?
+        permissions?.canSubscribe ?
           <EventHandlerProvider>
             <RoomServiceContext token={props.token}>
                 <ParticipantLayoutContext visible={true} >
