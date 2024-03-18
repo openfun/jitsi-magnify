@@ -1,13 +1,12 @@
 import { ControlBar, useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLiveKitRoom } from '@livekit/components-react'
 import { MagnifyControlBar } from '../controls/bar';
-
-
 import { Loader } from '@openfun/cunningham-react';
 import '@livekit/components-styles';
 import { useState, useEffect } from 'react';
 import { ConferenceLayout } from '../conference/conference';
 import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext } from '../controls/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
+import { EventHandlerProvider } from '../../../services/livekit/events';
 
 
 export interface LiveKitMeetingProps {
@@ -41,21 +40,9 @@ export const LiveKitMeeting = ({
         unreadMessages: 0,
     });
 
-    const localParticipant = useLocalParticipant().localParticipant
-    const permission = useLocalParticipantPermissions()
-
-    useEffect(() => {
-        if (permission?.canPublish) {
-            console.log("permission", permission);
-            localParticipant?.setCameraEnabled(true).then((e)=> console.log("traack publication result",e));
-        }
-        console.log(props.videoInput + "props.videoInput")
-        localParticipant?.setMicrophoneEnabled(props.audioInput)
-        console.log(localParticipant?.isCameraEnabled + 'isCameraEnabled');
-    }, [permission, localParticipant])
-
     return (
         localParticipant?.permissions?.canSubscribe ?
+          <EventHandlerProvider>
             <RoomServiceContext token={props.token}>
                 <ParticipantLayoutContext visible={true} >
                     <LayoutContextProvider onWidgetChange={setWidgetState}>
@@ -74,6 +61,7 @@ export const LiveKitMeeting = ({
                     </LayoutContextProvider>
                 </ParticipantLayoutContext>
             </RoomServiceContext>
+            </EventHandlerProvider>
             :
             <WaitingRoom />
 

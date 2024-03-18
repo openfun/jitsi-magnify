@@ -1,11 +1,12 @@
-import { CameraDisabledIcon, CameraIcon, ChatIcon, LeaveIcon, MediaDeviceMenu, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackToggleProps, UseChatToggleProps, useChatToggle, useDisconnectButton, useLocalParticipantPermissions, useTrackToggle } from "@livekit/components-react"
-import { Button, defaultTokens } from "@openfun/cunningham-react"
+import { CameraDisabledIcon, CameraIcon, ChatIcon, LeaveIcon, MediaDeviceMenu, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackToggleProps, UseChatToggleProps, useChatToggle, useDisconnectButton, useLocalParticipantPermissions, useRemoteParticipants, useTrackToggle } from "@livekit/components-react"
+import { Button, ToastProps, VariantType, defaultTokens } from "@openfun/cunningham-react"
 import { Track } from "livekit-client"
 import { Card } from "grommet"
 import React, { MouseEventHandler } from "react"
 import { ParticipantLayoutToggle, RaiseHand } from "./participants"
 import { useAudioAllowed, useScreenSharingAllowed, useVideoAllowed } from "../utils/hooks"
 import { useIsSmallSize } from "../../../hooks/useIsMobile"
+import { Event, useEventHandler } from "../../../services/livekit/events"
 
 
 
@@ -67,8 +68,34 @@ export const MagnifyControlBar = () => {
     return <ControlBar videoControl={video} audioControl={audio} screenSharingControl={screenSharing}/>
 }
 
+
 export const ControlBar = (props: ControlBarProps) => {
     const barProps = {...defaultControlBarProps, ...props }
+    const p = useLocalParticipantPermissions()
+    const handler=  useEventHandler()
+    
+    const videoEvent = new Event(p, {duration: 3000} as ToastProps, (p) : boolean => {
+        return p?.canPublishSources.includes(1) ?? true
+    })
+    videoEvent.onSwitch(true, false, {computeMessage : () => "An admin muted your camera", variant: VariantType.INFO})
+    videoEvent.onSwitch(false, true, {computeMessage :  () => "An admin unmuted your camera", variant: VariantType.SUCCESS})
+    handler.watchState(videoEvent)
+
+    const r = useRemoteParticipants()
+    const joinLeaveEvent = new Event(r, {duration: 3000} as ToastProps)
+    joinLeaveEvent.onCheck((o, t) => o.length > t.length , {computeMessage :  (o, t) => {
+        console.log("origin", o, "target", t);
+        o.filter((x) => t.includes(x))
+        return `${o[0]?.name ?? ""} left the room`
+    }, variant: VariantType.INFO})
+
+    joinLeaveEvent.onCheck((o, t) => (o.length < t.length) && o.length > 0 , {computeMessage :  (o, t) => {
+        console.log("origin", o, "target", t)
+        t.filter((x) => o.includes(x))
+        return `${t[0]?.name ?? ""} joined the room`
+    }, variant: VariantType.INFO})
+    handler.watchState(joinLeaveEvent)
+
     return (
         <div style={{ padding: "1em", display: 'flex', alignItems: "center", justifyContent: "center", gap: "1em"}}>
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
