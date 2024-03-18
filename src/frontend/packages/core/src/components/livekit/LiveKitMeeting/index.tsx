@@ -50,7 +50,7 @@ export const LiveKitMeeting = ({
                             <div style={{ position: "relative", gridRow: "1/2", gridColumn: "2/3", overflow: "hidden" }}>
                                 <ConferenceLayout />
                             </div>
-                            <Chat style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width: "20vw" }} />
+                            <Chat style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/2", gridColumn: "3/4", width: "20vw", overflow: "hidden" }} />
 
                             <div style={{ gridRow: "2/3", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
                                 <MagnifyControlBar />
