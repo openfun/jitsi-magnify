@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - livekit
+  workflow_dispatch:
+      
 
 jobs:
   docker:
