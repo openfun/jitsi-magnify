@@ -2,17 +2,17 @@ import { CameraDisabledIcon, CameraIcon, ChatIcon, LeaveIcon, MediaDeviceMenu, M
 import { Button, ToastProps, VariantType, defaultTokens } from "@openfun/cunningham-react"
 import { Track } from "livekit-client"
 import { Card } from "grommet"
-import React, { MouseEventHandler } from "react"
+import React, { MouseEventHandler, useEffect } from "react"
 import { ParticipantLayoutToggle, RaiseHand } from "./participants"
 import { useAudioAllowed, useScreenSharingAllowed, useVideoAllowed } from "../utils/hooks"
 import { useIsSmallSize } from "../../../hooks/useIsMobile"
 import { Event, useEventHandler } from "../../../services/livekit/events"
+import { LayoutToggle } from "../conference/conference"
 
 
 
 export const Leave = ({ ...props }) => {
     const { buttonProps } = useDisconnectButton(props)
-    console.log(buttonProps)
     return (
         <Button onClick={buttonProps.onClick} iconPosition={"right"} style={{ backgroundColor: `${defaultTokens.theme.colors["danger-400"]}` }} icon={<LeaveIcon />} />
     )
@@ -35,15 +35,16 @@ export type ToggleSource = Exclude<
 interface MagnifyToggleProps<T extends ToggleSource> {
     props: TrackToggleProps<T>,
     enabledIcon: React.ReactNode,
-    disabledIcon: React.ReactNode
+    disabledIcon: React.ReactNode,
+    clickable: boolean
 }
 
 export function TrackToggle<T extends ToggleSource>(props: MagnifyToggleProps<T>) {
     const { buttonProps, enabled } = useTrackToggle(props.props);
     const small = useIsSmallSize()
     return (
-        <Button style={buttonProps.style} onClick={buttonProps.onClick as MouseEventHandler<HTMLButtonElement> & MouseEventHandler<HTMLAnchorElement>} icon={enabled ? props.enabledIcon : props.disabledIcon} iconPosition="right">
-            { !small && props.props.children}
+        <Button style={buttonProps.style} disabled={props.clickable} onClick={buttonProps.onClick as MouseEventHandler<HTMLButtonElement> & MouseEventHandler<HTMLAnchorElement>} icon={enabled ? props.enabledIcon : props.disabledIcon} iconPosition="right">
+            {!small && props.props.children}
         </Button>
     );
 }
@@ -65,39 +66,61 @@ export const MagnifyControlBar = () => {
     const video = useVideoAllowed(permissions)
     const audio = useAudioAllowed(permissions)
     const screenSharing = useScreenSharingAllowed(permissions)
-    return <ControlBar videoControl={video} audioControl={audio} screenSharingControl={screenSharing}/>
+    return <ControlBar videoControl={video} audioControl={audio} screenSharingControl={screenSharing} />
 }
 
 
 export const ControlBar = (props: ControlBarProps) => {
-    const barProps = {...defaultControlBarProps, ...props }
+    const barProps = { ...defaultControlBarProps, ...props }
     const p = useLocalParticipantPermissions()
-    const handler=  useEventHandler()
-    
-    const videoEvent = new Event(p, {duration: 3000} as ToastProps, (p) : boolean => {
+    const handler = useEventHandler()
+
+    const videoEvent = new Event(p, { duration: 3000 } as ToastProps, (p): boolean => {
         return p?.canPublishSources.includes(1) ?? true
     })
-    videoEvent.onSwitch(true, false, {computeMessage : () => "An admin muted your camera", variant: VariantType.INFO})
-    videoEvent.onSwitch(false, true, {computeMessage :  () => "An admin unmuted your camera", variant: VariantType.SUCCESS})
+
+    videoEvent.onSwitch(true, false, { computeMessage: () => "An admin muted your camera", variant: VariantType.INFO })
+    videoEvent.onSwitch(false, true, { computeMessage: () => "An admin unmuted your camera", variant: VariantType.SUCCESS })
     handler.watchState(videoEvent)
 
-    const r = useRemoteParticipants()
-    const joinLeaveEvent = new Event(r, {duration: 3000} as ToastProps)
-    joinLeaveEvent.onCheck((o, t) => o.length > t.length , {computeMessage :  (o, t) => {
-        console.log("origin", o, "target", t);
-        o.filter((x) => t.includes(x))
-        return `${o[0]?.name ?? ""} left the room`
-    }, variant: VariantType.INFO})
+    const audioEvent = new Event(p, { duration: 3000 } as ToastProps, (p): boolean => {
+        return p?.canPublishSources.includes(2) ?? true
+    })
 
-    joinLeaveEvent.onCheck((o, t) => (o.length < t.length) && o.length > 0 , {computeMessage :  (o, t) => {
-        console.log("origin", o, "target", t)
-        t.filter((x) => o.includes(x))
-        return `${t[0]?.name ?? ""} joined the room`
-    }, variant: VariantType.INFO})
+    audioEvent.onSwitch(true, false, { computeMessage: () => "An admin muted your microphone", variant: VariantType.INFO })
+    audioEvent.onSwitch(false, true, { computeMessage: () => "An admin unmuted your microphone", variant: VariantType.SUCCESS })
+    handler.watchState(audioEvent)
+
+    const screenEvent = new Event(p, { duration: 3000 } as ToastProps, (p): boolean => {
+        return p?.canPublishSources.includes(3) ?? true
+    })
+
+    screenEvent.onSwitch(true, false, { computeMessage: () => "An admin muted your screen sharing", variant: VariantType.INFO })
+    screenEvent.onSwitch(false, true, { computeMessage: () => "An admin unmuted your screen sharing", variant: VariantType.SUCCESS })
+    handler.watchState(screenEvent)
+
+    
+
+    const r = useRemoteParticipants()
+
+    const joinLeaveEvent = new Event(r, { duration: 3000 } as ToastProps)
+    joinLeaveEvent.onCheck((o, t) => o.length > t.length, {
+        computeMessage: (o, t) => {
+            const newParticpants = o.filter((x) => !t.includes(x))
+            return `${newParticpants[0]?.name ?? ""} left the room`
+        }, variant: VariantType.INFO
+    })
+
+    joinLeaveEvent.onCheck((o, t) => (o.length < t.length) && o.length > 0, {
+        computeMessage: (o, t) => {
+            const newParticpants = t.filter((x) => !o.includes(x))
+            return `${newParticpants[0]?.name ?? ""} joined the room`
+        }, variant: VariantType.INFO
+    })
     handler.watchState(joinLeaveEvent)
 
     return (
-        <div style={{ padding: "1em", display: 'flex', alignItems: "center", justifyContent: "center", gap: "1em"}}>
+        <div style={{ padding: "1em", display: 'flex', alignItems: "center", justifyContent: "center", gap: "1em" }}>
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
                 <RaiseHand />
             </Card>
@@ -105,22 +128,26 @@ export const ControlBar = (props: ControlBarProps) => {
                 <ParticipantLayoutToggle />
             </Card>
 
-            {barProps.audioControl && <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <TrackToggle props={{ source: Track.Source.Microphone, children: "Microphone" }} enabledIcon={<MicIcon />} disabledIcon={<MicDisabledIcon />} />
+            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                <TrackToggle props={{ source: Track.Source.Microphone, children: "Microphone" }} clickable={!barProps.audioControl ?? false} enabledIcon={<MicIcon />} disabledIcon={<MicDisabledIcon />} />
                 <MediaDeviceMenu style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} kind="audioinput" />
-            </Card>}
+            </Card>
 
-            {barProps.videoControl && <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <TrackToggle props={{ source: Track.Source.Camera, children: "Camera" }} enabledIcon={<CameraIcon />} disabledIcon={<CameraDisabledIcon />} />
-                <MediaDeviceMenu style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} kind="audioinput" />
-            </Card>}
+            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                <TrackToggle props={{ source: Track.Source.Camera, children: "Camera" }} clickable={!barProps.videoControl ?? false} enabledIcon={<CameraIcon />} disabledIcon={<CameraDisabledIcon />} />
+                <MediaDeviceMenu style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} kind="videoinput" />
+            </Card>
 
-            {barProps.screenSharingControl && <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <TrackToggle props={{ source: Track.Source.ScreenShare }} enabledIcon={<ScreenShareStopIcon />} disabledIcon={<ScreenShareIcon />} />
-            </Card>}
+            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                <TrackToggle props={{ source: Track.Source.ScreenShare }} clickable={!barProps.screenSharingControl ?? false} enabledIcon={<ScreenShareStopIcon />} disabledIcon={<ScreenShareIcon />} />
+            </Card>
 
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
                 <ChatToggle props={{}} />
+            </Card>
+
+            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                <LayoutToggle />
             </Card>
             <Leave />
         </div>

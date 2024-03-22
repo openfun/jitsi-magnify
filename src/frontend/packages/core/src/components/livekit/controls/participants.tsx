@@ -1,16 +1,14 @@
-import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, GearIcon, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
+import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackReferenceOrPlaceholder, VideoConference, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
 import { Button, Decision, Modal, ModalSize, Popover, VariantType, useModal, useModals, useToastProvider } from "@openfun/cunningham-react"
-import React, { PropsWithChildren, useContext, useEffect, useRef, useState } from "react"
+import React, { PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { UserAvatar } from "../../users"
-import { Participant, RemoteParticipant } from "livekit-client"
-
+import { LocalParticipant, RemoteParticipant } from "livekit-client"
 import { useRoomService } from "../../../services/livekit/room.services"
-import { SleepIcon, ParticipantsIcon, RemoveUserIcon, MoreIcon, HandRaisedIcon, TickIcon } from "../utils/icons"
+import { SleepIcon, ParticipantsIcon, RemoveUserIcon, MoreIcon, HandRaisedIcon, TickIcon, AdminIcon } from "../utils/icons"
 import { useIsMobile } from "../../../hooks/useIsMobile"
 import { useAudioAllowed, useScreenSharingAllowed, useVideoAllowed } from "../utils/hooks"
-
-
-
+import { Layouts } from "../conference/conference"
+import { f } from "msw/lib/glossary-de6278a9"
 
 
 export interface ParticipantLayoutContextProps {
@@ -18,15 +16,30 @@ export interface ParticipantLayoutContextProps {
     toggle: () => void,
     handraised: Set<string>,
     isRaised: boolean,
-    isWaiting: boolean
+    isWaiting: boolean,
+    layout: Layouts,
+    setLayout: (layout: Layouts) => void,
+    pinnedTracks: Map<string, TrackReferenceOrPlaceholder>,
+    togglePinTrack: (track: TrackReferenceOrPlaceholder) => void
+}
 
+const ParticipantLayoutContextDefault: ParticipantLayoutContextProps = {
+    visible: true,
+    toggle: () => { },
+    handraised: new Set(),
+    isRaised: false,
+    isWaiting: false,
+    layout: Layouts.PIN,
+    setLayout: (layout: Layouts) => { },
+    pinnedTracks: new Map(),
+    togglePinTrack: (track: TrackReferenceOrPlaceholder) => { }
 }
 
 export interface ToggleProps {
     visible: boolean,
 }
 
-export const ParticipantContext = React.createContext<ParticipantLayoutContextProps | undefined>(undefined);
+export const ParticipantContext = React.createContext<ParticipantLayoutContextProps>(ParticipantLayoutContextDefault);
 
 export const useParticipantLayoutContext = () => {
     const context = useContext(ParticipantContext)
@@ -35,28 +48,62 @@ export const useParticipantLayoutContext = () => {
 
 export const ParticipantLayoutContext = (props: PropsWithChildren<ToggleProps>) => {
     const [visible, setVisible] = useState<boolean>(props.visible)
+    const [layout, setLayout] = useState<Layouts>(Layouts.GRID)
+    const [pinnedTracks, setPinnedTracks] = useState<Map<string, TrackReferenceOrPlaceholder>>(new Map())
     const participants = useRemoteParticipants()
-
     const allMetadata = participants.map((value, index) => { return JSON.parse(value.metadata || "{}").raised })
     const allSubscribe = participants.map((value, index) => { return value.permissions?.canSubscribe })
     const isRaised = allMetadata.includes(true)
     const isWaiting = allSubscribe.includes(false)
+
+    const pinTrack = (track: TrackReferenceOrPlaceholder, sid: string): void => {
+        const n = new Map(pinnedTracks)
+        n.set(sid, track)
+        setPinnedTracks(n)
+    }
+
+    const togglePinTrack = (track: TrackReferenceOrPlaceholder) => {
+        if (track.publication?.trackSid && pinnedTracks.has(track.publication.trackSid)) {
+            unPinTrack(track.publication.trackSid)
+        } else {
+            track.publication?.trackSid && pinTrack(track, track.publication?.trackSid)
+        }
+    }
+
+    const unPinTrack = (sid: string): void => {
+        const n = new Map(pinnedTracks)
+        n.delete(sid)
+        setPinnedTracks(n)
+    }
+
+    const toggleLayout = (layout: Layouts) => {
+        setLayout(layout)
+    }
 
     const toggle = () => {
         setVisible(!visible)
     }
 
     return (
-        <ParticipantContext.Provider value={{ visible: visible, toggle: toggle, handraised: new Set([""]), isRaised: isRaised, isWaiting: isWaiting }}>
+        <ParticipantContext.Provider value={{ visible: visible, toggle: toggle, handraised: new Set([""]), isRaised: isRaised, isWaiting: isWaiting, layout: layout, setLayout: toggleLayout, togglePinTrack: togglePinTrack, pinnedTracks: pinnedTracks }}>
             {props.children}
         </ParticipantContext.Provider>
     )
 }
 
+export interface PinnedTrackUtils {
+    pinnedTracks: TrackReferenceOrPlaceholder[]
+    togglePinTrack: (track: TrackReferenceOrPlaceholder) => void
+}
+
+export const usePinnedTracks = (): PinnedTrackUtils => {
+    const ctx = useContext(ParticipantContext)
+    return { togglePinTrack: ctx.togglePinTrack, pinnedTracks: ctx.pinnedTracks ? Array.from(ctx.pinnedTracks.values()) : [] }
+}
+
 export interface ParticipantLayoutOptions {
 
 }
-
 
 export interface ParticipantLayoutProps extends React.HTMLAttributes<HTMLDivElement>, ParticipantLayoutOptions {
 
@@ -68,14 +115,14 @@ interface MetaData {
 
 
 export const ParticipantsLayout = ({ ...props }: ParticipantLayoutProps) => {
-    const participants = useRemoteParticipants()
+    const remoteParticipants = useRemoteParticipants()
     const layoutContext = useParticipantLayoutContext()
-    const localParticipant = useLocalParticipant().localParticipant.metadata
-    const localMetaData = ((localParticipant == undefined) ? DefaultMetaData : JSON.parse(localParticipant)) as MetaData
+    const localParticipant = useLocalParticipant()
+    const localMetaData = ((localParticipant == undefined) || (localParticipant.localParticipant.metadata == undefined) ? DefaultMetaData : JSON.parse(localParticipant.localParticipant.metadata)) as MetaData
     const isAdmin = localMetaData.admin
     const mobile = useIsMobile()
 
-
+    const participants = [localParticipant.localParticipant, ...remoteParticipants]
     return (
         <div {...props} style={{ display: layoutContext?.visible ? 'block' : 'none', width: "20vw" }} >
             <div style={{ textAlign: "center", position: "relative", alignItems: "center", justifyItems: "center", gridTemplateColumns: "10fr 1fr" }}>
@@ -92,30 +139,33 @@ export const ParticipantsLayout = ({ ...props }: ParticipantLayoutProps) => {
                     </i>
                     <SleepIcon></SleepIcon>
                 </div> :
-                participants.map((value, index) => {
-                    return (
-                        value.name &&
-                        <div style={{ borderTop: "solid black 0.1em", display: "grid", alignItems: "center", justifyItems: "center", width: "20vw", gridTemplateColumns: "1fr 10fr 1fr" }}>
-                            <div style={{ paddingLeft: "0.5em", gridRow: "1/2", gridColumn: "1/2" }}>
-                                {JSON.parse(value.metadata || "{}").raised ? <Button icon={<HandRaisedIcon/>}/> : <UserAvatar username={value.name}></UserAvatar>}
-
+                <div>
+                    <AdminBulkActions />
+                    {participants.map((value, index) => {
+                        return (
+                            value.name &&
+                            <div style={{ borderTop: "solid black 0.1em", display: "grid", alignItems: "center", justifyItems: "center", width: "20vw", gridTemplateColumns: "1fr 10fr 1fr" }}>
+                                <div style={{ paddingLeft: "0.5em", gridRow: "1/2", gridColumn: "1/2", display: "flex", flexDirection: "row", gap: "1em", justifyContent: "center", alignItems: "center" }}>
+                                    <UserAvatar username={value.name}></UserAvatar>
+                                    {JSON.parse(value.metadata || "{}").admin && <AdminIcon />}
+                                </div>
+                                {!mobile && <div style={{ gridRow: "1/2", gridColumn: "2/3", textAlign: "left", width: "100%" }}>
+                                    <p style={{ paddingLeft: "1em" }}>{value.name + (value.isLocal ? " ( you )" : "")}</p>
+                                </div>}
+                                {isAdmin && <div style={{ gridRow: "1/2", gridColumn: "3/4" }}>
+                                    {<UserActions participant={value} />}
+                                </div>}
                             </div>
-                            {!mobile && <div style={{ gridRow: "1/2", gridColumn: "2/3", textAlign: "left", width: "100%" }}>
-                                <p style={{ paddingLeft: "1em" }}> {value.name}</p>
-                            </div>}
-                            {isAdmin && <div style={{ gridRow: "1/2", gridColumn: "3/4" }}>
-                                <UserActions participant={value} />
-                            </div>}
-                        </div>
-                    )
+                        )
 
-                })}
+                    })}
+                </div>}
         </div>
     )
 }
 
 interface UserActionInfo {
-    participant: RemoteParticipant
+    participant: RemoteParticipant | LocalParticipant
 }
 
 interface ParticipantMetaData {
@@ -195,6 +245,13 @@ const UserActions = (infos: UserActionInfo) => {
         })
     }
 
+    const reject = () => {
+        roomService.remove(infos.participant).then(() => {
+        }).catch(() => {
+            handleError()
+        })
+    }
+
     const kickModal = useModal()
 
     const parentRef = useRef(null)
@@ -228,9 +285,10 @@ const UserActions = (infos: UserActionInfo) => {
                 <Button onClick={switchPopover} icon={<MoreIcon />} style={{ backgroundColor: "transparent" }} />
             </div>
             :
-            <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: "column", backgroundColor: "" }}>
-                <Button style={{ color: "#0DCE36", backgroundColor: "transparent"}} onClick={accept} icon={<TickIcon  />} />
-             </div>
+            <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: "row", backgroundColor: "" }}>
+                <Button style={{ color: "#0DCE36", backgroundColor: "transparent" }} onClick={accept} icon={<TickIcon />} />
+                <Button style={{ backgroundColor: "transparent" }} onClick={reject} icon={<ChatCloseIcon style={{ strokeWidth: "1.5", stroke: "red" }} />} />
+            </div>
 
     )
 }
@@ -239,12 +297,11 @@ export const ParticipantLayoutToggle = ({ ...props }: ParticipantLayoutProps) =>
     const layoutContext = useParticipantLayoutContext()
     return (
         <div style={{ ...props.style }} >
-            <Button onClick={layoutContext?.toggle} icon={<ParticipantsIcon />} style={{ color: (layoutContext?.isRaised || layoutContext?.isWaiting) ? "red" : "" }} />
+            <Button onClick={layoutContext?.toggle} icon={<ParticipantsIcon />} />
 
         </div>
     )
 }
-
 
 
 export const RaiseHand = () => {
@@ -256,20 +313,83 @@ export const RaiseHand = () => {
 
     const error = () => {
         toast("An error occured", VariantType.ERROR)
-        console.log(error)
     }
 
     const sendRaise = () => {
         const data = JSON.parse(localParticipant.metadata || "{}")
         data.raised = !raised
         localParticipant.setMetadata(JSON.stringify(data))
-        console.log("raised ? " + raised);
         setHand(!raised)
     }
 
     return (
-    <div  >
-        <Button style={{ backgroundColor: !raised ? "" : "yellow", color: raised ? "black" : "white" }} onClick={sendRaise} icon={<HandRaisedIcon />} />
-    </div>
+        <div  >
+            <Button style={{ backgroundColor: !raised ? "" : "yellow", color: raised ? "black" : "white" }} onClick={sendRaise} icon={<HandRaisedIcon />} />
+        </div>
+    )
+}
+
+export const AdminBulkActions = () => {
+    const roomService = useRoomService()
+    const participants = useRemoteParticipants()
+    const [allVideoMuted, setallVideoMuted] = useState<boolean>(true)
+    const [allAudioMuted, setallAudioMuted] = useState<boolean>(true)
+    const [allScreenMuted, setallScreenMuted] = useState<boolean>(true)
+    const modals = useModals()
+    const allowedSources = useMemo(() => {
+        return [...allVideoMuted ? ["CAMERA"] : [], ...allAudioMuted ? ["MICROPHONE"] : [], ...allScreenMuted ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
+    }, [allAudioMuted, allVideoMuted, allScreenMuted])
+
+
+    const confirmBulk = async (): Promise<boolean> => {
+        return await modals.confirmationModal({ children: `This action will affect all users` })
+            .then((decision: Decision) => {
+                return decision == "yes" ? true : false
+            }).catch(() => false)
+    }
+
+    const tVideo = () => {
+        confirmBulk().then((choice) => {
+            if (choice == true) {
+                const sources = [...!allVideoMuted ? ["CAMERA"] : [], ...allAudioMuted ? ["MICROPHONE"] : [], ...allScreenMuted ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
+                const res = participants.map((p) => roomService.setAllowedSources(p, sources).then(() => true).catch(() => false)).every(Boolean)
+                if (res) {
+                    setallVideoMuted(!allVideoMuted)
+                }
+            }
+        })
+
+    }
+
+    const tAudio = () => {
+        confirmBulk().then((choice) => {
+            if (choice == true) {
+                const sources = [...allVideoMuted ? ["CAMERA"] : [], ...!allAudioMuted ? ["MICROPHONE"] : [], ...allScreenMuted ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
+                const res = participants.map((p) => roomService.setAllowedSources(p, sources).then(() => true).catch(() => false)).every(Boolean)
+                if (res) {
+                    setallAudioMuted(!allAudioMuted)
+                }
+            }
+        })
+    }
+
+    const tScreen = () => {
+        confirmBulk().then((choice) => {
+            if (choice == true) {
+                const sources = [...allVideoMuted ? ["CAMERA"] : [], ...allAudioMuted ? ["MICROPHONE"] : [], ...!allScreenMuted ? ["SCREEN_SHARE", "SCREEN_SHARE_AUDIO"] : []]
+                const res = participants.map((p) => roomService.setAllowedSources(p, sources).then(() => true).catch(() => false)).every(Boolean)
+                if (res) {
+                    setallScreenMuted(!allScreenMuted)
+                }
+            }
+        })
+    }
+
+    return (
+        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em" }}>
+            <Button style={{ backgroundColor: "transparent" }} onClick={tVideo} icon={!allVideoMuted ? <CameraDisabledIcon /> : <CameraIcon color="green" />} />
+            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={!allAudioMuted ? <MicDisabledIcon /> : <MicIcon color="green" />} />
+            <Button style={{ backgroundColor: "transparent" }} onClick={tScreen} icon={!allScreenMuted ? <ScreenShareStopIcon /> : <ScreenShareIcon color="green" />} />
+        </div>
     )
 }
