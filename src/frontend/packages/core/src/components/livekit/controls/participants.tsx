@@ -140,7 +140,7 @@ export const ParticipantsLayout = ({ ...props }: ParticipantLayoutProps) => {
                     <SleepIcon></SleepIcon>
                 </div> :
                 <div>
-                    <AdminBulkActions />
+                    {isAdmin && <AdminBulkActions />}
                     {participants.map((value, index) => {
                         return (
                             value.name &&
