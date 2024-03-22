@@ -74,7 +74,6 @@ export class Event<T>{
     constructor(state: T, props: ToastProps, compute: (state: T) => any = (r): boolean => {
         return true
     }) {
-        console.log("New event created");
         this.toast = props
         this.state = state
         this.fsm = new Map()
@@ -182,7 +181,6 @@ export const EventHandlerProvider = (props: any) => {
             const origin_c = event.getCompute()(origin)
             const transition = event.getFsm().get(origin_c)?.get(target_c)
             if (transition) {
-                console.log(transition);
                 toast(transition.computeMessage(origin_c, target_c), transition.variant, event.getToast())
             }
 

@@ -15,7 +15,6 @@ class LiveKitService {
         )
 
         this.api.interceptors.request.use(request => {
-            console.log('Starting Request', JSON.stringify(request, null, 2))
             return request
           })
           
@@ -85,13 +84,11 @@ export class RoomService {
             canSubscribe: permissions?.canSubscribe,
             canPublishSources: sources
         }
-        console.log(this.token);
         return this.update(participant, newPermissions, participant.metadata? participant.metadata : "{}")
     }
 
     async mute(participant: Participant, muted: boolean, kind: Track.Source): Promise<boolean> {
         const audioTrack = participant.getTrackPublication(kind)
-        console.log(this.token);
         
         const res = await this.service.api.post(
             RoomServiceRoutes.mute, {
@@ -101,7 +98,6 @@ export class RoomService {
             'track_sid': audioTrack?.trackSid
         }
         )
-        console.log(res);
         
         return res.status != 200 ? false : true
     }
