@@ -5,6 +5,7 @@ from datetime import date, timedelta
 import random
 import string
 import json
+import uuid
 
 from django.conf import settings
 from django.utils import timezone
@@ -48,9 +49,10 @@ def get_nth_week_number(original_date):
     return nb_weeks
 
 
-def create_video_grants(room, is_admin=False):
+def create_video_grants(room: string, is_admin=False):
     """Creates video grants given room and user permission"""
-    if is_admin:
+    roomData = models.Room.objects.get(id=uuid.UUID(room))
+    if is_admin or not roomData.configuration["waitingRoomEnabled"]:
         grants = api.VideoGrants(room_join = True, room = room, can_publish= True, can_subscribe = True, room_admin=is_admin, can_update_own_metadata = True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
     else:
         grants = api.VideoGrants(room_join = True, room = room, can_publish= False, can_subscribe = False, room_admin=is_admin, can_update_own_metadata = True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
