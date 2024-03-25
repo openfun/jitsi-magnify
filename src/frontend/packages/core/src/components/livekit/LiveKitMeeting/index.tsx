@@ -109,7 +109,7 @@ const Meeting = () => {
                 <Overlay />
             }
             {!mobile &&
-                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2" }} />
+                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2" , overflow:'hidden'}} />
             }
             <div style={{ gridRow: "1/2", gridColumn: "2/3" }} className={"confWrapper"}>
                 <ConferenceLayout />
