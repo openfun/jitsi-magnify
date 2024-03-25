@@ -92,7 +92,7 @@ export const RoomLiveKitView = () => {
       {(
         ready ?
           !isLoading &&
-          <LiveKitRoom data-lk-theme="default" serverUrl={window.config.LIVEKIT_DOMAIN} token={room?.livekit.token} connect={true} room={new Room(roomOptions)} audio={false} video={false} onDisconnected={handleDisconnect} connectOptions={{ autoSubscribe: true }}>
+          <LiveKitRoom data-lk-theme="default" serverUrl={window.config.LIVEKIT_DOMAIN} token={room?.livekit.token} connect={true} room={new Room(roomOptions)} audio={choices.audioEnabled} video={choices.videoEnabled} onDisconnected={handleDisconnect} connectOptions={{ autoSubscribe: true }}>
             <LiveKitMeeting token={room!.livekit.token} audioInput={choices.audioEnabled} videoInput={choices.videoEnabled} />
           </LiveKitRoom>
           :
