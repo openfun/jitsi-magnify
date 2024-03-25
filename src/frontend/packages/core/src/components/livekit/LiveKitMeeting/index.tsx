@@ -1,12 +1,14 @@
-import { ControlBar, useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLiveKitRoom } from '@livekit/components-react'
+import { ControlBar, useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLiveKitRoom, useLayoutContext, useChatToggle } from '@livekit/components-react'
 import { MagnifyControlBar } from '../controls/bar';
 import { Loader } from '@openfun/cunningham-react';
 import '@livekit/components-styles';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, TouchEvent } from 'react';
 import { AudioConferenceLayout, ConferenceLayout } from '../conference/conference';
-import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext } from '../controls/participants';
+import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext, useParticipantLayoutContext } from '../controls/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
 import { EventHandlerProvider } from '../../../services/livekit/events';
+import { useIsMobile } from '../../../hooks/useIsMobile';
+import { Box } from 'grommet';
 
 
 export interface LiveKitMeetingProps {
@@ -35,26 +37,14 @@ export const LiveKitMeeting = ({
 
     const permissions = useLocalParticipantPermissions()
 
+
     return (
         permissions?.canSubscribe ?
             <EventHandlerProvider>
                 <RoomServiceContext token={props.token}>
                     <ParticipantLayoutContext visible={true} >
                         <LayoutContextProvider onWidgetChange={setWidgetState}>
-                            <div style={{ maxHeight: "100%", height: "100%", display: "grid", gridTemplateRows: "10% 80% 10%", gridTemplateColumns: "0fr 6fr 0fr" }}>
-                                <div style={{ height:"100px",gridRow: "1/2", gridColumn: "2/3", display: "inline-block", overflowX: "scroll", whiteSpace: "nowrap", overflowY: "hidden", marginTop: "auto", marginBottom: "auto" }}>
-                                    <AudioConferenceLayout />
-                                </div>
-                                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2" }} />
-                                <div style={{ gridRow: "2/3", gridColumn: "2/3"}} className={"confWrapper"}>
-                                    <ConferenceLayout />
-                                </div>
-                                <Chat style={{ display: widgetState.showChat ? 'grid' : 'none', gridRow: "1/4", gridColumn: "3/4", width: "20vw", overflow: "hidden", backgroundColor:"transparent", border:"solid black 0.1em" }} />
-
-                                <div style={{ gridRow: "3/4", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
-                                    <MagnifyControlBar />
-                                </div>
-                            </div>
+                            <Meeting />
                             <RoomAudioRenderer></RoomAudioRenderer>
                         </LayoutContextProvider>
                     </ParticipantLayoutContext>
@@ -63,6 +53,70 @@ export const LiveKitMeeting = ({
             :
             <WaitingRoom />
 
+    )
+}
+
+const Meeting = () => {
+
+    const pContext = useParticipantLayoutContext()
+    const ctx = useLayoutContext()
+
+    const [touchStart, setTouchStart] = useState<number>(0)
+    const [touchEnd, setTouchEnd] = useState<number>(0)
+    const [chat, setChat] = useState(false)
+    const minSwipeDistance = 50
+
+    const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+        setTouchEnd(0)
+        setTouchStart(e.targetTouches[0].clientX)
+    }
+
+    const onTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+        setTouchEnd(e.targetTouches[0].clientX)
+    }
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd || (touchStart > 30 && touchStart < window.innerWidth - 30)  ) return
+        const distance = touchStart - touchEnd
+        const isLeftSwipe = (distance > minSwipeDistance) 
+        const isRightSwipe = (distance < -minSwipeDistance) 
+        
+        if (isRightSwipe) {
+            if (!ctx.widget.state?.showChat) {
+                pContext.setVisible(true)
+            }
+            ctx.widget.dispatch != undefined && ctx.widget.dispatch(({msg : 'hide_chat'}))
+        } else {
+            if (!pContext.visible) {
+                ctx.widget.dispatch != undefined && ctx.widget.dispatch(({msg : 'show_chat'}))
+            }
+            pContext.setVisible(false)
+            
+            
+        }
+        if (isLeftSwipe || isRightSwipe) console.log('swipe', isLeftSwipe ? 'left' : 'right')
+    }
+
+    const mobile = useIsMobile()
+
+    
+
+    return (
+        <div style={{ maxHeight: "100%", height: "100%", display: "grid", gridTemplateRows: "87% 10%", gridTemplateColumns: "0fr 6fr 0fr" }} onTouchEnd={onTouchEnd} onTouchStart={onTouchStart} onTouchMove={onTouchMove}>
+            {mobile &&
+                <Overlay />
+            }
+            {!mobile &&
+                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2" }} />
+            }
+            <div style={{ gridRow: "1/2", gridColumn: "2/3" }} className={"confWrapper"}>
+                <ConferenceLayout />
+            </div>
+            <Chat style={{ display: ctx.widget.state?.showChat ? 'grid' : 'none', gridRow: "1/4", gridColumn: "3/4", width: "20vw", overflow: "hidden", backgroundColor: "transparent", border: "solid black 0.1em" }} />
+            <div style={{ gridRow: "2/3", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
+                <MagnifyControlBar />
+            </div>
+        </div>
     )
 }
 
@@ -77,6 +131,21 @@ const RoomServiceContext = (props: any) => {
     )
 }
 
+
+const Overlay = () => {
+    const layoutContext = useParticipantLayoutContext()
+    const chatContext = useLayoutContext()
+    return (
+        <>
+            <Box style={{ backgroundColor: "black", position: "fixed", width: "60%", height: "100%", zIndex: 2, display: layoutContext.visible ? "grid" : "none", boxShadow: "1px 5px 5px black" }} elevation='100px'>
+                <ParticipantsLayout />
+            </Box>
+            <Box style={{ backgroundColor: "black", position: "fixed", right:"0", width: "100%", height: "100%", zIndex: 2, display: chatContext.widget.state?.showChat ? "grid" : "none" }}>
+                <Chat style={{width:"100%", height:"100%", float:"right", backgroundColor:"transparent"}}/>
+            </Box>
+        </>
+    )
+}
 
 
 

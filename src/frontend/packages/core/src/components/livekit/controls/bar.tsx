@@ -1,13 +1,14 @@
 import { CameraDisabledIcon, CameraIcon, ChatIcon, LeaveIcon, MediaDeviceMenu, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackToggleProps, UseChatToggleProps, useChatToggle, useDisconnectButton, useLocalParticipantPermissions, useRemoteParticipants, useTrackToggle } from "@livekit/components-react"
 import { Button, ToastProps, VariantType, defaultTokens } from "@openfun/cunningham-react"
 import { Track } from "livekit-client"
-import { Card } from "grommet"
-import React, { MouseEventHandler, useEffect } from "react"
-import { ParticipantLayoutToggle, RaiseHand } from "./participants"
+import { Card, DropButton } from "grommet"
+import React, { MouseEventHandler, useEffect, useState } from "react"
+import { ParticipantLayoutToggle, RaiseHand, useParticipantLayoutContext } from "./participants"
 import { useAudioAllowed, useScreenSharingAllowed, useVideoAllowed } from "../utils/hooks"
-import { useIsSmallSize } from "../../../hooks/useIsMobile"
+import { useIsMobile, useIsSmallSize } from "../../../hooks/useIsMobile"
 import { Event, useEventHandler } from "../../../services/livekit/events"
 import { LayoutToggle } from "../conference/conference"
+import { MoreIcon } from "../utils/icons"
 
 
 
@@ -71,6 +72,7 @@ export const MagnifyControlBar = () => {
 
 
 export const ControlBar = (props: ControlBarProps) => {
+
     const barProps = { ...defaultControlBarProps, ...props }
     const p = useLocalParticipantPermissions()
     const handler = useEventHandler()
@@ -99,7 +101,7 @@ export const ControlBar = (props: ControlBarProps) => {
     screenEvent.onSwitch(false, true, { computeMessage: () => "An admin unmuted your screen sharing", variant: VariantType.SUCCESS })
     handler.watchState(screenEvent)
 
-    
+
 
     const r = useRemoteParticipants()
 
@@ -119,14 +121,27 @@ export const ControlBar = (props: ControlBarProps) => {
     })
     handler.watchState(joinLeaveEvent)
 
+    const mobile = useIsMobile()
+
+    const mobileSelector =
+        <div style={{ color:"white",backgroundColor: `${defaultTokens.theme.colors["primary-400"]}`, flexDirection: "row", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <LayoutToggle/>
+            <TrackToggle props={{ source: Track.Source.ScreenShare }} clickable={!barProps.screenSharingControl ?? false} enabledIcon={<ScreenShareStopIcon />} disabledIcon={<ScreenShareIcon />} />
+            <RaiseHand/>
+        </div>
+
     return (
         <div style={{ padding: "1em", display: 'flex', alignItems: "center", justifyContent: "center", gap: "1em" }}>
-            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <RaiseHand />
-            </Card>
-            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <ParticipantLayoutToggle />
-            </Card>
+            {!mobile &&
+                <>
+                    <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                        <RaiseHand />
+                    </Card>
+                    <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                        <ParticipantLayoutToggle />
+                    </Card>
+                </>
+            }
 
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
                 <TrackToggle props={{ source: Track.Source.Microphone, children: "Microphone" }} clickable={!barProps.audioControl ?? false} enabledIcon={<MicIcon />} disabledIcon={<MicDisabledIcon />} />
@@ -138,18 +153,34 @@ export const ControlBar = (props: ControlBarProps) => {
                 <MediaDeviceMenu style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} kind="videoinput" />
             </Card>
 
-            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <TrackToggle props={{ source: Track.Source.ScreenShare }} clickable={!barProps.screenSharingControl ?? false} enabledIcon={<ScreenShareStopIcon />} disabledIcon={<ScreenShareIcon />} />
-            </Card>
+            {!mobile &&
+                <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                    <TrackToggle props={{ source: Track.Source.ScreenShare }} clickable={!barProps.screenSharingControl ?? false} enabledIcon={<ScreenShareStopIcon />} disabledIcon={<ScreenShareIcon />} />
+                </Card>
+            }
 
-            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <ChatToggle props={{}} />
-            </Card>
 
-            <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <LayoutToggle />
-            </Card>
+            {!mobile &&
+                <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                    <ChatToggle props={{}} />
+                </Card>
+            }
+
+            {mobile &&
+                <DropButton dropContent={mobileSelector} dropProps={{ justify: "center", alignContent: "center", alignSelf: "center", elevation: "none" }} margin={"none"} style={{ padding: "0.8em", display: "flex", justifyContent: "center", backgroundColor:`${defaultTokens.theme.colors["primary-400"]}`}} dropAlign={{ top: "bottom" }} >
+                    <MoreIcon />
+                </DropButton>
+            }
+
+            {!mobile &&
+                <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
+                    <LayoutToggle/>
+                </Card>
+
+            }
+
             <Leave />
         </div>
     )
 }
+

@@ -67,12 +67,12 @@ export const RoomLiveKitView = () => {
     setChoices(userChoices)
     setReady(true)
   }
-  
+
   if (!isLoading && room && (room.livekit?.token == null)) {
     return <>{intl.formatMessage(messages.privateRoomError)}</>;
   }
 
-  const roomOptions = useMemo(() : RoomOptions => {
+  const roomOptions = useMemo((): RoomOptions => {
     return ({
       videoCaptureDefaults: {
         deviceId: choices.videoDeviceId ?? undefined
@@ -86,20 +86,20 @@ export const RoomLiveKitView = () => {
       }
     })
   }, [choices])
-
+  
   return (
-    <Fragment>
+    <div style={{ height: `100svh`, position: "fixed", width: "100svw" }}>
       {(
         ready ?
-        !isLoading &&
+          !isLoading &&
           <LiveKitRoom data-lk-theme="default" serverUrl={window.config.LIVEKIT_DOMAIN} token={room?.livekit.token} connect={true} room={new Room(roomOptions)} audio={false} video={false} onDisconnected={handleDisconnect} connectOptions={{ autoSubscribe: true }}>
-             <LiveKitMeeting token={room!.livekit.token} audioInput={choices.audioEnabled} videoInput={choices.videoEnabled}/>
+            <LiveKitMeeting token={room!.livekit.token} audioInput={choices.audioEnabled} videoInput={choices.videoEnabled} />
           </LiveKitRoom>
           :
           <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
             <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={true}></PreJoin>
           </Box>
       )}
-    </Fragment>
+    </div>
   )
 }

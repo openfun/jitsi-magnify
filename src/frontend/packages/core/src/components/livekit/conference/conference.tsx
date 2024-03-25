@@ -3,9 +3,10 @@ import { Participant, Track } from "livekit-client"
 import * as React from "react"
 import { UserAvatar } from "../../users"
 import { AdminIcon, GridIcon, HandRaisedIcon, LayoutIcon, PinIcon, SpeakerIcon } from "../utils/icons"
-import { Button } from "@openfun/cunningham-react"
+import { Button, defaultTokens } from "@openfun/cunningham-react"
 import { ParticipantLayoutContextProps, useParticipantLayoutContext, usePinnedTracks } from "../controls/participants"
 import { Box, DropButton } from "grommet"
+import { useIsMobile } from "../../../hooks/useIsMobile"
 
 
 export enum Layouts {
@@ -17,10 +18,9 @@ export enum Layouts {
 
 export const LayoutToggle = () => {
     const context = useParticipantLayoutContext()
-    const [openedSelector, setOpenedSelector] = React.useState<boolean>(false)
 
     const selector =
-        <div style={{ backgroundColor: "transparent", flexDirection: "column", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}`, flexDirection: "column", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Button icon={<PinIcon />} onClick={() => context?.setLayout(Layouts.PIN)} />
             <Button icon={<GridIcon />} onClick={() => context?.setLayout(Layouts.GRID)} />
             <Button icon={<SpeakerIcon />} onClick={() => context?.setLayout(Layouts.SPEAKER)} />
@@ -32,6 +32,11 @@ export const LayoutToggle = () => {
         </DropButton>
 
     )
+}
+
+const trackWeight = (track: TrackReferenceOrPlaceholder) => {
+
+    return track.publication ? 1 : 0
 }
 
 export const ConferenceLayout = (props: React.CSSProperties) => {
@@ -48,9 +53,11 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
 
     // Filter camera source 
     const videoTracks = tracksFiltered.filter((t) => (t.source == Track.Source.Camera) || t.source == Track.Source.ScreenShare)
+    videoTracks.sort((a, b) => trackWeight(a) - trackWeight(b))
 
     // Hide deactivated camera
-    const displayedVideoTracks = videoTracks.filter((t) => t.source == Track.Source.ScreenShare || (!t.publication?.isMuted && isTrackReference(t)))
+    //const displayedVideoTracks = videoTracks.filter((t) => t.source == Track.Source.ScreenShare || (!t.publication?.isMuted && isTrackReference(t)))
+    const displayedVideoTracks = videoTracks
 
     const context = useParticipantLayoutContext()
 
@@ -59,6 +66,8 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
     if (Object.keys(context).length === 0) {
         return <></>
     }
+
+    const mobile = useIsMobile()
 
     if (displayedVideoTracks.length == 0) {
         return (
@@ -81,19 +90,21 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
         case Layouts.PIN:
             const pinnedID = pinnedTracks.map(((t) => t.publication?.trackSid))
             const otherTracks = displayedVideoTracks.filter((t) => !pinnedID.includes(t.publication?.trackSid))
+            
             return (
                 otherTracks.length ?
                     <div className="lk-focus-layout-wrapper" style={{ height: "100%" }}>
                         <FocusLayoutContainer >
                             <CarouselLayout tracks={otherTracks} style={{ paddingTop: "0.5em" }} >
-                                <VideoDisplay />
+                                <VideoDisplay style={{width: !mobile ? '100%': ''}}/>
                             </CarouselLayout>
+
                             <div className="lk-grid-layout-wrapper" style={{ minHeight: "100%", padding: "0px", border: "solid black 0.1em", borderRadius: "0.5em" }}>
                                 {pinnedTracks.length > 0 ?
                                     <GridLayout tracks={pinnedTracks}>
-                                        <VideoDisplay />
+                                        <VideoDisplay style={{ width: "100%" }} />
                                     </GridLayout> :
-                                    <ParticipantPlaceholder />
+                                    <ParticipantPlaceholder style={{ width: "100%" }} />
                                 }
                             </div>
                         </FocusLayoutContainer>
@@ -110,7 +121,6 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
 
         case Layouts.SPEAKER:
             displayedVideoTracks.sort((a, b) => focusTrackPrioritize(b) - focusTrackPrioritize(a))
-
             let focusTrack = displayedVideoTracks[0]
             const notSpeakingTracks = displayedVideoTracks.filter((t) => t != focusTrack)
             return (
@@ -118,7 +128,7 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
                     <div className="lk-focus-layout-wrapper" style={{ height: "100%" }}>
                         <FocusLayoutContainer>
                             <CarouselLayout tracks={notSpeakingTracks} style={{ paddingTop: "0.5em" }}>
-                                <VideoDisplay />
+                            <VideoDisplay />
                             </CarouselLayout>
                             <div className="lk-grid-layout-wrapper" style={{ minHeight: "100%", padding: "0px", border: "solid black 0.1em", borderRadius: "0.5em" }}>
                                 {focusTrack ?
@@ -165,34 +175,37 @@ export interface FocusLayoutProps extends React.HTMLAttributes<HTMLMediaElement>
 }
 
 
-const VideoDisplay = () => {
+const VideoDisplay = (props: React.HTMLAttributes<HTMLDivElement>) => {
     const trackref = useTrackRefContext()
     const participant = trackref.participant
     const { togglePinTrack, pinnedTracks } = usePinnedTracks()
-
     const pin = React.useMemo<boolean>(() => {
         return pinnedTracks.includes(trackref)
     }, [pinnedTracks])
 
     return (
         <>
-            {(isTrackReference(trackref) && !trackref.publication.isMuted) &&
-                <div style={{ position: 'relative', display: "flex", justifyContent: "center", borderRadius: "0.5em", outline: `${participant.isSpeaking ? `solid white 0.1em` : ""}`, width: "100%", maxHeight: "100%" }}>
-                    <VideoTrack trackRef={trackref} style={{ borderRadius: "0.5em" }} />
+            {
+                <div  style={{ ...props.style, position: 'relative', display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "0.5em", outline: `${participant.isSpeaking ? `solid white 0.1em` : ""}`, maxHeight: "100%", backgroundColor: "rgba(255,255,255,0.1)" }}>
+                    {(!trackref.publication || trackref.publication.isMuted || !isTrackReference(trackref)) ?
+                        <UserAvatar username={trackref.participant.name ?? ""} /> :
+                        <VideoTrack trackRef={trackref} style={{ borderRadius: "0.5em" }} />
+                    }
                     <div style={{
-                        position: "absolute", left: "0.5em", bottom: "0.5em", display: "flex", alignItems: "center", gap: "0.5em", backgroundColor: `${isTrackReference(trackref) ? "rgba(255,255,255,0.1)" : "transparent"}`, padding: "0.5em", borderRadius: "0.5em"
+                        position: "absolute", left: 0, bottom: 0, display: "flex", alignItems: "center", backgroundColor: `${isTrackReference(trackref) ? "rgba(0,0,0,0.4)" : "transparent"}`, padding: "0.2em", borderRadius: "0.5em"
                     }}>
                         <ParticipantName />
                     </div>
                     <div style={{
-                        position: "absolute", right: "0.5em", bottom: "0.5em", display: "flex", alignItems: "center", padding: "0.5em"
+                        position: "absolute", right: "0", bottom: "0.5em", display: "flex", alignItems: "center", padding: "0.1em"
                     }}>
                         <TrackMutedIndicator trackRef={{ participant: participant, source: Track.Source.Microphone }} />
                     </div>
-                    <div style={{ position: "absolute", top: "0.5em", left: "0.5em", display: "flex", alignItems: "center", gap: "1em" }}>
+                    <div style={{ position: "absolute", top: "0.1em", left: "0.1em", display: "flex", alignItems: "center", gap: "1em" }}>
+                    <Button style={{ backgroundColor: "transparent" }} icon={!pin ? <FocusToggleIcon /> : <UnfocusToggleIcon />} onClick={() => { togglePinTrack(trackref) }}/>
+                    </div>
+                    <div style={{ position: "absolute", top: "0.1em", right: "0.1em", display: "flex", alignItems: "center", gap: "1em" }}>
                         {JSON.parse(participant.metadata || "{}").raised && <HandRaisedIcon />}
-                        <Button style={{ backgroundColor: "transparent" }} icon={!pin ? <FocusToggleIcon /> : <UnfocusToggleIcon />} onClick={() => { togglePinTrack(trackref) }}>
-                        </Button>
                     </div>
 
                 </div>}

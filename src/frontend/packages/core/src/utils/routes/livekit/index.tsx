@@ -8,6 +8,7 @@ export enum LiveKitPath {
 export const getLiveKitRoutes = (): RouteObject => {
     return {
         path: LiveKitPath.WEB_CONF,
-        element: <RoomLiveKitView />,
+        element:
+            <RoomLiveKitView />
     };
 };

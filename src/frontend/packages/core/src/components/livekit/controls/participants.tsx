@@ -1,6 +1,6 @@
 import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackReferenceOrPlaceholder, VideoConference, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
 import { Button, Decision, Modal, ModalSize, Popover, VariantType, useModal, useModals, useToastProvider } from "@openfun/cunningham-react"
-import React, { PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from "react"
+import React, { Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { UserAvatar } from "../../users"
 import { LocalParticipant, RemoteParticipant } from "livekit-client"
 import { useRoomService } from "../../../services/livekit/room.services"
@@ -13,6 +13,7 @@ import { f } from "msw/lib/glossary-de6278a9"
 
 export interface ParticipantLayoutContextProps {
     visible: boolean,
+    setVisible: Dispatch<SetStateAction<boolean>>,
     toggle: () => void,
     handraised: Set<string>,
     isRaised: boolean,
@@ -25,6 +26,7 @@ export interface ParticipantLayoutContextProps {
 
 const ParticipantLayoutContextDefault: ParticipantLayoutContextProps = {
     visible: true,
+    setVisible: () => { },
     toggle: () => { },
     handraised: new Set(),
     isRaised: false,
@@ -85,7 +87,7 @@ export const ParticipantLayoutContext = (props: PropsWithChildren<ToggleProps>) 
     }
 
     return (
-        <ParticipantContext.Provider value={{ visible: visible, toggle: toggle, handraised: new Set([""]), isRaised: isRaised, isWaiting: isWaiting, layout: layout, setLayout: toggleLayout, togglePinTrack: togglePinTrack, pinnedTracks: pinnedTracks }}>
+        <ParticipantContext.Provider value={{setVisible: setVisible,visible: visible, toggle: toggle, handraised: new Set([""]), isRaised: isRaised, isWaiting: isWaiting, layout: layout, setLayout: toggleLayout, togglePinTrack: togglePinTrack, pinnedTracks: pinnedTracks }}>
             {props.children}
         </ParticipantContext.Provider>
     )
@@ -102,11 +104,11 @@ export const usePinnedTracks = (): PinnedTrackUtils => {
 }
 
 export interface ParticipantLayoutOptions {
-
+    visible? : boolean
 }
 
 export interface ParticipantLayoutProps extends React.HTMLAttributes<HTMLDivElement>, ParticipantLayoutOptions {
-
+    
 }
 
 interface MetaData {
@@ -114,7 +116,7 @@ interface MetaData {
 }
 
 
-export const ParticipantsLayout = ({ ...props }: ParticipantLayoutProps) => {
+export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps) => {
     const remoteParticipants = useRemoteParticipants()
     const layoutContext = useParticipantLayoutContext()
     const localParticipant = useLocalParticipant()
@@ -124,12 +126,12 @@ export const ParticipantsLayout = ({ ...props }: ParticipantLayoutProps) => {
 
     const participants = [localParticipant.localParticipant, ...remoteParticipants]
     return (
-        <div {...props} style={{ display: layoutContext?.visible ? 'block' : 'none', width: "20vw" }} >
+        <div {...props} style={{ display: layoutContext?.visible ? 'block' : 'none', width: "100%", minWidth:"20vw", }} >
             <div style={{ textAlign: "center", position: "relative", alignItems: "center", justifyItems: "center", gridTemplateColumns: "10fr 1fr" }}>
-                {mobile ? <Button style={{ backgroundColor: "transparent" }} onClick={layoutContext?.toggle} icon={<ParticipantsIcon />}></Button> : <h4 > Participants </h4>
+                {<h4 > Participants </h4>
                 }
                 <div style={{ position: "absolute", right: "0px", top: "0px", transform: "translate(0, -25%)", textAlign: "center", verticalAlign: "center" }} >
-                    {!mobile && <Button style={{ float: "right", backgroundColor: "transparent" }} onClick={layoutContext?.toggle} iconPosition="right" icon={<ChatCloseIcon />} />}
+                    {<Button style={{ float: "right", backgroundColor: "transparent" }} onClick={layoutContext?.toggle} iconPosition="right" icon={<ChatCloseIcon />} />}
                 </div>
             </div>
             {participants.length == 0 ?
@@ -144,15 +146,15 @@ export const ParticipantsLayout = ({ ...props }: ParticipantLayoutProps) => {
                     {participants.map((value, index) => {
                         return (
                             value.name &&
-                            <div style={{ borderTop: "solid black 0.1em", display: "grid", alignItems: "center", justifyItems: "center", width: "20vw", gridTemplateColumns: "1fr 10fr 1fr" }}>
+                            <div style={{ borderTop: "solid black 0.1em", display: "grid", alignItems: "center", justifyItems: "center", width: "100%", gridTemplateColumns: "1fr 10fr" }}>
                                 <div style={{ paddingLeft: "0.5em", gridRow: "1/2", gridColumn: "1/2", display: "flex", flexDirection: "row", gap: "1em", justifyContent: "center", alignItems: "center" }}>
                                     <UserAvatar username={value.name}></UserAvatar>
                                     {JSON.parse(value.metadata || "{}").admin && <AdminIcon />}
                                 </div>
-                                {!mobile && <div style={{ gridRow: "1/2", gridColumn: "2/3", textAlign: "left", width: "100%" }}>
-                                    <p style={{ paddingLeft: "1em" }}>{value.name + (value.isLocal ? " ( you )" : "")}</p>
+                                {<div style={{ gridRow: "1/2", gridColumn: "2/3", textAlign: "left", width: "100%" }}>
+                                    <p style={{ paddingLeft: "1em", width:"100%" }}>{value.name + (value.isLocal ? " ( you )" : "")}</p>
                                 </div>}
-                                {isAdmin && <div style={{ gridRow: "1/2", gridColumn: "3/4" }}>
+                                {isAdmin && !value.isLocal && <div style={{ gridRow: "1/2", gridColumn: "3/4" }}>
                                     {<UserActions participant={value} />}
                                 </div>}
                             </div>
@@ -257,7 +259,7 @@ const UserActions = (infos: UserActionInfo) => {
     const parentRef = useRef(null)
     const actionDiv =
 
-        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: "column", backgroundColor: "black" }}>
+        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: "row", backgroundColor: "black" }}>
             <Button style={{ backgroundColor: "transparent" }} onClick={audioMute} icon={audio ? <MicIcon /> : <MicDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={videoMute} icon={video ? <CameraIcon /> : <CameraDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={screenSharingMute} icon={screenSharing ? <ScreenShareIcon /> : <ScreenShareStopIcon />} />
@@ -324,7 +326,7 @@ export const RaiseHand = () => {
 
     return (
         <div  >
-            <Button style={{ backgroundColor: !raised ? "" : "yellow", color: raised ? "black" : "white" }} onClick={sendRaise} icon={<HandRaisedIcon />} />
+            <Button style={{ backgroundColor: !raised ? "" : "white", color: raised ? "black" : "white" }} onClick={sendRaise} icon={<HandRaisedIcon />} />
         </div>
     )
 }
@@ -387,9 +389,9 @@ export const AdminBulkActions = () => {
 
     return (
         <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em" }}>
-            <Button style={{ backgroundColor: "transparent" }} onClick={tVideo} icon={!allVideoMuted ? <CameraDisabledIcon /> : <CameraIcon color="green" />} />
-            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={!allAudioMuted ? <MicDisabledIcon /> : <MicIcon color="green" />} />
-            <Button style={{ backgroundColor: "transparent" }} onClick={tScreen} icon={!allScreenMuted ? <ScreenShareStopIcon /> : <ScreenShareIcon color="green" />} />
+            <Button style={{ backgroundColor: "transparent" }} onClick={tVideo} icon={!allVideoMuted ? <CameraDisabledIcon /> : <CameraIcon  />} />
+            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={!allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} />
+            <Button style={{ backgroundColor: "transparent" }} onClick={tScreen} icon={!allScreenMuted ? <ScreenShareStopIcon /> : <ScreenShareIcon  />} />
         </div>
     )
 }
