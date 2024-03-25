@@ -62,6 +62,7 @@ const Meeting = () => {
     const ctx = useLayoutContext()
 
     const [touchStart, setTouchStart] = useState<number>(0)
+    const [touchStartY, setTouchStartY] = useState<number>(0)
     const [touchEnd, setTouchEnd] = useState<number>(0)
     const [chat, setChat] = useState(false)
     const minSwipeDistance = 50
@@ -69,6 +70,7 @@ const Meeting = () => {
     const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
         setTouchEnd(0)
         setTouchStart(e.targetTouches[0].clientX)
+        setTouchStartY(e.targetTouches[0].clientY)
     }
 
     const onTouchMove = (e: TouchEvent<HTMLDivElement>) => {
@@ -76,7 +78,7 @@ const Meeting = () => {
     }
 
     const onTouchEnd = () => {
-        if (!touchStart || !touchEnd || (touchStart > 30 && touchStart < window.innerWidth - 30)  ) return
+        if (!touchStart || !touchEnd || touchStartY > innerHeight/2 ) return
         const distance = touchStart - touchEnd
         const isLeftSwipe = (distance > minSwipeDistance) 
         const isRightSwipe = (distance < -minSwipeDistance) 
