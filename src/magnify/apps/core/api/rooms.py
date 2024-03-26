@@ -59,7 +59,7 @@ class RoomViewSet(
                 "id": None,
                 "livekit": {
                     "room": slug,
-                    "token": utils.generate_token(request.user, slug, guest, is_admin=True, is_temp_room=True),
+                    "token": utils.generate_token(request.user, slug, guest, is_admin=False, is_temp_room=True),
                 },
             }
         else:
