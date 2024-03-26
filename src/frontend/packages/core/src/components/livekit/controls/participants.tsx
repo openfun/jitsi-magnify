@@ -260,7 +260,7 @@ const UserActions = (infos: UserActionInfo) => {
     const parentRef = useRef(null)
     const actionDiv =
 
-        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: "row", backgroundColor: "black" }}>
+        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: "column", backgroundColor: "black" }}>
             <Button style={{ backgroundColor: "transparent" }} onClick={audioMute} icon={audio ? <MicIcon /> : <MicDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={videoMute} icon={video ? <CameraIcon /> : <CameraDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={screenSharingMute} icon={screenSharing ? <ScreenShareIcon /> : <ScreenShareStopIcon />} />
@@ -388,7 +388,7 @@ export const AdminBulkActions = () => {
 
     return (
         <div style={{ justifyContent: "center", display: "flex", gap: "0.5em" }}>
-            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} >{!allAudioMuted? "Couper tout les micros" : "Autoriser à parler"}</Button>
+            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} >{!allAudioMuted? "Couper tous les micros" : "Autoriser à parler"}</Button>
         </div>
     )
 }
