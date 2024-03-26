@@ -1,15 +1,15 @@
-import { ControlBar, useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLiveKitRoom, useLayoutContext, useChatToggle, ChatIcon } from '@livekit/components-react'
+import { useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLayoutContext } from '@livekit/components-react'
 import { ChatToggle, MagnifyControlBar } from '../controls/bar';
 import { Loader } from '@openfun/cunningham-react';
 import '@livekit/components-styles';
-import { useState, useEffect, TouchEvent, HTMLAttributes } from 'react';
-import { AudioConferenceLayout, ConferenceLayout } from '../conference/conference';
+import { useState, TouchEvent, HTMLAttributes } from 'react';
+import { ConferenceLayout } from '../conference/conference';
 import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext, useParticipantLayoutContext } from '../controls/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
 import { EventHandlerProvider } from '../../../services/livekit/events';
 import { useIsMobile } from '../../../hooks/useIsMobile';
-import { Box, Button } from 'grommet';
-import { ParticipantsIcon, RChevron } from '../utils/icons';
+import { Box } from 'grommet';
+
 
 
 export interface LiveKitMeetingProps {
