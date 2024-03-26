@@ -82,24 +82,24 @@ export const ControlBar = (props: ControlBarProps) => {
         return p?.canPublishSources.includes(1) ?? true
     })
 
-    videoEvent.onSwitch(true, false, { computeMessage: () => "An admin muted your camera", variant: VariantType.INFO })
-    videoEvent.onSwitch(false, true, { computeMessage: () => "An admin unmuted your camera", variant: VariantType.SUCCESS })
+    videoEvent.onSwitch(true, false, { computeMessage: () => "Un modérateur a coupé votre caméra", variant: VariantType.INFO })
+    videoEvent.onSwitch(false, true, { computeMessage: () => "Un modérateur a autorisé votre caméra", variant: VariantType.SUCCESS })
     handler.watchState(videoEvent)
 
     const audioEvent = new Event(p, { duration: 3000 } as ToastProps, (p): boolean => {
         return p?.canPublishSources.includes(2) ?? true
     })
 
-    audioEvent.onSwitch(true, false, { computeMessage: () => "An admin muted your microphone", variant: VariantType.INFO })
-    audioEvent.onSwitch(false, true, { computeMessage: () => "An admin unmuted your microphone", variant: VariantType.SUCCESS })
+    audioEvent.onSwitch(true, false, { computeMessage: () => "Un modérateur a coupé votre microphone", variant: VariantType.INFO })
+    audioEvent.onSwitch(false, true, { computeMessage: () => "Un modérateur a autorisé votre microphone", variant: VariantType.SUCCESS })
     handler.watchState(audioEvent)
 
     const screenEvent = new Event(p, { duration: 3000 } as ToastProps, (p): boolean => {
         return p?.canPublishSources.includes(3) ?? true
     })
 
-    screenEvent.onSwitch(true, false, { computeMessage: () => "An admin muted your screen sharing", variant: VariantType.INFO })
-    screenEvent.onSwitch(false, true, { computeMessage: () => "An admin unmuted your screen sharing", variant: VariantType.SUCCESS })
+    screenEvent.onSwitch(true, false, { computeMessage: () => "Un admin a coupé votre partage d'écran", variant: VariantType.INFO })
+    screenEvent.onSwitch(false, true, { computeMessage: () => "Un admin a autorisé votre partage d'écran", variant: VariantType.SUCCESS })
     handler.watchState(screenEvent)
 
 
@@ -110,14 +110,14 @@ export const ControlBar = (props: ControlBarProps) => {
     joinLeaveEvent.onCheck((o, t) => o.length > t.length, {
         computeMessage: (o, t) => {
             const newParticpants = o.filter((x) => !t.includes(x))
-            return `${newParticpants[0]?.name ?? ""} left the room`
+            return `${newParticpants[0]?.name ?? ""} a quitté la conférence`
         }, variant: VariantType.INFO
     })
 
     joinLeaveEvent.onCheck((o, t) => (o.length < t.length) && o.length > 0, {
         computeMessage: (o, t) => {
             const newParticpants = t.filter((x) => !o.includes(x))
-            return `${newParticpants[0]?.name ?? ""} joined the room`
+            return `${newParticpants[0]?.name ?? ""} a rejoins la conférence`
         }, variant: VariantType.INFO
     })
     handler.watchState(joinLeaveEvent)
@@ -167,7 +167,7 @@ export const ControlBar = (props: ControlBarProps) => {
             }
 
             {mobile &&
-                <DropButton dropContent={mobileSelector} dropProps={{ justify: "center", alignContent: "center", alignSelf: "center", elevation: "none" }} margin={"none"} style={{ padding: "0.8em", display: "flex", justifyContent: "center", backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} dropAlign={{ top: "bottom" }} >
+                <DropButton dropContent={mobileSelector} dropProps={{justify: "center", alignContent: "center", alignSelf: "center", elevation: "none" }} margin={"none"} style={{ padding: "0.8em", display: "flex", justifyContent: "center", backgroundColor: `${tokens.theme.colors["primary-400"]}` }} dropAlign={{ top: "bottom" }} >
                     <MoreIcon />
                 </DropButton>
             }

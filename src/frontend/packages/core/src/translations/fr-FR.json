@@ -6,7 +6,7 @@
   "components.designSystem.modal.errorRequest.modalTitle": "Une erreur est survenue car vous n'êtes pas connecté, veuillez vous connecter.",
   "components.profile.identityForm.usernameLabel": "Nom d'utilisateur",
   "components.profile.identityForm.submitButtonLabel": "Sauvegarder",
-  "view.rooms.title_part_two": "et de qualité jusqu'à 500 personnes",
+  "view.rooms.title_part_two": "et de qualité jusqu'à 100 personnes",
   "components.auth.LoginForm.passwordLabel": "Mot de passe",
   "validationMesssages.confirmDoesNotMatch": "Le nouveau mot de passe et sa confirmation ne correspondent pas",
   "components.rooms.myRooms.myRoomCardTitle": "Liste des espaces virtuels",

@@ -22,7 +22,7 @@ export const WaitingRoom = () => {
     return (
         <div style={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "auto", flexDirection: "column" }}>
             <Loader size='medium' />
-            <h4 > En attente de validation par un administrateur</h4>
+            <h4 > En attente de validation par un modérateur</h4>
         </div>
     )
 }
@@ -38,12 +38,13 @@ export const LiveKitMeeting = ({
 
     const permissions = useLocalParticipantPermissions()
 
+    const mobile = useIsMobile()
 
     return (
         permissions?.canSubscribe ?
             <EventHandlerProvider>
                 <RoomServiceContext token={props.token}>
-                    <ParticipantLayoutContext visible={true} >
+                    <ParticipantLayoutContext visible={!mobile} >
                         <LayoutContextProvider onWidgetChange={setWidgetState}>
                             <Meeting />
                             <RoomAudioRenderer></RoomAudioRenderer>

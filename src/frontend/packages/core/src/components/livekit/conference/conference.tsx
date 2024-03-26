@@ -23,9 +23,9 @@ export const LayoutToggle = () => {
 
     const selector =
         <div style={{ backgroundColor: `${tokens.theme.colors["primary-400"]}`, borderRadius: "0.5em", flexDirection: "column", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Button style={{width: "100%"}} icon={<PinIcon />} onClick={() => context?.setLayout(Layouts.PIN)}>Pin {(context.layout == Layouts.PIN)? <TickIcon /> : ""}</Button>
-            <Button style={{width: "100%"}} icon={<GridIcon />} onClick={() => context?.setLayout(Layouts.GRID)}>Grid {(context.layout == Layouts.GRID)? <TickIcon /> : ""}</Button>
-            <Button style={{width: "100%"}} icon={<SpeakerIcon />} onClick={() => context?.setLayout(Layouts.SPEAKER)}>Speaker {(context.layout == Layouts.SPEAKER)? <TickIcon /> : ""}</Button>
+            <Button style={{ width: "100%" }} icon={<PinIcon />} onClick={() => context?.setLayout(Layouts.PIN)}>Pin {(context.layout == Layouts.PIN) ? <TickIcon /> : ""}</Button>
+            <Button style={{ width: "100%" }} icon={<GridIcon />} onClick={() => context?.setLayout(Layouts.GRID)}>Grid {(context.layout == Layouts.GRID) ? <TickIcon /> : ""}</Button>
+            <Button style={{ width: "100%" }} icon={<SpeakerIcon />} onClick={() => context?.setLayout(Layouts.SPEAKER)}>Speaker {(context.layout == Layouts.SPEAKER) ? <TickIcon /> : ""}</Button>
         </div>
     return (
 
@@ -109,9 +109,9 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
                                     <div style={{ width: "100%", display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                                         <ParticipantPlaceholder style={{ width: "100%" }} />
                                         <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "1em" }}>
-                                            <h4>Press </h4>
+                                            <h4>Appuyer </h4>
                                             <FocusToggleIcon />
-                                            <h4>to focus on a track</h4>
+                                            <h4>pour suivre une vidéo</h4>
                                         </div>
 
                                     </div>
@@ -138,7 +138,7 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
                     <div className="lk-focus-layout-wrapper" style={{ height: "100%" }}>
                         <FocusLayoutContainer>
                             <CarouselLayout tracks={notSpeakingTracks} style={{ paddingTop: "0.5em" }}>
-                                <VideoDisplay style={{ width: "100%" }} />
+                                <VideoDisplay style={{ width: !mobile ? '100%' : '' }} />
                             </CarouselLayout>
                             <div className="lk-grid-layout-wrapper" style={{ minHeight: "100%", padding: "0px", border: "solid black 0.1em", borderRadius: "0.5em" }}>
                                 {focusTrack ?
@@ -212,7 +212,7 @@ const VideoDisplay = (props: React.HTMLAttributes<HTMLDivElement>) => {
                         <TrackMutedIndicator trackRef={{ participant: participant, source: Track.Source.Microphone }} />
                     </div>
                     <div style={{ position: "absolute", top: "0.1em", left: "0.1em", display: "flex", alignItems: "center", gap: "1em" }}>
-                        <Button style={{ backgroundColor: "transparent" }} icon={!pin ? <FocusToggleIcon /> : <UnfocusToggleIcon />} onClick={() => { togglePinTrack(trackref) }} />
+                        { trackref.publication && <Button style={{ backgroundColor: "transparent" }} icon={!pin ? <FocusToggleIcon /> : <UnfocusToggleIcon />} onClick={() => { togglePinTrack(trackref) }} />}
                     </div>
                     <div style={{ position: "absolute", top: "0.1em", right: "0.1em", display: "flex", alignItems: "center", gap: "1em", color: "#ffd90f" }}>
                         {JSON.parse(participant.metadata || "{}").raised && <HandRaisedIcon />}
