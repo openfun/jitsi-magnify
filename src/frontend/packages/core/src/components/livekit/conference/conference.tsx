@@ -109,9 +109,9 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
                                     <div style={{ width: "100%", display: 'flex', flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                                         <ParticipantPlaceholder style={{ width: "100%" }} />
                                         <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "1em" }}>
-                                            <h4>Press </h4>
+                                            <h4>Appuyer </h4>
                                             <FocusToggleIcon />
-                                            <h4>to focus on a track</h4>
+                                            <h4>pour suivre une vidéo</h4>
                                         </div>
 
                                     </div>

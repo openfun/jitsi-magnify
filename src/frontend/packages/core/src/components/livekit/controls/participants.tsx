@@ -24,6 +24,8 @@ export interface ParticipantLayoutContextProps {
     togglePinTrack: (track: TrackReferenceOrPlaceholder) => void
 }
 
+
+
 const ParticipantLayoutContextDefault: ParticipantLayoutContextProps = {
     visible: true,
     setVisible: () => { },
@@ -123,6 +125,7 @@ export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps
     const localMetaData = ((localParticipant == undefined) || (localParticipant.localParticipant.metadata == undefined) ? DefaultMetaData : JSON.parse(localParticipant.localParticipant.metadata)) as MetaData
     const isAdmin = localMetaData.admin
     const mobile = useIsMobile()
+    mobile && layoutContext?.toggle()
 
     const participants = [localParticipant.localParticipant, ...remoteParticipants]
     return (
@@ -137,7 +140,7 @@ export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps
             {participants.length == 0 ?
                 <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <i>
-                        Seems like you are alone there...
+                        Il semble que vous soyez tout seul ici...
                     </i>
                     <SleepIcon></SleepIcon>
                 </div> :
@@ -152,7 +155,7 @@ export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps
                                     {JSON.parse(value.metadata || "{}").admin && <AdminIcon />}
                                 </div>
                                 {<div style={{ gridRow: "1/2", gridColumn: "2/3", textAlign: "left", width: "100%" }}>
-                                    <p style={{ paddingLeft: "1em", width:"100%" }}>{value.name + (value.isLocal ? " ( you )" : "")}</p>
+                                    <p style={{ paddingLeft: "1em", width:"100%" }}>{value.name + (value.isLocal ? " (vous)" : "")}</p>
                                 </div>}
                                 {isAdmin && !value.isLocal && <div style={{ gridRow: "1/2", gridColumn: "3/4" }}>
                                     {<UserActions participant={value} />}
@@ -218,7 +221,7 @@ const UserActions = (infos: UserActionInfo) => {
 
     const removeParticipant = () => {
         const confirmRemoval = async () => {
-            await modals.deleteConfirmationModal({ children: `Do you really want to remove ${infos.participant.name} ?` })
+            await modals.deleteConfirmationModal({ children: `Voulez-vous retirer ${infos.participant.name} ?` })
                 .then((decision: Decision) => {
                     if (decision == "delete") {
                         roomService.remove(infos.participant).catch(() => handleError())
@@ -281,8 +284,8 @@ const UserActions = (infos: UserActionInfo) => {
                     <Popover parentRef={parentRef} onClickOutside={closePopover}>
                         {actionDiv}
                     </Popover>}
-                <Modal {...kickModal} size={ModalSize.SMALL} title={"Warning"}>
-                    {`Do you really want to remove ${infos.participant.name} ?`}
+                <Modal {...kickModal} size={ModalSize.SMALL} title={"Attention"}>
+                    {`Voulez-vous retirer ${infos.participant.name} ?`}
                 </Modal>
                 <Button onClick={switchPopover} icon={<MoreIcon />} style={{ backgroundColor: "transparent" }} />
             </div>
@@ -312,7 +315,7 @@ export const RaiseHand = () => {
     const [raised, setHand] = useState<boolean>(false)
 
     const error = () => {
-        toast("An error occured", VariantType.ERROR)
+        toast("Une erreur s'est produite", VariantType.ERROR)
     }
 
     const sendRaise = () => {
@@ -333,7 +336,7 @@ export const AdminBulkActions = () => {
     const roomService = useRoomService()
     const participants = useRemoteParticipants()
     const [allVideoMuted, setallVideoMuted] = useState<boolean>(true)
-    const [allAudioMuted, setallAudioMuted] = useState<boolean>(true)
+    const [allAudioMuted, setallAudioMuted] = useState<boolean>(false)
     const [allScreenMuted, setallScreenMuted] = useState<boolean>(true)
     const modals = useModals()
     const allowedSources = useMemo(() => {
@@ -342,7 +345,7 @@ export const AdminBulkActions = () => {
 
 
     const confirmBulk = async (): Promise<boolean> => {
-        return await modals.confirmationModal({ children: `This action will affect all users` })
+        return await modals.confirmationModal({ children: `Cette action affectera tous les utilisateurs` })
             .then((decision: Decision) => {
                 return decision == "yes" ? true : false
             }).catch(() => false)
@@ -387,7 +390,7 @@ export const AdminBulkActions = () => {
 
     return (
         <div style={{ justifyContent: "center", display: "flex", gap: "0.5em" }}>
-            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} >{!allAudioMuted? "Mute all" : "Unmute all"}</Button>
+            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} >{!allAudioMuted? "Couper tout les micros" : "Autoriser à parler"}</Button>
         </div>
     )
 }

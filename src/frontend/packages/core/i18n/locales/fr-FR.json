@@ -429,7 +429,7 @@
   },
   "view.rooms.title_part_two": {
     "description": "Main title",
-    "message": "et de qualité jusqu'à 500 personnes"
+    "message": "et de qualité jusqu'à 100 personnes"
   },
   "view.users.preferences.title": {
     "description": "The label for the User preferences title",
