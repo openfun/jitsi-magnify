@@ -2,7 +2,7 @@ import { CameraDisabledIcon, CameraIcon, ChatIcon, LeaveIcon, MediaDeviceMenu, M
 import { Button, ToastProps, VariantType, defaultTokens } from "@openfun/cunningham-react"
 import { Track } from "livekit-client"
 import { Card, DropButton } from "grommet"
-import React, { MouseEventHandler, useEffect, useState } from "react"
+import { MouseEventHandler, useEffect, useState } from "react"
 import { ParticipantLayoutToggle, RaiseHand, useParticipantLayoutContext } from "./participants"
 import { useAudioAllowed, useScreenSharingAllowed, useVideoAllowed } from "../utils/hooks"
 import { useIsMobile, useIsSmallSize } from "../../../hooks/useIsMobile"

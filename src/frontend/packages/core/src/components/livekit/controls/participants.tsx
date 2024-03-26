@@ -1,6 +1,6 @@
 import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackReferenceOrPlaceholder, VideoConference, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
 import { Button, Decision, Modal, ModalSize, Popover, VariantType, useModal, useModals, useToastProvider } from "@openfun/cunningham-react"
-import React, { Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useMemo, useRef, useState } from "react"
+import { Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useMemo, useRef, useState, createContext } from "react"
 import { UserAvatar } from "../../users"
 import { LocalParticipant, RemoteParticipant } from "livekit-client"
 import { useRoomService } from "../../../services/livekit/room.services"
@@ -41,7 +41,7 @@ export interface ToggleProps {
     visible: boolean,
 }
 
-export const ParticipantContext = React.createContext<ParticipantLayoutContextProps>(ParticipantLayoutContextDefault);
+export const ParticipantContext = createContext<ParticipantLayoutContextProps>(ParticipantLayoutContextDefault);
 
 export const useParticipantLayoutContext = () => {
     const context = useContext(ParticipantContext)
@@ -309,7 +309,7 @@ export const RaiseHand = () => {
 
 
     const { toast } = useToastProvider()
-    const [raised, setHand] = React.useState<boolean>(false)
+    const [raised, setHand] = useState<boolean>(false)
 
     const error = () => {
         toast("An error occured", VariantType.ERROR)
@@ -386,8 +386,8 @@ export const AdminBulkActions = () => {
     }
 
     return (
-        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em" }}>
-            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={!allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} >{!allAudioMuted? "Mute all" : "Unmute all"}</Button>
+        <div style={{ justifyContent: "center", display: "flex", gap: "0.5em" }}>
+            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} >{!allAudioMuted? "Mute all" : "Unmute all"}</Button>
         </div>
     )
 }

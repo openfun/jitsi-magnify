@@ -1,11 +1,11 @@
 import { CarouselLayout, FocusLayoutContainer, GridLayout, ParticipantTile, useLayoutContext, useTracks, VideoTrack, useEnsureParticipant, useTrackRefContext, isTrackReference, TrackMutedIndicator, ParticipantName, TrackLoop, TrackReferenceOrPlaceholder, FocusToggle, TrackRefContext, FocusToggleIcon, UnfocusToggleIcon, ParticipantPlaceholder } from "@livekit/components-react"
 import { Participant, Track } from "livekit-client"
-import * as React from "react"
 import { UserAvatar } from "../../users"
-import { AdminIcon, GridIcon, HandRaisedIcon, LayoutIcon, PinIcon, SpeakerIcon } from "../utils/icons"
+import { AdminIcon, GridIcon, HandRaisedIcon, LayoutIcon, PinIcon, SpeakerIcon, TickIcon } from "../utils/icons"
 import { Button, defaultTokens } from "@openfun/cunningham-react"
 import { ParticipantLayoutContextProps, useParticipantLayoutContext, usePinnedTracks } from "../controls/participants"
 import { Box, DropButton } from "grommet"
+import React from "react"
 import { useIsMobile } from "../../../hooks/useIsMobile"
 import { colors } from "grommet/themes/base"
 
@@ -22,9 +22,9 @@ export const LayoutToggle = () => {
 
     const selector =
         <div style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}`, borderRadius: "0.5em", flexDirection: "column", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Button style={{width: "100%"}} icon={<PinIcon />} onClick={() => context?.setLayout(Layouts.PIN)}>Pin</Button>
-            <Button style={{width: "100%"}} icon={<GridIcon />} onClick={() => context?.setLayout(Layouts.GRID)}>Grid</Button>
-            <Button style={{width: "100%"}} icon={<SpeakerIcon />} onClick={() => context?.setLayout(Layouts.SPEAKER)}>Speaker</Button>
+            <Button style={{width: "100%"}} icon={<PinIcon />} onClick={() => context?.setLayout(Layouts.PIN)}>Pin {(context.layout == Layouts.PIN)? <TickIcon /> : ""}</Button>
+            <Button style={{width: "100%"}} icon={<GridIcon />} onClick={() => context?.setLayout(Layouts.GRID)}>Grid {(context.layout == Layouts.GRID)? <TickIcon /> : ""}</Button>
+            <Button style={{width: "100%"}} icon={<SpeakerIcon />} onClick={() => context?.setLayout(Layouts.SPEAKER)}>Speaker {(context.layout == Layouts.SPEAKER)? <TickIcon /> : ""}</Button>
         </div>
     return (
 
