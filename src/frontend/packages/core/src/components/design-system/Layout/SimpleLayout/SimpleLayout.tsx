@@ -10,6 +10,7 @@ import { useTranslations } from '../../../../i18n';
 import { KeycloakService } from '../../../../services';
 import { ResponsiveLayoutHeaderAvatar } from '../Header';
 import cover from './cover.svg';
+import logotu from './logo-tu.svg'
 
 interface Props {
   urlLogo: string;
@@ -44,32 +45,25 @@ export const SimpleLayout = ({ urlLogo, ...props }: PropsWithChildren<Props>) =>
       {!isMobile && (
         <Box height="100%" style={{ width: '50%', position: 'fixed', left: 0, top: 0 }}>
           <Box
-            background="linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)"
             color="white"
             style={{ overflow: 'hidden', flex: 2, minWidth: '20rem' }}
           >
-            <Box background="light-5" height="100%" width="100%">
+            <Box background="light-1" height="100%" width="100%">
               <Stack fill>
                 <Box
                   height="100%"
                   width="100%"
                   style={{
-                    background: `bottom no-repeat url(${cover}),
-                                          linear-gradient(45deg, #ffbdc9 0%, #687fc9 100%)`,
+                    background: `center no-repeat url(${logotu})`,
                   }}
                 />
-                <Box direction="column" height="100%" justify="between">
-                  <Box margin="5% 25%">
-                    <Image alt="logo" height="300px" src={urlLogo} />
-                  </Box>
-                </Box>
               </Stack>
             </Box>
           </Box>
         </Box>
       )}
       <Box
-        background="light-2"
+        background="light-1"
         height="100%"
         pad="4rem 2rem 2rem 2rem"
         style={{
