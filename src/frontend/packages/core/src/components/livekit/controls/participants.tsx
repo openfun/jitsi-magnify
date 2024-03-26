@@ -388,7 +388,7 @@ export const AdminBulkActions = () => {
 
     return (
         <div style={{ justifyContent: "center", display: "flex", gap: "0.5em" }}>
-            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} >{!allAudioMuted? "Couper tout les micros" : "Autoriser à parler"}</Button>
+            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} >{!allAudioMuted? "Couper tous les micros" : "Autoriser à parler"}</Button>
         </div>
     )
 }
