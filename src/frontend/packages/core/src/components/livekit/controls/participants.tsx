@@ -298,10 +298,8 @@ const UserActions = (infos: UserActionInfo) => {
 export const ParticipantLayoutToggle = ({ ...props }: ParticipantLayoutProps) => {
     const layoutContext = useParticipantLayoutContext()
     return (
-        <div style={{ ...props.style }} >
-            <Button onClick={layoutContext?.toggle} icon={<ParticipantsIcon />} />
-
-        </div>
+            <Button onClick={layoutContext?.toggle} icon={<ParticipantsIcon />} style={{...props.style}} />
+        
     )
 }
 

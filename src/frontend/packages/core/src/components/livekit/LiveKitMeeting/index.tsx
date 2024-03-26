@@ -1,14 +1,15 @@
-import { ControlBar, useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLiveKitRoom, useLayoutContext, useChatToggle } from '@livekit/components-react'
-import { MagnifyControlBar } from '../controls/bar';
+import { useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLayoutContext } from '@livekit/components-react'
+import { ChatToggle, MagnifyControlBar } from '../controls/bar';
 import { Loader } from '@openfun/cunningham-react';
 import '@livekit/components-styles';
-import { useState, useEffect, TouchEvent } from 'react';
-import { AudioConferenceLayout, ConferenceLayout } from '../conference/conference';
+import { useState, TouchEvent, HTMLAttributes } from 'react';
+import { ConferenceLayout } from '../conference/conference';
 import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext, useParticipantLayoutContext } from '../controls/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
 import { EventHandlerProvider } from '../../../services/livekit/events';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { Box } from 'grommet';
+
 
 
 export interface LiveKitMeetingProps {
@@ -78,44 +79,45 @@ const Meeting = () => {
     }
 
     const onTouchEnd = () => {
-        if (!touchStart || !touchEnd || touchStartY > innerHeight/2 ) return
+        if (!touchStart || !touchEnd || touchStartY > innerHeight / 2) return
         const distance = touchStart - touchEnd
-        const isLeftSwipe = (distance > minSwipeDistance) 
-        const isRightSwipe = (distance < -minSwipeDistance) 
-        
+        const isLeftSwipe = (distance > minSwipeDistance)
+        const isRightSwipe = (distance < -minSwipeDistance)
+
         if (isRightSwipe) {
             if (!ctx.widget.state?.showChat) {
                 pContext.setVisible(true)
             }
-            ctx.widget.dispatch != undefined && ctx.widget.dispatch(({msg : 'hide_chat'}))
+            ctx.widget.dispatch != undefined && ctx.widget.dispatch(({ msg: 'hide_chat' }))
         } else {
             if (!pContext.visible) {
-                ctx.widget.dispatch != undefined && ctx.widget.dispatch(({msg : 'show_chat'}))
+                ctx.widget.dispatch != undefined && ctx.widget.dispatch(({ msg: 'show_chat' }))
             }
             pContext.setVisible(false)
-            
-            
         }
-        if (isLeftSwipe || isRightSwipe) console.log('swipe', isLeftSwipe ? 'left' : 'right')
     }
 
     const mobile = useIsMobile()
 
-    
+
 
     return (
-        <div style={{ maxHeight: "100%", height: "100%", display: "grid", gridTemplateRows: "87% 10%", gridTemplateColumns: "0fr 6fr 0fr" }} onTouchEnd={onTouchEnd} onTouchStart={onTouchStart} onTouchMove={onTouchMove}>
+        <div style={{ maxHeight: "100%", height: "100%", display: "grid", gridTemplateRows: !mobile ? "87% 10%" : "6% 80% 9%", gridTemplateColumns: "0fr 6fr 0fr" }} onTouchEnd={onTouchEnd} onTouchStart={onTouchStart} onTouchMove={onTouchMove}>
             {mobile &&
                 <Overlay />
             }
             {!mobile &&
-                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2" , overflow:'hidden'}} />
+                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2", overflow: 'hidden' }} />
             }
-            <div style={{ gridRow: "1/2", gridColumn: "2/3" }} className={"confWrapper"}>
+
+            {mobile && 
+                <MobileHeader style={{width:"100%", gridRow:"1/2", gridColumn:"1/3", display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:'0.5em'}}/>
+            }
+            <div style={{ gridRow: !mobile ? "1/2" : "2/3", gridColumn: "2/3" }} className={"confWrapper"}>
                 <ConferenceLayout />
             </div>
             <Chat style={{ display: ctx.widget.state?.showChat ? 'grid' : 'none', gridRow: "1/4", gridColumn: "3/4", width: "20vw", overflow: "hidden", backgroundColor: "transparent", border: "solid black 0.1em" }} />
-            <div style={{ gridRow: "2/3", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
+            <div style={{ gridRow: !mobile ? "2/3" : "3/4", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
                 <MagnifyControlBar />
             </div>
         </div>
@@ -139,13 +141,24 @@ const Overlay = () => {
     const chatContext = useLayoutContext()
     return (
         <>
-            <Box style={{ backgroundColor: "black", position: "fixed", width: "60%", height: "100%", zIndex: 2, display: layoutContext.visible ? "grid" : "none", boxShadow: "1px 5px 5px black" }} elevation='100px'>
+            <Box style={{ backgroundColor: "black", position: "fixed", width: "100%", height: "100%", zIndex: 2, display: layoutContext.visible ? "grid" : "none", boxShadow: "1px 5px 5px black" }} elevation='100px'>
                 <ParticipantsLayout />
             </Box>
-            <Box style={{ backgroundColor: "black", position: "fixed", right:"0", width: "100%", height: "100%", zIndex: 2, display: chatContext.widget.state?.showChat ? "grid" : "none" }}>
-                <Chat style={{width:"100%", height:"100%", float:"right", backgroundColor:"transparent"}}/>
+            <Box style={{ backgroundColor: "black", position: "fixed", right: "0", width: "100%", height: "100%", zIndex: 2, display: chatContext.widget.state?.showChat ? "grid" : "none" }}>
+                <Chat style={{ width: "100%", height: "100%", float: "right", backgroundColor: "transparent" }} />
             </Box>
         </>
+    )
+}
+
+const MobileHeader = ({...props} : HTMLAttributes<HTMLDivElement>) => {
+    const localP = useLocalParticipant()
+    return (
+        <div {...props} >
+            <ParticipantLayoutToggle style={{backgroundColor:'transparent'}}/>
+            <h4>{localP.localParticipant.name}</h4>
+            <ChatToggle  props={{style:{backgroundColor:'transparent'}}}/>
+        </div>
     )
 }
 
