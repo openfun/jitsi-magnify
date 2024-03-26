@@ -212,7 +212,7 @@ const VideoDisplay = (props: React.HTMLAttributes<HTMLDivElement>) => {
                         <TrackMutedIndicator trackRef={{ participant: participant, source: Track.Source.Microphone }} />
                     </div>
                     <div style={{ position: "absolute", top: "0.1em", left: "0.1em", display: "flex", alignItems: "center", gap: "1em" }}>
-                        <Button style={{ backgroundColor: "transparent" }} icon={!pin ? <FocusToggleIcon /> : <UnfocusToggleIcon />} onClick={() => { togglePinTrack(trackref) }} />
+                        { trackref.publication && <Button style={{ backgroundColor: "transparent" }} icon={!pin ? <FocusToggleIcon /> : <UnfocusToggleIcon />} onClick={() => { togglePinTrack(trackref) }} />}
                     </div>
                     <div style={{ position: "absolute", top: "0.1em", right: "0.1em", display: "flex", alignItems: "center", gap: "1em", color: "#ffd90f" }}>
                         {JSON.parse(participant.metadata || "{}").raised && <HandRaisedIcon />}
