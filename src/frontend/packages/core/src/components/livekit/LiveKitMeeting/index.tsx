@@ -107,7 +107,7 @@ const Meeting = () => {
                 <Overlay />
             }
             {!mobile &&
-                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2", overflow: 'hidden' }} />
+                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2", overflow: 'scrollY' }} />
             }
 
             {mobile && 

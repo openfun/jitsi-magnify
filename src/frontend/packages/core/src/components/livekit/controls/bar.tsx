@@ -125,7 +125,7 @@ export const ControlBar = (props: ControlBarProps) => {
     const mobile = useIsMobile()
 
     const mobileSelector =
-        <div style={{ color: "white", backgroundColor: `${defaultTokens.theme.colors["primary-400"]}`, flexDirection: "row", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ color: "white", backgroundColor: `${tokens.theme.colors["primary-400"]}`, flexDirection: "row", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <LayoutToggle />
             <RaiseHand />
         </div>
@@ -145,12 +145,12 @@ export const ControlBar = (props: ControlBarProps) => {
 
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
                 <TrackToggle props={{ source: Track.Source.Microphone}} clickable={!barProps.audioControl ?? false} enabledIcon={<MicIcon />} disabledIcon={<MicDisabledIcon />} />
-                <MediaDeviceMenu style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} kind="audioinput" />
+                <MediaDeviceMenu style={{ backgroundColor: `${tokens.theme.colors["primary-400"]}` }} kind="audioinput" />
             </Card>
 
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
                 <TrackToggle props={{ source: Track.Source.Camera}} clickable={!barProps.videoControl ?? false} enabledIcon={<CameraIcon />} disabledIcon={<CameraDisabledIcon />} />
-                <MediaDeviceMenu style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} kind="videoinput" />
+                <MediaDeviceMenu style={{ backgroundColor: `${tokens.theme.colors["primary-400"]}` }} kind="videoinput" />
             </Card>
 
             {!mobile &&

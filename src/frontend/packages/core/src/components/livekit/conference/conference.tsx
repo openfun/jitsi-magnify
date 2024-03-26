@@ -8,6 +8,7 @@ import { Box, DropButton } from "grommet"
 import React from "react"
 import { useIsMobile } from "../../../hooks/useIsMobile"
 import { colors } from "grommet/themes/base"
+import { tokens } from "../../../cunningham-tokens"
 
 
 export enum Layouts {
@@ -21,7 +22,7 @@ export const LayoutToggle = () => {
     const context = useParticipantLayoutContext()
 
     const selector =
-        <div style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}`, borderRadius: "0.5em", flexDirection: "column", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ backgroundColor: `${tokens.theme.colors["primary-400"]}`, borderRadius: "0.5em", flexDirection: "column", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Button style={{width: "100%"}} icon={<PinIcon />} onClick={() => context?.setLayout(Layouts.PIN)}>Pin {(context.layout == Layouts.PIN)? <TickIcon /> : ""}</Button>
             <Button style={{width: "100%"}} icon={<GridIcon />} onClick={() => context?.setLayout(Layouts.GRID)}>Grid {(context.layout == Layouts.GRID)? <TickIcon /> : ""}</Button>
             <Button style={{width: "100%"}} icon={<SpeakerIcon />} onClick={() => context?.setLayout(Layouts.SPEAKER)}>Speaker {(context.layout == Layouts.SPEAKER)? <TickIcon /> : ""}</Button>
