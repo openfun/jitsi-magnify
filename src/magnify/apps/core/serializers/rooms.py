@@ -122,7 +122,7 @@ class RoomSerializer(serializers.ModelSerializer):
         if role is not None or instance.is_public:
             output["livekit"] = {
                 "room": instance.jitsi_name,
-                "token": generate_token(user, instance.jitsi_name, request.GET.get("guest"), is_admin=is_admin),
+                "token": generate_token(user, instance.jitsi_name, request.GET.get("guest"), is_admin=is_admin, is_temp_room=False),
             }
         output["is_administrable"] = is_admin
 
