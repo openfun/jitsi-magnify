@@ -9,7 +9,9 @@ export interface MagnifyConfiguration {
   KEYCLOAK_REALM: string;
   JITSI_DOMAIN: string;
   LANGUAGE_CODE: string;
+  DEFAULT_LIVEKIT_DOMAIN: string;
   LIVEKIT_DOMAIN: string;
+  LIVEKIT_ROOM_SERVICE_BASE_URL: string
 }
 
 export const TESTING_CONF: MagnifyConfiguration = {
@@ -21,5 +23,7 @@ export const TESTING_CONF: MagnifyConfiguration = {
   KEYCLOAK_EXPIRATION_SECONDS: 1800,
   KEYCLOAK_REALM: 'magnify',
   KEYCLOAK_URL: 'http://localhost:8080',
-  LIVEKIT_DOMAIN: 'http:///localhost:7880'
+  LIVEKIT_DOMAIN: 'http:///localhost:7880',
+  DEFAULT_LIVEKIT_DOMAIN: 'http://localhost:8080',
+  LIVEKIT_ROOM_SERVICE_BASE_URL: 'http://localhost:7880/twirp/livekit.RoomService'
 };

@@ -13,6 +13,7 @@ declare global {
       KEYCLOAK_REALM: string;
       JITSI_DOMAIN: string;
       LIVEKIT_DOMAIN: string;
+      LIVEKIT_ROOM_SERVICE_BASE_URL: string;
     };
   }
 }

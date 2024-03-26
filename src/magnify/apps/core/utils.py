@@ -4,6 +4,8 @@ Utils that can be useful throughout Magnify's core app
 from datetime import date, timedelta
 import random
 import string
+import json
+import uuid
 
 from django.conf import settings
 from django.utils import timezone
@@ -12,6 +14,7 @@ from livekit import api
 
 from rest_framework_simplejwt.tokens import RefreshToken
 from magnify.apps.core import models
+
 
 def get_date_of_weekday_in_nth_week(year, month, nth_week, week_day):
     """
@@ -47,37 +50,53 @@ def get_nth_week_number(original_date):
     return nb_weeks
 
 
-def create_video_grants(room, is_admin=False):
+def create_video_grants(room: string, is_admin=False, is_temp_room=True):
     """Creates video grants given room and user permission"""
-    grants = api.VideoGrants(room_join = True, room = room, can_publish= True, room_admin=is_admin)
-    return grants
+    print(f"room : {room} - temp : {is_temp_room} - isadmin {is_admin}")
+
+    grants = api.VideoGrants(room_join=True, room=room, can_publish=False, can_subscribe=False, room_admin=is_admin,
+                             can_update_own_metadata=True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
+
+    if is_temp_room:
+        grants = api.VideoGrants(room_join=True, room=room, can_publish=True, can_subscribe=True, room_admin=is_admin,
+                                 can_update_own_metadata=True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
+        return grants
+    try:
+        roomData = models.Room.objects.get(id=uuid.UUID(room))
+        print(roomData.__dict__)
+        if is_admin or not roomData.configuration["waitingRoomEnabled"]:
+            print("test")
+            grants = api.VideoGrants(room_join=True, room=room, can_publish=True, can_subscribe=True, room_admin=is_admin,
+                                     can_update_own_metadata=True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
+    finally:
+        return grants
 
 
-def create_livekit_token(identity, username, room, is_admin=False) :
+def create_livekit_token(identity, username, room, is_admin=False, is_temp_room=True):
     """Create the payload so that it contains each information jitsi requires"""
     expiration_seconds = int(
         settings.LIVEKIT_CONFIGURATION["livekit_token_expiration_seconds"]
     )
-    video_grants = create_video_grants(room, is_admin)
+    video_grants = create_video_grants(room, is_admin, is_temp_room)
     token_payload = api.AccessToken(
         settings.LIVEKIT_CONFIGURATION["livekit_api_key"],
         settings.LIVEKIT_CONFIGURATION["livekit_api_secret"],
-    ).with_identity(identity).with_name(username).with_grants(video_grants).with_ttl(timedelta(seconds=expiration_seconds))
+    ).with_identity(identity).with_name(username).with_grants(video_grants).with_ttl(timedelta(seconds=expiration_seconds)).with_metadata(f"{{ \"admin\" : {json.dumps(is_admin)}}}")
 
     return token_payload.to_jwt()
 
 
-def generate_token(user, room, guest, is_admin=False):
+def generate_token(user, room, guest, is_admin=False, is_temp_room=True):
     """Generate the access token that will give access to the room"""
 
-    if user.is_anonymous :
+    if user.is_anonymous:
         identity = "guest-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
         username = guest
-    else :
+    else:
         identity = user.username
         username = identity
-        
-    token = create_livekit_token(identity,username, room, is_admin)
+
+    token = create_livekit_token(identity, username, room, is_admin, is_temp_room)
     return token
 
 

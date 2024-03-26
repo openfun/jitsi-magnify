@@ -2,12 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { LiveKitMeeting } from "../../../components/livekit"
 import { useAuthContext } from "../../../context"
 import { MagnifyQueryKeys } from "../../../utils";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { RoomsRepository } from "../../../services";
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useMemo, useState } from "react";
 import { Box } from "grommet";
-import { PreJoin } from "@livekit/components-react";
+import { LiveKitRoom, PreJoin } from "@livekit/components-react";
 import { defineMessages, useIntl } from "react-intl";
+import { Room, RoomOptions } from "livekit-client";
 
 const messages = defineMessages({
   privateRoomError: {
@@ -22,7 +23,7 @@ export interface LocalUserChoices {
   audioEnabled: boolean,
   videoDeviceId: string,
   audioDeviceId: string,
-  username: string,
+  username: string
 }
 
 const UserPresets = React.createContext<LocalUserChoices>({} as LocalUserChoices)
@@ -33,6 +34,13 @@ export const usePresets = () => {
 }
 
 export const RoomLiveKitView = () => {
+
+  const navigate = useNavigate()
+
+  const handleDisconnect = () => {
+    navigate('/')
+  }
+
   const intl = useIntl();
   const { id } = useParams()
   const [ready, setReady] = useState<boolean>()
@@ -59,26 +67,39 @@ export const RoomLiveKitView = () => {
     setChoices(userChoices)
     setReady(true)
   }
-  
+
   if (!isLoading && room && (room.livekit?.token == null)) {
     return <>{intl.formatMessage(messages.privateRoomError)}</>;
   }
 
-  return (
-    <Fragment>
-      {
-        ready ? (
-          !isLoading && room?.livekit.token != null &&
-          <UserPresets.Provider value={choices}>
-            <LiveKitMeeting token={room!.livekit.token} />
-          </UserPresets.Provider>) :
-          <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={false}></PreJoin>
-          </Box>
+  const roomOptions = useMemo((): RoomOptions => {
+    return ({
+      videoCaptureDefaults: {
+        deviceId: choices.videoDeviceId ?? undefined
+      },
+      audioCaptureDefaults: {
+        deviceId: choices.audioDeviceId ?? undefined
+      },
+      dynacast: true,
+      publishDefaults: {
+        videoCodec: 'vp9'
       }
-    </Fragment>
+    })
+  }, [choices])
+  
+  return (
+    <div style={{ height: `100svh`, position: "fixed", width: "100svw" }}>
+      {(
+        ready ?
+          !isLoading &&
+          <LiveKitRoom data-lk-theme="default" serverUrl={window.config.LIVEKIT_DOMAIN} token={room?.livekit.token} connect={true} room={new Room(roomOptions)} audio={choices.audioEnabled} video={choices.videoEnabled} onDisconnected={handleDisconnect} connectOptions={{ autoSubscribe: true }}>
+            <LiveKitMeeting token={room!.livekit.token} audioInput={choices.audioEnabled} videoInput={choices.videoEnabled} />
+          </LiveKitRoom>
+          :
+          <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={true}></PreJoin>
+          </Box>
+      )}
+    </div>
   )
 }
-
-
-
