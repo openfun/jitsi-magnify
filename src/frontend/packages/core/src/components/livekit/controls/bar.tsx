@@ -143,12 +143,12 @@ export const ControlBar = (props: ControlBarProps) => {
             }
 
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <TrackToggle props={{ source: Track.Source.Microphone, children: "Microphone" }} clickable={!barProps.audioControl ?? false} enabledIcon={<MicIcon />} disabledIcon={<MicDisabledIcon />} />
+                <TrackToggle props={{ source: Track.Source.Microphone}} clickable={!barProps.audioControl ?? false} enabledIcon={<MicIcon />} disabledIcon={<MicDisabledIcon />} />
                 <MediaDeviceMenu style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} kind="audioinput" />
             </Card>
 
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <TrackToggle props={{ source: Track.Source.Camera, children: "Camera" }} clickable={!barProps.videoControl ?? false} enabledIcon={<CameraIcon />} disabledIcon={<CameraDisabledIcon />} />
+                <TrackToggle props={{ source: Track.Source.Camera}} clickable={!barProps.videoControl ?? false} enabledIcon={<CameraIcon />} disabledIcon={<CameraDisabledIcon />} />
                 <MediaDeviceMenu style={{ backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} kind="videoinput" />
             </Card>
 
@@ -182,4 +182,3 @@ export const ControlBar = (props: ControlBarProps) => {
         </div>
     )
 }
-

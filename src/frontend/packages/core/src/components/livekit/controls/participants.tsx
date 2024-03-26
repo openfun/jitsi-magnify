@@ -387,9 +387,7 @@ export const AdminBulkActions = () => {
 
     return (
         <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em" }}>
-            <Button style={{ backgroundColor: "transparent" }} onClick={tVideo} icon={!allVideoMuted ? <CameraDisabledIcon /> : <CameraIcon  />} />
-            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={!allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} />
-            <Button style={{ backgroundColor: "transparent" }} onClick={tScreen} icon={!allScreenMuted ? <ScreenShareStopIcon /> : <ScreenShareIcon  />} />
+            <Button style={{ backgroundColor: "transparent" }} onClick={tAudio} icon={!allAudioMuted ? <MicDisabledIcon /> : <MicIcon  />} >{!allAudioMuted? "Mute all" : "Unmute all"}</Button>
         </div>
     )
 }
