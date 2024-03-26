@@ -167,7 +167,7 @@ export const ControlBar = (props: ControlBarProps) => {
             }
 
             {mobile &&
-                <DropButton dropContent={mobileSelector} dropProps={{ justify: "center", alignContent: "center", alignSelf: "center", elevation: "none" }} margin={"none"} style={{ padding: "0.8em", display: "flex", justifyContent: "center", backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} dropAlign={{ top: "bottom" }} >
+                <DropButton dropContent={mobileSelector} dropProps={{justify: "center", alignContent: "center", alignSelf: "center", elevation: "none" }} margin={"none"} style={{ padding: "0.8em", display: "flex", justifyContent: "center", backgroundColor: `${tokens.theme.colors["primary-400"]}` }} dropAlign={{ top: "bottom" }} >
                     <MoreIcon />
                 </DropButton>
             }

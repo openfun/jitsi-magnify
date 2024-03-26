@@ -38,12 +38,13 @@ export const LiveKitMeeting = ({
 
     const permissions = useLocalParticipantPermissions()
 
+    const mobile = useIsMobile()
 
     return (
         permissions?.canSubscribe ?
             <EventHandlerProvider>
                 <RoomServiceContext token={props.token}>
-                    <ParticipantLayoutContext visible={true} >
+                    <ParticipantLayoutContext visible={!mobile} >
                         <LayoutContextProvider onWidgetChange={setWidgetState}>
                             <Meeting />
                             <RoomAudioRenderer></RoomAudioRenderer>

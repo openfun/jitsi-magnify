@@ -124,8 +124,6 @@ export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps
     const localParticipant = useLocalParticipant()
     const localMetaData = ((localParticipant == undefined) || (localParticipant.localParticipant.metadata == undefined) ? DefaultMetaData : JSON.parse(localParticipant.localParticipant.metadata)) as MetaData
     const isAdmin = localMetaData.admin
-    const mobile = useIsMobile()
-    mobile && layoutContext?.toggle()
 
     const participants = [localParticipant.localParticipant, ...remoteParticipants]
     return (

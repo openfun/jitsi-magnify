@@ -23,9 +23,9 @@ export const LayoutToggle = () => {
 
     const selector =
         <div style={{ backgroundColor: `${tokens.theme.colors["primary-400"]}`, borderRadius: "0.5em", flexDirection: "column", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Button style={{width: "100%"}} icon={<PinIcon />} onClick={() => context?.setLayout(Layouts.PIN)}>Pin {(context.layout == Layouts.PIN)? <TickIcon /> : ""}</Button>
-            <Button style={{width: "100%"}} icon={<GridIcon />} onClick={() => context?.setLayout(Layouts.GRID)}>Grid {(context.layout == Layouts.GRID)? <TickIcon /> : ""}</Button>
-            <Button style={{width: "100%"}} icon={<SpeakerIcon />} onClick={() => context?.setLayout(Layouts.SPEAKER)}>Speaker {(context.layout == Layouts.SPEAKER)? <TickIcon /> : ""}</Button>
+            <Button style={{ width: "100%" }} icon={<PinIcon />} onClick={() => context?.setLayout(Layouts.PIN)}>Pin {(context.layout == Layouts.PIN) ? <TickIcon /> : ""}</Button>
+            <Button style={{ width: "100%" }} icon={<GridIcon />} onClick={() => context?.setLayout(Layouts.GRID)}>Grid {(context.layout == Layouts.GRID) ? <TickIcon /> : ""}</Button>
+            <Button style={{ width: "100%" }} icon={<SpeakerIcon />} onClick={() => context?.setLayout(Layouts.SPEAKER)}>Speaker {(context.layout == Layouts.SPEAKER) ? <TickIcon /> : ""}</Button>
         </div>
     return (
 
@@ -138,7 +138,7 @@ export const ConferenceLayout = (props: React.CSSProperties) => {
                     <div className="lk-focus-layout-wrapper" style={{ height: "100%" }}>
                         <FocusLayoutContainer>
                             <CarouselLayout tracks={notSpeakingTracks} style={{ paddingTop: "0.5em" }}>
-                                <VideoDisplay style={{ width: "100%" }} />
+                                <VideoDisplay style={{ width: !mobile ? '100%' : '' }} />
                             </CarouselLayout>
                             <div className="lk-grid-layout-wrapper" style={{ minHeight: "100%", padding: "0px", border: "solid black 0.1em", borderRadius: "0.5em" }}>
                                 {focusTrack ?
