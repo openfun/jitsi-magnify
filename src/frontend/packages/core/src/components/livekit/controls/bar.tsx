@@ -1,4 +1,4 @@
-import { CameraDisabledIcon, CameraIcon, ChatIcon, LeaveIcon, MediaDeviceMenu, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackToggleProps, UseChatToggleProps, useChatToggle, useDisconnectButton, useLocalParticipantPermissions, useRemoteParticipants, useTrackToggle } from "@livekit/components-react"
+import { CameraDisabledIcon, CameraIcon, ChatIcon, LeaveIcon, MediaDeviceMenu, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackToggleProps, UseChatToggleProps, useChatToggle, useDisconnectButton, useLayoutContext, useLocalParticipantPermissions, useRemoteParticipants, useTrackToggle } from "@livekit/components-react"
 import { Button, ToastProps, VariantType, defaultTokens } from "@openfun/cunningham-react"
 import { Track } from "livekit-client"
 import { Card, DropButton } from "grommet"
@@ -22,9 +22,9 @@ export const Leave = ({ ...props }) => {
 
 
 export const ChatToggle = ({ ...props }: UseChatToggleProps) => {
-    const { mergedProps: { onClick } } = useChatToggle(props)
+    const { mergedProps } = useChatToggle(props)
     return (
-        <Button onClick={onClick} icon={<ChatIcon />}></Button>
+        <Button onClick={mergedProps.onClick} style={mergedProps.style} icon={<ChatIcon />}></Button>
     )
 }
 
@@ -124,10 +124,9 @@ export const ControlBar = (props: ControlBarProps) => {
     const mobile = useIsMobile()
 
     const mobileSelector =
-        <div style={{ color:"white",backgroundColor: `${defaultTokens.theme.colors["primary-400"]}`, flexDirection: "row", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <LayoutToggle/>
-            <TrackToggle props={{ source: Track.Source.ScreenShare }} clickable={!barProps.screenSharingControl ?? false} enabledIcon={<ScreenShareStopIcon />} disabledIcon={<ScreenShareIcon />} />
-            <RaiseHand/>
+        <div style={{ color: "white", backgroundColor: `${defaultTokens.theme.colors["primary-400"]}`, flexDirection: "row", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <LayoutToggle />
+            <RaiseHand />
         </div>
 
     return (
@@ -167,14 +166,14 @@ export const ControlBar = (props: ControlBarProps) => {
             }
 
             {mobile &&
-                <DropButton dropContent={mobileSelector} dropProps={{ justify: "center", alignContent: "center", alignSelf: "center", elevation: "none" }} margin={"none"} style={{ padding: "0.8em", display: "flex", justifyContent: "center", backgroundColor:`${defaultTokens.theme.colors["primary-400"]}`}} dropAlign={{ top: "bottom" }} >
+                <DropButton dropContent={mobileSelector} dropProps={{ justify: "center", alignContent: "center", alignSelf: "center", elevation: "none" }} margin={"none"} style={{ padding: "0.8em", display: "flex", justifyContent: "center", backgroundColor: `${defaultTokens.theme.colors["primary-400"]}` }} dropAlign={{ top: "bottom" }} >
                     <MoreIcon />
                 </DropButton>
             }
 
             {!mobile &&
                 <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                    <LayoutToggle/>
+                    <LayoutToggle />
                 </Card>
 
             }
