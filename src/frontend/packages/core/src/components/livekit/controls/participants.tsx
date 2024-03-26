@@ -126,7 +126,7 @@ export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps
 
     const participants = [localParticipant.localParticipant, ...remoteParticipants]
     return (
-        <div {...props} style={{ display: layoutContext?.visible ? 'block' : 'none', width: "100%", minWidth:"30vw", }} >
+        <div {...props} style={{ display: layoutContext?.visible ? 'block' : 'none', width: "100%", minWidth:"30vw" }} >
             <div style={{ textAlign: "center", position: "relative", alignItems: "center", justifyItems: "center", gridTemplateColumns: "10fr 1fr" }}>
                 {<h4 > Participants </h4>
                 }
@@ -141,7 +141,7 @@ export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps
                     </i>
                     <SleepIcon></SleepIcon>
                 </div> :
-                <div>
+                <div  style={{overflowY:'scroll', overflowX:'hidden', height:'100%'}}>
                     {isAdmin && <AdminBulkActions />}
                     {participants.map((value, index) => {
                         return (
