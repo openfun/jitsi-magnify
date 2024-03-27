@@ -7,6 +7,6 @@
   "KEYCLOAK_URL": "http://localhost:8080",
   "LANGUAGE_CODE": "en",
   "MAGNIFY_SHOW_REGISTER_LINK": true,
-  "LIVEKIT_DOMAIN": "localhost",
-  "LIVEKIT_ROOM_SERVICE_BASE_URL" : "localhost"
+  "LIVEKIT_DOMAIN": "http://localhost:7880",
+  "LIVEKIT_ROOM_SERVICE_BASE_URL" : "http://localhost:7880/twirp/livekit.RoomService/"
 }
