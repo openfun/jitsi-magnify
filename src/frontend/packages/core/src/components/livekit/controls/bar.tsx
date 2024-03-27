@@ -117,7 +117,7 @@ export const ControlBar = (props: ControlBarProps) => {
     joinLeaveEvent.onCheck((o, t) => (o.length < t.length) && o.length > 0, {
         computeMessage: (o, t) => {
             const newParticpants = t.filter((x) => !o.includes(x))
-            return `${newParticpants[0]?.name ?? ""} a rejoins la conférence`
+            return `${newParticpants[0]?.name ?? ""} a rejoint la conférence`
         }, variant: VariantType.INFO
     })
     handler.watchState(joinLeaveEvent)
