@@ -14,7 +14,7 @@ const messages = defineMessages({
     description: 'Main title part one',
   },
   title_part_two: {
-    defaultMessage: 'and quality up to 500 people',
+    defaultMessage: 'with end-to-end encryption',
     id: 'view.rooms.title_part_two',
     description: 'Main title',
   },
