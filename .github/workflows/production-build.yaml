@@ -6,6 +6,7 @@ on:
       - closed
     branches:
       - 'livekit'
+  push:
 
 jobs:
   docker:
