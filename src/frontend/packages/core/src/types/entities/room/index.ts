@@ -25,6 +25,8 @@ export interface Room {
   };
   configuration?: RoomSettings;
   accesses?: RoomUserAccesses[];
+  start_with_audio_muted: boolean,
+  start_with_video_muted: boolean
 }
 
 export const defaultConfiguration: RoomSettings = {

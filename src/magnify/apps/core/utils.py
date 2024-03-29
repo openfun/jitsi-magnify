@@ -50,9 +50,18 @@ def get_nth_week_number(original_date):
     return nb_weeks
 
 
+def get_publish_sources(room, is_admin: bool):
+    sources = ["camera", "microphone", "screen_share", "screen_share_audio"]
+    if is_admin:
+        return sources
+    if not room.configuration["screenSharingEnabled"]:
+        sources.remove("screen_share")
+        sources.remove("screen_share_audio")
+    return sources
+
+
 def create_video_grants(room: string, is_admin=False, is_temp_room=True):
     """Creates video grants given room and user permission"""
-    print(f"room : {room} - temp : {is_temp_room} - isadmin {is_admin}")
 
     grants = api.VideoGrants(room_join=True, room=room, can_publish=False, can_subscribe=False, room_admin=is_admin,
                              can_update_own_metadata=True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
@@ -61,13 +70,16 @@ def create_video_grants(room: string, is_admin=False, is_temp_room=True):
         grants = api.VideoGrants(room_join=True, room=room, can_publish=True, can_subscribe=True, room_admin=is_admin,
                                  can_update_own_metadata=True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
         return grants
+
     try:
         roomData = models.Room.objects.get(id=uuid.UUID(room))
-        print(roomData.__dict__)
+
+        chat_enabled = roomData.configuration['enableLobbyChat'] or is_admin
+        grants = api.VideoGrants(room_join=True, room=room, can_publish=False, can_subscribe=False, room_admin=is_admin,
+                                 can_update_own_metadata=True, can_publish_sources=get_publish_sources(roomData, is_admin), can_publish_data=chat_enabled)
         if is_admin or not roomData.configuration["waitingRoomEnabled"]:
-            print("test")
             grants = api.VideoGrants(room_join=True, room=room, can_publish=True, can_subscribe=True, room_admin=is_admin,
-                                     can_update_own_metadata=True, can_publish_sources=["camera", "microphone", "screen_share", "screen_share_audio"])
+                                     can_update_own_metadata=True, can_publish_sources=get_publish_sources(roomData, is_admin), can_publish_data=chat_enabled)
     finally:
         return grants
 

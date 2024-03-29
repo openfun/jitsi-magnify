@@ -1,4 +1,4 @@
-import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackReferenceOrPlaceholder, VideoConference, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
+import { CameraDisabledIcon, CameraIcon, ChatCloseIcon, MicDisabledIcon, MicIcon, ScreenShareIcon, ScreenShareStopIcon, TrackReferenceOrPlaceholder, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
 import { Button, Decision, Modal, ModalSize, Popover, VariantType, useModal, useModals, useToastProvider } from "@openfun/cunningham-react"
 import { Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useMemo, useRef, useState, createContext } from "react"
 import { UserAvatar } from "../../users"
@@ -8,7 +8,6 @@ import { SleepIcon, ParticipantsIcon, RemoveUserIcon, MoreIcon, HandRaisedIcon, 
 import { useIsMobile } from "../../../hooks/useIsMobile"
 import { useAudioAllowed, useScreenSharingAllowed, useVideoAllowed } from "../utils/hooks"
 import { Layouts } from "../conference/conference"
-import { f } from "msw/lib/glossary-de6278a9"
 
 
 export interface ParticipantLayoutContextProps {
@@ -147,7 +146,7 @@ export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps
                     {participants.map((value, index) => {
                         return (
                             value.name &&
-                            <div style={{ borderTop: "solid black 0.1em", display: "grid", alignItems: "center", justifyItems: "center", width: "100%", gridTemplateColumns: "1fr 10fr" }}>
+                            <div key={value.name} style={{ borderTop: "solid black 0.1em", display: "grid", alignItems: "center", justifyItems: "center", width: "100%", gridTemplateColumns: "1fr 10fr" }}>
                                 <div style={{ paddingLeft: "0.5em", gridRow: "1/2", gridColumn: "1/2", display: "flex", flexDirection: "row", gap: "1em", justifyContent: "center", alignItems: "center" }}>
                                     <UserAvatar username={value.name}></UserAvatar>
                                     {JSON.parse(value.metadata || "{}").admin && <AdminIcon />}
@@ -187,9 +186,7 @@ const UserActions = (infos: UserActionInfo) => {
     const screenSharing = useScreenSharingAllowed(infos.participant.permissions)
 
     const { toast } = useToastProvider()
-    const localParticipant = infos.participant
-    const localMetaData = ((localParticipant.metadata == undefined || localParticipant.metadata == "") ? DefaultMetaData : JSON.parse(localParticipant.metadata)) as ParticipantMetaData
-
+    const localParticipant = infos.participant    
     const handleError = () => {
         toast("An error occured", VariantType.ERROR)
     }

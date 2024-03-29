@@ -29,6 +29,8 @@ export const defaultRoom: Room = {
       },
     },
   ],
+  start_with_audio_muted: false,
+  start_with_video_muted: false
 };
 
 export const roomsHandlers = [

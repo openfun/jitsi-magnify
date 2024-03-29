@@ -1,14 +1,16 @@
-import { useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLayoutContext } from '@livekit/components-react'
+import { useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLayoutContext, useTracks, useTrackToggle } from '@livekit/components-react'
 import { ChatToggle, MagnifyControlBar } from '../controls/bar';
 import { Loader } from '@openfun/cunningham-react';
 import '@livekit/components-styles';
-import { useState, TouchEvent, HTMLAttributes } from 'react';
+import { useState, TouchEvent, HTMLAttributes, useEffect } from 'react';
 import { ConferenceLayout } from '../conference/conference';
 import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext, useParticipantLayoutContext } from '../controls/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
 import { EventHandlerProvider } from '../../../services/livekit/events';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { Box } from 'grommet';
+import { useMagnifyRoomContext } from '../../../context/room';
+import { Track } from 'livekit-client';
 
 
 
@@ -36,7 +38,26 @@ export const LiveKitMeeting = ({
         unreadMessages: 0,
     });
 
+    const room = useRoomContext()
     const permissions = useLocalParticipantPermissions()
+    const magnifyRoom = useMagnifyRoomContext()
+    // Apply presets
+    const videoToggle = useTrackToggle({ source: Track.Source.Camera })
+    const audioToggle = useTrackToggle({ source: Track.Source.Microphone })
+
+    useEffect(() => {
+        if (permissions?.canSubscribe) {
+            console.log(magnifyRoom.configuration);
+            if (!magnifyRoom.start_with_video_muted) {
+                videoToggle.toggle(room.options.videoCaptureDefaults?.deviceId !== "")
+            }
+            if (!magnifyRoom.start_with_audio_muted) {
+                audioToggle.toggle(room.options.audioCaptureDefaults?.deviceId !== "")
+            }
+
+
+        }
+    }, [permissions])
 
     const mobile = useIsMobile()
 
@@ -59,14 +80,12 @@ export const LiveKitMeeting = ({
 }
 
 const Meeting = () => {
-
     const pContext = useParticipantLayoutContext()
     const ctx = useLayoutContext()
 
     const [touchStart, setTouchStart] = useState<number>(0)
     const [touchStartY, setTouchStartY] = useState<number>(0)
     const [touchEnd, setTouchEnd] = useState<number>(0)
-    const [chat, setChat] = useState(false)
     const minSwipeDistance = 50
 
     const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
@@ -90,7 +109,7 @@ const Meeting = () => {
                 pContext.setVisible(true)
             }
             ctx.widget.dispatch != undefined && ctx.widget.dispatch(({ msg: 'hide_chat' }))
-        } else {
+        } else if (isLeftSwipe) {
             if (!pContext.visible) {
                 ctx.widget.dispatch != undefined && ctx.widget.dispatch(({ msg: 'show_chat' }))
             }
@@ -100,19 +119,17 @@ const Meeting = () => {
 
     const mobile = useIsMobile()
 
-
-
     return (
         <div style={{ maxHeight: "100%", height: "100%", display: "grid", gridTemplateRows: !mobile ? "87% 10%" : "6% 80% 9%", gridTemplateColumns: "0fr 6fr 0fr" }} onTouchEnd={onTouchEnd} onTouchStart={onTouchStart} onTouchMove={onTouchMove}>
             {mobile &&
                 <Overlay />
             }
             {!mobile &&
-                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2"}} />
+                <ParticipantsLayout style={{ gridRow: "1/4", gridColumn: "1/2" }} />
             }
 
-            {mobile && 
-                <MobileHeader style={{width:"100%", gridRow:"1/2", gridColumn:"1/3", display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:'0.5em'}}/>
+            {mobile &&
+                <MobileHeader style={{ width: "100%", gridRow: "1/2", gridColumn: "1/3", display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.5em' }} />
             }
             <div style={{ gridRow: !mobile ? "1/2" : "2/3", gridColumn: "2/3" }} className={"confWrapper"}>
                 <ConferenceLayout />
@@ -151,13 +168,13 @@ const Overlay = () => {
     )
 }
 
-const MobileHeader = ({...props} : HTMLAttributes<HTMLDivElement>) => {
+const MobileHeader = ({ ...props }: HTMLAttributes<HTMLDivElement>) => {
     const localP = useLocalParticipant()
     return (
         <div {...props} >
-            <ParticipantLayoutToggle style={{backgroundColor:'transparent'}}/>
+            <ParticipantLayoutToggle style={{ backgroundColor: 'transparent' }} />
             <h4>{localP.localParticipant.name}</h4>
-            <ChatToggle  props={{style:{backgroundColor:'transparent'}}}/>
+            <ChatToggle props={{ style: { backgroundColor: 'transparent' } }} />
         </div>
     )
 }

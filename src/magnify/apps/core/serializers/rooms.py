@@ -125,5 +125,6 @@ class RoomSerializer(serializers.ModelSerializer):
                 "token": generate_token(user, instance.jitsi_name, request.GET.get("guest"), is_admin=is_admin, is_temp_room=False),
             }
         output["is_administrable"] = is_admin
-
+        output["start_with_audio_muted"] = instance.configuration["startWithAudioMuted"]
+        output["start_with_video_muted"] = instance.configuration["startWithVideoMuted"]
         return output
