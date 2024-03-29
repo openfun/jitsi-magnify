@@ -10,6 +10,7 @@ import { Event, useEventHandler } from "../../../services/livekit/events"
 import { LayoutToggle } from "../conference/conference"
 import { MoreIcon } from "../utils/icons"
 import { tokens } from "../../../cunningham-tokens"
+import { useMagnifyRoomContext } from "../../../context/room"
 
 
 
@@ -75,10 +76,10 @@ export const MagnifyControlBar = () => {
 export const ControlBar = (props: ControlBarProps) => {
 
     const barProps = { ...defaultControlBarProps, ...props }
-    const p = useLocalParticipantPermissions()
+    const localPermissions = useLocalParticipantPermissions()
     const handler = useEventHandler()
 
-    const videoEvent = new Event(p, { duration: 3000 } as ToastProps, (p): boolean => {
+    const videoEvent = new Event(localPermissions, { duration: 3000 } as ToastProps, (p): boolean => {
         return p?.canPublishSources.includes(1) ?? true
     })
 
@@ -86,7 +87,7 @@ export const ControlBar = (props: ControlBarProps) => {
     videoEvent.onSwitch(false, true, { computeMessage: () => "Un modérateur a autorisé votre caméra", variant: VariantType.SUCCESS })
     handler.watchState(videoEvent)
 
-    const audioEvent = new Event(p, { duration: 3000 } as ToastProps, (p): boolean => {
+    const audioEvent = new Event(localPermissions, { duration: 3000 } as ToastProps, (p): boolean => {
         return p?.canPublishSources.includes(2) ?? true
     })
 
@@ -94,7 +95,7 @@ export const ControlBar = (props: ControlBarProps) => {
     audioEvent.onSwitch(false, true, { computeMessage: () => "Un modérateur a autorisé votre microphone", variant: VariantType.SUCCESS })
     handler.watchState(audioEvent)
 
-    const screenEvent = new Event(p, { duration: 3000 } as ToastProps, (p): boolean => {
+    const screenEvent = new Event(localPermissions, { duration: 3000 } as ToastProps, (p): boolean => {
         return p?.canPublishSources.includes(3) ?? true
     })
 
@@ -144,12 +145,12 @@ export const ControlBar = (props: ControlBarProps) => {
             }
 
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <TrackToggle props={{ source: Track.Source.Microphone}} clickable={!barProps.audioControl ?? false} enabledIcon={<MicIcon />} disabledIcon={<MicDisabledIcon />} />
+                <TrackToggle props={{ source: Track.Source.Microphone }} clickable={!barProps.audioControl ?? false} enabledIcon={<MicIcon />} disabledIcon={<MicDisabledIcon />} />
                 <MediaDeviceMenu style={{ backgroundColor: `${tokens.theme.colors["primary-400"]}` }} kind="audioinput" />
             </Card>
 
             <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
-                <TrackToggle props={{ source: Track.Source.Camera}} clickable={!barProps.videoControl ?? false} enabledIcon={<CameraIcon />} disabledIcon={<CameraDisabledIcon />} />
+                <TrackToggle props={{ source: Track.Source.Camera }} clickable={!barProps.videoControl ?? false} enabledIcon={<CameraIcon />} disabledIcon={<CameraDisabledIcon />} />
                 <MediaDeviceMenu style={{ backgroundColor: `${tokens.theme.colors["primary-400"]}` }} kind="videoinput" />
             </Card>
 
@@ -159,7 +160,6 @@ export const ControlBar = (props: ControlBarProps) => {
                 </Card>
             }
 
-
             {!mobile &&
                 <Card style={{ borderRadius: "0.6em", display: "flex", flexDirection: "row" }} className="bg-primary-400">
                     <ChatToggle props={{}} />
@@ -167,7 +167,7 @@ export const ControlBar = (props: ControlBarProps) => {
             }
 
             {mobile &&
-                <DropButton dropContent={mobileSelector} dropProps={{justify: "center", alignContent: "center", alignSelf: "center", elevation: "none" }} margin={"none"} style={{ padding: "0.8em", display: "flex", justifyContent: "center", backgroundColor: `${tokens.theme.colors["primary-400"]}` }} dropAlign={{ top: "bottom" }} >
+                <DropButton dropContent={mobileSelector} dropProps={{ justify: "center", alignContent: "center", alignSelf: "center", elevation: "none" }} margin={"none"} style={{ padding: "0.8em", display: "flex", justifyContent: "center", backgroundColor: `${tokens.theme.colors["primary-400"]}` }} dropAlign={{ top: "bottom" }} >
                     <MoreIcon />
                 </DropButton>
             }
