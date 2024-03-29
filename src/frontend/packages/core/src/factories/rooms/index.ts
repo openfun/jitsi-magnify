@@ -14,6 +14,8 @@ export function createRandomRoom(isAdmin: boolean = true): Room {
       token: '123',
       room: `${name}-${id}`,
     },
+    start_with_audio_muted: false,
+    start_with_video_muted: false
   };
 
   result.accesses = [...Array(5)].map(() => createRoomUserAccesses());
