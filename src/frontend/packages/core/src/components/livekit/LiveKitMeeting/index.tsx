@@ -1,18 +1,19 @@
-import { useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipant, useLocalParticipantPermissions, RoomAudioRenderer, useLayoutContext, useTracks, useTrackToggle } from '@livekit/components-react'
-import { ChatToggle, MagnifyControlBar } from '../controls/bar';
+import { useRoomContext, Chat, LayoutContextProvider, WidgetState, useLocalParticipantPermissions, RoomAudioRenderer, useLayoutContext, useTrackToggle } from '@livekit/components-react'
+import { MagnifyControlBar } from '../controls/MagnifyControlBar/MagnifyControlBar';
 import { Loader } from '@openfun/cunningham-react';
 import '@livekit/components-styles';
-import { useState, TouchEvent, HTMLAttributes, useEffect } from 'react';
-import { ConferenceLayout } from '../conference/conference';
-import { ParticipantLayoutToggle, ParticipantsLayout, ParticipantLayoutContext, useParticipantLayoutContext } from '../controls/participants';
+import { useState, TouchEvent, useEffect } from 'react';
+import { VideoConference } from '../conference/VideoConference';
+import { ParticipantsLayout} from '../display/pannel/ParticipantsLayout/participants';
 import { RoomService, RoomServices } from '../../../services/livekit/room.services';
 import { EventHandlerProvider } from '../../../services/livekit/events';
 import { useIsMobile } from '../../../hooks/useIsMobile';
-import { Box } from 'grommet';
 import { useMagnifyRoomContext } from '../../../context/room';
 import { Track } from 'livekit-client';
-
-
+import { Overlay } from '../mobile/Overlay';
+import { MobileHeader } from '../mobile/MobileHeader';
+import { RoomServiceContext } from '../../../context/livekit/roomservices';
+import { ParticipantLayoutContext, useParticipantLayoutContext } from '../../../context/livekit/layout';
 
 export interface LiveKitMeetingProps {
     token: string,
@@ -132,7 +133,7 @@ const Meeting = () => {
                 <MobileHeader style={{ width: "100%", gridRow: "1/2", gridColumn: "1/3", display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.5em' }} />
             }
             <div style={{ gridRow: !mobile ? "1/2" : "2/3", gridColumn: "2/3" }} className={"confWrapper"}>
-                <ConferenceLayout />
+                <VideoConference />
             </div>
             <Chat style={{ display: ctx.widget.state?.showChat ? 'grid' : 'none', gridRow: "1/4", gridColumn: "3/4", width: "20vw", overflow: "hidden", backgroundColor: "transparent", border: "solid black 0.1em" }} />
             <div style={{ gridRow: !mobile ? "2/3" : "3/4", gridTemplateColumns: "1fr 10fr", gridColumn: "1/4" }}>
@@ -142,39 +143,7 @@ const Meeting = () => {
     )
 }
 
-const RoomServiceContext = (props: any) => {
-    const room = useRoomContext()
-    const service = new RoomService(props.token, room)
 
-    return (
-        <RoomServices.Provider value={service}>
-            {props.children}
-        </RoomServices.Provider>
-    )
-}
 
-const Overlay = () => {
-    const layoutContext = useParticipantLayoutContext()
-    const chatContext = useLayoutContext()
-    return (
-        <>
-            <Box style={{ backgroundColor: "black", position: "fixed", width: "100%", height: "100%", zIndex: 2, display: layoutContext.visible ? "grid" : "none", boxShadow: "1px 5px 5px black" }} elevation='100px'>
-                <ParticipantsLayout />
-            </Box>
-            <Box style={{ backgroundColor: "black", position: "fixed", right: "0", width: "100%", height: "100%", zIndex: 2, display: chatContext.widget.state?.showChat ? "grid" : "none" }}>
-                <Chat style={{ width: "100%", height: "100%", float: "right", backgroundColor: "transparent" }} />
-            </Box>
-        </>
-    )
-}
 
-const MobileHeader = ({ ...props }: HTMLAttributes<HTMLDivElement>) => {
-    const localP = useLocalParticipant()
-    return (
-        <div {...props} >
-            <ParticipantLayoutToggle style={{ backgroundColor: 'transparent' }} />
-            <h4>{localP.localParticipant.name}</h4>
-            <ChatToggle props={{ style: { backgroundColor: 'transparent' } }} />
-        </div>
-    )
-}
+
