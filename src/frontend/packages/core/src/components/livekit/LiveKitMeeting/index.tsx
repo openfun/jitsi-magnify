@@ -4,8 +4,7 @@ import { Loader } from '@openfun/cunningham-react';
 import '@livekit/components-styles';
 import { useState, TouchEvent, useEffect } from 'react';
 import { VideoConference } from '../conference/VideoConference';
-import { ParticipantsLayout} from '../display/pannel/ParticipantsLayout/participants';
-import { RoomService, RoomServices } from '../../../services/livekit/room.services';
+import { ParticipantsLayout } from '../display/pannel/ParticipantsLayout/participants';
 import { EventHandlerProvider } from '../../../services/livekit/events';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useMagnifyRoomContext } from '../../../context/room';
@@ -47,16 +46,14 @@ export const LiveKitMeeting = ({
     const audioToggle = useTrackToggle({ source: Track.Source.Microphone })
 
     useEffect(() => {
+        
         if (permissions?.canSubscribe) {
-            console.log(magnifyRoom.configuration);
             if (!magnifyRoom.start_with_video_muted) {
                 videoToggle.toggle(room.options.videoCaptureDefaults?.deviceId !== "")
             }
             if (!magnifyRoom.start_with_audio_muted) {
                 audioToggle.toggle(room.options.audioCaptureDefaults?.deviceId !== "")
             }
-
-
         }
     }, [permissions])
 
@@ -69,14 +66,13 @@ export const LiveKitMeeting = ({
                     <ParticipantLayoutContext visible={!mobile} >
                         <LayoutContextProvider onWidgetChange={setWidgetState}>
                             <Meeting />
-                            <RoomAudioRenderer></RoomAudioRenderer>
+                            <RoomAudioRenderer />
                         </LayoutContextProvider>
                     </ParticipantLayoutContext>
                 </RoomServiceContext>
             </EventHandlerProvider>
             :
             <WaitingRoom />
-
     )
 }
 

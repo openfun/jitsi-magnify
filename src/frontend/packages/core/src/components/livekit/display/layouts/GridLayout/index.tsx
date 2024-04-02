@@ -1,5 +1,5 @@
-import { TrackReferenceOrPlaceholder } from "@livekit/components-react";
-import { HTMLAttributes, ReactNode } from "react";
+import { GridLayout, TrackReferenceOrPlaceholder } from "@livekit/components-react";
+import { HTMLAttributes } from "react";
 import { VideoDisplay } from "../../media/VideoDisplay";
 
 export interface GridLayoutProps extends HTMLAttributes<HTMLDivElement> {
@@ -7,7 +7,7 @@ export interface GridLayoutProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 
-export const GridLayout = ({ ...props }: GridLayoutProps) => {
+export const MagnifyGridLayout = ({ ...props }: GridLayoutProps) => {
     return (
         <div className="lk-grid-layout-wrapper" style={{ height: "100%" }}>
             <GridLayout tracks={props.tracks}>

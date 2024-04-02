@@ -372,7 +372,16 @@ class Room(Resource):
 
     configuration = models.JSONField(
         blank=True,
-        default=dict,
+        default=lambda : {
+            "roomPassword": "",
+            "askForPassword": False,
+            "enableLobbyChat": True,
+            "waitingRoomEnabled": True,
+            "startWithAudioMuted": False,
+            "startWithVideoMuted": True,
+            "askForAuthentication": True,
+            "screenSharingEnabled": True
+        },
         verbose_name=_("Jitsi room configuration"),
         help_text=_(
             "Values for Jitsi parameters to configure the room via the iframe API."

@@ -8,7 +8,6 @@ export const AudioDisplay = (props: React.HTMLAttributes<HTMLDivElement>) => {
     const trackref = useTrackRefContext()
     const participant = trackref.participant
     const handraised = JSON.parse(participant.metadata || "{}").raised
-    console.log(handraised);
 
     return (
 

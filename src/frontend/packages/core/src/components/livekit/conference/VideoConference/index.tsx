@@ -2,7 +2,7 @@ import { useTracks, ParticipantPlaceholder } from "@livekit/components-react"
 import { Track } from "livekit-client"
 import React from "react"
 import { useParticipantLayoutContext, usePinnedTracks } from "../../../../context/livekit/layout"
-import { GridLayout } from "../../display/layouts/GridLayout"
+import { MagnifyGridLayout } from "../../display/layouts/GridLayout"
 import { PinLayout } from "../../display/layouts/PinLayout"
 import { SpeakerLayout } from "../../display/layouts/SpeakerLayout"
 import { focusTrackPrioritize, trackWeight } from "../../utils/media"
@@ -53,7 +53,7 @@ export const VideoConference = (props: React.CSSProperties) => {
     switch (context?.layout) {
         case Layouts.GRID:
             return (
-                <GridLayout tracks={displayedVideoTracks} />
+                <MagnifyGridLayout tracks={displayedVideoTracks} />
             )
 
         case Layouts.PIN:
@@ -73,7 +73,7 @@ export const VideoConference = (props: React.CSSProperties) => {
 
         default:
             return (
-                <GridLayout tracks={tracksFiltered} />
+                <MagnifyGridLayout tracks={tracksFiltered} />
             )
     }
 }
