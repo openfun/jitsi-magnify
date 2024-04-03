@@ -117,7 +117,7 @@ jobs:
             echo "magnify version: ${BACKEND_VERSION}"
             # In the frontend workspace
             cat src/frontend/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
-            # In the "@openfun/jitsi-magnify" frontend library
+            # In the "@numerique-gouv/magnify" frontend library
             cat src/frontend/packages/core/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
             # In the "sandbox" frontend application
             cat src/frontend/sandbox/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"

@@ -85,7 +85,7 @@ def create_video_grants(room: string, is_admin=False, is_temp_room=True):
 
 
 def create_livekit_token(identity, username, room, is_admin=False, is_temp_room=True):
-    """Create the payload so that it contains each information jitsi requires"""
+    """Create the token so that it contains each information LiveKit requires"""
     expiration_seconds = int(
         settings.LIVEKIT_CONFIGURATION["livekit_token_expiration_seconds"]
     )

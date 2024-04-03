@@ -1,9 +1,9 @@
-# Jitsi Magnify
+# Magnify
 
-An authentication, room and meeting management system for Jitsi based on Django/React.
+An authentication, room and meeting management system for LiveKit based on Django/React.
 
-Jitsi Magnify is built with [ReactJS](https://fr.reactjs.org/) for the frontend, and
-[Django](https://www.djangoproject.com/) for the backend.
+Magnify is built with a [ReactJS](https://fr.reactjs.org/) frontend and a 
+[Django](https://www.djangoproject.com/) backend.
 
 ## Getting started
 
@@ -60,22 +60,11 @@ $ make superuser
 
 ## Running Magnify in production
 
-### Configure a Jitsi instance
+### Configure a LiveKit instance
 
-Before running Magnify, you will need a Jitsi instance with JWT authentication activated:
-
-```
-ENABLE_AUTH=1
-AUTH_TYPE=jwt
-JWT_APP_ID=magnify
-JWT_APP_SECRET={JWT_JITSI_APP_SECRET}
-```
-
-In the Prosody configuration, you should also set the variable:
-`XMPP_DOMAIN={JWT_JITSI_XMPP_DOMAIN}`.
-
-The `JWT_JITSI_APP_SECRET` and `JWT_JITSI_XMPP_DOMAIN` variables should be set to the same value
-in your Jitsi instance and in Magnify.
+Before running Magnify, you will need a LiveKit server or cluster runnning.  
+If you want to deploy your server to a VM, see [Deploying LiveKit to a VM](https://docs.livekit.io/realtime/self-hosting/vm/).  
+If you want to run your server on a Kubernetes cluster, see [Deploying LiveKit to Kubernetes](https://docs.livekit.io/realtime/self-hosting/kubernetes/)
 
 ### Configure Magnify
 
@@ -83,7 +72,6 @@ The easiest way to run Magnify in production is to use the [official Docker imag
 
 Configuration is done via environment variables as detailed in our
 [configuration guide](docs/env.md).
-
 
 ## Frontend
 
@@ -107,13 +95,15 @@ Here is the list of all the available variables :
 
 ```
 {
-  "API_URL": "http://localhost:8071/api" // URL of magnify api,
-  "JITSI_DOMAIN": "exemple.test",
+  "API_URL": "http://localhost:8071/api",
   "KEYCLOAK_CLIENT_ID": "magnify-front",
   "KEYCLOAK_EXPIRATION_SECONDS": 1800,
   "KEYCLOAK_REALM": "magnify",
+  "KEYCLOAK_URL": "http://localhost:8080",
+  "LANGUAGE_CODE": "en",
   "MAGNIFY_SHOW_REGISTER_LINK": true,
-  "KEYCLOAK_URL": "http://localhost:8080"
+  "LIVEKIT_DOMAIN": "http://localhost:7880",
+  "LIVEKIT_ROOM_SERVICE_BASE_URL" : "http://localhost:7880/twirp/livekit.RoomService/"
 }
 
 ```
@@ -122,7 +112,7 @@ You can mock these variables by adding a `config.json` file in the public folder
 #### Development mode
 
 We have added a compilation option that allows the compiler to directly access the project sources when it encounters
-an import from the `@openfun/jitsi-magnify` package.
+an import from the `@numerique-gouv/magnify` package.
 
 As a result, to use package components in the sandbox, you don't need to build the package. You just need to export them.
 

@@ -109,7 +109,6 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
             environ_name="KEYCLOAK_EXPIRATION_SECONDS",
             environ_prefix=None,
         ),
-        "LIVEKIT_DOMAIN": values.Value(environ_name="LIVEKIT_DOMAIN", environ_prefix=None),
         "LIVEKIT_ROOM_SERVICE_BASE_URL": values.Value(
             environ_name="LIVEKIT_ROOM_SERVICE_BASE_URL", environ_prefix=None
         ),
@@ -121,26 +120,6 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
 
     AUTH_USER_MODEL = "core.User"
 
-    JITSI_CONFIGURATION = {
-        "jitsi_domain": values.Value(environ_name="JITSI_DOMAIN", environ_prefix=None),
-        "jitsi_app_id": values.Value(environ_name="JITSI_APP_ID", environ_prefix=None),
-        "jitsi_secret_key": values.Value(
-            environ_name="JITSI_SECRET_KEY", environ_prefix=None
-        ),
-        "jitsi_xmpp_domain": values.Value(
-            environ_name="JITSI_XMPP_DOMAIN", environ_prefix=None
-        ),
-        "jitsi_guest_avatar": values.Value(
-            "", environ_name="JITSI_GUEST_AVATAR", environ_prefix=None
-        ),
-        "jitsi_guest_username": values.Value(
-            "Guest", environ_name="JITSI_GUEST_USERNAME", environ_prefix=None
-        ),
-        "jitsi_token_expiration_seconds": values.Value(
-            300, environ_name="JITSI_TOKEN_EXPIRATION_SECONDS", environ_prefix=None
-        ),
-    }
-
     LIVEKIT_CONFIGURATION = {
         "livekit_token_expiration_seconds": values.Value(300, environ_name="LIVEKIT_TOKEN_EXPIRATION_SECONDS", environ_prefix=None
                                                          ),
@@ -150,12 +129,10 @@ class Base(MagnifyCoreConfigurationMixin, Configuration):
                                            ),
         "livekit_domain": values.Value(environ_name="LIVEKIT_DOMAIN", environ_prefix=None
                                        ),
-
-
     }
 
-    JITSI_ROOM_PREFIX = values.Value(
-        "", environ_name="MAGNIFY_JITSI_ROOM_PREFIX", environ_prefix=None
+    LIVEKIT_ROOM_PREFIX = values.Value(
+        "", environ_name="MAGNIFY_LIVEKIT_ROOM_PREFIX", environ_prefix=None
     )
     DEFAULT_ROOM_IS_PUBLIC = values.BooleanValue(
         True, environ_name="MAGNIFY_DEFAULT_ROOM_IS_PUBLIC", environ_prefix=None
@@ -443,7 +420,6 @@ class Build(Base):
     """Build environment settings"""
 
     SECRET_KEY = "ThisIsAnExampleKeyForBuildPurposeOnly"  # nosec
-    JWT_JITSI_SECRET_KEY = "ThisIsAnExampleKeyForBuildPurposeOnly"  # nosec
 
     STORAGES = {
         "staticfiles": {

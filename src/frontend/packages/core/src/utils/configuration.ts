@@ -11,7 +11,6 @@ declare global {
       MAGNIFY_SHOW_REGISTER_LINK: boolean;
       LANGUAGE_CODE: Maybe<string>;
       KEYCLOAK_REALM: string;
-      JITSI_DOMAIN: string;
       LIVEKIT_DOMAIN: string;
       LIVEKIT_ROOM_SERVICE_BASE_URL: string;
     };
