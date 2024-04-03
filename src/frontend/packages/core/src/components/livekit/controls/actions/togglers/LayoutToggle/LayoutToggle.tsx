@@ -3,12 +3,13 @@ import { useParticipantLayoutContext } from "../../../../../../context/livekit/l
 import { tokens } from "../../../../../../cunningham-tokens"
 import { DropButton } from "grommet"
 import { GridIcon, LayoutIcon, PinIcon, SpeakerIcon, TickIcon } from "../../../../assets/icons"
-import { Layouts } from "../../../../conference/VideoConference"
+import { Layouts } from "../../../../conference/VideoConference/VideoConference"
+import './style.css'
 
 export const LayoutToggle = () => {
     const context = useParticipantLayoutContext()
     const selector =
-        <div style={{ backgroundColor: `${tokens.theme.colors["primary-400"]}`, borderRadius: "0.5em", flexDirection: "column", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="Selector" style={{ backgroundColor: `${tokens.theme.colors["primary-400"]}`}}>
             <Button style={{ width: "100%" }} icon={<PinIcon />} onClick={() => context?.setLayout(Layouts.PIN)}>Pin {(context.layout == Layouts.PIN) ? <TickIcon /> : ""}</Button>
             <Button style={{ width: "100%" }} icon={<GridIcon />} onClick={() => context?.setLayout(Layouts.GRID)}>Grid {(context.layout == Layouts.GRID) ? <TickIcon /> : ""}</Button>
             <Button style={{ width: "100%" }} icon={<SpeakerIcon />} onClick={() => context?.setLayout(Layouts.SPEAKER)}>Speaker {(context.layout == Layouts.SPEAKER) ? <TickIcon /> : ""}</Button>

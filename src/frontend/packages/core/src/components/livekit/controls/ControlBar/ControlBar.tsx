@@ -7,9 +7,9 @@ import { useIsMobile, useIsSmallSize } from "../../../../hooks/useIsMobile"
 import { Event, useEventHandler } from "../../../../services/livekit/events"
 import { MoreIcon } from "../../assets/icons"
 import { tokens } from "../../../../cunningham-tokens"
-import { LayoutToggle } from "../actions/togglers/LayoutToggle"
-import { HandRaiseToggle } from "../actions/togglers/HandRaiseToggle"
-import { ParticipantLayoutToggle } from "../actions/togglers/ParticipantLayoutToggle"
+import { LayoutToggle } from "../actions/togglers/LayoutToggle/LayoutToggle"
+import { HandRaiseToggle } from "../actions/togglers/HandRaiseToggle/HandRaiseToggle"
+import { ParticipantLayoutToggle } from "../actions/togglers/ParticipantLayoutToggle/ParticipantLayoutToggle"
 
 
 
@@ -19,8 +19,6 @@ export const Leave = ({ ...props }) => {
         <Button onClick={buttonProps.onClick} iconPosition={"right"} style={{ backgroundColor: `${defaultTokens.theme.colors["danger-400"]}` }} icon={<LeaveIcon />} />
     )
 }
-
-
 
 export const ChatToggle = ({ ...props }: UseChatToggleProps) => {
     const { mergedProps } = useChatToggle(props)

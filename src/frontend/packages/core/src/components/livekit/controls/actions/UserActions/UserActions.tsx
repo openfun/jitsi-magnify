@@ -6,6 +6,7 @@ import { MicIcon, MicDisabledIcon, CameraIcon, CameraDisabledIcon, ScreenShareIc
 import { useState, useRef, useEffect } from "react"
 import { useIsMobile } from "../../../../../hooks/useIsMobile"
 import { RemoveUserIcon, MoreIcon, TickIcon } from "../../../assets/icons"
+import './style.css'
 
 export interface UserActionInfo {
     participant: RemoteParticipant | LocalParticipant
@@ -90,7 +91,7 @@ export const UserActions = (infos: UserActionInfo) => {
     const parentRef = useRef(null)
     const actionDiv =
 
-        <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: "column", backgroundColor: "black" }}>
+        <div className="ActionContainer" >
             <Button style={{ backgroundColor: "transparent" }} onClick={audioMute} icon={audio ? <MicIcon /> : <MicDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={videoMute} icon={video ? <CameraIcon /> : <CameraDisabledIcon />} />
             <Button style={{ backgroundColor: "transparent" }} onClick={screenSharingMute} icon={screenSharing ? <ScreenShareIcon /> : <ScreenShareStopIcon />} />
@@ -118,7 +119,7 @@ export const UserActions = (infos: UserActionInfo) => {
                 <Button onClick={switchPopover} icon={<MoreIcon />} style={{ backgroundColor: "transparent" }} />
             </div>
             :
-            <div style={{ justifyContent: "space-between", display: "flex", gap: "0.5em", flexDirection: "row", backgroundColor: "" }}>
+            <div className="JoinContainer" >
                 <Button style={{ color: "#0DCE36", backgroundColor: "transparent" }} onClick={accept} icon={<TickIcon />} />
                 <Button style={{ backgroundColor: "transparent" }} onClick={reject} icon={<ChatCloseIcon style={{ strokeWidth: "1.5", stroke: "red" }} />} />
             </div>

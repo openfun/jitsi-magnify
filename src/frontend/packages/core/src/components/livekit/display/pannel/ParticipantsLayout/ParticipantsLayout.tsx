@@ -1,11 +1,11 @@
-import { ChatCloseIcon, TrackReferenceOrPlaceholder, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
-import { Button, VariantType, useToastProvider } from "@openfun/cunningham-react"
-import { useState } from "react"
+import { ChatCloseIcon, useLocalParticipant, useRemoteParticipants } from "@livekit/components-react"
+import { Button } from "@openfun/cunningham-react"
 import { UserAvatar } from "../../../../users"
-import { SleepIcon, HandRaisedIcon, AdminIcon } from "../../../assets/icons"
-import { BulkActions } from "../../../controls/actions/BulkActions"
-import { UserActions } from "../../../controls/actions/UserActions"
+import { SleepIcon, AdminIcon } from "../../../assets/icons"
+import { BulkActions } from "../../../controls/actions/BulkActions/BulkActions"
+import { UserActions } from "../../../controls/actions/UserActions/UserActions"
 import { useParticipantLayoutContext } from "../../../../../context/livekit/layout"
+import './style.css'
 
 export interface ParticipantLayoutOptions {
     visible? : boolean
@@ -29,10 +29,10 @@ export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps
     const participants = [localParticipant.localParticipant, ...remoteParticipants]
     return (
         <div {...props} style={{ display: layoutContext?.visible ? 'block' : 'none', width: "100%", minWidth:"30vw" }} >
-            <div style={{ textAlign: "center", position: "relative", alignItems: "center", justifyItems: "center", gridTemplateColumns: "10fr 1fr" }}>
+            <div className="LayoutHeader">
                 {<h4 > Participants </h4>
                 }
-                <div style={{ position: "absolute", right: "0px", top: "0px", transform: "translate(0, -25%)", textAlign: "center", verticalAlign: "center" }} >
+                <div className="LayoutToggle" >
                     {<Button style={{ float: "right", backgroundColor: "transparent" }} onClick={layoutContext?.toggle} iconPosition="right" icon={<ChatCloseIcon />} />}
                 </div>
             </div>
@@ -43,13 +43,13 @@ export const ParticipantsLayout = ({ visible, ...props }: ParticipantLayoutProps
                     </i>
                     <SleepIcon></SleepIcon>
                 </div> :
-                <div  style={{overflowY:'scroll', overflowX:'hidden', height:'100%'}}>
+                <div className="ParticipantsList">
                     {isAdmin && <BulkActions />}
                     {participants.map((value, index) => {
                         return (
                             value.name &&
-                            <div key={value.name} style={{ borderTop: "solid black 0.1em", display: "grid", alignItems: "center", justifyItems: "center", width: "100%", gridTemplateColumns: "1fr 10fr" }}>
-                                <div style={{ paddingLeft: "0.5em", gridRow: "1/2", gridColumn: "1/2", display: "flex", flexDirection: "row", gap: "1em", justifyContent: "center", alignItems: "center" }}>
+                            <div key={value.name} className="ParticipantContainer" >
+                                <div className="ProfileContainer">
                                     <UserAvatar username={value.name}></UserAvatar>
                                     {JSON.parse(value.metadata || "{}").admin && <AdminIcon />}
                                 </div>

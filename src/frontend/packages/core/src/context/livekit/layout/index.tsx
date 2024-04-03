@@ -1,7 +1,7 @@
 import { TrackReferenceOrPlaceholder, useRemoteParticipants } from "@livekit/components-react";
 import { Dispatch, SetStateAction, createContext, useContext, PropsWithChildren, useState } from "react";
-import { Layouts } from "../../../components/livekit/conference/VideoConference/index.js";
-import { PinnedTrackUtils } from "../../../components/livekit/display/layouts/PinLayout/index.js";
+import { Layouts } from "../../../components/livekit/conference/VideoConference/VideoConference.js";
+import { PinnedTrackUtils } from "../../../components/livekit/display/layouts/PinLayout/PinLayout.js";
 
 export interface ParticipantLayoutContextProps {
     visible: boolean,

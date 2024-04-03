@@ -5,6 +5,7 @@ import { Button } from "grommet"
 import { Track } from "livekit-client"
 import { UserAvatar } from "../../../../users"
 import { HandRaisedIcon } from "../../../assets/icons"
+import './style.css'
 
 export const VideoDisplay = (props: React.HTMLAttributes<HTMLDivElement>) => {
     const trackref = useTrackRefContext()
@@ -17,25 +18,21 @@ export const VideoDisplay = (props: React.HTMLAttributes<HTMLDivElement>) => {
     return (
         <>
             {
-                <div style={{ ...props.style, position: 'relative', display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "0.5em", outline: JSON.parse(participant.metadata || "{}").raised ? "solid #ffd90f 0.1em" : `${participant.isSpeaking ? `solid white 0.1em` : ""}`, maxHeight: "100%", backgroundColor: "rgba(255,255,255,0.1)" }}>
+                <div className="VideoContainer" style={{ ...props.style, outline: JSON.parse(participant.metadata || "{}").raised ? "solid #ffd90f 0.1em" : `${participant.isSpeaking ? `solid white 0.1em` : ""}`}}>
                     {(!trackref.publication || trackref.publication.isMuted || !isTrackReference(trackref)) ?
                         <UserAvatar username={trackref.participant.name ?? ""} /> :
                         <VideoTrack trackRef={trackref} style={{ borderRadius: "0.5em" }} />
                     }
-                    <div style={{
-                        position: "absolute", left: 0, bottom: 0, display: "flex", alignItems: "center", backgroundColor: `${isTrackReference(trackref) ? "rgba(0,0,0,0.4)" : "transparent"}`, padding: "0.2em", borderRadius: "0.5em"
-                    }}>
+                    <div className="BLContainer" style={{ backgroundColor: `${isTrackReference(trackref) ? "rgba(0,0,0,0.4)" : "transparent"}`}}>
                         <ParticipantName />
                     </div>
-                    <div style={{
-                        position: "absolute", right: "0", bottom: "0.5em", display: "flex", alignItems: "center", padding: "0.1em"
-                    }}>
+                    <div className="BRContainer">
                         <TrackMutedIndicator trackRef={{ participant: participant, source: Track.Source.Microphone }} />
                     </div>
-                    <div style={{ position: "absolute", top: "0.1em", left: "0.1em", display: "flex", alignItems: "center", gap: "1em" }}>
+                    <div className="TLContainer">
                         { trackref.publication && <Button style={{ backgroundColor: "transparent" }} icon={!pin ? <FocusToggleIcon /> : <UnfocusToggleIcon />} onClick={() => { togglePinTrack(trackref) }} />}
                     </div>
-                    <div style={{ position: "absolute", top: "0.1em", right: "0.1em", display: "flex", alignItems: "center", gap: "1em", color: "#ffd90f" }}>
+                    <div className="TRContainer" >
                         {JSON.parse(participant.metadata || "{}").raised && <HandRaisedIcon />}
                     </div>
 

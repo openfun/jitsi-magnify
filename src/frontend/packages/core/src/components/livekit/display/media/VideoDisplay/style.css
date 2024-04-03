@@ -1,0 +1,48 @@
+.TRContainer {
+    position: absolute;
+    top: 0.1em;
+    right: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    color: #ffd90f;
+}
+
+.TLContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 0em;
+}
+
+.BRContainer {
+    position: absolute;
+    right: 0;
+    bottom: 0.5em;
+    display: flex;
+    align-items: center;
+    padding: 0.1em;
+}
+
+.BLContainer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 0.2em;
+    border-radius: 0.5em;
+}
+
+.VideoContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5em;
+    max-height: 100%;
+    background-color: rgba(255,255,255,0.1)
+}
+

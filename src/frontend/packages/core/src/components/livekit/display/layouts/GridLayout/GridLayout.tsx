@@ -1,6 +1,6 @@
 import { GridLayout, TrackReferenceOrPlaceholder } from "@livekit/components-react";
 import { HTMLAttributes } from "react";
-import { VideoDisplay } from "../../media/VideoDisplay";
+import { VideoDisplay } from "../../media/VideoDisplay/VideoDisplay";
 
 export interface GridLayoutProps extends HTMLAttributes<HTMLDivElement> {
     tracks: TrackReferenceOrPlaceholder[]

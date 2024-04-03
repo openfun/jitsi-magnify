@@ -3,14 +3,14 @@ import { MagnifyControlBar } from '../controls/MagnifyControlBar/MagnifyControlB
 import { Loader } from '@openfun/cunningham-react';
 import '@livekit/components-styles';
 import { useState, TouchEvent, useEffect } from 'react';
-import { VideoConference } from '../conference/VideoConference';
-import { ParticipantsLayout } from '../display/pannel/ParticipantsLayout/participants';
+import { VideoConference } from '../conference/VideoConference/VideoConference';
+import { ParticipantsLayout } from '../display/pannel/ParticipantsLayout/ParticipantsLayout';
 import { EventHandlerProvider } from '../../../services/livekit/events';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useMagnifyRoomContext } from '../../../context/room';
 import { Track } from 'livekit-client';
-import { Overlay } from '../mobile/Overlay';
-import { MobileHeader } from '../mobile/MobileHeader';
+import { Overlay } from '../mobile/Overlay/Overlay';
+import { MobileHeader } from '../mobile/MobileHeader/MobileHeader';
 import { RoomServiceContext } from '../../../context/livekit/roomservices';
 import { ParticipantLayoutContext, useParticipantLayoutContext } from '../../../context/livekit/layout';
 

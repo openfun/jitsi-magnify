@@ -2,11 +2,11 @@ import { useTracks, ParticipantPlaceholder } from "@livekit/components-react"
 import { Track } from "livekit-client"
 import React from "react"
 import { useParticipantLayoutContext, usePinnedTracks } from "../../../../context/livekit/layout"
-import { MagnifyGridLayout } from "../../display/layouts/GridLayout"
-import { PinLayout } from "../../display/layouts/PinLayout"
-import { SpeakerLayout } from "../../display/layouts/SpeakerLayout"
+import { MagnifyGridLayout } from "../../display/layouts/GridLayout/GridLayout"
+import { PinLayout } from "../../display/layouts/PinLayout/PinLayout"
+import { SpeakerLayout } from "../../display/layouts/SpeakerLayout/SpeakerLayout"
 import { focusTrackPrioritize, trackWeight } from "../../utils/media"
-
+import './style.css'
 
 export enum Layouts {
     SPEAKER,
@@ -44,8 +44,8 @@ export const VideoConference = (props: React.CSSProperties) => {
 
     if (displayedVideoTracks.length == 0) {
         return (
-            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <ParticipantPlaceholder style={{ margin: "auto", alignItems: "center" }} />
+            <div className="VideoConference">
+                <ParticipantPlaceholder className="Placeholder" />
             </div>
         )
     }

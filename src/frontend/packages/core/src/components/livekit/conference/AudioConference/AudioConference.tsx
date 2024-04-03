@@ -1,6 +1,6 @@
 import { TrackLoop, useLayoutContext, useTracks } from "@livekit/components-react"
 import { Track } from "livekit-client"
-import { AudioDisplay } from "../../display/media/AudioDisplay"
+import { AudioDisplay } from "../../display/media/AudioDisplay/AudioDisplay"
 import { audioTrackPrioritize, isVideoActivated } from "../../utils/media"
 
 export const AudioConference = () => {
