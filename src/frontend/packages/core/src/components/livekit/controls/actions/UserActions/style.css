@@ -1,0 +1,15 @@
+.ActionContainer {
+    justify-content: space-between;
+    display: flex;
+    gap: 0.5em;
+    flex-direction: column;
+    background-color: black;
+}
+
+.JoinContainer {
+    justify-content: space-between;
+    display: flex;
+    gap: 0.5em;
+    flex-direction: row;
+    background-color: "";
+}

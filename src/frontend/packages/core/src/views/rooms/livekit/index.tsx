@@ -66,11 +66,6 @@ export const RoomLiveKitView = () => {
     }
   }, [choices])
 
-  useEffect(() => {
-    console.log('room', room);
-
-  }, [room])
-
   const handlePreJoinSubmit = (userChoices: LocalUserChoices) => {
     setChoices(userChoices)
     setReady(true)
@@ -107,7 +102,7 @@ export const RoomLiveKitView = () => {
           </LiveKitRoom>
           :
           <Box style={{ backgroundColor: "black", width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center",gap:"1em" }}>
-            <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={true}></PreJoin>
+            <PreJoin style={{ backgroundColor: "black" }} data-lk-theme="default" onSubmit={handlePreJoinSubmit} defaults={choices} persistUserChoices={false}></PreJoin>
             {room?.start_with_video_muted && <Alert canClose type={VariantType.WARNING}>Room configuration will mute your camera when entering the room </Alert>}
             {room?.start_with_audio_muted && <Alert canClose type={VariantType.WARNING}>Room configuration will mute your microphone when entering the room</Alert>}
           </Box>

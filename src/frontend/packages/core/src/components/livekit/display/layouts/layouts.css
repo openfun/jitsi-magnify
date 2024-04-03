@@ -1,0 +1,6 @@
+.GridContainer {
+    min-height: 100%;
+    padding: 0;
+    border: solid black 0.1em ;
+    border-radius: 0.5em;
+}
