@@ -1,798 +1,798 @@
-# Configuration file anchors
-generate-version-file: &generate-version-file
-  run:
-    name: Create a version.json
-    command: |
-      # Create a version.json à-la-mozilla
-      # https://github.com/mozilla-services/Dockerflow/blob/master/docs/version_object.md
-      printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' \
-        "$CIRCLE_SHA1" \
-        "$CIRCLE_TAG" \
-        "$CIRCLE_PROJECT_USERNAME" \
-        "$CIRCLE_PROJECT_REPONAME" \
-        "$CIRCLE_BUILD_URL" > sandbox/version.json
-
-version: 2
-
-aliases:
-  - &checkout_fun
-    checkout:
-      path: ~/fun
-
-  - &restore_node_modules
-    restore_cache:
-      name: Restore node_modules cache
-      keys:
-        - v18-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
-        - v18-front-dependencies-
-
-jobs:
-  # Git jobs
-  # Check that the git history is clean and complies with our expectations
-  lint-git:
-    docker:
-      - image: cimg/python:3.10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - checkout
-      # Make sure the changes don't add a "print" statement to the code base.
-      # We should exclude the ".circleci" folder from the search as the very command that checks
-      # the absence of "print" is including a "print(" itself.
-      - run:
-          name: enforce absence of print statements in code
-          command: |
-            ! git diff origin/main..HEAD -- ":(exclude)*.circleci/*" | grep "print("
-      - run:
-          name: Check absence of fixup commits
-          command: |
-            ! git log | grep 'fixup!'
-      - run:
-          name: Install gitlint
-          command: |
-            pip install --user requests gitlint
-      - run:
-          name: lint commit messages added to main
-          command: |
-            ~/.local/bin/gitlint --commits origin/main..HEAD
-
-  # Check that the CHANGELOG has been updated in the current branch
-  check-changelog:
-    docker:
-      - image: circleci/buildpack-deps:stretch-scm
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - checkout
-      - run:
-          name: Check that the CHANGELOG has been modified in the current branch
-          command: |
-            git whatchanged --name-only --pretty="" origin..HEAD | grep CHANGELOG
-
-  # Check that the CHANGELOG max line length does not exceed 80 characters
-  lint-changelog:
-    docker:
-      - image: debian:stretch
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - checkout
-      - run:
-          name: Check CHANGELOG max line length
-          command: |
-            # Get the longuest line width (ignoring release links)
-            test $(cat CHANGELOG.md | grep -Ev "^\[.*\]: https://github.com/openfun" | wc -L) -le 80
-
-  # Check that renovate configuration file is valid
-  check-renovate-configuration:
-    docker:
-      - image: renovate/renovate
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - checkout
-      - run:
-          name: Run renovate-config-validator command
-          command: renovate-config-validator
-
-  # Check that all versions (backend, frontend) are up-to-date
-  check-versions:
-    docker:
-      - image: cimg/base:2022.04
-    working_directory: ~/fun
-    steps:
-      - checkout
-      - run:
-          name: Check that all versions are the same
-          command: |
-            BACKEND_VERSION=$(cat setup.cfg | grep "version" | cut -d" " -f3)
-            echo "magnify version: ${BACKEND_VERSION}"
-            # In the frontend workspace
-            cat src/frontend/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
-            # In the "@openfun/jitsi-magnify" frontend library
-            cat src/frontend/packages/core/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
-            # In the "sandbox" frontend application
-            cat src/frontend/sandbox/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
-
-  # ---- Docker jobs ----
-  # Build the Docker image ready for production
-  build-docker:
-    docker:
-      - image: circleci/buildpack-deps:stretch
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      # Checkout repository sources
-      - checkout
-      # Generate a version.json file describing app release
-      - <<: *generate-version-file
-      # Activate docker-in-docker
-      - setup_remote_docker:
-          version: 19.03.13
-
-      # Login to Docker Hub with encrypted credentials stored as secret
-      # environment variables (set in CircleCI project settings) if the expected
-      # environment variable is set; switch to anonymous mode otherwise.
-      - run:
-          name: Login to DockerHub
-          command: >
-            test -n "$DOCKER_USER" &&
-              echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin ||
-              echo "Docker Hub anonymous mode"
-
-      # Each image is tagged with the current git commit sha1 to avoid
-      # collisions in parallel builds.
-      - run:
-          name: Build production image
-          command: docker build -t magnify:${CIRCLE_SHA1} --target production .
-      - run:
-          name: Check built image availability
-          command: docker images "magnify:${CIRCLE_SHA1}*"
-
-  # ---- Backend jobs ----
-  # Build backend development environment
-  build-back:
-    docker:
-      - image: cimg/python:3.10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v2-back-dependencies-{{ .Revision }}
-      - run:
-          name: Install development dependencies
-          command: pip install --user .[dev,sandbox]
-      - save_cache:
-          paths:
-            - ~/.local
-          key: v2-back-dependencies-{{ .Revision }}
-
-  # Build backend translations
-  build-back-i18n:
-    docker:
-      - image: cimg/python:3.10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun/src/magnify
-    steps:
-      - *checkout_fun
-      - restore_cache:
-          keys:
-            - v2-back-dependencies-{{ .Revision }}
-      - run:
-          name: Install gettext (required to make messages)
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y gettext
-      # Generate and persist the translations base file
-      - run:
-          name: Generate a POT file from strings extracted from the project
-          command: ~/.local/bin/django-admin makemessages --keep-pot --all
-      - persist_to_workspace:
-          root: ~/fun
-          paths:
-            - src/magnify/locale/django.pot
-
-  lint-back:
-    docker:
-      - image: cimg/python:3.10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v2-back-dependencies-{{ .Revision }}
-      - run:
-          name: Lint code with flake8
-          command: ~/.local/bin/flake8 src/magnify/apps sandbox tests
-      - run:
-          name: Lint code with isort
-          command: ~/.local/bin/isort --check-only src/magnify/apps sandbox tests
-      - run:
-          name: Lint code with black
-          command: ~/.local/bin/black . --check
-      - run:
-          name: Lint code with pylint
-          command: ~/.local/bin/pylint src/magnify/apps sandbox tests
-      - run:
-          name: Lint code with bandit
-          command: ~/.local/bin/bandit -qr src/magnify/apps sandbox
-
-  # Restore back POT & front json files containing strings to translate and upload them to our
-  # translation management tool
-  upload-i18n-strings:
-    docker:
-      - image: crowdin/cli:3.3.0
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/fun
-      - run:
-          name: upload files to crowdin
-          command: crowdin upload sources -c crowdin/config.yml
-
-  test-back-mysql-8:
-    docker:
-      - image: cimg/python:3.10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-        environment:
-          DJANGO_SETTINGS_MODULE: settings
-          DJANGO_CONFIGURATION: Test
-          DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
-          JWT_JITSI_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
-          MAGNIFY_API_URL: http://localhost:8070/api
-          KEYCLOAK_URL: http://localhost:8080
-          PYTHONPATH: /home/circleci/fun/sandbox
-          magnify_ES_HOST: localhost
-          DB_ENGINE: django.db.backends.mysql
-          # The DB_HOST should match the host name and cannot be set from here
-          # where it will be escaped. See the test command instead:
-          # DB_HOST=${HOSTNAME}
-          DB_HOST:
-          DB_NAME: magnify
-          DB_USER: fun
-          DB_PASSWORD: pass
-          DB_PORT: 3306
-      # services
-      - image: circleci/mysql:8.0-ram
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-        environment:
-          MYSQL_ROOT_PASSWORD:
-          MYSQL_DATABASE: test_magnify
-          MYSQL_USER: fun
-          MYSQL_PASSWORD: pass
-        command: --default-authentication-plugin=mysql_native_password
-      - image: docker.io/bitnami/redis:6.0-debian-10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-        name: redis-primary
-        environment:
-          ALLOW_EMPTY_PASSWORD: yes
-          REDIS_REPLICATION_MODE: master
-      - image: docker.io/bitnami/redis-sentinel:6.0-debian-10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-        name: redis-sentinel
-        environment:
-          REDIS_MASTER_HOST: redis-primary
-    working_directory: ~/fun
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v2-back-dependencies-{{ .Revision }}
-      # Attach the frontend production build
-      - attach_workspace:
-          at: ~/fun
-      # While running tests, we need to make the /data directory writable for
-      # the circleci user
-      - run:
-          name: Create writable /data
-          command: |
-            sudo mkdir /data && \
-            sudo chown circleci:circleci /data
-      # Run back-end (Django) test suite
-      #
-      # Nota bene:
-      #
-      # 1. to run the django test suite, we need to ensure that the MySQL
-      #    service is up and ready. To achieve this, we wrap the
-      #    pytest command execution with dockerize, a tiny tool installed in the
-      #    CircleCI image. In our case, dockerize will wait up to one minute
-      #    that the database container opened its expected tcp port (3306).
-      # 2. We should avoid using localhost for the DB_HOST with MySQL as the
-      #    client will try to use a local socket (_e.g._
-      #    `/var/run/mysqld/mysqld.sock`) instead of the database host and port
-      #    ¯\_(ツ)_/¯.
-      - run:
-          name: Run tests
-          command: |
-            DB_HOST=${HOSTNAME} dockerize \
-              -wait tcp://${HOSTNAME}:3306 \
-              -timeout 60s \
-                ~/.local/bin/pytest
-
-  test-back-postgresql:
-    docker:
-      - image: cimg/python:3.10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-        environment:
-          DJANGO_SETTINGS_MODULE: settings
-          DJANGO_CONFIGURATION: Test
-          DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
-          JWT_JITSI_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
-          MAGNIFY_API_URL: http://localhost:8070/api
-          KEYCLOAK_URL: http://localhost:8080
-          PYTHONPATH: /home/circleci/fun/sandbox
-          DB_HOST: localhost
-          DB_NAME: magnify
-          DB_USER: fun
-          DB_PASSWORD: pass
-          DB_PORT: 5432
-      # services
-      - image: cimg/postgres:14.2
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-        environment:
-          POSTGRES_DB: test_magnify
-          POSTGRES_USER: fun
-          POSTGRES_PASSWORD: pass
-      - image: docker.io/bitnami/redis:6.0-debian-10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-        name: redis-primary
-        environment:
-          ALLOW_EMPTY_PASSWORD: yes
-          REDIS_REPLICATION_MODE: master
-      - image: docker.io/bitnami/redis-sentinel:6.0-debian-10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-        name: redis-sentinel
-        environment:
-          REDIS_MASTER_HOST: redis-primary
-    working_directory: ~/fun
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v2-back-dependencies-{{ .Revision }}
-      # Attach the frontend production build
-      - attach_workspace:
-          at: ~/fun
-      # While running tests, we need to make the /data directory writable for
-      # the circleci user
-      - run:
-          name: Create writable /data
-          command: |
-            sudo mkdir /data && \
-            sudo chown circleci:circleci /data
-      # Run back-end (Django) test suite
-      #
-      # Nota bene: to run the django test suite, we need to ensure that the
-      # MySQL service is up and ready. To achieve this, we wrap the pytest
-      # command execution with dockerize, a tiny tool installed
-      # in the CircleCI image. In our case, dockerize will wait up to one minute
-      # that the database container opened its expected tcp port (3306).
-      - run:
-          name: Run tests
-          command: |
-            dockerize \
-              -wait tcp://localhost:5432 \
-              -timeout 60s \
-                ~/.local/bin/pytest
-
-  # ---- Packaging jobs ----
-  package-back:
-    docker:
-      - image: cimg/python:3.10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - checkout
-      # Ensure we restore frontend production builds in magnify's static
-      # directory
-      - attach_workspace:
-          at: ~/fun
-      - run:
-          name: Build python package
-          command: python setup.py sdist bdist_wheel
-      # Persist build packages to the workspace
-      - persist_to_workspace:
-          root: ~/fun
-          paths:
-            - dist
-      # Store packages as artifacts to download/test them
-      - store_artifacts:
-          path: ~/fun/dist
-
-  # Publishing to PyPI requires that:
-  #   * you already registered to pypi.org
-  #   * you have define both the TWINE_USERNAME & TWINE_PASSWORD secret
-  #     environment variables in CircleCI UI (with your PyPI credentials)
-  pypi:
-    docker:
-      - image: cimg/python:3.10
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - checkout
-      # Restore built python packages
-      - attach_workspace:
-          at: ~/fun
-      - run:
-          name: List built packages
-          command: ls dist/*
-      - run:
-          name: Install base requirements (twine)
-          command: pip install --user .[ci]
-      - run:
-          name: Upload built packages to PyPI
-          command: ~/.local/bin/twine upload dist/*
-
-  # ---- Front-end jobs ----
-  build-front:
-    docker:
-      - image: cimg/node:16.15
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun/src/frontend
-    steps:
-      - *checkout_fun
-      - *restore_node_modules
-      # If the yarn.lock file is not up-to-date with the package.json file,
-      # using the --frozen-lockfile should fail.
-      - run:
-          name: Install front-end dependencies
-          command: yarn install --frozen-lockfile
-      - run:
-          name: Build front-end
-          command: yarn build
-      - run:
-          name: Use formatjs-cli to generate frontend.json files
-          command: yarn extract-translations
-      - persist_to_workspace:
-          root: ~/fun
-          paths:
-            - src/frontend/sandbox/i18n/frontend.json
-            - src/frontend/packages/core/i18n/frontend.json
-            - src/frontend/packages/core/dist
-      - save_cache:
-          paths:
-            - ./node_modules
-            - ./sandbox/node_modules
-            - ./packages/core/node_modules
-          key: v18-front-dependencies-{{ checksum "yarn.lock" }}
-
-  lint-front:
-    docker:
-      - image: cimg/node:16.15
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun/src/frontend
-    steps:
-      - *checkout_fun
-      - *restore_node_modules
-      - run:
-          name: Lint code with eslint
-          command: yarn lint
-      - run:
-          name: Lint code with prettier
-          command: yarn format:check
-
-  test-front:
-    docker:
-      - image: cimg/node:16.15
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    parallelism: 5
-    resource_class: large
-    working_directory: ~/fun/src/frontend
-    steps:
-      - *checkout_fun
-      - *restore_node_modules
-      - run:
-          path: packages/core
-          name: Test @openfun/jitsi-magnify
-          command: |
-            TEST=$(circleci tests glob "src/**/*.test.tsx" | circleci tests split --split-by=timings)
-            yarn test $TEST
-      - run:
-          name: Test frontend demo
-          command: yarn test-demo
-
-  # Publishing to npm requires that you have define the NPM_TOKEN secret
-  # environment variables in CircleCI UI (with your PyPI credentials)
-  npm:
-    docker:
-      - image: cimg/node:16.15
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
-    working_directory: ~/fun
-    steps:
-      - *checkout_fun
-      - attach_workspace:
-          at: ~/fun
-      - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/fun/.npmrc
-      - run:
-          name: Publish @openfun/jitsi-magnify package
-          command: npm publish src/frontend/packages/core
-
-  # ---- DockerHub publication job ----
-  hub:
-    docker:
-      - image: cimg/base:2022.05
-    working_directory: ~/fun
-    steps:
-      - *checkout_fun
-      # Generate a version.json file describing app release
-      - <<: *generate-version-file
-      # Activate docker-in-docker
-      - setup_remote_docker:
-          version: 19.03.13
-      - run:
-          name: Build production image
-          command: docker build -t magnify:${CIRCLE_SHA1} --target production .
-      - run:
-          name: Check built images availability
-          command: docker images "magnify:${CIRCLE_SHA1}*"
-      # Login to DockerHub to Publish new images
-      #
-      # Nota bene: you'll need to define the following secrets environment vars
-      # in CircleCI interface:
-      #
-      #   - DOCKER_HUB_USER
-      #   - DOCKER_HUB_PASSWORD
-      - run:
-          name: Login to DockerHub
-          command: echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
-      # Tag docker images with the same pattern used in Git (Semantic Versioning)
-      #
-      # Git tag: v1.0.1
-      # Docker tag: 1.0.1(-ci)
-      - run:
-          name: Tag images
-          command: |
-            docker images fundocker/jitsi-magnify
-            DOCKER_TAG=$([[ -z "$CIRCLE_TAG" ]] && echo $CIRCLE_BRANCH || echo ${CIRCLE_TAG} | sed 's/^v//')
-            RELEASE_TYPE=$([[ -z "$CIRCLE_TAG" ]] && echo "branch" || echo "tag ")
-            # Display either:
-            # - DOCKER_TAG: master (Git branch)
-            # or
-            # - DOCKER_TAG: 1.1.2 (Git tag v1.1.2)
-            echo "DOCKER_TAG: ${DOCKER_TAG} (Git ${RELEASE_TYPE}${CIRCLE_TAG})"
-            docker tag magnify:${CIRCLE_SHA1} fundocker/jitsi-magnify:${DOCKER_TAG}
-            if [[ -n "$CIRCLE_TAG" ]]; then
-              docker tag magnify:${CIRCLE_SHA1} fundocker/jitsi-magnify:latest
-            fi
-            docker images | grep -E "^fundocker/jitsi-magnify\s*(${DOCKER_TAG}.*|latest|master)"
-
-      # Publish images to DockerHub
-      #
-      # Nota bene: logged user (see "Login to DockerHub" step) must have write
-      # permission for the project's repository; this also implies that the
-      # DockerHub repository already exists.
-      - run:
-          name: Publish images
-          command: |
-            DOCKER_TAG=$([[ -z "$CIRCLE_TAG" ]] && echo $CIRCLE_BRANCH || echo ${CIRCLE_TAG} | sed 's/^v//')
-            RELEASE_TYPE=$([[ -z "$CIRCLE_TAG" ]] && echo "branch" || echo "tag ")
-            # Display either:
-            # - DOCKER_TAG: master (Git branch)
-            # or
-            # - DOCKER_TAG: 1.1.2 (Git tag v1.1.2)
-            echo "DOCKER_TAG: ${DOCKER_TAG} (Git ${RELEASE_TYPE}${CIRCLE_TAG})"
-            docker push fundocker/jitsi-magnify:${DOCKER_TAG}
-            if [[ -n "$CIRCLE_TAG" ]]; then
-              docker push fundocker/jitsi-magnify:latest
-            fi
-
-workflows:
-  version: 2
-
-  magnify:
-    jobs:
-      # Front-end jobs
-      #
-      # Build, lint and test the front-end apps
-      - build-front:
-          filters:
-            tags:
-              only: /.*/
-      - lint-front:
-          requires:
-            - build-front
-          filters:
-            tags:
-              only: /.*/
-      - test-front:
-          requires:
-            - lint-front
-          filters:
-            tags:
-              only: /.*/
-
-      # Git jobs
-      #
-      # Check validity of git history
-      - lint-git:
-          filters:
-            tags:
-              only: /.*/
-      #       Check CHANGELOG update
-      - check-changelog:
-          filters:
-            branches:
-              ignore: main
-            tags:
-              only: /(?!^v).*/
-      - lint-changelog:
-          filters:
-            branches:
-              ignore: main
-            tags:
-              only: /.*/
-      #       Check Renovate configuration
-      - check-renovate-configuration:
-          filters:
-            tags:
-              only: /.*/
-      #       Check on each PR if the last magnify version is present everywhere it should be.
-      #       If not the build will fail before publishing a new release.
-      - check-versions:
-          filters:
-            tags:
-              only: /.*/
-
-      #       Docker jobs
-      #
-      #       Build images
-      - build-docker:
-          filters:
-            tags:
-              only: /.*/
-
-      # Backend jobs
-      #
-      # Build, lint and test production and development Docker images
-      # (debian-based)
-      - build-back:
-          filters:
-            tags:
-              only: /.*/
-      - lint-back:
-          requires:
-            - build-back
-          filters:
-            tags:
-              only: /.*/
-      - test-back-mysql-8:
-          requires:
-            - build-back
-          filters:
-            tags:
-              only: /.*/
-      - test-back-postgresql:
-          requires:
-            - build-back
-          filters:
-            tags:
-              only: /.*/
-
-      # i18n jobs
-      #
-      # Extract strings and upload them to our translation management SaaS
-      - build-back-i18n:
-          requires:
-            - build-back
-          filters:
-            tags:
-              only: /.*/
-      - upload-i18n-strings:
-          requires:
-            - build-front
-            - build-back-i18n
-          filters:
-            branches:
-              only: main
-
-      # Packaging: python
-      #
-      # Build the python package
-      - package-back:
-          requires:
-            - test-front
-            - test-back-mysql-8
-            - test-back-postgresql
-            - build-front
-          filters:
-            tags:
-              only: /.*/
-
-      # PyPI publication.
-      #
-      # Publish python package to PYPI only if all build, lint and test jobs
-      # succeed and it has been tagged with a tag starting with the letter v
-      - pypi:
-          requires:
-            - check-versions
-            - package-back
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
-      # NPM publication.
-      #
-      # Publish frontend package to NPM only if all build, lint and test jobs
-      # succeed, and it has been tagged with a tag starting with the letter v
-      - npm:
-          requires:
-            - check-versions
-            - build-front
-            - lint-front
-            - test-front
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
-
-      # DockerHub publication.
-      #
-      # Publish docker images only if all build, lint and test jobs succeed
-      # and it has been tagged with a tag starting with the letter v or is on
-      # the main branch
-      - hub:
-          requires:
-            - build-docker
-            - test-back-mysql-8
-            - test-back-postgresql
-          filters:
-            branches:
-              only: main
-            tags:
-              only: /^v.*/
+## Configuration file anchors
+#generate-version-file: &generate-version-file
+#  run:
+#    name: Create a version.json
+#    command: |
+#      # Create a version.json à-la-mozilla
+#      # https://github.com/mozilla-services/Dockerflow/blob/master/docs/version_object.md
+#      printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' \
+#        "$CIRCLE_SHA1" \
+#        "$CIRCLE_TAG" \
+#        "$CIRCLE_PROJECT_USERNAME" \
+#        "$CIRCLE_PROJECT_REPONAME" \
+#        "$CIRCLE_BUILD_URL" > sandbox/version.json
+#
+#version: 2
+#
+#aliases:
+#  - &checkout_fun
+#    checkout:
+#      path: ~/fun
+#
+#  - &restore_node_modules
+#    restore_cache:
+#      name: Restore node_modules cache
+#      keys:
+#        - v18-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
+#        - v18-front-dependencies-
+#
+#jobs:
+#  # Git jobs
+#  # Check that the git history is clean and complies with our expectations
+#  lint-git:
+#    docker:
+#      - image: cimg/python:3.10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      # Make sure the changes don't add a "print" statement to the code base.
+#      # We should exclude the ".circleci" folder from the search as the very command that checks
+#      # the absence of "print" is including a "print(" itself.
+#      - run:
+#          name: enforce absence of print statements in code
+#          command: |
+#            ! git diff origin/main..HEAD -- ":(exclude)*.circleci/*" | grep "print("
+#      - run:
+#          name: Check absence of fixup commits
+#          command: |
+#            ! git log | grep 'fixup!'
+#      - run:
+#          name: Install gitlint
+#          command: |
+#            pip install --user requests gitlint
+#      - run:
+#          name: lint commit messages added to main
+#          command: |
+#            ~/.local/bin/gitlint --commits origin/main..HEAD
+#
+#  # Check that the CHANGELOG has been updated in the current branch
+#  check-changelog:
+#    docker:
+#      - image: circleci/buildpack-deps:stretch-scm
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      - run:
+#          name: Check that the CHANGELOG has been modified in the current branch
+#          command: |
+#            git whatchanged --name-only --pretty="" origin..HEAD | grep CHANGELOG
+#
+#  # Check that the CHANGELOG max line length does not exceed 80 characters
+#  lint-changelog:
+#    docker:
+#      - image: debian:stretch
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      - run:
+#          name: Check CHANGELOG max line length
+#          command: |
+#            # Get the longuest line width (ignoring release links)
+#            test $(cat CHANGELOG.md | grep -Ev "^\[.*\]: https://github.com/openfun" | wc -L) -le 80
+#
+#  # Check that renovate configuration file is valid
+#  check-renovate-configuration:
+#    docker:
+#      - image: renovate/renovate
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      - run:
+#          name: Run renovate-config-validator command
+#          command: renovate-config-validator
+#
+#  # Check that all versions (backend, frontend) are up-to-date
+#  check-versions:
+#    docker:
+#      - image: cimg/base:2022.04
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      - run:
+#          name: Check that all versions are the same
+#          command: |
+#            BACKEND_VERSION=$(cat setup.cfg | grep "version" | cut -d" " -f3)
+#            echo "magnify version: ${BACKEND_VERSION}"
+#            # In the frontend workspace
+#            cat src/frontend/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+#            # In the "@openfun/jitsi-magnify" frontend library
+#            cat src/frontend/packages/core/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+#            # In the "sandbox" frontend application
+#            cat src/frontend/sandbox/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+#
+#  # ---- Docker jobs ----
+#  # Build the Docker image ready for production
+#  build-docker:
+#    docker:
+#      - image: circleci/buildpack-deps:stretch
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      # Checkout repository sources
+#      - checkout
+#      # Generate a version.json file describing app release
+#      - <<: *generate-version-file
+#      # Activate docker-in-docker
+#      - setup_remote_docker:
+#          version: 19.03.13
+#
+#      # Login to Docker Hub with encrypted credentials stored as secret
+#      # environment variables (set in CircleCI project settings) if the expected
+#      # environment variable is set; switch to anonymous mode otherwise.
+#      - run:
+#          name: Login to DockerHub
+#          command: >
+#            test -n "$DOCKER_USER" &&
+#              echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin ||
+#              echo "Docker Hub anonymous mode"
+#
+#      # Each image is tagged with the current git commit sha1 to avoid
+#      # collisions in parallel builds.
+#      - run:
+#          name: Build production image
+#          command: docker build -t magnify:${CIRCLE_SHA1} --target production .
+#      - run:
+#          name: Check built image availability
+#          command: docker images "magnify:${CIRCLE_SHA1}*"
+#
+#  # ---- Backend jobs ----
+#  # Build backend development environment
+#  build-back:
+#    docker:
+#      - image: cimg/python:3.10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      - restore_cache:
+#          keys:
+#            - v2-back-dependencies-{{ .Revision }}
+#      - run:
+#          name: Install development dependencies
+#          command: pip install --user .[dev,sandbox]
+#      - save_cache:
+#          paths:
+#            - ~/.local
+#          key: v2-back-dependencies-{{ .Revision }}
+#
+#  # Build backend translations
+#  build-back-i18n:
+#    docker:
+#      - image: cimg/python:3.10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun/src/magnify
+#    steps:
+#      - *checkout_fun
+#      - restore_cache:
+#          keys:
+#            - v2-back-dependencies-{{ .Revision }}
+#      - run:
+#          name: Install gettext (required to make messages)
+#          command: |
+#            sudo apt-get update
+#            sudo apt-get install -y gettext
+#      # Generate and persist the translations base file
+#      - run:
+#          name: Generate a POT file from strings extracted from the project
+#          command: ~/.local/bin/django-admin makemessages --keep-pot --all
+#      - persist_to_workspace:
+#          root: ~/fun
+#          paths:
+#            - src/magnify/locale/django.pot
+#
+#  lint-back:
+#    docker:
+#      - image: cimg/python:3.10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      - restore_cache:
+#          keys:
+#            - v2-back-dependencies-{{ .Revision }}
+#      - run:
+#          name: Lint code with flake8
+#          command: ~/.local/bin/flake8 src/magnify/apps sandbox tests
+#      - run:
+#          name: Lint code with isort
+#          command: ~/.local/bin/isort --check-only src/magnify/apps sandbox tests
+#      - run:
+#          name: Lint code with black
+#          command: ~/.local/bin/black . --check
+#      - run:
+#          name: Lint code with pylint
+#          command: ~/.local/bin/pylint src/magnify/apps sandbox tests
+#      - run:
+#          name: Lint code with bandit
+#          command: ~/.local/bin/bandit -qr src/magnify/apps sandbox
+#
+#  # Restore back POT & front json files containing strings to translate and upload them to our
+#  # translation management tool
+#  upload-i18n-strings:
+#    docker:
+#      - image: crowdin/cli:3.3.0
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      - attach_workspace:
+#          at: ~/fun
+#      - run:
+#          name: upload files to crowdin
+#          command: crowdin upload sources -c crowdin/config.yml
+#
+#  test-back-mysql-8:
+#    docker:
+#      - image: cimg/python:3.10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#        environment:
+#          DJANGO_SETTINGS_MODULE: settings
+#          DJANGO_CONFIGURATION: Test
+#          DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
+#          JWT_JITSI_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
+#          MAGNIFY_API_URL: http://localhost:8070/api
+#          KEYCLOAK_URL: http://localhost:8080
+#          PYTHONPATH: /home/circleci/fun/sandbox
+#          magnify_ES_HOST: localhost
+#          DB_ENGINE: django.db.backends.mysql
+#          # The DB_HOST should match the host name and cannot be set from here
+#          # where it will be escaped. See the test command instead:
+#          # DB_HOST=${HOSTNAME}
+#          DB_HOST:
+#          DB_NAME: magnify
+#          DB_USER: fun
+#          DB_PASSWORD: pass
+#          DB_PORT: 3306
+#      # services
+#      - image: circleci/mysql:8.0-ram
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#        environment:
+#          MYSQL_ROOT_PASSWORD:
+#          MYSQL_DATABASE: test_magnify
+#          MYSQL_USER: fun
+#          MYSQL_PASSWORD: pass
+#        command: --default-authentication-plugin=mysql_native_password
+#      - image: docker.io/bitnami/redis:6.0-debian-10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#        name: redis-primary
+#        environment:
+#          ALLOW_EMPTY_PASSWORD: yes
+#          REDIS_REPLICATION_MODE: master
+#      - image: docker.io/bitnami/redis-sentinel:6.0-debian-10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#        name: redis-sentinel
+#        environment:
+#          REDIS_MASTER_HOST: redis-primary
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      - restore_cache:
+#          keys:
+#            - v2-back-dependencies-{{ .Revision }}
+#      # Attach the frontend production build
+#      - attach_workspace:
+#          at: ~/fun
+#      # While running tests, we need to make the /data directory writable for
+#      # the circleci user
+#      - run:
+#          name: Create writable /data
+#          command: |
+#            sudo mkdir /data && \
+#            sudo chown circleci:circleci /data
+#      # Run back-end (Django) test suite
+#      #
+#      # Nota bene:
+#      #
+#      # 1. to run the django test suite, we need to ensure that the MySQL
+#      #    service is up and ready. To achieve this, we wrap the
+#      #    pytest command execution with dockerize, a tiny tool installed in the
+#      #    CircleCI image. In our case, dockerize will wait up to one minute
+#      #    that the database container opened its expected tcp port (3306).
+#      # 2. We should avoid using localhost for the DB_HOST with MySQL as the
+#      #    client will try to use a local socket (_e.g._
+#      #    `/var/run/mysqld/mysqld.sock`) instead of the database host and port
+#      #    ¯\_(ツ)_/¯.
+#      - run:
+#          name: Run tests
+#          command: |
+#            DB_HOST=${HOSTNAME} dockerize \
+#              -wait tcp://${HOSTNAME}:3306 \
+#              -timeout 60s \
+#                ~/.local/bin/pytest
+#
+#  test-back-postgresql:
+#    docker:
+#      - image: cimg/python:3.10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#        environment:
+#          DJANGO_SETTINGS_MODULE: settings
+#          DJANGO_CONFIGURATION: Test
+#          DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
+#          JWT_JITSI_SECRET_KEY: ThisIsAnExampleKeyForDevPurposeOnly
+#          MAGNIFY_API_URL: http://localhost:8070/api
+#          KEYCLOAK_URL: http://localhost:8080
+#          PYTHONPATH: /home/circleci/fun/sandbox
+#          DB_HOST: localhost
+#          DB_NAME: magnify
+#          DB_USER: fun
+#          DB_PASSWORD: pass
+#          DB_PORT: 5432
+#      # services
+#      - image: cimg/postgres:14.2
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#        environment:
+#          POSTGRES_DB: test_magnify
+#          POSTGRES_USER: fun
+#          POSTGRES_PASSWORD: pass
+#      - image: docker.io/bitnami/redis:6.0-debian-10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#        name: redis-primary
+#        environment:
+#          ALLOW_EMPTY_PASSWORD: yes
+#          REDIS_REPLICATION_MODE: master
+#      - image: docker.io/bitnami/redis-sentinel:6.0-debian-10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#        name: redis-sentinel
+#        environment:
+#          REDIS_MASTER_HOST: redis-primary
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      - restore_cache:
+#          keys:
+#            - v2-back-dependencies-{{ .Revision }}
+#      # Attach the frontend production build
+#      - attach_workspace:
+#          at: ~/fun
+#      # While running tests, we need to make the /data directory writable for
+#      # the circleci user
+#      - run:
+#          name: Create writable /data
+#          command: |
+#            sudo mkdir /data && \
+#            sudo chown circleci:circleci /data
+#      # Run back-end (Django) test suite
+#      #
+#      # Nota bene: to run the django test suite, we need to ensure that the
+#      # MySQL service is up and ready. To achieve this, we wrap the pytest
+#      # command execution with dockerize, a tiny tool installed
+#      # in the CircleCI image. In our case, dockerize will wait up to one minute
+#      # that the database container opened its expected tcp port (3306).
+#      - run:
+#          name: Run tests
+#          command: |
+#            dockerize \
+#              -wait tcp://localhost:5432 \
+#              -timeout 60s \
+#                ~/.local/bin/pytest
+#
+#  # ---- Packaging jobs ----
+#  package-back:
+#    docker:
+#      - image: cimg/python:3.10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      # Ensure we restore frontend production builds in magnify's static
+#      # directory
+#      - attach_workspace:
+#          at: ~/fun
+#      - run:
+#          name: Build python package
+#          command: python setup.py sdist bdist_wheel
+#      # Persist build packages to the workspace
+#      - persist_to_workspace:
+#          root: ~/fun
+#          paths:
+#            - dist
+#      # Store packages as artifacts to download/test them
+#      - store_artifacts:
+#          path: ~/fun/dist
+#
+#  # Publishing to PyPI requires that:
+#  #   * you already registered to pypi.org
+#  #   * you have define both the TWINE_USERNAME & TWINE_PASSWORD secret
+#  #     environment variables in CircleCI UI (with your PyPI credentials)
+#  pypi:
+#    docker:
+#      - image: cimg/python:3.10
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - checkout
+#      # Restore built python packages
+#      - attach_workspace:
+#          at: ~/fun
+#      - run:
+#          name: List built packages
+#          command: ls dist/*
+#      - run:
+#          name: Install base requirements (twine)
+#          command: pip install --user .[ci]
+#      - run:
+#          name: Upload built packages to PyPI
+#          command: ~/.local/bin/twine upload dist/*
+#
+#  # ---- Front-end jobs ----
+#  build-front:
+#    docker:
+#      - image: cimg/node:16.15
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun/src/frontend
+#    steps:
+#      - *checkout_fun
+#      - *restore_node_modules
+#      # If the yarn.lock file is not up-to-date with the package.json file,
+#      # using the --frozen-lockfile should fail.
+#      - run:
+#          name: Install front-end dependencies
+#          command: yarn install --frozen-lockfile
+#      - run:
+#          name: Build front-end
+#          command: yarn build
+#      - run:
+#          name: Use formatjs-cli to generate frontend.json files
+#          command: yarn extract-translations
+#      - persist_to_workspace:
+#          root: ~/fun
+#          paths:
+#            - src/frontend/sandbox/i18n/frontend.json
+#            - src/frontend/packages/core/i18n/frontend.json
+#            - src/frontend/packages/core/dist
+#      - save_cache:
+#          paths:
+#            - ./node_modules
+#            - ./sandbox/node_modules
+#            - ./packages/core/node_modules
+#          key: v18-front-dependencies-{{ checksum "yarn.lock" }}
+#
+#  lint-front:
+#    docker:
+#      - image: cimg/node:16.15
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun/src/frontend
+#    steps:
+#      - *checkout_fun
+#      - *restore_node_modules
+#      - run:
+#          name: Lint code with eslint
+#          command: yarn lint
+#      - run:
+#          name: Lint code with prettier
+#          command: yarn format:check
+#
+#  test-front:
+#    docker:
+#      - image: cimg/node:16.15
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    parallelism: 5
+#    resource_class: large
+#    working_directory: ~/fun/src/frontend
+#    steps:
+#      - *checkout_fun
+#      - *restore_node_modules
+#      - run:
+#          path: packages/core
+#          name: Test @openfun/jitsi-magnify
+#          command: |
+#            TEST=$(circleci tests glob "src/**/*.test.tsx" | circleci tests split --split-by=timings)
+#            yarn test $TEST
+#      - run:
+#          name: Test frontend demo
+#          command: yarn test-demo
+#
+#  # Publishing to npm requires that you have define the NPM_TOKEN secret
+#  # environment variables in CircleCI UI (with your PyPI credentials)
+#  npm:
+#    docker:
+#      - image: cimg/node:16.15
+#        auth:
+#          username: $DOCKER_USER
+#          password: $DOCKER_PASS
+#    working_directory: ~/fun
+#    steps:
+#      - *checkout_fun
+#      - attach_workspace:
+#          at: ~/fun
+#      - run:
+#          name: Authenticate with registry
+#          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/fun/.npmrc
+#      - run:
+#          name: Publish @openfun/jitsi-magnify package
+#          command: npm publish src/frontend/packages/core
+#
+#  # ---- DockerHub publication job ----
+#  hub:
+#    docker:
+#      - image: cimg/base:2022.05
+#    working_directory: ~/fun
+#    steps:
+#      - *checkout_fun
+#      # Generate a version.json file describing app release
+#      - <<: *generate-version-file
+#      # Activate docker-in-docker
+#      - setup_remote_docker:
+#          version: 19.03.13
+#      - run:
+#          name: Build production image
+#          command: docker build -t magnify:${CIRCLE_SHA1} --target production .
+#      - run:
+#          name: Check built images availability
+#          command: docker images "magnify:${CIRCLE_SHA1}*"
+#      # Login to DockerHub to Publish new images
+#      #
+#      # Nota bene: you'll need to define the following secrets environment vars
+#      # in CircleCI interface:
+#      #
+#      #   - DOCKER_HUB_USER
+#      #   - DOCKER_HUB_PASSWORD
+#      - run:
+#          name: Login to DockerHub
+#          command: echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+#      # Tag docker images with the same pattern used in Git (Semantic Versioning)
+#      #
+#      # Git tag: v1.0.1
+#      # Docker tag: 1.0.1(-ci)
+#      - run:
+#          name: Tag images
+#          command: |
+#            docker images fundocker/jitsi-magnify
+#            DOCKER_TAG=$([[ -z "$CIRCLE_TAG" ]] && echo $CIRCLE_BRANCH || echo ${CIRCLE_TAG} | sed 's/^v//')
+#            RELEASE_TYPE=$([[ -z "$CIRCLE_TAG" ]] && echo "branch" || echo "tag ")
+#            # Display either:
+#            # - DOCKER_TAG: master (Git branch)
+#            # or
+#            # - DOCKER_TAG: 1.1.2 (Git tag v1.1.2)
+#            echo "DOCKER_TAG: ${DOCKER_TAG} (Git ${RELEASE_TYPE}${CIRCLE_TAG})"
+#            docker tag magnify:${CIRCLE_SHA1} fundocker/jitsi-magnify:${DOCKER_TAG}
+#            if [[ -n "$CIRCLE_TAG" ]]; then
+#              docker tag magnify:${CIRCLE_SHA1} fundocker/jitsi-magnify:latest
+#            fi
+#            docker images | grep -E "^fundocker/jitsi-magnify\s*(${DOCKER_TAG}.*|latest|master)"
+#
+#      # Publish images to DockerHub
+#      #
+#      # Nota bene: logged user (see "Login to DockerHub" step) must have write
+#      # permission for the project's repository; this also implies that the
+#      # DockerHub repository already exists.
+#      - run:
+#          name: Publish images
+#          command: |
+#            DOCKER_TAG=$([[ -z "$CIRCLE_TAG" ]] && echo $CIRCLE_BRANCH || echo ${CIRCLE_TAG} | sed 's/^v//')
+#            RELEASE_TYPE=$([[ -z "$CIRCLE_TAG" ]] && echo "branch" || echo "tag ")
+#            # Display either:
+#            # - DOCKER_TAG: master (Git branch)
+#            # or
+#            # - DOCKER_TAG: 1.1.2 (Git tag v1.1.2)
+#            echo "DOCKER_TAG: ${DOCKER_TAG} (Git ${RELEASE_TYPE}${CIRCLE_TAG})"
+#            docker push fundocker/jitsi-magnify:${DOCKER_TAG}
+#            if [[ -n "$CIRCLE_TAG" ]]; then
+#              docker push fundocker/jitsi-magnify:latest
+#            fi
+#
+#workflows:
+#  version: 2
+#
+#  magnify:
+#    jobs:
+#      # Front-end jobs
+#      #
+#      # Build, lint and test the front-end apps
+#      - build-front:
+#          filters:
+#            tags:
+#              only: /.*/
+#      - lint-front:
+#          requires:
+#            - build-front
+#          filters:
+#            tags:
+#              only: /.*/
+#      - test-front:
+#          requires:
+#            - lint-front
+#          filters:
+#            tags:
+#              only: /.*/
+#
+#      # Git jobs
+#      #
+#      # Check validity of git history
+#      - lint-git:
+#          filters:
+#            tags:
+#              only: /.*/
+#      #       Check CHANGELOG update
+#      - check-changelog:
+#          filters:
+#            branches:
+#              ignore: main
+#            tags:
+#              only: /(?!^v).*/
+#      - lint-changelog:
+#          filters:
+#            branches:
+#              ignore: main
+#            tags:
+#              only: /.*/
+#      #       Check Renovate configuration
+#      - check-renovate-configuration:
+#          filters:
+#            tags:
+#              only: /.*/
+#      #       Check on each PR if the last magnify version is present everywhere it should be.
+#      #       If not the build will fail before publishing a new release.
+#      - check-versions:
+#          filters:
+#            tags:
+#              only: /.*/
+#
+#      #       Docker jobs
+#      #
+#      #       Build images
+#      - build-docker:
+#          filters:
+#            tags:
+#              only: /.*/
+#
+#      # Backend jobs
+#      #
+#      # Build, lint and test production and development Docker images
+#      # (debian-based)
+#      - build-back:
+#          filters:
+#            tags:
+#              only: /.*/
+#      - lint-back:
+#          requires:
+#            - build-back
+#          filters:
+#            tags:
+#              only: /.*/
+#      - test-back-mysql-8:
+#          requires:
+#            - build-back
+#          filters:
+#            tags:
+#              only: /.*/
+#      - test-back-postgresql:
+#          requires:
+#            - build-back
+#          filters:
+#            tags:
+#              only: /.*/
+#
+#      # i18n jobs
+#      #
+#      # Extract strings and upload them to our translation management SaaS
+#      - build-back-i18n:
+#          requires:
+#            - build-back
+#          filters:
+#            tags:
+#              only: /.*/
+#      - upload-i18n-strings:
+#          requires:
+#            - build-front
+#            - build-back-i18n
+#          filters:
+#            branches:
+#              only: main
+#
+#      # Packaging: python
+#      #
+#      # Build the python package
+#      - package-back:
+#          requires:
+#            - test-front
+#            - test-back-mysql-8
+#            - test-back-postgresql
+#            - build-front
+#          filters:
+#            tags:
+#              only: /.*/
+#
+#      # PyPI publication.
+#      #
+#      # Publish python package to PYPI only if all build, lint and test jobs
+#      # succeed and it has been tagged with a tag starting with the letter v
+#      - pypi:
+#          requires:
+#            - check-versions
+#            - package-back
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /^v.*/
+#
+#      # NPM publication.
+#      #
+#      # Publish frontend package to NPM only if all build, lint and test jobs
+#      # succeed, and it has been tagged with a tag starting with the letter v
+#      - npm:
+#          requires:
+#            - check-versions
+#            - build-front
+#            - lint-front
+#            - test-front
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /^v.*/
+#
+#      # DockerHub publication.
+#      #
+#      # Publish docker images only if all build, lint and test jobs succeed
+#      # and it has been tagged with a tag starting with the letter v or is on
+#      # the main branch
+#      - hub:
+#          requires:
+#            - build-docker
+#            - test-back-mysql-8
+#            - test-back-postgresql
+#          filters:
+#            branches:
+#              only: main
+#            tags:
+#              only: /^v.*/
