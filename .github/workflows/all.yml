@@ -1,0 +1,255 @@
+# Ancres du fichier de configuration
+generate-version-file: &generate-version-file
+  run:
+    name: Créer un fichier version.json
+    command: |
+      # Créer un fichier version.json à la manière de Mozilla
+      # https://github.com/mozilla-services/Dockerflow/blob/master/docs/version_object.md
+      printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' \
+        "$CIRCLE_SHA1" \
+        "$CIRCLE_TAG" \
+        "$CIRCLE_PROJECT_USERNAME" \
+        "$CIRCLE_PROJECT_REPONAME" \
+        "$CIRCLE_BUILD_URL" > sandbox/version.json
+
+version: 2
+
+aliases:
+  - &checkout_fun
+    checkout:
+      path: ~/fun
+
+  - &restore_node_modules
+    restore_cache:
+      name: Restaurer le cache node_modules
+      keys:
+        - v18-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
+        - v18-front-dependencies-
+
+jobs:
+  # Tâches Git
+  # Vérifier que l'historique git est propre et conforme à nos attentes
+  lint-git:
+    docker:
+      - image: cimg/python:3.10
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: ~/fun
+    steps:
+      - checkout
+      # S'assurer que les modifications n'ajoutent pas une instruction "print" à la base de code.
+      # Nous devons exclure le dossier ".circleci" de la recherche car la commande même qui vérifie
+      # l'absence de "print" inclut un "print(" lui-même.
+      - run:
+          name: Enforcer l'absence d'instructions print dans le code
+          command: |
+            ! git diff origin/main..HEAD -- ":(exclude)*.circleci/*" | grep "print("
+      - run:
+          name: Vérifier l'absence de commits de correction (fixup)
+          command: |
+            ! git log | grep 'fixup!'
+      - run:
+          name: Installer gitlint
+          command: |
+            pip install --user requests gitlint
+      - run:
+          name: Linter les messages de commit ajoutés à main
+          command: |
+            ~/.local/bin/gitlint --commits origin/main..HEAD
+
+  # Vérifier que le CHANGELOG a été mis à jour dans la branche actuelle
+  check-changelog:
+    docker:
+      - image: circleci/buildpack-deps:stretch-scm
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: ~/fun
+    steps:
+      - checkout
+      - run:
+          name: Vérifier que le CHANGELOG a été modifié dans la branche actuelle
+          command: |
+            git whatchanged --name-only --pretty="" origin..HEAD | grep CHANGELOG
+
+  # Vérifier que la longueur maximale des lignes du CHANGELOG ne dépasse pas 80 caractères
+  lint-changelog:
+    docker:
+      - image: debian:stretch
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: ~/fun
+    steps:
+      - checkout
+      - run:
+          name: Vérifier la longueur maximale des lignes du CHANGELOG
+          command: |
+            # Obtenir la largeur de la ligne la plus longue (en ignorant les liens de publication)
+            test $(cat CHANGELOG.md | grep -Ev "^\[.*\]: https://github.com/openfun" | wc -L) -le 80
+
+  # Vérifier que le fichier de configuration de Renovate est valide
+  check-renovate-configuration:
+    docker:
+      - image: renovate/renovate
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: ~/fun
+    steps:
+      - checkout
+      - run:
+          name: Exécuter la commande renovate-config-validator
+          command: renovate-config-validator
+
+  # Vérifier que toutes les versions (backend, frontend) sont à jour
+  check-versions:
+    docker:
+      - image: cimg/base:2022.04
+    working_directory: ~/fun
+    steps:
+      - checkout
+      - run:
+          name: Vérifier que toutes les versions sont identiques
+          command: |
+            BACKEND_VERSION=$(cat setup.cfg | grep "version" | cut -d" " -f3)
+            echo "Version magnify : ${BACKEND_VERSION}"
+            # Dans l'espace de travail frontend
+            cat src/frontend/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+            # Dans la bibliothèque frontend "@openfun/jitsi-magnify"
+            cat src/frontend/packages/core/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+            # Dans l'application frontend "sandbox"
+            cat src/frontend/sandbox/package.json | grep "\"version\": \"${BACKEND_VERSION}\",$"
+
+  # ---- Tâches Docker ----
+  # Construire l'image Docker prête pour la production
+  build-docker:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: ~/fun
+    steps:
+      # Récupérer les sources du dépôt
+      - checkout
+      # Générer un fichier version.json décrivant la version de l'application
+      - <<: *generate-version-file
+      # Activer docker-in-docker
+      - setup_remote_docker:
+          version: 19.03.13
+
+      # Se connecter à Docker Hub avec des identifiants cryptés stockés en tant que secret
+      # variables d'environnement (définies dans les paramètres du projet CircleCI) si la variable
+      # d'environnement attendue est définie; passer en mode anonyme sinon.
+      - run:
+          name: Se connecter à DockerHub
+          command: >
+            test -n "$DOCKER_USER" &&
+              echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin ||
+              echo "Mode anonyme Docker Hub"
+
+      # Chaque image est marquée avec le hachage du commit git actuel pour éviter
+      # les collisions dans les constructions parallèles.
+      - run:
+          name: Construire l'image de production
+          command: docker build -t magnify:${CIRCLE_SHA1} --target production .
+      - run:
+          name: Vérifier la disponibilité de l'image construite
+          command: docker images "magnify:${CIRCLE_SHA1}*"
+
+  # ---- Tâches Backend ----
+  # Construire l'environnement de développement backend
+  build-back:
+    docker:
+      - image: cimg/python:3.10
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: ~/fun
+    steps:
+      - checkout
+      # Restaurer le cache des dépendances Python
+      - restore_cache:
+          name: Restaurer le cache des dépendances Python
+          keys:
+            - v18-back-dependencies-{{ checksum "~/fun/setup.cfg" }}
+            - v18-back-dependencies-
+      - run:
+          name: Installer les dépendances du backend
+          command: pip install -r requirements-dev.txt
+      # Sauvegarder le cache des dépendances Python
+      - save_cache:
+          name: Sauvegarder le cache des dépendances Python
+          key: v18-back-dependencies-{{ checksum "~/fun/setup.cfg" }}
+          paths:
+            - ~/.cache/pip
+            - ./venv/lib/python*/site-packages/
+      - run:
+          name: Vérifier la compatibilité entre les versions des bibliothèques Python et Black
+          command: pip check
+
+  # ---- Tâches Frontend ----
+  # Installer les dépendances du frontend et les outils de développement
+  build-front:
+    docker:
+      - image: cimg/node:17.3
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    working_directory: ~/fun
+    steps:
+      - checkout
+      # Restaurer le cache des dépendances Node.js
+      - restore_cache:
+          name: Restaurer le cache des dépendances Node.js
+          <<: *restore_node_modules
+      - run:
+          name: Installer les dépendances Node.js
+          command: yarn install --frozen-lockfile --non-interactive
+      # Sauvegarder le cache des dépendances Node.js
+      - save_cache:
+          name: Sauvegarder le cache des dépendances Node.js
+          key: v18-front-dependencies-{{ checksum "~/fun/src/frontend/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - ~/.cache/Cypress
+            - ./src/frontend/node_modules
+      - run:
+          name: Vérifier la compatibilité entre les dépendances du frontend et ESLint
+          command: yarn run eslint --no-error-on-unmatched-pattern
+
+workflows:
+  version: 2
+  lint-git:
+    jobs:
+      - lint-git
+
+  check-changelog:
+    jobs:
+      - check-changelog
+
+  lint-changelog:
+    jobs:
+      - lint-changelog
+
+  check-renovate-configuration:
+    jobs:
+      - check-renovate-configuration
+
+  check-versions:
+    jobs:
+      - check-versions
+
+  build-docker:
+    jobs:
+      - build-docker
+
+  build-back:
+    jobs:
+      - build-back
+
+  build-front:
+    jobs:
+      - build-front
