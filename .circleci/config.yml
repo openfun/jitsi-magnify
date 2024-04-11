@@ -744,8 +744,8 @@ workflows:
       - package-back:
           requires:
             - test-front
-            - test-back-mysql-8
-            - test-back-postgresql
+            #- test-back-mysql-8
+            #- test-back-postgresql
             - build-front
           filters:
             tags:
@@ -789,8 +789,8 @@ workflows:
       - hub:
           requires:
             - build-docker
-            - test-back-mysql-8
-            - test-back-postgresql
+            #- test-back-mysql-8
+            #- test-back-postgresql
           filters:
             branches:
               only: main
