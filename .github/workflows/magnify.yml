@@ -19,6 +19,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Install gitlint
+        run: |
+          pip install gitlint
       - name: Show git logs
         run: git log
       # Add your script to check for print statements here
@@ -36,6 +39,7 @@ jobs:
       # Add your script to lint commit messages here
       - name: Run GitLint
         run: gitlint --commits origin/${{ github.event.pull_request.base.ref }}..HEAD
+
 
   check-changelog:
     runs-on: ubuntu-latest
