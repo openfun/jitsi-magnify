@@ -58,11 +58,11 @@ jobs:
       - name: Build CI App
         run: cd src/frontend/ && yarn build
 
-#      - name: Cache build frontend
-#        uses: actions/cache@v4
-#        with:
-#          path: src/frontend/apps/magnify/out/
-#          key: build-front-${{ github.run_id }}
+      - name: Cache build frontend
+        uses: actions/cache@v4
+        with:
+          path: src/frontend/apps/magnify/out/
+          key: build-front-${{ github.run_id }}
 
   test-front:
     runs-on: ubuntu-latest
