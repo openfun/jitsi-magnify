@@ -47,10 +47,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
       - name: Check CHANGELOG max line length
         run: |
-          max_line_length=$(cat CHANGELOG.md | grep -Ev "^\[.*\]: https://github.com" | wc -L)
-          if [ $max_line_length -ge 80 ]; then
+          max_line_length=$(awk '!/^\[.*\]: https:\/\/github.com/ { if (length > max) max = length } END { print max }' CHANGELOG.md)
+          if [ "$max_line_length" -gt 80 ]; then
             echo "ERROR: CHANGELOG has lines longer than 80 characters."
             exit 1
           fi
@@ -62,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/backend
+        working-directory: src/magnify
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -83,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/backend
+        working-directory: src/tests
 
     services:
       postgres:
@@ -147,7 +148,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install development dependencies
-        working-directory: src/backend
+        working-directory: src/magnify
         run: pip install --user .[dev]
 
       - name: Generate the translation base file
