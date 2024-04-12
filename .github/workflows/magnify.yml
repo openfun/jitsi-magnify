@@ -1,0 +1,71 @@
+name: magnify Workflow
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  lint-git:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install gitlint
+        run: |
+          pip install gitlint
+      - name: Show git logs
+        run: git log
+      # Add your script to check for print statements here
+      - name: Check for print statements
+        run: |
+          # Your script to check for print statements
+          # Example:
+          # ! git diff origin/${{ github.event.pull_request.base.ref }}..HEAD -- . ':(exclude)**/magnify.yml' | grep "print("
+      # Add your script to check for fixup commits here
+      - name: Check for fixup commits
+        run: |
+          # Your script to check for fixup commits
+          # Example:
+          # ! git log | grep 'fixup!'
+      # Add your script to lint commit messages here
+      - name: Run GitLint
+        run: /path/to/gitlint --commits origin/${{ github.event.pull_request.base.ref }}..HEAD
+
+
+
+  check-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      # Add your script to check CHANGELOG modifications here
+      - name: Check CHANGELOG modifications
+        run: |
+          # Your script to check CHANGELOG modifications
+          # Example:
+          # git log --name-only --pretty="" origin..HEAD | grep CHANGELOG
+
+  lint-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      # Add your script to check CHANGELOG max line length here
+      - name: Check CHANGELOG max line length
+        run: |
+          # Your script to check CHANGELOG max line length
+          # Example:
+          # max_line_length=$(awk '!/^\[.*\]: https:\/\/github.com/ { if (length > max) max = length } END { print max }' CHANGELOG.md)
+          # if [ "$max_line_length" -gt 80 ]; then
+          #   echo "ERROR: CHANGELOG has lines longer than 80 characters."
+          #   exit 1
+          # fi

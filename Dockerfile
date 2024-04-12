@@ -16,6 +16,13 @@
 
 # ---- Base image to inherit from ----
 FROM python:3.10-buster as base
+# Upgrade pip to its latest release to speed up dependencies installation
+RUN python -m pip install --upgrade pip
+
+# Upgrade system packages to install security updates
+RUN apt-get update && \
+  apt-get -y upgrade && \
+  rm -rf /var/lib/apt/lists/*
 
 # ---- Front-end builder image ----
 FROM node:16.15 as front-builder
@@ -27,6 +34,28 @@ WORKDIR /builder/src/frontend
 
 RUN yarn install --frozen-lockfile && \
     yarn build
+
+# ---- Front-end image ----
+FROM nginxinc/nginx-unprivileged:1.25 as frontend-production
+
+# Un-privileged user running the application
+ARG DOCKER_USER
+USER ${DOCKER_USER}
+
+COPY --from=frontend-builder \
+    /builder/apps/magnify/out \
+    /usr/share/nginx/html
+
+COPY ./src/frontend/apps/magnify/conf/default.conf /etc/nginx/conf.d
+
+# Copy entrypoint
+COPY ./docker/files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
+
+ENTRYPOINT [ "/usr/local/bin/entrypoint" ]
+
+CMD ["nginx", "-g", "daemon off;"]
+
+
 
 # ---- Back-end builder image ----
 FROM base as back-builder
@@ -47,6 +76,50 @@ RUN pip install --upgrade pip
 
 RUN mkdir /install && \
     pip install --prefix=/install .[sandbox]
+
+# ---- Development image ----
+FROM core as backend-development
+
+# Switch back to the root user to install development dependencies
+USER root:root
+
+# Install psql
+RUN apt-get update && \
+    apt-get install -y postgresql-client && \
+    rm -rf /var/lib/apt/lists/*
+
+# Uninstall impress and re-install it in editable mode along with development
+# dependencies
+RUN pip uninstall -y impress
+RUN pip install -e .[dev]
+
+# Restore the un-privileged user running the application
+ARG DOCKER_USER
+USER ${DOCKER_USER}
+
+# Target database host (e.g. database engine following docker compose services
+# name) & port
+ENV DB_HOST=postgresql \
+    DB_PORT=5432
+
+# Run django development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+
+# Gunicorn
+RUN mkdir -p /usr/local/etc/gunicorn
+COPY docker/files/usr/local/etc/gunicorn/magnify.py /usr/local/etc/gunicorn/magnify.py
+
+# Un-privileged user running the application
+ARG DOCKER_USER
+USER ${DOCKER_USER}
+
+# Copy statics
+COPY --from=link-collector ${MAGNIFY_STATIC_ROOT} ${MAGNIFY_STATIC_ROOT}
+
+
+# The default command runs gunicorn WSGI server in magnify's main module
+CMD ["gunicorn", "-c", "/usr/local/etc/gunicorn/magnify.py", "magnify.wsgi:application"]
 
 # ---- static link collector ----
 FROM base as link-collector
