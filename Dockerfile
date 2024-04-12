@@ -43,10 +43,10 @@ ARG DOCKER_USER
 USER ${DOCKER_USER}
 
 COPY --from=frontend-builder \
-    /builder/apps/impress/out \
+    /builder/apps/magnify/out \
     /usr/share/nginx/html
 
-COPY ./src/frontend/apps/impress/conf/default.conf /etc/nginx/conf.d
+COPY ./src/frontend/apps/magnify/conf/default.conf /etc/nginx/conf.d
 
 # Copy entrypoint
 COPY ./docker/files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
