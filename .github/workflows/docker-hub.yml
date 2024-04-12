@@ -49,31 +49,31 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
 
-build-and-push-frontend:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+  build-and-push-frontend:
+     runs-on: ubuntu-latest
+     steps:
+     - name: Checkout Repository
+       uses: actions/checkout@v4
 
-    - name: Docker meta
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
+     - name: Docker meta
+       id: meta
+       uses: docker/metadata-action@v5
+       with:
         images: lasuite/magnify-frontend
 
-    - name: Load Sops Secrets
-      uses: rouja/actions-sops@main
-      with:
+     - name: Load Sops Secrets
+       uses: rouja/actions-sops@main
+       with:
         secret-file: .github/workflows/secrets.enc.env
         age-key: ${{ secrets.SOPS_PRIVATE }}
 
-    - name: Login to DockerHub
-      if: github.event_name != 'pull_request'
-      run: echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+     - name: Login to DockerHub
+       if: github.event_name != 'pull_request'
+       run: echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
 
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v5
-      with:
+     - name: Build and Push Docker Image
+       uses: docker/build-push-action@v5
+       with:
         context: .
         file: Dockerfile  # Spécifiez le chemin vers votre Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
