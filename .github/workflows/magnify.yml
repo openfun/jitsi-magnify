@@ -34,9 +34,9 @@ jobs:
       - name: Run GitLint
         run: gitlint --commits origin/${{ github.event.pull_request.base.ref }}..HEAD
 
-check-changelog:
-  runs-on: ubuntu-latest
-  steps:
+  check-changelog:
+    runs-on: ubuntu-latest
+    steps:
     - name: Checkout repository
       uses: actions/checkout@v2
     - name: Check that the CHANGELOG has been modified in the current branch
