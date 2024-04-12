@@ -151,10 +151,35 @@ ARG MAGNIFY_STATIC_ROOT=/data/static
 
 WORKDIR /app/sandbox
 
-# Définition explicite de la cible frontend-production
-FROM base as frontend-production
 # Copy statics
 COPY --from=link-collector ${MAGNIFY_STATIC_ROOT} ${MAGNIFY_STATIC_ROOT}
 
-# Copier les fichiers statiques de frontend dans la cible frontend-production
-CMD cp -r /app/sandbox/static/frontend ${MAGNIFY_STATIC_ROOT}
+# The default command runs gunicorn WSGI server in the sandbox
+CMD gunicorn -c /usr/local/etc/gunicorn/magnify.py wsgi:application
+# ---- Front-end image ----
+FROM nginxinc/nginx-unprivileged:1.25 as frontend-production
+
+# Un-privileged user running the application
+ARG DOCKER_USER
+USER ${DOCKER_USER}
+
+COPY --from=frontend-builder \
+    /builder/apps/magnify/out \
+    /usr/share/nginx/html
+
+COPY ./src/frontend/apps/magnify/conf/default.conf /etc/nginx/conf.d
+# ---- Production image ----
+FROM core as backend-production
+
+ARG MAGNIFY_STATIC_ROOT=/data/static
+
+# Gunicorn
+RUN mkdir -p /usr/local/etc/gunicorn
+COPY docker/files/usr/local/etc/gunicorn/magnify.py /usr/local/etc/gunicorn/magnify.py
+
+# Un-privileged user running the application
+ARG DOCKER_USER
+USER ${DOCKER_USER}
+
+# Copy statics
+COPY --from=link-collector ${MAGNIFY_STATIC_ROOT} ${MAGNIFY_STATIC_ROOT}
