@@ -151,8 +151,10 @@ ARG MAGNIFY_STATIC_ROOT=/data/static
 
 WORKDIR /app/sandbox
 
+# Définition explicite de la cible frontend-production
+FROM base as frontend-production
 # Copy statics
 COPY --from=link-collector ${MAGNIFY_STATIC_ROOT} ${MAGNIFY_STATIC_ROOT}
 
-# The default command runs gunicorn WSGI server in the sandbox
-CMD gunicorn -c /usr/local/etc/gunicorn/magnify.py wsgi:application
+# Copier les fichiers statiques de frontend dans la cible frontend-production
+CMD cp -r /app/sandbox/static/frontend ${MAGNIFY_STATIC_ROOT}
