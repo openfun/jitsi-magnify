@@ -13,23 +13,23 @@ on:
 jobs:
   lint-git:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' # Makes sense only for pull requests
+    if: github.event_name == 'pull_request' # Ne s'applique que pour les pull requests
     steps:
-      - name: Checkout repository
+      - name: Checkout du dépôt
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: show
+      - name: Afficher les logs
         run: git log
-      - name: Enforce absence of print statements in code
+      - name: Assurer l'absence d'instructions print dans le code
         run: |
           ! git diff origin/${{ github.event.pull_request.base.ref }}..HEAD -- . ':(exclude)**/magnify.yml' | grep "print("
-      - name: Check absence of fixup commits
+      - name: Vérifier l'absence de commits fixup
         run: |
           ! git log | grep 'fixup!'
-      - name: Install gitlint
+      - name: Installer gitlint
         run: pip install --user requests gitlint
-      - name: Lint commit messages added to main
+      - name: Vérifier les messages de commit ajoutés à la branche principale
         run: ~/.local/bin/gitlint --commits origin/${{ github.event.pull_request.base.ref }}..HEAD
 
 #  check-changelog:
