@@ -38,7 +38,8 @@ jobs:
           # ! git log | grep 'fixup!'
       # Add your script to lint commit messages here
       - name: Run GitLint
-        run: gitlint --commits origin/${{ github.event.pull_request.base.ref }}..HEAD
+        run: /path/to/gitlint --commits origin/${{ github.event.pull_request.base.ref }}..HEAD
+
 
 
   check-changelog:
