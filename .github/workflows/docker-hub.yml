@@ -52,35 +52,30 @@ jobs:
   build-and-push-frontend:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v4
-      -
-        name: Docker meta
+      - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: lasuite/magnify-frontend
-      -
-        name: Load sops secrets
+      - name: Load sops secrets
         uses: rouja/actions-sops@main
         with:
           secret-file: .github/workflows/secrets.enc.env
           age-key: ${{ secrets.SOPS_PRIVATE }}
-      -
-        name: Login to DockerHub
+      - name: Login to DockerHub
         if: github.event_name != 'pull_request'
         run: echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
-      -
-        name: Build and push
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
-          target: frontend-production
-          build-args: DOCKER_USER=${{ env.DOCKER_USER }}:-1000
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          file: Dockerfile  # Ajoutez cette ligne pour spécifier le Dockerfile à utiliser
+          build-args: DOCKER_USER=${{ env.DOCKER_USER }}:-1000
 
   notify-argocd:
     needs:
