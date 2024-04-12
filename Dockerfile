@@ -105,9 +105,6 @@ ENV DB_HOST=postgresql \
 # Run django development server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
-# ---- Production image ----
-FROM core as backend-production
-
 
 # Gunicorn
 RUN mkdir -p /usr/local/etc/gunicorn
