@@ -657,17 +657,17 @@ workflows:
       # Git jobs
       #
       # Check validity of git history
-#      - lint-git:
-#          filters:
-#            tags:
-#              only: /.*/
+      - lint-git:
+          filters:
+            tags:
+              only: /.*/
       #       Check CHANGELOG update
-#      - check-changelog:
-#          filters:
-#            branches:
-#              ignore: main
-#            tags:
-#              only: /(?!^v).*/
+      - check-changelog:
+          filters:
+            branches:
+              ignore: main
+            tags:
+              only: /(?!^v).*/
       - lint-changelog:
           filters:
             branches:
@@ -708,18 +708,18 @@ workflows:
           filters:
             tags:
               only: /.*/
-#      - test-back-mysql-8:
-#          requires:
-#            - build-back
-#          filters:
-#            tags:
-#              only: /.*/
-#      - test-back-postgresql:
-#          requires:
-#            - build-back
-#          filters:
-#            tags:
-#              only: /.*/
+      - test-back-mysql-8:
+          requires:
+            - build-back
+          filters:
+            tags:
+              only: /.*/
+      - test-back-postgresql:
+          requires:
+            - build-back
+          filters:
+            tags:
+              only: /.*/
 
       # i18n jobs
       #
@@ -744,8 +744,8 @@ workflows:
       - package-back:
           requires:
             - test-front
-            #- test-back-mysql-8
-            #- test-back-postgresql
+            - test-back-mysql-8
+            - test-back-postgresql
             - build-front
           filters:
             tags:
@@ -789,8 +789,8 @@ workflows:
       - hub:
           requires:
             - build-docker
-            #- test-back-mysql-8
-            #- test-back-postgresql
+            - test-back-mysql-8
+            - test-back-postgresql
           filters:
             branches:
               only: main
