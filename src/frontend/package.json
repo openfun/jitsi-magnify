@@ -36,9 +36,9 @@
       "packages/*"
   ],
   "devDependencies": {
-    "turbo": "1.10.14",
+    "turbo": "2.2.3",
     "@lib/eslint-config": "*",
-    "prettier": "3.0.3"
+    "prettier": "3.3.3"
   },
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@1.22.22"
 }
